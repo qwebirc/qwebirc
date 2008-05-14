@@ -7,12 +7,15 @@ from twisted.application.service import IServiceMaker
 from twisted.application import internet, strports
 from twisted.web import static, server
 
+from qwebirc import RootSite
+
 class Options(usage.Options):
   optParameters = [["port", "p", "9090","Port to start the server on."],
     ["logfile", "l", None, "Path to web CLF (Combined Log Format) log file."],
     ["https", None, None, "Port to listen on for Secure HTTP."],
     ["certificate", "c", "server.pem", "SSL certificate to use for HTTPS. "],
     ["privkey", "k", "server.pem", "SSL certificate to use for HTTPS."],
+    ["staticpath", "s", "static", "Path to static content"],
   ]
 
   optFlags = [["notracebacks", "n", "Display tracebacks in broken web pages. " +
@@ -35,13 +38,12 @@ class QWebIRCServiceMaker(object):
   description = "QuakeNet web-based IRC client"
   options = Options
 
+  
   def makeService(self, config):
-    root = static.File("static/")
-    
     if config['logfile']:
-      site = server.Site(root, logPath=config['logfile'])
+      site = RootSite(config['staticpath'], logPath=config['logfile'])
     else:
-      site = server.Site(root)
+      site = RootSite(config['staticpath'])
     
     
     site.displayTracebacks = not config["notracebacks"]
