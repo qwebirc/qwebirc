@@ -39,12 +39,10 @@ function Theme(values) {
         var c2 = n[++i];
 
         var o = ThemeControlCodeMap[c2];
-        if(!o) {
+        if(!o)
           o = h[c2];
-          if(!o)
-            o = c;
-        }
-        msg.push(o);
+        if(o)
+          msg.push(o);
       } else {
         msg.push(c);
       }

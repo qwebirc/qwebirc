@@ -20,10 +20,10 @@ function colourise(line, entity) {
     }
     i++;
     if(isnum(xline[i + 1])) {
-      fg = xline[i] + xline[i + 1];
+      fg = parseInt(xline[i] + xline[i + 1]);
       i++;
     } else {
-      fg = xline[i];
+      fg = parseInt(xline[i]);
     }
     if(xline[i + 1] != ",")
       return i;
@@ -32,10 +32,10 @@ function colourise(line, entity) {
     i+=2;
     
     if(isnum(xline[i + 1])) {
-      bg = xline[i] + xline[i + 1];
+      bg = parseInt(xline[i] + xline[i + 1]);
       i++;
     } else {
-      bg = xline[i];
+      bg = parseInt(xline[i]);
     }
     return i;
   }
@@ -83,6 +83,10 @@ function colourise(line, entity) {
       ac();
       
       i = parsecolours(xline, i);
+      if(bg > 15)
+        bg = undefined;
+      if(fg > 15)
+        fg = undefined;
       pc();
     } else {
       out.push(lc);

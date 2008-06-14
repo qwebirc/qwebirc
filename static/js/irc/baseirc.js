@@ -84,6 +84,7 @@ function BaseIRCClient(nickname, view) {
     var user = prefix;
     var channel = params[0];
     var message = params[1];
+
     var nick = hosttonick(user);
     
     if((nick == self.nickname) && self.channels[channel])

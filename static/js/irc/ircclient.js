@@ -89,11 +89,9 @@ function IRCClient(nickname, ui) {
       self.tracker.removeChannel(channel);
     } else {
       self.tracker.removeNickFromChannel(nick, channel);
+      newChanLine(channel, "PART", user, {"m": message});
     }
-    
-    if(!message)
-      message = "";
-    newChanLine(channel, "PART", user, {"m": message});
+  
     self.updateNickList(channel);
     
     if(nick == self.nickname)
@@ -108,8 +106,6 @@ function IRCClient(nickname, ui) {
       self.tracker.removeNickFromChannel(kickee, channel);
       self.updateNickList(channel);
     }
-    if(!message)
-      message = "";
       
     newChanLine(channel, "KICK", kicker, {"v": kickee, "m": message});
   }
