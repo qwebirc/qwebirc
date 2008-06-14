@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<html>
+<head>
+  <script src="js/mootools-release-1.11.js" type="text/javascript"></script>
+  <script type="text/javascript" src="js/jslib.js"></script>
+  <script type="text/javascript" src="js/ui/uglyui.js"></script>
+  <script type="text/javascript" src="js/tcp.js"></script>
+  <script type="text/javascript" src="js/irc/irclib.js"></script>
+  <script type="text/javascript" src="js/irc/baseirc.js"></script>
+  <script type="text/javascript" src="js/irc/irctracker.js"></script>
+  <script type="text/javascript" src="js/irc/ircclient.js"></script>
+  <script type="text/javascript">  
+    var ui;
+    
+    function fnp(x, data) {
+      ui.windowLine(x, data);
+    }
+
+    function updatenicklist(channel, nicks) {
+      ui.updateNickList(channel, nicks);
+    }
+    
+    function updatetopic(channel, topic) {
+      ui.updateTopic(channel, topic);
+    }
+    
+    window.addEvent("domready", function() {
+      ui = new UglyUI($("ircui"));
+      ui.newWindow("", "Status");
+      
+      var IRC = new IRCClient(prompt("Nickname","moofishaax"), ui);
+      IRC.connect();
+    });
+
+  </script>
+</head>
+<body>
+  <div id="ircui"></div>
+</body>
+</html>

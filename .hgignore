@@ -1,4 +1,5 @@
 syntax: glob
+qwebirc\config.py
 dropin.cache
 *.tap
 *.pyc

@@ -13,4 +13,5 @@ class RootSite(server.Site):
     server.Site.__init__(self, root, *args, **kwargs)
     
     root.putChild("", RootResource())
+    root.putChild("e", AJAXEngine("/e"))
     root.putChild("static", static.File(path))
