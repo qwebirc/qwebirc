@@ -3,14 +3,36 @@ function IRCClient(nickname, ui) {
   this.prefixes = "@+";
   this.modeprefixes = "ov";
   
+  newLine = function(window, type, data) {
+    if(!data)
+      data = {};
+      
+    ui.newLine(window, type, data);
+  }
+  
+  newChanLine = function(channel, type, user, extra) {
+    if(!extra)
+      extra = {};
+
+    extra["n"] = hosttonick(user);
+    extra["h"] = hosttohost(user);
+    extra["c"] = channel;
+    
+    newLine(channel, type, extra);
+  }
+  
+  newServerLine = function(type, data) {
+    newLine("", type, data);
+  }
+  
   this.rawNumeric = function(numeric, prefix, params) {
-    ui.newLine("", params.slice(1));
+    newServerLine("RAW", {"n": "numeric", "m": params.slice(1).join(" ")});
   }
   
   this.signedOn = function(nickname) {
     self.tracker = new IRCTracker();
     self.nickname = nickname;
-    ui.newLine("", "Signed on!");
+    newServerLine("SIGNON");
   }
 
   this.updateNickList = function(channel) {
@@ -49,11 +71,12 @@ function IRCClient(nickname, ui) {
     var host = hosttohost(user);
     
     if(nick == self.nickname) {
-      /* */
+      ui.newWindow(channel, true);
+      ui.selectTab(channel);
     }
     self.tracker.addNickToChannel(nick, channel);
 
-    ui.newLine(channel, "== " + nick + " [" + host + "] has joined " + channel);
+    newChanLine(channel, "JOIN", user);
     
     self.updateNickList(channel);
   }
@@ -68,21 +91,27 @@ function IRCClient(nickname, ui) {
       self.tracker.removeNickFromChannel(nick, channel);
     }
     
-    ui.newLine(channel, "== " + nick + " [" + host + "] left " + channel);
-    
+    if(!message)
+      message = "";
+    newChanLine(channel, "PART", user, {"m": message});
     self.updateNickList(channel);
+    
+    if(nick == self.nickname)
+      ui.closeWindow(channel);      
   }
 
   this.userKicked = function(kicker, channel, kickee, message) {
     if(kickee == self.nickname) {
       self.tracker.removeChannel(channel);
+      ui.closeWindow(channel);
     } else {
       self.tracker.removeNickFromChannel(kickee, channel);
+      self.updateNickList(channel);
     }
-    
-    var kickernick = hosttonick(kicker);
-    ui.newLine(channel, "== " + kickee + " was kicked from " + channel + " by " + kickernick + " [" + message + "]");
-    self.updateNickList(channel);
+    if(!message)
+      message = "";
+      
+    newChanLine(channel, "KICK", kicker, {"v": kickee, "m": message});
   }
   
   this.channelMode = function(user, channel, modes, raw) {
@@ -104,30 +133,27 @@ function IRCClient(nickname, ui) {
         self.addPrefix(nc, prefixchar);
       }
     });
-    
-    var nick = hosttonick(user);
-    
-    ui.newLine(channel, "== mode/" + channel + " [" + raw.join(" ") + "] by " + nick);
+
+    newChanLine(channel, "MODE", user, {"m": raw.join(" ")});
     
     self.updateNickList(channel);
   }
 
   this.userQuit = function(user, message) {
     var nick = hosttonick(user);
-    var host = hosttohost(user);
     
     var channels = self.tracker.getNick(nick);
     
     var clist = [];
     for(var c in channels) {
       clist.push(c);
-      ui.newLine(c, "== " + nick + " [" + host + "] has quit [" + message + "]");
+      newChanLine(c, "QUIT", user);
     }
     
     self.tracker.removeNick(nick);
     
     forEach(clist, function(cli) {
-      this.updateNickList(cli);
+      self.updateNickList(cli);
     });
   }
 
@@ -142,15 +168,14 @@ function IRCClient(nickname, ui) {
     var channels = self.tracker.getNick(newnick);
     
     for(var c in channels) {
-      ui.newLine(c, "* " + oldnick + " changed nick to " + newnick);
-      this.updateNickList(c);
+      newChanLine(c, "NICK", user, {"w": newnick});
+      /* TODO: rename queries */
+      self.updateNickList(c);
     }
   }
   
   this.channelTopic = function(user, channel, topic) {
-    var nick = hosttonick(user);
-    
-    ui.newLine(channel, "== " + nick + " changed the topic of " + channel + " to: " + topic);
+    newChanLine(channel, "TOPIC", user, {"m": topic});    
     ui.updateTopic(channel, topic);
   }
   
@@ -159,37 +184,41 @@ function IRCClient(nickname, ui) {
   }
   
   this.channelPrivmsg = function(user, channel, message) {
-    var nick = hosttonick(user);
-    
-    ui.newLine(channel, "<" + nick + "> " + message);
+    newChanLine(channel, "CHANMSG", user, {"m": message});
   }
 
   this.channelNotice = function(user, channel, message) {
-    var nick = hosttonick(user);
-    ui.newLine(channel, "-" + nick + "- " + message);
+    newChanLine(channel, "CHANNOTICE", user, {"m": message});
   }
 
   this.userPrivmsg = function(user, message) {
     var nick = hosttonick(user);
-    
-    ui.newLine("", "*" + nick + "* " + message);
+    var host = hosttohost(user);
+
+    ui.newWindow(nick, false);
+    newLine(nick, "PRIVMSG", {"m": message, "h": host, "n": nick});
   }
   
   this.serverNotice = function(message) {
-    ui.newLine("", "-server- " + message);
+    newServerLine("SERVERNOTICE", {"m": message});
   }
   
   this.userNotice = function(user, message) {
-    ui.newLine("", "-(" + user + ")- " + message);
+    var nick = hosttonick(user);
+    var host = hosttohost(user);
+
+    newServerLine("NOTICE", {"m": message, "h": host, "n": nick});
   }
   
   this.userInvite = function(user, channel) {
     var nick = hosttonick(user);
-    ui.newLine("", "* " + nick + " invites you to join " + channel);
+    var host = hosttohost(user);
+
+    newServerLine("INVITE", {"c": channel, "h": host, "n": nick});
   }
   
   this.userMode = function(modes) {
-    ui.newLine("", "MODE " + self.nickname + " " + modes);
+    newServerLine("UMODE", {"m": modes, "n": self.nickname});
   }
   
   this.addPrefix = function(nickchanentry, prefix) {
@@ -208,7 +237,7 @@ function IRCClient(nickname, ui) {
   }
   
   this.removePrefix = function(nickchanentry, prefix) {
-    nickchanentry.prefixes = nickchanentry.prefixes.replace(prefix, "");
+    nickchanentry.prefixes = nickchanentry.prefixes.replaceAll(prefix, "");
   }
 
   this.channelNames = function(channel, names) {
@@ -242,7 +271,7 @@ function IRCClient(nickname, ui) {
   this.disconnected = function() {
     self.tracker = undefined;
     
-    ui.newLine("", "== Disconnected");
+    newServerLine("DISCONNECT");
     self.disconnect();
   }
   
@@ -256,11 +285,11 @@ function IRCClient(nickname, ui) {
   }
   
   this.connected = function() {
-    ui.newLine("", "== Connected!");
+    newServerLine("CONNECT");
   }
   
   this.serverError = function(message) {
-    ui.newLine("", "== ERROR: " + message);
+    newServerLine("ERROR", {"m": message});
   }
   
   this.parent = new BaseIRCClient(nickname, this);

@@ -41,3 +41,15 @@ var forEach = function(x, fn) {
     if(fn(x[i]))
       return;
 }
+
+/* how horribly inefficient */
+String.prototype.replaceAll = function(f, t) {
+  var i = this.indexOf(f);
+  var c = this;
+ 
+  while(i > -1) {
+    c = c.replace(f, t);
+    i = c.indexOf(f);
+  }
+  return c;
+}

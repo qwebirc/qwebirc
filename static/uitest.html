@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
 "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<html>
 <head>
+  <link rel="stylesheet" href="css/colours.css" type="text/css">
   <script src="js/mootools-release-1.11.js" type="text/javascript"></script>
   <script type="text/javascript" src="js/jslib.js"></script>
+  <script type="text/javascript" src="js/ui/colour.js"></script>
+  <script type="text/javascript" src="js/ui/basetheme.js"></script>
+  <script type="text/javascript" src="js/ui/theme.js"></script>
   <script type="text/javascript" src="js/ui/uglyui.js"></script>
   <script type="text/javascript" src="js/tcp.js"></script>
   <script type="text/javascript" src="js/irc/irclib.js"></script>
@@ -27,9 +30,13 @@
     }
     
     window.addEvent("domready", function() {
-      ui = new UglyUI($("ircui"));
-      ui.newWindow("", "Status");
+      var theme = new Theme();
+      ui = new UglyUI($("ircui"), theme);
       
+      ui.newWindow("", false, "Status");
+      ui.newLine("", "", "Welcome to QuakeNet webIRC", "#f99");
+      ui.selectTab("");
+
       var IRC = new IRCClient(prompt("Nickname","moofishaax"), ui);
       IRC.connect();
     });

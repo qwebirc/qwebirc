@@ -5,6 +5,7 @@ function BaseIRCClient(nickname, view) {
   this.nickname = nickname;
   this.signedOn = false;
   this.pmodes = ["b", "k,", "o", "l", "v"];
+  this.channels = {}
   
   /* attempt javascript inheritence! */
   this.dispatch = function(data) {
@@ -83,7 +84,10 @@ function BaseIRCClient(nickname, view) {
     var user = prefix;
     var channel = params[0];
     var message = params[1];
+    var nick = hosttonick(user);
     
+    if((nick == self.nickname) && self.channels[channel])
+      delete self.channels[channel];
     view.userPart(user, channel, message);
     
     return true;
@@ -95,6 +99,8 @@ function BaseIRCClient(nickname, view) {
     var kickee = params[1];
     var message = params[2];
     
+    if((kickee == self.nickname) && self.channels[channel])
+      delete self.channels[channel];
     view.userKicked(kicker, channel, kickee, message);
     
     return true;
@@ -109,7 +115,11 @@ function BaseIRCClient(nickname, view) {
   this.irc_JOIN = function(prefix, params) {
     var channel = params[0];
     var user = prefix;
-
+    var nick = hosttonick(user);
+    
+    if(nick == self.nickname)
+      self.channels[channel] = true;
+      
     view.userJoined(user, channel);
     
     return true;
@@ -251,8 +261,10 @@ function BaseIRCClient(nickname, view) {
     var channel = params[1];
     var topic = ANI(params, -1);
     
-    view.initialTopic(channel, topic);
-    return true;
+    if(self.channels[channel]) {
+      view.initialTopic(channel, topic);
+      return true;
+    }
   }
   
   this.irc_RPL_TOPICWHOTIME = function(prefix, params) {
