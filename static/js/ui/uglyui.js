@@ -153,7 +153,7 @@ function UglyUI(parent, theme) {
     if(type)
       line = theme.message(type, line);
     
-    colourise(line, e);
+    colourise(timestamp() + " " + line, e);
     
     wx.lastcolour = !wx.lastcolour;
 

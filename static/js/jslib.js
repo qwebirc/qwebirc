@@ -73,7 +73,7 @@ DaysOfWeek = {
   4: "Thu",
   5: "Fri",
   6: "Sat"
-}
+};
 
 MonthsOfYear = {
   0: "Jan",
@@ -88,5 +88,8 @@ MonthsOfYear = {
   9: "Oct",
   10: "Nov",
   11: "Dec"
-}
+};
 
+function getBrowserDetails() {
+  return navigator.appName + " " + parseFloat(navigator.appVersion);
+}

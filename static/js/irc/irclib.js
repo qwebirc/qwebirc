@@ -51,3 +51,15 @@ function hosttonick(user) {
 function hosttohost(user) {
   return user.split("!", 2)[1];
 }
+
+function timestamp() {
+  var d = new Date();
+  function pad(x) {
+    x = "" + x;
+    if(x.length == 1)
+      return "0" + x;
+    return x
+  }
+  
+  return "[" + pad(d.getHours()) + ":" + pad(d.getMinutes()) + "]";
+}
