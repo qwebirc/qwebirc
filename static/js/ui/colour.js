@@ -50,9 +50,9 @@ function colourise(line, entity) {
   }  
   function pc() {
     classes = []
-    if(fg)
+    if(fg != undefined)
       classes.push("Xc" + fg);
-    if(bg)
+    if(bg != undefined)
       classes.push("Xbc" + bg);
     if(bold)
       classes.push("Xb");
