@@ -1,7 +1,7 @@
 Numerics = {"001": "RPL_WELCOME", "433": "ERR_NICKNAMEINUSE", "004": "RPL_MYINFO", "005": "RPL_ISUPPORT", "353": "RPL_NAMREPLY", "366": "RPL_ENDOFNAMES", "331": "RPL_NOTOPIC", "332": "RPL_TOPIC", "333": "RPL_TOPICWHOTIME"};
 
 registeredCTCPs = {
-  "VERSION": function(x) { return "qwebirc 0.01. Copyright (C) Chris Porter 2008"; },
+  "VERSION": function(x) { return "qwebirc v" + QWEBIRC_VERSION + ", copyright (C) Chris Porter 2008."; },
   "USERINFO": function(x) { return "qwebirc"; },
   "TIME": function(x) { function pad(x) { x = "" + x; if(x.length == 1) x = "0" + x; return x; }var d = new Date(); return DaysOfWeek[d.getDay()] + " " + MonthsOfYear[d.getMonth()] + " " + pad(d.getDate()) + " "  + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds()) + " " + d.getFullYear() },
   "PING": function(x) { return x; },

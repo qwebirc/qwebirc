@@ -68,7 +68,7 @@ function UglyUI(parent, theme) {
 
         self.closeWindow(windowname);
       });
-      tabclose.setText("X");
+      tabclose.set("text", "X");
       tab.appendChild(tabclose);
     }
     tabhash[windowname] = { "name": windowname, "container": container, "tab": tab, "element": e, "lastcolour": false, "nicklist": nicklist, "topic": topic, "ischannel": ischannel };
@@ -156,8 +156,15 @@ function UglyUI(parent, theme) {
     colourise(line, e);
     
     wx.lastcolour = !wx.lastcolour;
+
+    var prev = window.getScroll();
+    var prevbottom = window.getScrollSize().y;
+    var prevsize = window.getSize();
     window.appendChild(e);
     
+    if(prev.y + prevsize.y == prevbottom)
+      window.scrollTo(prev.x, window.getScrollSize().y);
+      
     if(windowname != self.active)
       wx.tab.setStyle("color", "red");
   }

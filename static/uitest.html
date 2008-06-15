@@ -2,8 +2,10 @@
 "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
+  <title>QuakeNet Web IRC</title>
   <link rel="stylesheet" href="css/colours.css" type="text/css">
-  <script src="js/mootools-release-1.11.js" type="text/javascript"></script>
+  <script type="text/javascript" src="js/mootools-1.2-core.js"></script>
+  <script type="text/javascript" src="js/version.js"></script>
   <script type="text/javascript" src="js/jslib.js"></script>
   <script type="text/javascript" src="js/ui/colour.js"></script>
   <script type="text/javascript" src="js/ui/basetheme.js"></script>
@@ -36,7 +38,7 @@
       
       ui.newWindow("", false, "Status");
       ui.selectTab("");
-      ui.newLine("", "", "Welcome to QuakeNet webIRC -- comments/bugs to slug@quakenet.org.", "#f99");
+      ui.newLine("", "", "Welcome to qwebirc v" + QWEBIRC_VERSION + " --- comments/bugs to slug@quakenet.org.", "#f99");
 
       var IRC = new IRCClient(prompt("Nickname","uberfish"), ui);
       IRC.connect();

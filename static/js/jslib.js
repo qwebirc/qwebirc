@@ -65,18 +65,6 @@ String.prototype.splitMax = function(by, max) {
   return newitems;
 }
 
-alert("a".splitMax(" ", 2));
-alert("a b".splitMax(" ", 2));
-alert("a b c".splitMax(" ", 2));
-alert("a b".splitMax(" ", 3));
-alert("a b c".splitMax(" ", 3));
-alert("a".splitMax(" ", 4));
-alert("a b".splitMax(" ", 4));
-alert("a b c".splitMax(" ", 4));
-alert("a".splitMax(" ", 1));
-alert("a b".splitMax(" ", 1));
-alert("a b c".splitMax(" ", 1));
-
 DaysOfWeek = {
   0: "Sun",
   1: "Mon",

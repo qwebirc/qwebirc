@@ -162,6 +162,11 @@ function CommandParser(ui, send) {
       return;
     }
     
+    if(args == "") {
+      ui.errorMessage("Insufficient arguments for command.")
+      return;      
+    }
+      
     self.cmd_PRIVMSG(w.name + " " + args);
   }
 }
