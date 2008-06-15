@@ -51,8 +51,8 @@ class QWebIRCClient(basic.LineReceiver):
     nick, ident, ip, realname = f["nick"], f["ident"], f["ip"], f["realname"]
     
     hmac = hmacfn(ident, ip)
-    self.write("NICK %s" % nick)
     self.write("USER %s bleh bleh %s %s :%s" % (ident, ip, hmac, realname))
+    self.write("NICK %s" % nick)
     
     self.factory.client = self
     self("connect")

@@ -13,6 +13,7 @@
   <script type="text/javascript" src="js/irc/irclib.js"></script>
   <script type="text/javascript" src="js/irc/baseirc.js"></script>
   <script type="text/javascript" src="js/irc/irctracker.js"></script>
+  <script type="text/javascript" src="js/irc/commandparser.js"></script>
   <script type="text/javascript" src="js/irc/ircclient.js"></script>
   <script type="text/javascript">  
     var ui;
@@ -34,10 +35,10 @@
       ui = new UglyUI($("ircui"), theme);
       
       ui.newWindow("", false, "Status");
-      ui.newLine("", "", "Welcome to QuakeNet webIRC", "#f99");
       ui.selectTab("");
+      ui.newLine("", "", "Welcome to QuakeNet webIRC -- comments/bugs to slug@quakenet.org.", "#f99");
 
-      var IRC = new IRCClient(prompt("Nickname","moofishaax"), ui);
+      var IRC = new IRCClient(prompt("Nickname","uberfish"), ui);
       IRC.connect();
     });
 

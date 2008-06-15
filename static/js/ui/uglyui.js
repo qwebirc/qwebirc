@@ -2,7 +2,7 @@ function UglyUI(parent, theme) {
   var self = this;
   var active;
   
-  var tabs = new Element("div", {"styles": { "border": "1px solid black", "padding": "4px" } });
+  var tabs = new Element("div", {"styles": { "border": "1px solid black", "padding": "4px", "font-family": "Lucida Console" } });
   parent.appendChild(tabs);
   var tabhash = {};
   
@@ -61,17 +61,22 @@ function UglyUI(parent, theme) {
     tabs.appendChild(tab);
     
     if(windowname != "") {
-      var tabclose = new Element("span", {"styles": { "border": "1px black solid" } });
+      var tabclose = new Element("span", {"styles": { "border": "1px black solid", "margin-left": "5px", "padding": "2px", "font-size": "0.5em" } });
       tabclose.addEvent("click", function() {
         if(ischannel)
-          self.send("PART " + windowname);
+          self.send("/PART " + windowname);
+
         self.closeWindow(windowname);
       });
       tabclose.setText("X");
       tab.appendChild(tabclose);
     }
-    tabhash[windowname] = { "container": container, "tab": tab, "element": e, "lastcolour": false, "nicklist": nicklist, "topic": topic };
+    tabhash[windowname] = { "name": windowname, "container": container, "tab": tab, "element": e, "lastcolour": false, "nicklist": nicklist, "topic": topic, "ischannel": ischannel };
     
+    return tabhash[windowname];
+  }
+  
+  this.getWindow = function(windowname) {
     return tabhash[windowname];
   }
   
@@ -105,23 +110,32 @@ function UglyUI(parent, theme) {
   }
   
   this.selectTab = function(windowname) {
+    var w = tabhash[windowname];
+    if(!w)
+      return;
+      
     for(var i in tabhash) {
       var o = tabhash[i];
       o.container.setStyle("display", "none");
       o.tab.setStyle("background", "#eee");
     }
     
-    tabhash[windowname].container.setStyle("display", "block");
-    tabhash[windowname].tab.setStyle("background", "#dff");
-    tabhash[windowname].tab.setStyle("color", "");
+    w.container.setStyle("display", "block");
+    w.tab.setStyle("background", "#dff");
+    w.tab.setStyle("color", "");
     self.active = windowname;
   }
   
-  this.newLine = function(windowname,  type, line, colour) {
+  this.newLine = function(windowname, type, line, colour) {
     var window = tabhash[windowname];
     if(!window) {
-      window = tabhash[""];
-      windowname = "";
+      if(windowname == false) {
+        windowname = self.active;
+        window = tabhash[self.active];
+      } else {
+        window = tabhash[""];
+        windowname = "";
+      }
     }
     
     var wx = window;
@@ -148,6 +162,10 @@ function UglyUI(parent, theme) {
       wx.tab.setStyle("color", "red");
   }
   
+  this.getActiveWindow = function() {
+    return tabhash[self.active];
+  }
+  
   this.closeWindow = function(windowname) {
     var w = tabhash[windowname];
     if(!w)
@@ -155,8 +173,14 @@ function UglyUI(parent, theme) {
     
     window.removeChild(w.container);
     tabs.removeChild(w.tab);
-    self.selectTab("");
+    
+    if(self.active == windowname)
+      self.selectTab("");
     
     delete tabhash[windowname];
+  }
+  
+  this.errorMessage = function(message) {
+    self.newLine(false, "", message, "red");
   }
 }

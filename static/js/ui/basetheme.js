@@ -72,7 +72,55 @@ var DefaultTheme = {
   "CHANNOTICE": [
     "-$n:$c- $m"
   ],
-  "NOTICE": [
+  "PRIVNOTICE": [
     "-$n- $m"
+  ],
+  "OURCHANMSG": [
+    "<$n> $m"
+  ],
+  "OURPRIVMSG": [
+    "<$n> $m"
+  ],
+  "OURTARGETEDMSG": [
+    "*$t* $m"
+  ],
+  "OURTARGETEDNOTICE": [
+    "[notice($t)] $m"
+  ],
+  "OURCHANNOTICE": [
+    "-$n:$t- $m"
+  ],
+  "OURPRIVNOTICE": [
+    "-$n- $m"
+  ],
+  "OURCHANACTION": [
+    " * $n $m"
+  ],
+  "OURPRIVACTION": [
+    " * $n $m"
+  ],
+  "CHANACTION": [
+    " * $n $m"
+  ],
+  "PRIVACTION": [
+    " * $n $m"
+  ],
+  "CHANCTCP": [
+    "$n [$h] requested CTCP $x from $c: $m"
+  ],
+  "PRIVCTCP": [
+    "$n [$h] requested CTCP $x from $-: $m"
+  ],
+  "CTCPREPLY": [
+    "CTCP $x reply from $n: $m"
+  ],
+  "OURCHANCTCP": [
+    "[ctcp($t)] $x $m"
+  ],
+  "OURPRIVCTCP": [
+    "[ctcp($t)] $x $m"
+  ],
+  "OURTARGETEDCTCP": [
+    "[ctcp($t)] $x $m"
   ]
 }

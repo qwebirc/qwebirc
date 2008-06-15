@@ -1,4 +1,12 @@
-Numerics = {"001": "RPL_WELCOME", "433": "ERR_NICKNAMEINUSE", "004": "RPL_MYINFO", "005": "RPL_ISUPPORT", "353": "RPL_NAMREPLY", "366": "RPL_ENDOFNAMES", "331": "RPL_NOTOPIC", "332": "RPL_TOPIC", "333": "RPL_TOPICWHOTIME"}
+Numerics = {"001": "RPL_WELCOME", "433": "ERR_NICKNAMEINUSE", "004": "RPL_MYINFO", "005": "RPL_ISUPPORT", "353": "RPL_NAMREPLY", "366": "RPL_ENDOFNAMES", "331": "RPL_NOTOPIC", "332": "RPL_TOPIC", "333": "RPL_TOPICWHOTIME"};
+
+registeredCTCPs = {
+  "VERSION": function(x) { return "qwebirc 0.01. Copyright (C) Chris Porter 2008"; },
+  "USERINFO": function(x) { return "qwebirc"; },
+  "TIME": function(x) { function pad(x) { x = "" + x; if(x.length == 1) x = "0" + x; return x; }var d = new Date(); return DaysOfWeek[d.getDay()] + " " + MonthsOfYear[d.getMonth()] + " " + pad(d.getDate()) + " "  + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds()) + " " + d.getFullYear() },
+  "PING": function(x) { return x; },
+  "CLIENTINFO": function(x) { return "PING VERSION TIME USERINFO CLIENTINFO"; },
+};
 
 function BaseIRCClient(nickname, view) {
   var self = this;
@@ -6,6 +14,7 @@ function BaseIRCClient(nickname, view) {
   this.signedOn = false;
   this.pmodes = ["b", "k,", "o", "l", "v"];
   this.channels = {}
+  var nextctcp = 0;
   
   /* attempt javascript inheritence! */
   this.dispatch = function(data) {
@@ -59,7 +68,7 @@ function BaseIRCClient(nickname, view) {
   
   this.irc_NICK = function(prefix, params) {
     var user = prefix;
-    var oldnick = user.split("!", 1);
+    var oldnick = hosttonick(user);
     var newnick = params[0];
     
     if(self.nickname == oldnick)
@@ -136,15 +145,45 @@ function BaseIRCClient(nickname, view) {
     return true;
   }
   
+  var processCTCP = function(message) {
+    if(message.charAt(0) == "\x01") {
+      if(message.charAt(message.length - 1) == "\x01") {
+        message = message.substr(1, message.length - 2);
+      } else {
+        message = message.substr(1);
+      }
+      return message.splitMax(" ", 2);
+    }
+  }
+  
   this.irc_PRIVMSG = function(prefix, params) {
     var user = prefix;
     var target = params[0];
     var message = ANI(params, -1);
     
-    if(target == self.nickname) {
-      view.userPrivmsg(user, message);
+    var ctcp = processCTCP(message);
+    if(ctcp) {
+      var type = ctcp[0].toUpperCase();
+      
+      var replyfn = registeredCTCPs[type];
+      if(replyfn) {
+        var t = new Date().getTime() / 1000;
+        if(t > nextctcp)
+          self.send("NOTICE " + hosttonick(user) + " :\x01" + type + " " + replyfn(ctcp[1]) + "\x01");
+        nextctcp = t + 5;
+      }
+      
+      if(target == self.nickname) {
+        view.userCTCP(user, type, ctcp[1]);
+      } else {
+        view.channelCTCP(user, target, type, ctcp[1]);
+      }
     } else {
-      view.channelPrivmsg(user, target, message);
+      if(target == self.nickname) {
+        view.userPrivmsg(user, message);
+      } else {
+        view.channelPrivmsg(user, target, message);
+      }
     }
     
     return true;
@@ -158,7 +197,12 @@ function BaseIRCClient(nickname, view) {
     if(user == "") {
       view.serverNotice(message);
     } else if(target == self.nickname) {
-      view.userNotice(user, message);
+      var ctcp = processCTCP(message);
+      if(ctcp) {
+        view.userCTCPReply(user, ctcp[0], ctcp[1]);
+      } else {
+        view.userNotice(user, message);
+      }
     } else {
       view.channelNotice(user, target, message);
     }
@@ -225,7 +269,7 @@ function BaseIRCClient(nickname, view) {
     var supportedhash = {};
     
     for(var i=0;i<supported.length;i++) {
-      var l = supported[i].split("=", 2);
+      var l = supported[i].splitMax("=", 2);
       view.supported(l[0], l[1]);
     }
   }

@@ -3,26 +3,31 @@ function IRCClient(nickname, ui) {
   this.prefixes = "@+";
   this.modeprefixes = "ov";
   
-  newLine = function(window, type, data) {
+  var newLine = function(window, type, data) {
     if(!data)
       data = {};
       
     ui.newLine(window, type, data);
   }
   
-  newChanLine = function(channel, type, user, extra) {
+  var newChanLine = function(channel, type, user, extra) {
     if(!extra)
       extra = {};
 
     extra["n"] = hosttonick(user);
     extra["h"] = hosttohost(user);
     extra["c"] = channel;
+    extra["-"] = self.nickname;
     
     newLine(channel, type, extra);
   }
   
-  newServerLine = function(type, data) {
+  var newServerLine = function(type, data) {
     newLine("", type, data);
+  }
+
+  var newActiveLine = function(type, data) {
+    newLine(false, type, data);
   }
   
   this.rawNumeric = function(numeric, prefix, params) {
@@ -143,7 +148,7 @@ function IRCClient(nickname, ui) {
     var clist = [];
     for(var c in channels) {
       clist.push(c);
-      newChanLine(c, "QUIT", user);
+      newChanLine(c, "QUIT", user, {"m": message});
     }
     
     self.tracker.removeNick(nick);
@@ -171,12 +176,56 @@ function IRCClient(nickname, ui) {
   }
   
   this.channelTopic = function(user, channel, topic) {
-    newChanLine(channel, "TOPIC", user, {"m": topic});    
+    newChanLine(channel, "TOPIC", user, {"m": topic});
     ui.updateTopic(channel, topic);
   }
   
   this.initialTopic = function(channel, topic) {
     ui.updateTopic(channel, topic);
+  }
+  
+  this.chanCTCP = function(user, channel, type, args) {
+    if(args == undefined)
+      args = "";
+
+    if(type == "ACTION") {
+      newChanLine(channel, "CHANACTION", user, {"m": args, "c": channel});
+      return;
+    }
+    
+    newChanLine(channel, "CHANCTCP", user, {"x": type, "m": args, "c": channel});
+  }
+  
+  this.userCTCP = function(user, type, args) {
+    var nick = hosttonick(user);
+    var host = hosttohost(user);
+    if(args == undefined)
+      args = "";
+    
+    if(type == "ACTION") {      
+      ui.newWindow(nick, false);
+      newLine(nick, "PRIVACTION", {"m": args, "x": type, "h": host, "n": nick});
+      return;
+    }
+    
+    if(ui.getWindow(nick)) {
+      newLine(nick, "PRIVCTCP", {"m": args, "x": type, "h": host, "n": nick, "-": self.nickname});
+    } else {
+      newActiveLine("PRIVCTCP", {"m": args, "x": type, "h": host, "n": nick, "-": self.nickname});
+    }
+  }
+  
+  this.userCTCPReply = function(user, type, args) {
+    var nick = hosttonick(user);
+    var host = hosttohost(user);
+    if(args == undefined)
+      args = "";
+    
+    if(ui.getWindow(nick)) {
+      newLine(nick, "CTCPREPLY", {"m": args, "x": type, "h": host, "n": nick, "-": self.nickname});
+    } else {
+      newActiveLine("CTCPREPLY", {"m": args, "x": type, "h": host, "n": nick, "-": self.nickname});
+    }
   }
   
   this.channelPrivmsg = function(user, channel, message) {
@@ -190,7 +239,6 @@ function IRCClient(nickname, ui) {
   this.userPrivmsg = function(user, message) {
     var nick = hosttonick(user);
     var host = hosttohost(user);
-
     ui.newWindow(nick, false);
     newLine(nick, "PRIVMSG", {"m": message, "h": host, "n": nick});
   }
@@ -203,7 +251,11 @@ function IRCClient(nickname, ui) {
     var nick = hosttonick(user);
     var host = hosttohost(user);
 
-    newServerLine("NOTICE", {"m": message, "h": host, "n": nick});
+    if(ui.getWindow(nick)) {
+      newLine(nick, "PRIVNOTICE", {"m": message, "h": host, "n": nick});
+    } else {
+      newActiveLine("PRIVNOTICE", {"m": message, "h": host, "n": nick});
+    }
   }
   
   this.userInvite = function(user, channel) {
@@ -265,6 +317,10 @@ function IRCClient(nickname, ui) {
   }
   
   this.disconnected = function() {
+    for(var x in this.parent.channels) {
+      ui.closeWindow(x);
+    }
+
     self.tracker = undefined;
     
     newServerLine("DISCONNECT");
@@ -289,7 +345,12 @@ function IRCClient(nickname, ui) {
   }
   
   this.parent = new BaseIRCClient(nickname, this);
-  ui.send = this.parent.send;
+  this.commandparser = new CommandParser(ui, this.parent.send);
+  ui.send = this.commandparser.dispatch;
+  ui.getNickname = function() {
+    return self.nickname;
+  }
+  
   this.connect = this.parent.connect;
   this.disconnect = this.parent.disconnect;
 }

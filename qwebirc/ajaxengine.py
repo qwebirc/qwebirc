@@ -41,6 +41,13 @@ class IRCSession:
       if not self.schedule:
         self.schedule = reactor.callLater(self.throttle - t, self.flush, True)
       return
+    else:
+      # process the rest of the packet
+      if not scheduled:
+        if not self.schedule:
+          self.schedule = reactor.callLater(0, self.flush, True)
+        return
+        
     self.throttle = t + config.UPDATE_FREQ
 
     encdata = simplejson.dumps(self.buffer)

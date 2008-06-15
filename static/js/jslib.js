@@ -53,3 +53,52 @@ String.prototype.replaceAll = function(f, t) {
   }
   return c;
 }
+
+/* how horribly inefficient (again) */
+String.prototype.splitMax = function(by, max) {
+  var items = this.split(by);
+  var newitems = items.slice(0, max-1);
+
+  if(items.length >= max)
+    newitems.push(items.slice(max-1).join(by));
+  
+  return newitems;
+}
+
+alert("a".splitMax(" ", 2));
+alert("a b".splitMax(" ", 2));
+alert("a b c".splitMax(" ", 2));
+alert("a b".splitMax(" ", 3));
+alert("a b c".splitMax(" ", 3));
+alert("a".splitMax(" ", 4));
+alert("a b".splitMax(" ", 4));
+alert("a b c".splitMax(" ", 4));
+alert("a".splitMax(" ", 1));
+alert("a b".splitMax(" ", 1));
+alert("a b c".splitMax(" ", 1));
+
+DaysOfWeek = {
+  0: "Sun",
+  1: "Mon",
+  2: "Tue",
+  3: "Wed",
+  4: "Thu",
+  5: "Fri",
+  6: "Sat"
+}
+
+MonthsOfYear = {
+  0: "Jan",
+  1: "Feb",
+  2: "Mar",
+  3: "Apr",
+  4: "May",
+  5: "Jun",
+  6: "Jul",
+  7: "Aug",
+  8: "Sep",
+  9: "Oct",
+  10: "Nov",
+  11: "Dec"
+}
+
