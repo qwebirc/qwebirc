@@ -1,4 +1,4 @@
-function IRCClient(nickname, ui) {
+function IRCClient(nickname, ui, autojoin) {
   var self = this;
   this.prefixes = "@+";
   this.modeprefixes = "ov";
@@ -38,6 +38,9 @@ function IRCClient(nickname, ui) {
     self.tracker = new IRCTracker();
     self.nickname = nickname;
     newServerLine("SIGNON");
+    
+    if(autojoin)
+      self.send("JOIN " + autojoin);
   }
 
   this.updateNickList = function(channel) {
@@ -344,6 +347,7 @@ function IRCClient(nickname, ui) {
     newServerLine("ERROR", {"m": message});
   }
   
+  this.send = this.parent.send;
   this.parent = new BaseIRCClient(nickname, this);
   this.commandparser = new CommandParser(ui, this.parent.send);
   ui.send = this.commandparser.dispatch;
