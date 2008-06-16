@@ -347,8 +347,8 @@ function IRCClient(nickname, ui, autojoin) {
     newServerLine("ERROR", {"m": message});
   }
   
-  this.send = this.parent.send;
   this.parent = new BaseIRCClient(nickname, this);
+  this.send = this.parent.send;
   this.commandparser = new CommandParser(ui, this.parent.send);
   ui.send = this.commandparser.dispatch;
   ui.getNickname = function() {

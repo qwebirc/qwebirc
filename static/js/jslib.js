@@ -90,6 +90,12 @@ MonthsOfYear = {
   11: "Dec"
 };
 
-function getBrowserDetails() {
-  return navigator.appName + " " + parseFloat(navigator.appVersion);
+if(jQuery == undefined) {
+  function getBrowserDetails() {
+    return navigator.appName + " " + parseFloat(navigator.appVersion);
+  }
+} else {
+  function getBrowserDetails() {
+    alert(jQuery.browser);
+  }  
 }
