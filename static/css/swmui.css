@@ -3,44 +3,73 @@ body, html {
   width: 100%;
   margin: 0;
   padding: 0;
+  font-family: "Lucida Console", sans-serif;
 }
 
-div#container {
+.qwebirc-swmui .container {
   height: 100%;
   width: 100%;
 }
 
-div#tabs {
+.qwebirc-swmui .tabs {
   background: #fdd;
 }
 
-div#main {
+.qwebirc-swmui .main {
   background: #ddf;
 }
 
-div#entry {
+.qwebirc-swmui .entry {
   background: #dfd;
 }
 
-div#content {
+.qwebirc-swmui .content {
   background: #ddf;
 }
 
-div#nicklist {
+.qwebirc-swmui .nicklist {
   background: #dff;
 }
 
-div#tabs span {
+.qwebirc-swmui .tab {
   float: left;
   min-width: 100px;
+  width: 100px;
   display: block;
   border: 1px solid black;
   margin-right: 2px;
+  cursor: default;
 }
 
-div#entry input {
+.qwebirc-swmui .tabclose {
+  border: 1px solid black;
+  margin: 2px;
+  font-size: 0.5em;
+}
+
+.qwebirc-swmui .entry input {
   padding: 0px;
 }
 
-div#entry {
+.qwebirc-swmui .entry {
+}
+
+.qwebirc-swmui .tab-highlighted {
+  color: red;
+}
+
+.qwebirc-swmui .linestyle1 {
+  background: #efefef;
+}
+
+.qwebirc-swmui .linestyle2 {
+  background: #eeffff;
+}
+
+.qwebirc-swmui .tab-selected {
+  background: #eff;
+}
+
+.qwebirc-swmui .tab-unselected {
+  background: #eee;
 }
