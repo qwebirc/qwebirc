@@ -1,4 +1,5 @@
 syntax: glob
+static\js\debug
 qwebirc\config.py
 dropin.cache
 *.tap
