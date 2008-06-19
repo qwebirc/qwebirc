@@ -87,7 +87,7 @@ function CommandParser(parent) {
         message = "";
       
       send("KICK " + channel + " " + target + " :" + message);
-    }],
+    }]
   };
 
   this.dispatch = function(line) {

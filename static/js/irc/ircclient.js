@@ -390,7 +390,7 @@ function IRCClient(nickname, ui, autojoin) {
   this.__send = this.parent.send;
   
   this.commandparser = new CommandParser(this);
-  this.dispatch = this.commandparser.dispatch
+  this.dispatch = this.commandparser.dispatch;
 
   this.statusWindow = ui.newClient(self);
 

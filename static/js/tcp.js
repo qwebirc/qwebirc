@@ -1,44 +1,57 @@
-function TCPConnection(nickname, parser) {
-  var self = this;
-  var dispatch = parser.dispatch;
-  var counter = 0;
-  var disconnected = false;
-  
-  this.send = function(data) {
-    XHR("/e/p/" + self.sessionid + "?c=" + encodeURIComponent(data) + "&t=" + counter++, function(o) {
+var IRCConnection = new Class({
+  Implements: [Events, Options],
+  options: {
+    initialNickname: "ircconnX"
+  },
+  initialize: function(options) {
+    this.setOptions(options);
+    
+    this.initialNickname = this.options.initialNickname;
+    
+    this.counter = 0;
+    this.disconnected = false;
+  },
+  send: function(data) {
+    var r = new Request.JSON({url: "/e/p/" + this.sessionid + "?c=" + encodeURIComponent(data) + "&t=" + this.counter++, onComplete: function(o) {
       if(o[0] == false)
         alert("An error occured: " + o[1]);
-    });
-  }
-
-  this.recv = function() {
-    if(self.disconnected)
+    }});
+    
+    r.get();
+  },
+  x: function() {
+    this.fireEvent("recv", [[false, "moo"]]);
+  },
+  recv: function() {
+    if(this.disconnected)
       return;
       
-    XHR("/e/s/" + self.sessionid + "?t=" + counter++, function(o) {
+    var r = new Request.JSON({url: "/e/s/" + this.sessionid + "?t=" + this.counter++, onComplete: function(o) {
       if(o[0] == false) {
         alert("An error occured: " + o[1]);
         return;
       }
-      forEach(o, function(x) {
-        dispatch(x);
-      });
-      self.recv();
-    });
-  }
-
-  this.connect = function() {
-    XHR("/e/n?nick=" + encodeURIComponent(nickname) + "&r=" + Math.random() * 1024 * 1024, function(o) {
+      o.each(function(x) {
+        this.fireEvent("recv", [x]);
+      }, this);
+      
+      this.recv();
+    }.bind(this)});    
+    r.get();
+  },
+  connect: function() {
+    var r = new Request.JSON({url: "/e/n?nick=" + encodeURIComponent(this.initialNickname) + "&r=" + Math.random() * 1024 * 1024, onComplete: function(o) {
       if(o[0] == false) {
         alert("An error occured: " + o[1]);
         return;
       }
-      self.sessionid = o[1];
-      self.recv();    
-    });
+      this.sessionid = o[1];
+      
+      this.recv();    
+    }.bind(this)});
+    r.get();
+  },
+  disconnect: function() {
+    this.disconnected = true;
   }
-  
-  this.disconnect = function() {
-    self.disconnected = true;
-  }
-}
+});

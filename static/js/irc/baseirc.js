@@ -324,8 +324,9 @@ function BaseIRCClient(nickname, view) {
     return true;
   }
   
-  this.connection = new TCPConnection(nickname, this);
-  this.send = this.connection.send;
-  this.connect = this.connection.connect;
+  this.connection = new IRCConnection({initialNickname: nickname, onRecv: this.dispatch});
+  
+  this.send = this.connection.send.bind(this.connection);
+  this.connect = this.connection.connect.bind(this.connection);
   this.disconnect = this.connection.disconnect;
 }

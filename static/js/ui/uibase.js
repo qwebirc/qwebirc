@@ -3,6 +3,7 @@ WINDOW_QUERY = 2;
 WINDOW_CHANNEL = 3;
 
 var UIWindow = new Class({
+  Implements: [Events],
   initialize: function(parentObject, client, type, name, identifier) {
     this.parentObject = parentObject;
     this.type = type;
@@ -32,7 +33,6 @@ var UIWindow = new Class({
     this.addLine("", message, "red");
   }
 });
-UIWindow.implement(new Events);
 
 var UI = new Class({
   initialize: function(windowClass) {
@@ -52,7 +52,7 @@ var UI = new Class({
     if(type == WINDOW_STATUS)
       identifier = "";
       
-    w = this.windows[client][identifier] = new this.windowClass(this, client, type, name, identifier);
+    var w = this.windows[client][identifier] = new this.windowClass(this, client, type, name, identifier);
     this.windowArray.push(w);
     
     return w;
@@ -71,19 +71,17 @@ var UI = new Class({
   __closed: function(window) {
     if(window.active) {
       this.active = undefined;
-      if(this.windowArray.length > 1) {
-        for(var i=0;i<this.windowArray.length;i++) {
-          if(this.windowArray[i] != window)
-            continue;
-
-          if(i == 0) {
-            this.selectWindow(this.windowArray[1]);
-          } else {
-            this.selectWindow(this.windowArray[i - 1]);
-          }
-          this.windowArray = this.windowArray.splice(i, 1);
-          break;
+      if(this.windowArray.length == 1) {
+        this.windowArray = [];
+      } else {
+        var index = this.windowArray.indexOf(window);
+        if(i == 0) {
+          this.selectWindow(this.windowArray[1]);
+        } else {
+          this.selectWindow(this.windowArray[index - 1]);
         }
+        
+        this.windowArray = this.windowArray.erase(window);
       }
     }
     
