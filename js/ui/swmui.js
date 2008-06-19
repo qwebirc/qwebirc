@@ -62,18 +62,18 @@ var SWMUIWindow = new Class({
       e.appendChild(document.createTextNode(nick));
     });
     
-    parentObject.resize();
+    this.parentObject.resize();
   },
   updateTopic: function(topic) {
     this.parent(topic);
-
     var t = this.topic.element;
     
     while(t.firstChild)
       t.removeChild(t.firstChild);
 
-    this.parentObject.resize();
     Colourise(topic, t);
+
+    this.parentObject.resize();
   },
   select: function() {
     this.parent();

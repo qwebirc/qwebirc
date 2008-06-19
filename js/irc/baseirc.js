@@ -134,10 +134,10 @@ var BaseIRCClient = new Class({
     var channel = params[0];
     var user = prefix;
     var nick = user.hostToNick();
-    
+        
     if(nick == this.nickname)
       this.channels[channel] = true;
-      
+    
     this.userJoined(user, channel);
     
     return true;
