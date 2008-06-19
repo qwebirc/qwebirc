@@ -1,0 +1,46 @@
+body, html {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+div#container {
+  height: 100%;
+  width: 100%;
+}
+
+div#tabs {
+  background: #fdd;
+}
+
+div#main {
+  background: #ddf;
+}
+
+div#entry {
+  background: #dfd;
+}
+
+div#content {
+  background: #ddf;
+}
+
+div#nicklist {
+  background: #dff;
+}
+
+div#tabs span {
+  float: left;
+  min-width: 100px;
+  display: block;
+  border: 1px solid black;
+  margin-right: 2px;
+}
+
+div#entry input {
+  padding: 0px;
+}
+
+div#entry {
+}
