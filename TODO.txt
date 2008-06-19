@@ -5,4 +5,4 @@ TODO:
   - better error handling server side
   - better error handling client side
   - figure out how to disable twisted error pages
-  
+  - IE6

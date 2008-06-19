@@ -13,7 +13,7 @@ var RegisteredCTCPs = {
 var BaseIRCClient = new Class({
   Implements: [Options],
   options: {
-    nickname: "WCunset",
+    nickname: "WCunset"
   },
   initialize: function(options) {
     this.setOptions(options);

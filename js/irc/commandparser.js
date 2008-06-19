@@ -143,5 +143,5 @@ var CommandParser = new Class({
       message = "";
     
     this.send("KICK " + channel + " " + target + " :" + message);
-  }],
+  }]
 });

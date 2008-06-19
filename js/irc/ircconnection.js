@@ -27,13 +27,15 @@ var IRCConnection = new Class({
       return;
       
     var r = new Request.JSON({url: "/e/s/" + this.sessionid + "?t=" + this.counter++, onComplete: function(o) {
-      if(o[0] == false) {
-        alert("An error occured: " + o[1]);
-        return;
+      if(o) {
+        if(o[0] == false) {
+          alert("An error occured: " + o[1]);
+          return;
+        }
+        o.each(function(x) {
+          this.fireEvent("recv", [x]);
+        }, this);
       }
-      o.each(function(x) {
-        this.fireEvent("recv", [x]);
-      }, this);
       
       this.recv();
     }.bind(this)});    

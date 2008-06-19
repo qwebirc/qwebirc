@@ -2,7 +2,7 @@ var IRCClient = new Class({
   Extends: BaseIRCClient,
   options: {
     nickname: "WCunset",
-    autojoin: "",
+    autojoin: ""
   },
   initialize: function(options, ui) {
     this.parent(options);
