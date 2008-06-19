@@ -4,26 +4,36 @@ var UglyUIWindow = new Class({
   initialize: function(parentObject, client, type, name) {
     this.parent(parentObject, client, type, name);
         
-    this.outerContainer = new Element("div", { "styles": { "display": "none", "font-family": "Lucida Console" } });
+    this.outerContainer = new Element("div");
+    this.outerContainer.addClass("outercontainer");
+    this.outerContainer.addClass("tab-invisible");
+    
     parentObject.container.appendChild(this.outerContainer);
     
     if(type == WINDOW_CHANNEL) {
-      this.nicklist = new Element("div", {"styles": { "border-left": "1px solid black", "width": "125px", "float": "right", "height": "480px", "clear": "both", "overflow": "auto", "background": "white"} });
+      this.nicklist = new Element("div");
+      this.nicklist.addClass("nicklist");
+      
       this.outerContainer.appendChild(this.nicklist);
     }
     
-    var innerContainer = new Element("div", {"styles": { "height": "480px" }});
+    var innerContainer = new Element("div");
+    innerContainer.addClass("innercontainer");
     this.outerContainer.appendChild(innerContainer);
     
     if(type == WINDOW_CHANNEL) {
-      this.topic = new Element("div", {"styles": { "background": "#fef", "height": "20px" } });
+      this.topic = new Element("div");
+      this.topic.addClass("topic");
       innerContainer.appendChild(this.topic);
     }
     
-    this.lines = new Element("div", {"styles": { "height": "460px", "overflow": "auto", "word-wrap": "break-word" }});
+    this.lines = new Element("div");
+    this.lines.addClass("lines");
     innerContainer.appendChild(this.lines);
     
-    this.tab = new Element("span", {"styles": { "border": "1px black solid", "padding": "2px", "cursor": "default", "margin-right": "2px", "background": "#eee", "clear": "both" } });
+    this.tab = new Element("span");
+    this.tab.addClass("tab");
+    
     this.tab.appendText(name);
     this.tab.addEvent("click", function() {
       parentObject.selectWindow(this);
@@ -32,7 +42,8 @@ var UglyUIWindow = new Class({
     parentObject.tabs.appendChild(this.tab);
     
     if(type != WINDOW_STATUS) {
-      tabclose = new Element("span", {"styles": { "border": "1px black solid", "margin-left": "5px", "padding": "2px", "font-size": "0.5em" } });
+      tabclose = new Element("span");
+      tabclose.addClass("tabclose");
       tabclose.addEvent("click", function(e) {
         new Event(e).stop();
         
@@ -71,15 +82,17 @@ var UglyUIWindow = new Class({
   select: function() {
     this.parent();
     
-    this.outerContainer.setStyle("display", "block");
-    this.tab.setStyle("background", "#dff");
-    this.tab.setStyle("color", "");
+    this.outerContainer.removeClass("tab-invisible");
+    this.tab.removeClass("tab-unselected");
+    this.tab.removeClass("tab-highlighted");
+    this.tab.addClass("tab-selected");
   },
   deselect: function() {
     this.parent();
     
-    this.outerContainer.setStyle("display", "none");
-    this.tab.setStyle("background", "#eee");
+    this.outerContainer.addClass("tab-invisible");
+    this.tab.removeClass("tab-selected");
+    this.tab.addClass("tab-unselected");
   },
   close: function() {
     this.parent();
@@ -90,16 +103,16 @@ var UglyUIWindow = new Class({
   addLine: function(type, line, colour) {
     this.parent(type, line, colour);
     
-    var c;
+    var e = new Element("div");
+
     if(colour) {
-      c = colour;
+      e.addStyle("background", colour);
     } else if(this.lastcolour) {
-      c = "#efefef";
+      e.addClass("linestyle1");
     } else {
-      c = "#eeffff";
+      e.addClass("linestyle2");
     }
     
-    var e = new Element("div", { "styles": { "background": c } });
     if(type)
       line = this.parentObject.theme.message(type, line);
     
@@ -116,26 +129,30 @@ var UglyUIWindow = new Class({
       this.lines.scrollTo(prev.x, this.lines.getScrollSize().y);
       
     if(!this.active)
-      this.tab.setStyle("color", "red");
+      this.tab.addClass("tab-highlighted");
   }
 });
 
 var UglyUI = new Class({
   Extends: UI,
   initialize: function(parentElement, theme) {
-    this.parent(UglyUIWindow);
+    this.parent(parentElement, UglyUIWindow, "uglyui");
     
-    this.parentElement = parentElement;
     this.theme = theme;
     
-    this.tabs = new Element("div", {"styles": { "border": "1px solid black", "padding": "4px", "font-family": "Lucida Console" } });
+    this.tabs = new Element("div");
+    this.tabs.addClass("tabbar");
+    
     parentElement.appendChild(this.tabs);
     
-    this.container = new Element("div", {"styles": { "border": "1px solid black", "margin": "2px 0px 0px 0px", "height": "480px" } });
+    this.container = new Element("div");
+    this.container.addClass("container");
+    
     parentElement.appendChild(this.container);
   
     var form = new Element("form");
-    var inputbox = new Element("input", {"styles": { "width": "400px", "border": "1px solid black", "margin": "2px 0px 0px 0px"} });
+    var inputbox = new Element("input");
+    inputbox.addClass("input");
   
     form.addEvent("submit", function(e) {
       new Event(e).stop();

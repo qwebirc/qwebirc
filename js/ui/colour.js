@@ -8,6 +8,8 @@ function Colourise(line, entity) {
   var xline = line.split("");
   var element = document.createElement("span");
 
+  entity.addClass("colourline");
+  
   function isNum(x) {
     return x >= '0' && x <= '9';
   }

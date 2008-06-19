@@ -35,10 +35,13 @@ var UIWindow = new Class({
 });
 
 var UI = new Class({
-  initialize: function(windowClass) {
+  initialize: function(parentElement, windowClass, uiName) {
     this.windows = {};
     this.windowArray = [];
     this.windowClass = windowClass;
+    this.parentElement = parentElement;
+    this.parentElement.addClass("qwebirc");
+    this.parentElement.addClass("qwebirc-" + uiName);
   },
   newClient: function(client) {
     this.windows[client] = {}
@@ -75,7 +78,7 @@ var UI = new Class({
         this.windowArray = [];
       } else {
         var index = this.windowArray.indexOf(window);
-        if(i == 0) {
+        if(index == 0) {
           this.selectWindow(this.windowArray[1]);
         } else {
           this.selectWindow(this.windowArray[index - 1]);

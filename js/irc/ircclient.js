@@ -353,7 +353,6 @@ var IRCClient = new Class({
 
       this.modeprefixes = value.substr(1, l);
       this.prefixes = value.substr(l + 2, l);
-      alert(this.prefixes);
     }
   },
   connected: function() {
