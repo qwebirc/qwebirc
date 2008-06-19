@@ -66,7 +66,7 @@ var UglyUIWindow = new Class({
     while(t.firstChild)
       t.removeChild(t.firstChild);
 
-    colourise(topic, t);
+    Colourise(topic, t);
   },
   select: function() {
     this.parent();
@@ -103,7 +103,7 @@ var UglyUIWindow = new Class({
     if(type)
       line = this.parentObject.theme.message(type, line);
     
-    colourise(timestamp() + " " + line, e);
+    Colourise(IRCTimestamp(new Date()) + " " + line, e);
     
     this.lastcolour = !this.lastcolour;
     

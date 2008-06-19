@@ -1,17 +1,11 @@
-Numerics = {"001": "RPL_WELCOME", "433": "ERR_NICKNAMEINUSE", "004": "RPL_MYINFO", "005": "RPL_ISUPPORT", "353": "RPL_NAMREPLY", "366": "RPL_ENDOFNAMES", "331": "RPL_NOTOPIC", "332": "RPL_TOPIC", "333": "RPL_TOPICWHOTIME"};
+var Numerics = {"001": "RPL_WELCOME", "433": "ERR_NICKNAMEINUSE", "004": "RPL_MYINFO", "005": "RPL_ISUPPORT", "353": "RPL_NAMREPLY", "366": "RPL_ENDOFNAMES", "331": "RPL_NOTOPIC", "332": "RPL_TOPIC", "333": "RPL_TOPICWHOTIME"};
 
-registeredCTCPs = {
+var RegisteredCTCPs = {
   "VERSION": function(x) {
-    return "qwebirc v" + QWEBIRC_VERSION + ", copyright (C) Chris Porter 2008 -- user agent: " + getBrowserDetails();
+    return "qwebirc v" + QWEBIRC_VERSION + ", copyright (C) Chris Porter 2008 -- user agent: " + Browser.Engine.name + " (" + Browser.Platform.name + ")";
   },
   "USERINFO": function(x) { return "qwebirc"; },
-  "TIME": function(x) {
-    function pad(x) { x = "" + x; if(x.length == 1) x = "0" + x; return x; }
-    
-    var d = new Date();
-    
-    return DaysOfWeek[d.getDay()] + " " + MonthsOfYear[d.getMonth()] + " " + pad(d.getDate()) + " "  + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds()) + " " + d.getFullYear()
-  },
+  "TIME": function(x) { return IRCTime(new Date()); },
   "PING": function(x) { return x; },
   "CLIENTINFO": function(x) { return "PING VERSION TIME USERINFO CLIENTINFO"; }
 };
@@ -76,7 +70,7 @@ function BaseIRCClient(nickname, view) {
   
   this.irc_NICK = function(prefix, params) {
     var user = prefix;
-    var oldnick = hosttonick(user);
+    var oldnick = user.hostToNick();
     var newnick = params[0];
     
     if(self.nickname == oldnick)
@@ -90,7 +84,7 @@ function BaseIRCClient(nickname, view) {
   this.irc_QUIT = function(prefix, params) {
     var user = prefix;
     
-    var message = indexFromEnd(params, -1);
+    var message = params.indexFromEnd(-1);
     
     view.userQuit(user, message);
     
@@ -102,7 +96,7 @@ function BaseIRCClient(nickname, view) {
     var channel = params[0];
     var message = params[1];
 
-    var nick = hosttonick(user);
+    var nick = user.hostToNick();
     
     if((nick == self.nickname) && self.channels[channel])
       delete self.channels[channel];
@@ -125,7 +119,7 @@ function BaseIRCClient(nickname, view) {
   }
   
   this.irc_PING = function(prefix, params) {
-    self.send("PONG :" + indexFromEnd(params, -1));
+    self.send("PONG :" + params.indexFromEnd(-1));
     
     return true;
   }
@@ -133,7 +127,7 @@ function BaseIRCClient(nickname, view) {
   this.irc_JOIN = function(prefix, params) {
     var channel = params[0];
     var user = prefix;
-    var nick = hosttonick(user);
+    var nick = user.hostToNick();
     
     if(nick == self.nickname)
       self.channels[channel] = true;
@@ -146,7 +140,7 @@ function BaseIRCClient(nickname, view) {
   this.irc_TOPIC = function(prefix, params) {
     var user = prefix;
     var channel = params[0];
-    var topic = indexFromEnd(params, -1);
+    var topic = params.indexFromEnd(-1);
     
     view.channelTopic(user, channel, topic);
     
@@ -167,7 +161,7 @@ function BaseIRCClient(nickname, view) {
   this.irc_PRIVMSG = function(prefix, params) {
     var user = prefix;
     var target = params[0];
-    var message = indexFromEnd(params, -1);
+    var message = params.indexFromEnd(-1);
     
     var ctcp = processCTCP(message);
     if(ctcp) {
@@ -177,7 +171,7 @@ function BaseIRCClient(nickname, view) {
       if(replyfn) {
         var t = new Date().getTime() / 1000;
         if(t > nextctcp)
-          self.send("NOTICE " + hosttonick(user) + " :\x01" + type + " " + replyfn(ctcp[1]) + "\x01");
+          self.send("NOTICE " + user.hostToNick() + " :\x01" + type + " " + replyfn(ctcp[1]) + "\x01");
         nextctcp = t + 5;
       }
       
@@ -200,7 +194,7 @@ function BaseIRCClient(nickname, view) {
   this.irc_NOTICE = function(prefix, params) {
     var user = prefix;
     var target = params[0];
-    var message = indexFromEnd(params, -1);
+    var message = params.indexFromEnd(-1);
     
     if(user == "") {
       view.serverNotice(message);
@@ -220,7 +214,7 @@ function BaseIRCClient(nickname, view) {
 
   this.irc_INVITE = function(prefix, params) {
     var user = prefix;
-    var channel = indexFromEnd(params, -1);
+    var channel = params.indexFromEnd(-1);
     
     view.userInvite(user, channel);
     
@@ -228,7 +222,7 @@ function BaseIRCClient(nickname, view) {
   }
 
   this.irc_ERROR = function(prefix, params) {
-    var message = indexFromEnd(params, -1);
+    var message = params.indexFromEnd(-1);
     
     view.serverError(message);
     
@@ -312,7 +306,7 @@ function BaseIRCClient(nickname, view) {
   
   this.irc_RPL_TOPIC = function(prefix, params) {
     var channel = params[1];
-    var topic = indexFromEnd(params, -1);
+    var topic = params.indexFromEnd(-1);
     
     if(self.channels[channel]) {
       view.initialTopic(channel, topic);

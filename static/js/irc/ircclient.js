@@ -21,8 +21,8 @@ function IRCClient(nickname, ui, autojoin) {
     if(!extra)
       extra = {};
 
-    extra["n"] = hosttonick(user);
-    extra["h"] = hosttohost(user);
+    extra["n"] = user.hostToNick();
+    extra["h"] = user.hostToHost();
     extra["c"] = channel;
     extra["-"] = self.nickname;
     
@@ -63,10 +63,10 @@ function IRCClient(nickname, ui, autojoin) {
       
       if(nc.prefixes.length > 0) {
         var c = nc.prefixes.charAt(0);
-        nx = String.fromCharCode(self.prefixes.indexOf(c)) + toIRCLower(n);
+        nx = String.fromCharCode(self.prefixes.indexOf(c)) + n.toIRCLower();
         nh[nx] = c + n;
       } else {
-        nx = tff + toIRCLower(n);
+        nx = tff + n.toIRCLower();
         nh[nx] = n;
       }
       names.push(nx);
@@ -105,8 +105,8 @@ function IRCClient(nickname, ui, autojoin) {
   }
   
   this.userJoined = function(user, channel) {
-    var nick = hosttonick(user);
-    var host = hosttohost(user);
+    var nick = user.hostToNick();
+    var host = user.hostToHost();
     
     if((nick == self.nickname) && !self.getWindow(channel))
       self.newWindow(channel, WINDOW_CHANNEL, true);
@@ -118,8 +118,8 @@ function IRCClient(nickname, ui, autojoin) {
   }
   
   this.userPart = function(user, channel, message) {
-    var nick = hosttonick(user);
-    var host = hosttohost(user);
+    var nick = user.hostToNick();
+    var host = user.hostToHost();
         
     if(nick == self.nickname) {
       self.tracker.removeChannel(channel);
@@ -173,7 +173,7 @@ function IRCClient(nickname, ui, autojoin) {
   }
 
   this.userQuit = function(user, message) {
-    var nick = hosttonick(user);
+    var nick = user.hostToNick();
     
     var channels = self.tracker.getNick(nick);
     
@@ -191,7 +191,7 @@ function IRCClient(nickname, ui, autojoin) {
   }
 
   this.nickChanged = function(user, newnick) {
-    var oldnick = hosttonick(user);
+    var oldnick = user.hostToNick();
     
     if(oldnick == self.nickname)
       self.nickname = newnick;
@@ -229,8 +229,8 @@ function IRCClient(nickname, ui, autojoin) {
   }
   
   this.userCTCP = function(user, type, args) {
-    var nick = hosttonick(user);
-    var host = hosttohost(user);
+    var nick = user.hostToNick();
+    var host = user.hostToHost();
     if(args == undefined)
       args = "";
     
@@ -248,8 +248,8 @@ function IRCClient(nickname, ui, autojoin) {
   }
   
   this.userCTCPReply = function(user, type, args) {
-    var nick = hosttonick(user);
-    var host = hosttohost(user);
+    var nick = user.hostToNick();
+    var host = user.hostToHost();
     if(args == undefined)
       args = "";
     
@@ -269,8 +269,8 @@ function IRCClient(nickname, ui, autojoin) {
   }
 
   this.userPrivmsg = function(user, message) {
-    var nick = hosttonick(user);
-    var host = hosttohost(user);
+    var nick = user.hostToNick();
+    var host = user.hostToHost();
     
     self.newWindow(nick, WINDOW_QUERY);
     
@@ -282,8 +282,8 @@ function IRCClient(nickname, ui, autojoin) {
   }
   
   this.userNotice = function(user, message) {
-    var nick = hosttonick(user);
-    var host = hosttohost(user);
+    var nick = user.hostToNick();
+    var host = user.hostToHost();
 
     if(self.getWindow(nick)) {
       newLine(nick, "PRIVNOTICE", {"m": message, "h": host, "n": nick});
@@ -293,8 +293,8 @@ function IRCClient(nickname, ui, autojoin) {
   }
   
   this.userInvite = function(user, channel) {
-    var nick = hosttonick(user);
-    var host = hosttohost(user);
+    var nick = user.hostToNick();
+    var host = user.hostToHost();
 
     newServerLine("INVITE", {"c": channel, "h": host, "n": nick});
   }
@@ -390,10 +390,11 @@ function IRCClient(nickname, ui, autojoin) {
   this.__send = this.parent.send;
   
   this.commandparser = new CommandParser(this);
-  this.dispatch = this.commandparser.dispatch;
+  this.dispatch = this.commandparser.dispatch.bind(this.commandparser);
 
   this.statusWindow = ui.newClient(self);
 
   this.connect = this.parent.connect;
   this.disconnect = this.parent.disconnect;
 }
+

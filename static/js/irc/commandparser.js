@@ -1,96 +1,98 @@
-function CommandParser(parent) {
-  var self = this;
-  var aliases = {
-    "J": "JOIN",
-    "K": "KICK",
-    "MSG": "PRIVMSG",
-    "Q": "QUERY"
-  };
-  
-  var send = parent.__send;
-  
-  var newTargetLine = function(target, type, message, extra) {
+var CommandParser = new Class({
+  initialize: function(parentObject) {
+    this.aliases = {
+      "J": "JOIN",
+      "K": "KICK",
+      "MSG": "PRIVMSG",
+      "Q": "QUERY"
+    };
+    
+    this.send = parentObject.__send;
+    this.parentObject = parentObject;
+    
+    this.commands = {
+      ME: [true, undefined, undefined, function(args) {
+        if(args == undefined)
+          args = "";
+        this.send("PRIVMSG " + w.name + " :\x01ACTION " + args + "\x01");
+        this.newTargetLine(w.name, "ACTION", args);
+      }],
+      CTCP: [false, 3, 2, function(args) {
+        var target = args[0];
+        var type = args[1].toUpperCase();
+        var message = args[2];
+        
+        if(message == undefined)
+          message = "";
+
+        if(message == "") {
+          this.send("PRIVMSG " + target + " :\x01" + type + "\x01");
+        } else {
+          this.send("PRIVMSG " + target + " :\x01" + type + " " + message + "\x01");
+        }
+      
+        this.newTargetLine(target, "CTCP", message, {"x": type});
+      }],
+      PRIVMSG: [false, 2, 2, function(args) {
+        var target = args[0];
+        var message = args[1];
+        
+        this.newTargetLine(target, "MSG", message, {});
+        
+        this.send("PRIVMSG " + target + " :" + message);
+      }],
+      NOTICE: [false, 2, 2, function(args) {
+        var target = args[0];
+        var message = args[1];
+
+        this.newTargetLine(target, "NOTICE", message);
+        this.send("NOTICE " + target + " :" + message);
+      }],
+      QUERY: [false, 2, 1, function(args) {
+        this.parentObject.newWindow(args[0], WINDOW_QUERY, true);
+
+        if((args.length > 1) && (args[1] != ""))
+          return ["SAY", args[1]];
+      }],
+      SAY: [true, undefined, undefined, function(args) {
+        if(args == undefined)
+          args = "";
+          
+        return ["PRIVMSG", this.parentObject.getActiveWindow().name + " " + args]
+      }],
+      KICK: [true, 3, 2, function(args) {
+        var channel = args[0];
+        var target = args[1];
+        var message = args[2];
+        if(!message)
+          message = "";
+        
+        this.send("KICK " + channel + " " + target + " :" + message);
+      }]
+    };    
+  },
+  newTargetLine: function(target, type, message, extra) {
     if(!extra)
       extra = {}
-      
-    extra["n"] = parent.getNickname();
+
+    extra["n"] = this.parentObject.getNickname();
     extra["m"] = message;
     extra["t"] = target;
-    
-    var window = parent.getWindow(target);
+
+    var window = this.parentObject.getWindow(target);
     var channel;
     if(!window) {
       type = "TARGETED" + type;
       target = false;
-    } else if(window.ischannel) {
+    } else if(window.type == WINDOW_CHANNEL) {
       type = "CHAN" + type;
     } else {
       type = "PRIV" + type;
     }
-    parent.newLine(target, "OUR" + type, extra);
-  }
 
-  var commands = {
-    ME: [true, undefined, undefined, function(args) {
-      if(args == undefined)
-        args = "";
-      send("PRIVMSG " + w.name + " :\x01ACTION " + args + "\x01");
-      newTargetLine(w.name, "ACTION", args);
-    }],
-    CTCP: [false, 3, 2, function(args) {
-      var target = args[0];
-      var type = args[1].toUpperCase();
-      var message = args[2];
-      
-      if(message == undefined)
-        message = "";
-
-      if(message == "") {
-        send("PRIVMSG " + target + " :\x01" + type + "\x01");
-      } else {
-        send("PRIVMSG " + target + " :\x01" + type + " " + message + "\x01");
-      }
-    
-      newTargetLine(target, "CTCP", message, {"x": type});
-    }],
-    PRIVMSG: [false, 2, 2, function(args) {
-      var target = args[0];
-      var message = args[1];
-    
-      newTargetLine(target, "MSG", message);
-      send("PRIVMSG " + target + " :" + message);
-    }],
-    NOTICE: [false, 2, 2, function(args) {
-      var target = args[0];
-      var message = args[1];
-
-      newTargetLine(target, "NOTICE", message);
-      send("NOTICE " + target + " :" + message);
-    }],
-    QUERY: [false, 2, 1, function(args) {
-      parent.newWindow(args[0], WINDOW_QUERY, true);
-
-      if((args.length > 1) && (args[1] != ""))
-        return ["SAY", args[1]];
-    }],
-    SAY: [true, undefined, undefined, function(args) {
-      if(args == undefined)
-        args = "";
-        
-      return ["PRIVMSG", parent.getActiveWindow().name + " " + args]
-    }],
-    KICK: [true, 3, 2, function(args) {
-      var channel = args[0];
-      var target = args[1];
-      var message = args[2];
-      if(!message)
-        message = "";
-      
-      send("KICK " + channel + " " + target + " :" + message);
-    }]
-  };
-
-  this.dispatch = function(line) {
+    this.parentObject.newLine(target, "OUR" + type, extra);
+  },
+  dispatch: function(line) {
     if(line.length == 0)
       return;
 
@@ -102,17 +104,17 @@ function CommandParser(parent) {
     var command = allargs[0].toUpperCase();
     var args = allargs[1];
         
-    var aliascmd = aliases[command];
+    var aliascmd = this.aliases[command];
     if(aliascmd)
       command = aliascmd;
     
     for(;;) {
-      var cmdopts = commands[command];
+      var cmdopts = this.commands[command];
       if(!cmdopts) {
         if(args) {
-          send(command + " " + args);
+          this.send(command + " " + args);
         } else {
-          send(command);
+          this.send(command);
         }
         return;
       }
@@ -122,7 +124,7 @@ function CommandParser(parent) {
       var minargs = cmdopts[2];  
       var fn = cmdopts[3];
       
-      var w = parent.getActiveWindow();
+      var w = this.parentObject.getActiveWindow();
       if(activewin && w.type == WINDOW_STATUS) {
         w.errorMessage("Can't use this command in this window");
         return;
@@ -136,7 +138,7 @@ function CommandParser(parent) {
         return;
       }
       
-      var ret = fn(args);
+      var ret = fn.attempt([args], this);
       if(ret == undefined)
         return;
         
@@ -144,4 +146,4 @@ function CommandParser(parent) {
       args = ret[1];
     }
   }
-}
+});

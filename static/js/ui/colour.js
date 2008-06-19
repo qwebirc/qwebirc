@@ -1,4 +1,4 @@
-function colourise(line, entity) {
+function Colourise(line, entity) {
   var fg;
   var bg;
   var underline = false;
@@ -8,18 +8,18 @@ function colourise(line, entity) {
   var xline = line.split("");
   var element = document.createElement("span");
 
-  function isnum(x) {
+  function isNum(x) {
     return x >= '0' && x <= '9';
   }
 
-  function parsecolours(xline, i) {
-    if(!isnum(xline[i + 1])) {
+  function parseColours(xline, i) {
+    if(!isNum(xline[i + 1])) {
       fg = undefined;
       bg = undefined;
       return i;
     }
     i++;
-    if(isnum(xline[i + 1])) {
+    if(isNum(xline[i + 1])) {
       fg = parseInt(xline[i] + xline[i + 1]);
       i++;
     } else {
@@ -27,11 +27,11 @@ function colourise(line, entity) {
     }
     if(xline[i + 1] != ",")
       return i;
-    if(!isnum(xline[i + 2]))
+    if(!isNum(xline[i + 2]))
       return i;
     i+=2;
     
-    if(isnum(xline[i + 1])) {
+    if(isNum(xline[i + 1])) {
       bg = parseInt(xline[i] + xline[i + 1]);
       i++;
     } else {
@@ -40,7 +40,7 @@ function colourise(line, entity) {
     return i;
   }
 
-  function ac() {
+  function emitEndToken() {
     if(out.length > 0) {
       element.appendChild(document.createTextNode(out.join("")));
       entity.appendChild(element);
@@ -48,7 +48,7 @@ function colourise(line, entity) {
     }
     element = document.createElement("span");
   }  
-  function pc() {
+  function emitStartToken() {
     classes = []
     if(fg != undefined)
       classes.push("Xc" + fg);
@@ -64,34 +64,38 @@ function colourise(line, entity) {
   for(i=0;i<xline.length;i++) {
     var lc = xline[i];
     if(lc == "\x02") {
-      ac();
+      emitEndToken();
 
       bold = !bold;
-      pc();
+      
+      emitStartToken();
     } else if(lc == "\x1F") {
-      ac();
+      emitEndToken();
 
       underline = !underline;
-      pc();
+      
+      emitStartToken();
     } else if(lc == "\x0F") {
-      ac();
+      emitEndToken();
+      
       fg = undefined;
       bg = undefined;
       underline = false;
       bold = false;
     } else if(lc == "\x03") {
-      ac();
+      emitEndToken();
       
-      i = parsecolours(xline, i);
+      i = parseColours(xline, i);
       if(bg > 15)
         bg = undefined;
       if(fg > 15)
         fg = undefined;
-      pc();
+        
+      emitStartToken();
     } else {
       out.push(lc);
     }
   }
   
-  ac();
+  emitEndToken();
 }

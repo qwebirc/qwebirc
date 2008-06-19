@@ -1,4 +1,4 @@
-IRCLowerTable = [
+var IRCLowerTable = [
 /* x00-x07 */ '\x00', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\x07',
 /* x08-x0f */ '\x08', '\x09', '\x0a', '\x0b', '\x0c', '\x0d', '\x0e', '\x0f',
 /* x10-x17 */ '\x10', '\x11', '\x12', '\x13', '\x14', '\x15', '\x16', '\x17',
@@ -33,7 +33,9 @@ IRCLowerTable = [
 /* xf8-xff */ '\xf8', '\xf9', '\xfa', '\xfb', '\xfc', '\xfd', '\xfe', '\xff'
 ];
 
-function toIRCLower(x) {
+String.prototype.toIRCLower = function() {
+  var x = this;
+  
   var p = [];
   for(var i=0;i<x.length;i++) {
     var l = x.charCodeAt(i);
@@ -44,16 +46,15 @@ function toIRCLower(x) {
   return p.join("");
 }
 
-function hosttonick(user) {
-  return user.split("!", 1)[0];
+String.prototype.hostToNick = function() {
+  return this.split("!", 1)[0];
 }
 
-function hosttohost(user) {
-  return user.split("!", 2)[1];
+String.prototype.hostToHost = function() {
+  return this.split("!", 2)[1];
 }
 
-function timestamp() {
-  var d = new Date();
+function IRCTimestamp(d) {
   function pad(x) {
     x = "" + x;
     if(x.length == 1)
@@ -62,4 +63,33 @@ function timestamp() {
   }
   
   return "[" + pad(d.getHours()) + ":" + pad(d.getMinutes()) + "]";
+}
+
+var DaysOfWeek = {
+  0: "Sun",
+  1: "Mon",
+  2: "Tue",
+  3: "Wed",
+  4: "Thu",
+  5: "Fri",
+  6: "Sat"
+};
+
+var MonthsOfYear = {
+  0: "Jan",
+  1: "Feb",
+  2: "Mar",
+  3: "Apr",
+  4: "May",
+  5: "Jun",
+  6: "Jul",
+  7: "Aug",
+  8: "Sep",
+  9: "Oct",
+  10: "Nov",
+  11: "Dec"
+};
+
+function IRCDate(d) {
+  return DaysOfWeek[d.getDay()] + " " + MonthsOfYear[d.getMonth()] + " " + pad(d.getDate()) + " "  + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds()) + " " + d.getFullYear();
 }

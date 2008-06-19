@@ -1,35 +1,6 @@
-if( typeof XMLHttpRequest == "undefined" ) XMLHttpRequest = function() {
-  try{ return new ActiveXObject("Msxml2.XMLHTTP.6.0") }catch(e){}
-  try{ return new ActiveXObject("Msxml2.XMLHTTP.3.0") }catch(e){}
-  try{ return new ActiveXObject("Msxml2.XMLHTTP") }catch(e){}
-  try{ return new ActiveXObject("Microsoft.XMLHTTP") }catch(e){}
-  throw new Error("This browser does not support XMLHttpRequest or XMLHTTP.")
-};
- 
-function jsdecode(data) {
-  return eval('(' + data + ')');
-}
- 
-function XHR(url, fn) {
-  var r = new XMLHttpRequest();
-  r.onreadystatechange = function() {
-    if(r.readyState == 4 && r.status == 200) {
-      var o = jsdecode(r.responseText);
-      fn(o);
-    }
-  }
-  r.open("GET", url, true);
-  r.send(null);
-}
-
-function empty(y) {
-  for(var x in y) {
-    return false;
-  }
-  return true;
-}
-
-function indexFromEnd(p, d) {
+Array.prototype.indexFromEnd = function(d) {
+  var p = this;
+  
   if(d < 0)
     return p[p.length + d];
 
@@ -64,39 +35,3 @@ String.prototype.splitMax = function(by, max) {
   
   return newitems;
 }
-
-DaysOfWeek = {
-  0: "Sun",
-  1: "Mon",
-  2: "Tue",
-  3: "Wed",
-  4: "Thu",
-  5: "Fri",
-  6: "Sat"
-};
-
-MonthsOfYear = {
-  0: "Jan",
-  1: "Feb",
-  2: "Mar",
-  3: "Apr",
-  4: "May",
-  5: "Jun",
-  6: "Jul",
-  7: "Aug",
-  8: "Sep",
-  9: "Oct",
-  10: "Nov",
-  11: "Dec"
-};
-/*
-if(jQuery == undefined) {*/
-  function getBrowserDetails() {
-    return navigator.appName + " " + parseFloat(navigator.appVersion);
-  }
-  /*
-} else {
-  function getBrowserDetails() {
-    alert(jQuery.browser);
-  }  
-}*/
