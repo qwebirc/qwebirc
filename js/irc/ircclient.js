@@ -157,9 +157,11 @@ var IRCClient = new Class({
   
     this.updateNickList(channel);
     
-    var w = this.getWindow(channel)
-    if(w)
-      w.close();
+    if(nick == this.nickname) {
+      var w = this.getWindow(channel)
+      if(w)
+        w.close();
+    }
   },
   userKicked: function(kicker, channel, kickee, message) {
     if(kickee == this.nickname) {
