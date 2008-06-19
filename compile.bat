@@ -15,6 +15,7 @@ goto ene
 :ok
 del concat.js
 copy js\copyright.js + compiled.js /b static\js\qwebirc.js
+del compiled.js
 goto end
 
 :end

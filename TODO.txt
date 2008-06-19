@@ -1,0 +1,8 @@
+TODO:
+  - isp transparent proxy issue
+  - new UI
+  - connect UI (do with newUI?)
+  - better error handling server side
+  - better error handling client side
+
+
