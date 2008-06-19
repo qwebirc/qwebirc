@@ -8,7 +8,7 @@ var IRCTracker = new Class({
     this.nicknames = {};
   },
   isEmpty: function(hash) {
-    for(var x in y)
+    for(var x in hash)
       return false;
     return true;
   },

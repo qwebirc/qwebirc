@@ -7,12 +7,6 @@ Array.prototype.indexFromEnd = function(d) {
   return p[d];
 }
 
-var forEach = function(x, fn) {
-  for(var i=0;i<x.length;i++)
-    if(fn(x[i]))
-      return;
-}
-
 /* how horribly inefficient */
 String.prototype.replaceAll = function(f, t) {
   var i = this.indexOf(f);

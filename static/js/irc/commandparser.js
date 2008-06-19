@@ -7,69 +7,8 @@ var CommandParser = new Class({
       "Q": "QUERY"
     };
     
-    this.send = parentObject.__send;
+    this.send = parentObject.send;
     this.parentObject = parentObject;
-    
-    this.commands = {
-      ME: [true, undefined, undefined, function(args) {
-        if(args == undefined)
-          args = "";
-        this.send("PRIVMSG " + w.name + " :\x01ACTION " + args + "\x01");
-        this.newTargetLine(w.name, "ACTION", args);
-      }],
-      CTCP: [false, 3, 2, function(args) {
-        var target = args[0];
-        var type = args[1].toUpperCase();
-        var message = args[2];
-        
-        if(message == undefined)
-          message = "";
-
-        if(message == "") {
-          this.send("PRIVMSG " + target + " :\x01" + type + "\x01");
-        } else {
-          this.send("PRIVMSG " + target + " :\x01" + type + " " + message + "\x01");
-        }
-      
-        this.newTargetLine(target, "CTCP", message, {"x": type});
-      }],
-      PRIVMSG: [false, 2, 2, function(args) {
-        var target = args[0];
-        var message = args[1];
-        
-        this.newTargetLine(target, "MSG", message, {});
-        
-        this.send("PRIVMSG " + target + " :" + message);
-      }],
-      NOTICE: [false, 2, 2, function(args) {
-        var target = args[0];
-        var message = args[1];
-
-        this.newTargetLine(target, "NOTICE", message);
-        this.send("NOTICE " + target + " :" + message);
-      }],
-      QUERY: [false, 2, 1, function(args) {
-        this.parentObject.newWindow(args[0], WINDOW_QUERY, true);
-
-        if((args.length > 1) && (args[1] != ""))
-          return ["SAY", args[1]];
-      }],
-      SAY: [true, undefined, undefined, function(args) {
-        if(args == undefined)
-          args = "";
-          
-        return ["PRIVMSG", this.parentObject.getActiveWindow().name + " " + args]
-      }],
-      KICK: [true, 3, 2, function(args) {
-        var channel = args[0];
-        var target = args[1];
-        var message = args[2];
-        if(!message)
-          message = "";
-        
-        this.send("KICK " + channel + " " + target + " :" + message);
-      }]
-    };    
   },
   newTargetLine: function(target, type, message, extra) {
     if(!extra)
@@ -109,7 +48,7 @@ var CommandParser = new Class({
       command = aliascmd;
     
     for(;;) {
-      var cmdopts = this.commands[command];
+      var cmdopts = this["cmd_" + command];
       if(!cmdopts) {
         if(args) {
           this.send(command + " " + args);
@@ -145,5 +84,64 @@ var CommandParser = new Class({
       command = ret[0];
       args = ret[1];
     }
-  }
+  },
+  
+  
+  cmd_ME: [true, undefined, undefined, function(args) {
+    if(args == undefined)
+      args = "";
+    return ["SAY", "\x01ACTION " + args + "\x01"];
+  }],
+  cmd_CTCP: [false, 3, 2, function(args) {
+    var target = args[0];
+    var type = args[1].toUpperCase();
+    var message = args[2];
+    
+    if(message == undefined)
+      message = "";
+
+    if(message == "") {
+      this.send("PRIVMSG " + target + " :\x01" + type + "\x01");
+    } else {
+      this.send("PRIVMSG " + target + " :\x01" + type + " " + message + "\x01");
+    }
+  
+    this.newTargetLine(target, "CTCP", message, {"x": type});
+  }],
+  cmd_PRIVMSG: [false, 2, 2, function(args) {
+    var target = args[0];
+    var message = args[1];
+    
+    this.newTargetLine(target, "MSG", message, {});
+    
+    this.send("PRIVMSG " + target + " :" + message);
+  }],
+  cmd_NOTICE: [false, 2, 2, function(args) {
+    var target = args[0];
+    var message = args[1];
+
+    this.newTargetLine(target, "NOTICE", message);
+    this.send("NOTICE " + target + " :" + message);
+  }],
+  cmd_QUERY: [false, 2, 1, function(args) {
+    this.parentObject.newWindow(args[0], WINDOW_QUERY, true);
+
+    if((args.length > 1) && (args[1] != ""))
+      return ["SAY", args[1]];
+  }],
+  cmd_SAY: [true, undefined, undefined, function(args) {
+    if(args == undefined)
+      args = "";
+      
+    return ["PRIVMSG", this.parentObject.getActiveWindow().name + " " + args]
+  }],
+  KICK: [true, 3, 2, function(args) {
+    var channel = args[0];
+    var target = args[1];
+    var message = args[2];
+    if(!message)
+      message = "";
+    
+    this.send("KICK " + channel + " " + target + " :" + message);
+  }],
 });

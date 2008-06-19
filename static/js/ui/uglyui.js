@@ -37,7 +37,7 @@ var UglyUIWindow = new Class({
         new Event(e).stop();
         
         if(type == WINDOW_CHANNEL)
-          this.client.dispatch("/PART " + name);
+          this.client.exec("/PART " + name);
 
         this.close();
       }.bind(this));
@@ -52,7 +52,7 @@ var UglyUIWindow = new Class({
     while(n.firstChild)
       n.removeChild(n.firstChild);
 
-    forEach(nicks, function(nick) {
+    nicks.each(function(nick) {
       var e = new Element("div");
       n.appendChild(e);
       e.appendChild(document.createTextNode(nick));
@@ -140,7 +140,7 @@ var UglyUI = new Class({
     form.addEvent("submit", function(e) {
       new Event(e).stop();
     
-      this.getActiveWindow().client.dispatch(inputbox.value);
+      this.getActiveWindow().client.exec(inputbox.value);
       inputbox.value = "";
     }.bind(this));
     parentElement.appendChild(form);  

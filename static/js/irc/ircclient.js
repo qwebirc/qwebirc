@@ -1,57 +1,53 @@
-function IRCClient(nickname, ui, autojoin) {
-  var self = this;
-  this.prefixes = "@+";
-  this.modeprefixes = "ov";
-  this.windows = {};
-  
-  var newLine = function(window, type, data) {
+var IRCClient = new Class({
+  Extends: BaseIRCClient,
+  options: {
+    nickname: "WCunset",
+    autojoin: "",
+  },
+  initialize: function(options, ui) {
+    this.parent(options);
+
+    this.ui = ui;
+
+    this.prefixes = "@+";
+    this.modeprefixes = "ov";
+    this.windows = {};
+    
+    this.commandparser = new CommandParser(this);
+    this.exec = this.commandparser.dispatch.bind(this.commandparser);
+
+    this.statusWindow = this.ui.newClient(this);
+  },
+  newLine: function(window, type, data) {
     if(!data)
       data = {};
       
-    var w = self.getWindow(window);
+    var w = this.getWindow(window);
     if(w) {
       w.addLine(type, data);
     } else {
-      self.statusWindow.addLine(type, data);
+      this.statusWindow.addLine(type, data);
     }
-  }
-  this.newLine = newLine;
-  
-  var newChanLine = function(channel, type, user, extra) {
+  },
+  newChanLine: function(channel, type, user, extra) {
     if(!extra)
       extra = {};
 
     extra["n"] = user.hostToNick();
     extra["h"] = user.hostToHost();
     extra["c"] = channel;
-    extra["-"] = self.nickname;
+    extra["-"] = this.nickname;
     
-    newLine(channel, type, extra);
-  }
-  
-  var newServerLine = function(type, data) {
-    self.statusWindow.addLine(type, data);
-  }
-
-  var newActiveLine = function(type, data) {
-    ui.getActiveWindow().addLine(type, data);
-  }
-  
-  this.rawNumeric = function(numeric, prefix, params) {
-    newServerLine("RAW", {"n": "numeric", "m": params.slice(1).join(" ")});
-  }
-  
-  this.signedOn = function(nickname) {
-    self.tracker = new IRCTracker();
-    self.nickname = nickname;
-    newServerLine("SIGNON");
-    
-    if(autojoin)
-      self.__send("JOIN " + autojoin);
-  }
-
-  this.updateNickList = function(channel) {
-    var n1 = self.tracker.getChannel(channel);
+    this.newLine(channel, type, extra);
+  },
+  newServerLine: function(type, data) {
+    this.statusWindow.addLine(type, data);
+  },
+  newActiveLine: function(type, data) {
+    this.ui.getActiveWindow().addLine(type, data);
+  },
+  updateNickList: function(channel) {
+    var n1 = this.tracker.getChannel(channel);
     var names = new Array();
     var tff = String.fromCharCode(255);
     var nh = {}
@@ -63,7 +59,7 @@ function IRCClient(nickname, ui, autojoin) {
       
       if(nc.prefixes.length > 0) {
         var c = nc.prefixes.charAt(0);
-        nx = String.fromCharCode(self.prefixes.indexOf(c)) + n.toIRCLower();
+        nx = String.fromCharCode(this.prefixes.indexOf(c)) + n.toIRCLower();
         nh[nx] = c + n;
       } else {
         nx = tff + n.toIRCLower();
@@ -75,326 +71,295 @@ function IRCClient(nickname, ui, autojoin) {
     names.sort();
     
     var sortednames = new Array();
-    forEach(names, function(name) {
+    names.each(function(name) {
       sortednames.push(nh[name]);
     });
     
-    var w = self.getWindow(channel);
+    var w = this.getWindow(channel);
     if(w)
       w.updateNickList(sortednames);
-  }
-  
-  this.getWindow = function(name) {
-    return self.windows[name];
-  }
-  
-  this.newWindow = function(name, type, select) {
-    var w = self.getWindow(name);
+  },
+  getWindow: function(name) {
+    return this.windows[name];
+  },
+  newWindow: function(name, type, select) {
+    var w = this.getWindow(name);
     if(!w) {
-      w = self.windows[name] = ui.newWindow(self, type, name);
+      w = this.windows[name] = this.ui.newWindow(this, type, name);
       
       w.addEvent("close", function(w) {
-        delete self.windows[name];
-      });
+        delete this.windows[name];
+      }.bind(this));
     }
     
     if(select)
-      ui.selectWindow(w);
+      this.ui.selectWindow(w);
       
     return w;
-  }
-  
-  this.userJoined = function(user, channel) {
-    var nick = user.hostToNick();
-    var host = user.hostToHost();
-    
-    if((nick == self.nickname) && !self.getWindow(channel))
-      self.newWindow(channel, WINDOW_CHANNEL, true);
-    self.tracker.addNickToChannel(nick, channel);
-
-    newChanLine(channel, "JOIN", user);
-    
-    self.updateNickList(channel);
-  }
-  
-  this.userPart = function(user, channel, message) {
-    var nick = user.hostToNick();
-    var host = user.hostToHost();
-        
-    if(nick == self.nickname) {
-      self.tracker.removeChannel(channel);
-    } else {
-      self.tracker.removeNickFromChannel(nick, channel);
-      newChanLine(channel, "PART", user, {"m": message});
-    }
-  
-    self.updateNickList(channel);
-    
-    var w = self.getWindow(channel)
-    if(w)
-      w.close();
-  }
-
-  this.userKicked = function(kicker, channel, kickee, message) {
-    if(kickee == self.nickname) {
-      self.tracker.removeChannel(channel);
-      self.getWindow(channel).close();
-    } else {
-      self.tracker.removeNickFromChannel(kickee, channel);
-      self.updateNickList(channel);
-    }
-      
-    newChanLine(channel, "KICK", kicker, {"v": kickee, "m": message});
-  }
-  
-  this.channelMode = function(user, channel, modes, raw) {
-    forEach(modes, function(mo) {
-      var direction = mo[0];
-      var mode = mo[1];
-
-      var prefixindex = self.modeprefixes.indexOf(mode);
-      if(prefixindex == -1)
-        return;
-        
-      var nick = mo[2];
-      var prefixchar = self.prefixes.charAt(prefixindex);
-
-      var nc = self.tracker.getOrCreateNickOnChannel(nick, channel);
-      if(direction == "-") {
-        self.removePrefix(nc, prefixchar);
-      } else {
-        self.addPrefix(nc, prefixchar);
-      }
-    });
-
-    newChanLine(channel, "MODE", user, {"m": raw.join(" ")});
-    
-    self.updateNickList(channel);
-  }
-
-  this.userQuit = function(user, message) {
-    var nick = user.hostToNick();
-    
-    var channels = self.tracker.getNick(nick);
-    
-    var clist = [];
-    for(var c in channels) {
-      clist.push(c);
-      newChanLine(c, "QUIT", user, {"m": message});
-    }
-    
-    self.tracker.removeNick(nick);
-    
-    forEach(clist, function(cli) {
-      self.updateNickList(cli);
-    });
-  }
-
-  this.nickChanged = function(user, newnick) {
-    var oldnick = user.hostToNick();
-    
-    if(oldnick == self.nickname)
-      self.nickname = newnick;
-      
-    self.tracker.renameNick(oldnick, newnick);
-
-    var channels = self.tracker.getNick(newnick);
-    
-    for(var c in channels) {
-      newChanLine(c, "NICK", user, {"w": newnick});
-      /* TODO: rename queries */
-      self.updateNickList(c);
-    }
-  }
-  
-  this.channelTopic = function(user, channel, topic) {
-    newChanLine(channel, "TOPIC", user, {"m": topic});
-    self.getWindow(channel).updateTopic(topic);
-  }
-  
-  this.initialTopic = function(channel, topic) {
-    self.getWindow(channel).updateTopic(topic);
-  }
-  
-  this.channelCTCP = function(user, channel, type, args) {
-    if(args == undefined)
-      args = "";
-
-    if(type == "ACTION") {
-      newChanLine(channel, "CHANACTION", user, {"m": args, "c": channel});
-      return;
-    }
-    
-    newChanLine(channel, "CHANCTCP", user, {"x": type, "m": args, "c": channel});
-  }
-  
-  this.userCTCP = function(user, type, args) {
-    var nick = user.hostToNick();
-    var host = user.hostToHost();
-    if(args == undefined)
-      args = "";
-    
-    if(type == "ACTION") {      
-      self.newWindow(nick, WINDOW_QUERY);
-      newLine(nick, "PRIVACTION", {"m": args, "x": type, "h": host, "n": nick});
-      return;
-    }
-    
-    if(self.getWindow(nick)) {
-      newLine(nick, "PRIVCTCP", {"m": args, "x": type, "h": host, "n": nick, "-": self.nickname});
-    } else {
-      newActiveLine("PRIVCTCP", {"m": args, "x": type, "h": host, "n": nick, "-": self.nickname});
-    }
-  }
-  
-  this.userCTCPReply = function(user, type, args) {
-    var nick = user.hostToNick();
-    var host = user.hostToHost();
-    if(args == undefined)
-      args = "";
-    
-    if(self.getWindow(nick)) {
-      newLine(nick, "CTCPREPLY", {"m": args, "x": type, "h": host, "n": nick, "-": self.nickname});
-    } else {
-      newActiveLine("CTCPREPLY", {"m": args, "x": type, "h": host, "n": nick, "-": self.nickname});
-    }
-  }
-  
-  this.channelPrivmsg = function(user, channel, message) {
-    newChanLine(channel, "CHANMSG", user, {"m": message});
-  }
-
-  this.channelNotice = function(user, channel, message) {
-    newChanLine(channel, "CHANNOTICE", user, {"m": message});
-  }
-
-  this.userPrivmsg = function(user, message) {
-    var nick = user.hostToNick();
-    var host = user.hostToHost();
-    
-    self.newWindow(nick, WINDOW_QUERY);
-    
-    newLine(nick, "PRIVMSG", {"m": message, "h": host, "n": nick});
-  }
-  
-  this.serverNotice = function(message) {
-    newServerLine("SERVERNOTICE", {"m": message});
-  }
-  
-  this.userNotice = function(user, message) {
-    var nick = user.hostToNick();
-    var host = user.hostToHost();
-
-    if(self.getWindow(nick)) {
-      newLine(nick, "PRIVNOTICE", {"m": message, "h": host, "n": nick});
-    } else {
-      newActiveLine("PRIVNOTICE", {"m": message, "h": host, "n": nick});
-    }
-  }
-  
-  this.userInvite = function(user, channel) {
-    var nick = user.hostToNick();
-    var host = user.hostToHost();
-
-    newServerLine("INVITE", {"c": channel, "h": host, "n": nick});
-  }
-  
-  this.userMode = function(modes) {
-    newServerLine("UMODE", {"m": modes, "n": self.nickname});
-  }
-  
-  this.addPrefix = function(nickchanentry, prefix) {
+  },
+  getActiveWindow: function() {
+    return this.ui.getActiveWindow();
+  },
+  getNickname: function() {
+    return this.nickname;
+  },
+  addPrefix: function(nickchanentry, prefix) {
     var ncp = nickchanentry.prefixes + prefix;
-    var prefixes = new Array();
+    var prefixes = [];
     
     /* O(n^2) */
-    for(var i=0;i<self.prefixes.length;i++) {
-      var pc = self.prefixes.charAt(i);
+    for(var i=0;i<this.prefixes.length;i++) {
+      var pc = this.prefixes.charAt(i);
       var index = ncp.indexOf(pc);
       if(index != -1)
         prefixes.push(pc);
     }
     
     nickchanentry.prefixes = prefixes.join("");
-  }
-  
-  this.removePrefix = function(nickchanentry, prefix) {
+  },
+  removePrefix: function(nickchanentry, prefix) {
     nickchanentry.prefixes = nickchanentry.prefixes.replaceAll(prefix, "");
-  }
+  },
+  
+  /* from here down are events */
+  rawNumeric: function(numeric, prefix, params) {
+    this.newServerLine("RAW", {"n": "numeric", "m": params.slice(1).join(" ")});
+  },
+  signedOn: function(nickname) {
+    this.tracker = new IRCTracker();
+    this.nickname = nickname;
+    this.newServerLine("SIGNON");
+    
+    if(this.autojoin)
+      this.send("JOIN " + this.autojoin);
+  },
+  userJoined: function(user, channel) {
+    var nick = user.hostToNick();
+    var host = user.hostToHost();
+    
+    if((nick == this.nickname) && !this.getWindow(channel))
+      this.newWindow(channel, WINDOW_CHANNEL, true);
+    this.tracker.addNickToChannel(nick, channel);
 
-  this.channelNames = function(channel, names) {
-    if(names.length == 0) {
-      self.updateNickList(channel);
+    this.newChanLine(channel, "JOIN", user);
+    this.updateNickList(channel);
+  },
+  userPart: function(user, channel, message) {
+    var nick = user.hostToNick();
+    var host = user.hostToHost();
+        
+    if(nick == this.nickname) {
+      this.tracker.removeChannel(channel);
+    } else {
+      this.tracker.removeNickFromChannel(nick, channel);
+      this.newChanLine(channel, "PART", user, {"m": message});
+    }
+  
+    this.updateNickList(channel);
+    
+    var w = this.getWindow(channel)
+    if(w)
+      w.close();
+  },
+  userKicked: function(kicker, channel, kickee, message) {
+    if(kickee == this.nickname) {
+      this.tracker.removeChannel(channel);
+      this.getWindow(channel).close();
+    } else {
+      this.tracker.removeNickFromChannel(kickee, channel);
+      this.updateNickList(channel);
+    }
+      
+    this.newChanLine(channel, "KICK", kicker, {"v": kickee, "m": message});
+  },
+  channelMode: function(user, channel, modes, raw) {
+    modes.each(function(mo) {
+      var direction = mo[0];
+      var mode = mo[1];
+
+      var prefixindex = this.modeprefixes.indexOf(mode);
+      if(prefixindex == -1)
+        return;
+        
+      var nick = mo[2];
+      var prefixchar = this.prefixes.charAt(prefixindex);
+
+      var nc = this.tracker.getOrCreateNickOnChannel(nick, channel);
+      if(direction == "-") {
+        this.removePrefix(nc, prefixchar);
+      } else {
+        this.addPrefix(nc, prefixchar);
+      }
+    }, this);
+
+    this.newChanLine(channel, "MODE", user, {"m": raw.join(" ")});
+    
+    this.updateNickList(channel);
+  },
+  userQuit: function(user, message) {
+    var nick = user.hostToNick();
+    
+    var channels = this.tracker.getNick(nick);
+    
+    var clist = [];
+    for(var c in channels) {
+      clist.push(c);
+      this.newChanLine(c, "QUIT", user, {"m": message});
+    }
+    
+    this.tracker.removeNick(nick);
+    
+    clist.each(function(cli) {
+      this.updateNickList(cli);
+    }, this);
+  },
+  nickChanged: function(user, newnick) {
+    var oldnick = user.hostToNick();
+    
+    if(oldnick == this.nickname)
+      this.nickname = newnick;
+      
+    this.tracker.renameNick(oldnick, newnick);
+
+    var channels = this.tracker.getNick(newnick);
+    
+    for(var c in channels) {
+      this.newChanLine(c, "NICK", user, {"w": newnick});
+      /* TODO: rename queries */
+      this.updateNickList(c);
+    }
+  },
+  channelTopic: function(user, channel, topic) {
+    this.newChanLine(channel, "TOPIC", user, {"m": topic});
+    this.getWindow(channel).updateTopic(topic);
+  },
+  initialTopic: function(channel, topic) {
+    this.getWindow(channel).updateTopic(topic);
+  },
+  channelCTCP: function(user, channel, type, args) {
+    if(args == undefined)
+      args = "";
+
+    if(type == "ACTION") {
+      this.newChanLine(channel, "CHANACTION", user, {"m": args, "c": channel});
       return;
     }
     
-    forEach(names, function(nick) {
+    this.newChanLine(channel, "CHANCTCP", user, {"x": type, "m": args, "c": channel});
+  },
+  userCTCP: function(user, type, args) {
+    var nick = user.hostToNick();
+    var host = user.hostToHost();
+    if(args == undefined)
+      args = "";
+    
+    if(type == "ACTION") {      
+      this.newWindow(nick, WINDOW_QUERY);
+      this.newLine(nick, "PRIVACTION", {"m": args, "x": type, "h": host, "n": nick});
+      return;
+    }
+    
+    if(this.getWindow(nick)) {
+      this.newLine(nick, "PRIVCTCP", {"m": args, "x": type, "h": host, "n": nick, "-": this.nickname});
+    } else {
+      this.newActiveLine("PRIVCTCP", {"m": args, "x": type, "h": host, "n": nick, "-": this.nickname});
+    }
+  },
+  userCTCPReply: function(user, type, args) {
+    var nick = user.hostToNick();
+    var host = user.hostToHost();
+    if(args == undefined)
+      args = "";
+    
+    if(this.getWindow(nick)) {
+      this.newLine(nick, "CTCPREPLY", {"m": args, "x": type, "h": host, "n": nick, "-": this.nickname});
+    } else {
+      this.newActiveLine("CTCPREPLY", {"m": args, "x": type, "h": host, "n": nick, "-": this.nickname});
+    }
+  },
+  channelPrivmsg: function(user, channel, message) {
+    this.newChanLine(channel, "CHANMSG", user, {"m": message});
+  },
+  channelNotice: function(user, channel, message) {
+    this.newChanLine(channel, "CHANNOTICE", user, {"m": message});
+  },
+  userPrivmsg: function(user, message) {
+    var nick = user.hostToNick();
+    var host = user.hostToHost();
+    
+    this.newWindow(nick, WINDOW_QUERY);
+    
+    this.newLine(nick, "PRIVMSG", {"m": message, "h": host, "n": nick});
+  },
+  serverNotice: function(message) {
+    this.newServerLine("SERVERNOTICE", {"m": message});
+  },
+  userNotice: function(user, message) {
+    var nick = user.hostToNick();
+    var host = user.hostToHost();
+
+    if(this.getWindow(nick)) {
+      this.newLine(nick, "PRIVNOTICE", {"m": message, "h": host, "n": nick});
+    } else {
+      this.newActiveLine("PRIVNOTICE", {"m": message, "h": host, "n": nick});
+    }
+  },
+  userInvite: function(user, channel) {
+    var nick = user.hostToNick();
+    var host = user.hostToHost();
+
+    this.newServerLine("INVITE", {"c": channel, "h": host, "n": nick});
+  },
+  userMode: function(modes) {
+    this.newServerLine("UMODE", {"m": modes, "n": this.nickname});
+  },
+  channelNames: function(channel, names) {
+    if(names.length == 0) {
+      this.updateNickList(channel);
+      return;
+    }
+    
+    names.each(function(nick) {
       var prefixes = [];
       var splitnick = nick.split("");
       
-      var i = 0;
-      forEach(splitnick, function(c) {
-        if(self.prefixes.indexOf(c) == -1) {
+      splitnick.every(function(c, i) {
+        if(this.prefixes.indexOf(c) == -1) {
           nick = nick.substr(i);
-          return true;
+          return false;
         }
         
         prefixes.push(c);
-        i++;
-      });
+        return true;
+      }, this);
 
-      var nc = self.tracker.addNickToChannel(nick, channel);
-      forEach(prefixes, function(p) {
-        self.addPrefix(nc, p);
-      });
-    });
-  }
-  
-  this.disconnected = function() {
-    for(var x in this.parent.channels) {
-      ui.closeWindow(x);
-    }
+      var nc = this.tracker.addNickToChannel(nick, channel);
+      prefixes.each(function(p) {
+        this.addPrefix(nc, p);
+      }, this);
+    }, this);
+  },
+  disconnected: function() {
+    for(var x in this.parent.channels)
+      this.ui.closeWindow(x);
 
-    self.tracker = undefined;
+    this.tracker = undefined;
     
-    newServerLine("DISCONNECT");
-    self.disconnect();
-  }
-  
-  this.supported = function(key, value) {
+    this.newServerLine("DISCONNECT");
+  },
+  supported: function(key, value) {
     if(key == "PREFIX") {
       var l = (value.length - 2) / 2;
 
-      self.modeprefixes = value.substr(1, l);
-      self.prefixes = value.substr(l + 2, l);
-    }    
+      this.modeprefixes = value.substr(1, l);
+      this.prefixes = value.substr(l + 2, l);
+      alert(this.prefixes);
+    }
+  },
+  connected: function() {
+    this.newServerLine("CONNECT");
+  },
+  serverError: function(message) {
+    this.newServerLine("ERROR", {"m": message});
   }
-  
-  this.connected = function() {
-    newServerLine("CONNECT");
-  }
-  
-  this.serverError = function(message) {
-    newServerLine("ERROR", {"m": message});
-  }
-
-  this.getActiveWindow = function() {
-    return ui.getActiveWindow();
-  }
-    
-  this.getNickname = function() {
-    return self.nickname;
-  }
-  
-  this.parent = new BaseIRCClient(nickname, this);
-  this.__send = this.parent.send;
-  
-  this.commandparser = new CommandParser(this);
-  this.dispatch = this.commandparser.dispatch.bind(this.commandparser);
-
-  this.statusWindow = ui.newClient(self);
-
-  this.connect = this.parent.connect;
-  this.disconnect = this.parent.disconnect;
-}
-
+});

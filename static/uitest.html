@@ -7,22 +7,22 @@
   <script type="text/javascript" src="js/mootools-1.2-core.js"></script>
   <script type="text/javascript" src="js/version.js"></script>
   <script type="text/javascript" src="js/jslib.js"></script>
-  <script type="text/javascript" src="js/ui/uibase.js"></script>
-  <script type="text/javascript" src="js/ui/colour.js"></script>
-  <script type="text/javascript" src="js/ui/theme.js"></script>
-  <script type="text/javascript" src="js/ui/uglyui.js"></script>
-  <script type="text/javascript" src="js/tcp.js"></script>
+  <script type="text/javascript" src="js/irc/ircconn.js"></script>
   <script type="text/javascript" src="js/irc/irclib.js"></script>
   <script type="text/javascript" src="js/irc/baseirc.js"></script>
   <script type="text/javascript" src="js/irc/irctracker.js"></script>
   <script type="text/javascript" src="js/irc/commandparser.js"></script>
   <script type="text/javascript" src="js/irc/ircclient.js"></script>
+  <script type="text/javascript" src="js/ui/uibase.js"></script>
+  <script type="text/javascript" src="js/ui/colour.js"></script>
+  <script type="text/javascript" src="js/ui/theme.js"></script>
+  <script type="text/javascript" src="js/ui/uglyui.js"></script>
   <script type="text/javascript">  
     window.addEvent("domready", function() {
       var theme = new Theme();
       var ui = new UglyUI($("ircui"), theme);
 
-      var IRC = new IRCClient("mcgoogle", ui);
+      var IRC = new IRCClient({nickname: "mcgoogle"}, ui);
       
       IRC.connect();
     });

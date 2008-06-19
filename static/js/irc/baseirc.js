@@ -10,23 +10,35 @@ var RegisteredCTCPs = {
   "CLIENTINFO": function(x) { return "PING VERSION TIME USERINFO CLIENTINFO"; }
 };
 
-function BaseIRCClient(nickname, view) {
-  var self = this;
-  this.nickname = nickname;
-  this.signedOn = false;
-  this.pmodes = ["b", "k,", "o", "l", "v"];
-  this.channels = {}
-  var nextctcp = 0;
+var BaseIRCClient = new Class({
+  Implements: [Options],
+  options: {
+    nickname: "WCunset",
+  },
+  initialize: function(options) {
+    this.setOptions(options);
+
+    this.nickname = this.options.nickname;
+    
+    this.__signedOn = false;
+    this.pmodes = ["b", "k,", "o", "l", "v"];
+    this.channels = {}
+    this.nextctcp = 0;    
+
+    this.connection = new IRCConnection({initialNickname: this.nickname, onRecv: this.dispatch.bind(this)});
   
-  /* attempt javascript inheritence! */
-  this.dispatch = function(data) {
+    this.send = this.connection.send.bind(this.connection);
+    this.connect = this.connection.connect.bind(this.connection);
+    this.disconnect = this.connection.disconnect;
+  },
+  dispatch: function(data) {
     var message = data[0];
     if(message == "connect") {
-      view.connected();
+      this.connected();
     } else if(message == "disconnect") {
-      view.disconnected();
+      this.disconnected();
     } else if(message == "c") {
-      var command = data[1];
+      var command = data[1].toUpperCase();
        
       var prefix = data[2];
       var sl = data[3];
@@ -36,206 +48,194 @@ function BaseIRCClient(nickname, view) {
       if(!n)
         n = command;  
 
-      var o = view["irc_" + n];
-      if(!o)
-        o = self["irc_" + n];
+      var o = this["irc_" + n];
       
       if(o) {
-        var r = o(prefix, sl);
+        var r = o.attempt([prefix, sl], this);
         if(!r)
-          view.rawNumeric(command, prefix, sl);
+          this.rawNumeric(command, prefix, sl);
       } else {
-        view.rawNumeric(command, prefix, sl);
+        this.rawNumeric(command, prefix, sl);
       }
     }
-  }
-  
-  this.irc_RPL_WELCOME = function(prefix, params) {
-    self.nickname = params[0];
-    
-    self.signedOn = true;
-    view.signedOn(self.nickname);
-  }
-  
-  this.irc_ERR_NICKNAMEINUSE = function(prefix, params) {
-    if(self.signedOn == false) {
-      var newnick = params[1] + "_";
-      if(newnick == self.lastnick)
-        newnick = "webchat" + Math.floor(Math.random() * 1024 * 1024);
+  },
 
-      self.send("NICK " + newnick);
-      self.lastnick = newnick;
-    }
-  }
-  
-  this.irc_NICK = function(prefix, params) {
+  irc_RPL_WELCOME: function(prefix, params) {
+    this.nickname = params[0];
+    
+    this.__signedOn = true;
+    this.signedOn(this.nickname);
+  },
+  irc_ERR_NICKNAMEINUSE: function(prefix, params) {
+    if(this.__signedOn)
+      return;
+    
+    var newnick = params[1] + "_";
+    if(newnick == this.lastnick)
+      newnick = "webchat" + Math.floor(Math.random() * 1024 * 1024);
+
+    this.send("NICK " + newnick);
+    this.lastnick = newnick;
+  },
+  irc_NICK: function(prefix, params) {
     var user = prefix;
     var oldnick = user.hostToNick();
     var newnick = params[0];
     
-    if(self.nickname == oldnick)
-      self.nickname = newnick;
+    if(this.nickname == oldnick)
+      this.nickname = newnick;
       
-    view.nickChanged(user, newnick);
+    this.nickChanged(user, newnick);
     
     return true;
-  }
-  
-  this.irc_QUIT = function(prefix, params) {
+  },
+  irc_QUIT: function(prefix, params) {
     var user = prefix;
     
     var message = params.indexFromEnd(-1);
     
-    view.userQuit(user, message);
+    this.userQuit(user, message);
     
     return true;
-  }
-
-  this.irc_PART = function(prefix, params) {
+  },
+  irc_PART: function(prefix, params) {
     var user = prefix;
     var channel = params[0];
     var message = params[1];
 
     var nick = user.hostToNick();
     
-    if((nick == self.nickname) && self.channels[channel])
-      delete self.channels[channel];
-    view.userPart(user, channel, message);
+    if((nick == this.nickname) && this.channels[channel])
+      delete this.channels[channel];
+      
+    this.userPart(user, channel, message);
     
     return true;
-  }
-  
-  this.irc_KICK = function(prefix, params) {
+  },
+  irc_KICK: function(prefix, params) {
     var kicker = prefix;
     var channel = params[0];
     var kickee = params[1];
     var message = params[2];
     
-    if((kickee == self.nickname) && self.channels[channel])
-      delete self.channels[channel];
-    view.userKicked(kicker, channel, kickee, message);
+    if((kickee == this.nickname) && this.channels[channel])
+      delete this.channels[channel];
+      
+    this.userKicked(kicker, channel, kickee, message);
     
     return true;
-  }
-  
-  this.irc_PING = function(prefix, params) {
-    self.send("PONG :" + params.indexFromEnd(-1));
+  },
+  irc_PING: function(prefix, params) {
+    this.send("PONG :" + params.indexFromEnd(-1));
     
     return true;
-  }
-  
-  this.irc_JOIN = function(prefix, params) {
+  },
+  irc_JOIN: function(prefix, params) {
     var channel = params[0];
     var user = prefix;
     var nick = user.hostToNick();
     
-    if(nick == self.nickname)
-      self.channels[channel] = true;
+    if(nick == this.nickname)
+      this.channels[channel] = true;
       
-    view.userJoined(user, channel);
+    this.userJoined(user, channel);
     
     return true;
-  }
-  
-  this.irc_TOPIC = function(prefix, params) {
+  },
+  irc_TOPIC: function(prefix, params) {
     var user = prefix;
     var channel = params[0];
     var topic = params.indexFromEnd(-1);
     
-    view.channelTopic(user, channel, topic);
+    this.channelTopic(user, channel, topic);
     
     return true;
-  }
-  
-  var processCTCP = function(message) {
-    if(message.charAt(0) == "\x01") {
-      if(message.charAt(message.length - 1) == "\x01") {
-        message = message.substr(1, message.length - 2);
-      } else {
-        message = message.substr(1);
-      }
-      return message.splitMax(" ", 2);
+  },
+  processCTCP: function(message) {
+    if(message.charAt(0) != "\x01")
+      return;
+    
+    if(message.charAt(message.length - 1) == "\x01") {
+      message = message.substr(1, message.length - 2);
+    } else {
+      message = message.substr(1);
     }
-  }
-  
-  this.irc_PRIVMSG = function(prefix, params) {
+    return message.splitMax(" ", 2);
+  },
+  irc_PRIVMSG: function(prefix, params) {
     var user = prefix;
     var target = params[0];
     var message = params.indexFromEnd(-1);
     
-    var ctcp = processCTCP(message);
+    var ctcp = this.processCTCP(message);
     if(ctcp) {
       var type = ctcp[0].toUpperCase();
       
-      var replyfn = registeredCTCPs[type];
+      var replyfn = RegisteredCTCPs[type];
       if(replyfn) {
         var t = new Date().getTime() / 1000;
-        if(t > nextctcp)
-          self.send("NOTICE " + user.hostToNick() + " :\x01" + type + " " + replyfn(ctcp[1]) + "\x01");
-        nextctcp = t + 5;
+        if(t > this.nextctcp)
+          this.send("NOTICE " + user.hostToNick() + " :\x01" + type + " " + replyfn(ctcp[1]) + "\x01");
+        this.nextctcp = t + 5;
       }
       
-      if(target == self.nickname) {
-        view.userCTCP(user, type, ctcp[1]);
+      if(target == this.nickname) {
+        this.userCTCP(user, type, ctcp[1]);
       } else {
-        view.channelCTCP(user, target, type, ctcp[1]);
+        this.channelCTCP(user, target, type, ctcp[1]);
       }
     } else {
-      if(target == self.nickname) {
-        view.userPrivmsg(user, message);
+      if(target == this.nickname) {
+        this.userPrivmsg(user, message);
       } else {
-        view.channelPrivmsg(user, target, message);
+        this.channelPrivmsg(user, target, message);
       }
     }
     
     return true;
-  }
-
-  this.irc_NOTICE = function(prefix, params) {
+  },
+  irc_NOTICE: function(prefix, params) {
     var user = prefix;
     var target = params[0];
     var message = params.indexFromEnd(-1);
     
     if(user == "") {
-      view.serverNotice(message);
-    } else if(target == self.nickname) {
-      var ctcp = processCTCP(message);
+      this.serverNotice(message);
+    } else if(target == this.nickname) {
+      var ctcp = this.processCTCP(message);
       if(ctcp) {
-        view.userCTCPReply(user, ctcp[0], ctcp[1]);
+        this.userCTCPReply(user, ctcp[0], ctcp[1]);
       } else {
-        view.userNotice(user, message);
+        this.userNotice(user, message);
       }
     } else {
-      view.channelNotice(user, target, message);
+      this.channelNotice(user, target, message);
     }
     
     return true;
-  }
-
-  this.irc_INVITE = function(prefix, params) {
+  },
+  irc_INVITE: function(prefix, params) {
     var user = prefix;
     var channel = params.indexFromEnd(-1);
     
-    view.userInvite(user, channel);
+    this.userInvite(user, channel);
     
     return true;
-  }
-
-  this.irc_ERROR = function(prefix, params) {
+  },
+  irc_ERROR: function(prefix, params) {
     var message = params.indexFromEnd(-1);
     
-    view.serverError(message);
+    this.serverError(message);
     
     return true;
-  }
-  
-  this.irc_MODE = function(prefix, params) {
+  },
+  irc_MODE: function(prefix, params) {
     var user = prefix;
     var target = params[0];
     var args = params.slice(1);
     
-    if(target == self.nickname) {
-      view.userMode(args);
+    if(target == this.nickname) {
+      this.userMode(args);
     } else {
       var modes = args[0].split("");
       var xargs = args.slice(1);
@@ -245,82 +245,70 @@ function BaseIRCClient(nickname, view) {
       var pos = 0;
       var cmode = "+";
       
-      forEach(modes, function(mode) {
+      modes.each(function(mode) {
         if((mode == "+") || (mode == "-")) {
           cmode = mode;
           return;
         }
 
-        if(self.pmodes[mode]) { 
+        if(this.pmodes[mode]) { 
           d = [cmode, mode, xargs[carg++]]
         } else {
           d = [cmode, mode]
         }
         
         data.push(d);
-      });
+      }, this);
       
-      view.channelMode(user, target, data, args);
+      this.channelMode(user, target, data, args);
     }
     
     return true;
-  }
-  
-  this.irc_RPL_ISUPPORT = function(prefix, params) {
+  },  
+  irc_RPL_ISUPPORT: function(prefix, params) {
     var supported = params.slice(1, -1);
     var supportedhash = {};
     
     for(var i=0;i<supported.length;i++) {
       var l = supported[i].splitMax("=", 2);
-      view.supported(l[0], l[1]);
+      this.supported(l[0], l[1]);
     }
-  }
-  
-  this.irc_RPL_MYINFO = function(prefix, params) {
+  },  
+  irc_RPL_MYINFO: function(prefix, params) {
     var pmodes = params[5].split("");
-    self.pmodes = {}
-    forEach(pmodes, function(pmode) {
-      self.pmodes[pmode] = true;
-    });
-  }
-  
-  this.irc_RPL_NAMREPLY = function(prefix, params) {
+    this.pmodes = {}
+    
+    pmodes.each(function(pmode) {
+      this.pmodes[pmode] = true;
+    }, this);
+  },  
+  irc_RPL_NAMREPLY: function(prefix, params) {
     var channel = params[2];    
     var names = params[3];
     
-    view.channelNames(channel, names.split(" "));
+    this.channelNames(channel, names.split(" "));
     
     return true;
-  }
-
-  this.irc_RPL_ENDOFNAMES = function(prefix, params) {
+  },
+  irc_RPL_ENDOFNAMES: function(prefix, params) {
     var channel = params[1];
 
-    view.channelNames(channel, []);
+    this.channelNames(channel, []);
     return true;
-  }
-
-  this.irc_RPL_NOTOPIC = function(prefix, params) {
+  },
+  irc_RPL_NOTOPIC: function(prefix, params) {
     return true;
-  }
-  
-  this.irc_RPL_TOPIC = function(prefix, params) {
+  },  
+  irc_RPL_TOPIC: function(prefix, params) {
     var channel = params[1];
     var topic = params.indexFromEnd(-1);
     
-    if(self.channels[channel]) {
-      view.initialTopic(channel, topic);
+    if(this.channels[channel]) {
+      this.initialTopic(channel, topic);
       return true;
     }
-  }
-  
-  this.irc_RPL_TOPICWHOTIME = function(prefix, params) {
+  },  
+  irc_RPL_TOPICWHOTIME: function(prefix, params) {
     return true;
   }
-  
-  this.connection = new IRCConnection({initialNickname: nickname, onRecv: this.dispatch});
-  
-  this.send = this.connection.send.bind(this.connection);
-  this.connect = this.connection.connect.bind(this.connection);
-  this.disconnect = this.connection.disconnect;
-}
+});
