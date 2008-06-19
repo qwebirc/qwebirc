@@ -29,7 +29,7 @@ function empty(y) {
   return true;
 }
 
-function ANI(p, d) {
+function indexFromEnd(p, d) {
   if(d < 0)
     return p[p.length + d];
 
@@ -89,13 +89,14 @@ MonthsOfYear = {
   10: "Nov",
   11: "Dec"
 };
-
-if(jQuery == undefined) {
+/*
+if(jQuery == undefined) {*/
   function getBrowserDetails() {
     return navigator.appName + " " + parseFloat(navigator.appVersion);
   }
+  /*
 } else {
   function getBrowserDetails() {
     alert(jQuery.browser);
   }  
-}
+}*/

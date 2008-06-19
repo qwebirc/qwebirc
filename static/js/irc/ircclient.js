@@ -2,13 +2,20 @@ function IRCClient(nickname, ui, autojoin) {
   var self = this;
   this.prefixes = "@+";
   this.modeprefixes = "ov";
+  this.windows = {};
   
   var newLine = function(window, type, data) {
     if(!data)
       data = {};
       
-    ui.newLine(window, type, data);
+    var w = self.getWindow(window);
+    if(w) {
+      w.addLine(type, data);
+    } else {
+      self.statusWindow.addLine(type, data);
+    }
   }
+  this.newLine = newLine;
   
   var newChanLine = function(channel, type, user, extra) {
     if(!extra)
@@ -23,11 +30,11 @@ function IRCClient(nickname, ui, autojoin) {
   }
   
   var newServerLine = function(type, data) {
-    newLine("", type, data);
+    self.statusWindow.addLine(type, data);
   }
 
   var newActiveLine = function(type, data) {
-    newLine(false, type, data);
+    ui.getActiveWindow().addLine(type, data);
   }
   
   this.rawNumeric = function(numeric, prefix, params) {
@@ -40,7 +47,7 @@ function IRCClient(nickname, ui, autojoin) {
     newServerLine("SIGNON");
     
     if(autojoin)
-      self.send("JOIN " + autojoin);
+      self.__send("JOIN " + autojoin);
   }
 
   this.updateNickList = function(channel) {
@@ -71,17 +78,38 @@ function IRCClient(nickname, ui, autojoin) {
     forEach(names, function(name) {
       sortednames.push(nh[name]);
     });
-    ui.updateNickList(channel, sortednames);
+    
+    var w = self.getWindow(channel);
+    if(w)
+      w.updateNickList(sortednames);
+  }
+  
+  this.getWindow = function(name) {
+    return self.windows[name];
+  }
+  
+  this.newWindow = function(name, type, select) {
+    var w = self.getWindow(name);
+    if(!w) {
+      w = self.windows[name] = ui.newWindow(self, type, name);
+      
+      w.addEvent("close", function(w) {
+        delete self.windows[name];
+      });
+    }
+    
+    if(select)
+      ui.selectWindow(w);
+      
+    return w;
   }
   
   this.userJoined = function(user, channel) {
     var nick = hosttonick(user);
     var host = hosttohost(user);
     
-    if(nick == self.nickname) {
-      ui.newWindow(channel, true);
-      ui.selectTab(channel);
-    }
+    if((nick == self.nickname) && !self.getWindow(channel))
+      self.newWindow(channel, WINDOW_CHANNEL, true);
     self.tracker.addNickToChannel(nick, channel);
 
     newChanLine(channel, "JOIN", user);
@@ -102,14 +130,15 @@ function IRCClient(nickname, ui, autojoin) {
   
     self.updateNickList(channel);
     
-    if(nick == self.nickname)
-      ui.closeWindow(channel);      
+    var w = self.getWindow(channel)
+    if(w)
+      w.close();
   }
 
   this.userKicked = function(kicker, channel, kickee, message) {
     if(kickee == self.nickname) {
       self.tracker.removeChannel(channel);
-      ui.closeWindow(channel);
+      self.getWindow(channel).close();
     } else {
       self.tracker.removeNickFromChannel(kickee, channel);
       self.updateNickList(channel);
@@ -180,14 +209,14 @@ function IRCClient(nickname, ui, autojoin) {
   
   this.channelTopic = function(user, channel, topic) {
     newChanLine(channel, "TOPIC", user, {"m": topic});
-    ui.updateTopic(channel, topic);
+    self.getWindow(channel).updateTopic(topic);
   }
   
   this.initialTopic = function(channel, topic) {
-    ui.updateTopic(channel, topic);
+    self.getWindow(channel).updateTopic(topic);
   }
   
-  this.chanCTCP = function(user, channel, type, args) {
+  this.channelCTCP = function(user, channel, type, args) {
     if(args == undefined)
       args = "";
 
@@ -206,12 +235,12 @@ function IRCClient(nickname, ui, autojoin) {
       args = "";
     
     if(type == "ACTION") {      
-      ui.newWindow(nick, false);
+      self.newWindow(nick, WINDOW_QUERY);
       newLine(nick, "PRIVACTION", {"m": args, "x": type, "h": host, "n": nick});
       return;
     }
     
-    if(ui.getWindow(nick)) {
+    if(self.getWindow(nick)) {
       newLine(nick, "PRIVCTCP", {"m": args, "x": type, "h": host, "n": nick, "-": self.nickname});
     } else {
       newActiveLine("PRIVCTCP", {"m": args, "x": type, "h": host, "n": nick, "-": self.nickname});
@@ -224,7 +253,7 @@ function IRCClient(nickname, ui, autojoin) {
     if(args == undefined)
       args = "";
     
-    if(ui.getWindow(nick)) {
+    if(self.getWindow(nick)) {
       newLine(nick, "CTCPREPLY", {"m": args, "x": type, "h": host, "n": nick, "-": self.nickname});
     } else {
       newActiveLine("CTCPREPLY", {"m": args, "x": type, "h": host, "n": nick, "-": self.nickname});
@@ -242,7 +271,9 @@ function IRCClient(nickname, ui, autojoin) {
   this.userPrivmsg = function(user, message) {
     var nick = hosttonick(user);
     var host = hosttohost(user);
-    ui.newWindow(nick, false);
+    
+    self.newWindow(nick, WINDOW_QUERY);
+    
     newLine(nick, "PRIVMSG", {"m": message, "h": host, "n": nick});
   }
   
@@ -254,7 +285,7 @@ function IRCClient(nickname, ui, autojoin) {
     var nick = hosttonick(user);
     var host = hosttohost(user);
 
-    if(ui.getWindow(nick)) {
+    if(self.getWindow(nick)) {
       newLine(nick, "PRIVNOTICE", {"m": message, "h": host, "n": nick});
     } else {
       newActiveLine("PRIVNOTICE", {"m": message, "h": host, "n": nick});
@@ -346,15 +377,23 @@ function IRCClient(nickname, ui, autojoin) {
   this.serverError = function(message) {
     newServerLine("ERROR", {"m": message});
   }
-  
-  this.parent = new BaseIRCClient(nickname, this);
-  this.send = this.parent.send;
-  this.commandparser = new CommandParser(ui, this.parent.send);
-  ui.send = this.commandparser.dispatch;
-  ui.getNickname = function() {
+
+  this.getActiveWindow = function() {
+    return ui.getActiveWindow();
+  }
+    
+  this.getNickname = function() {
     return self.nickname;
   }
   
+  this.parent = new BaseIRCClient(nickname, this);
+  this.__send = this.parent.send;
+  
+  this.commandparser = new CommandParser(this);
+  this.dispatch = this.commandparser.dispatch
+
+  this.statusWindow = ui.newClient(self);
+
   this.connect = this.parent.connect;
   this.disconnect = this.parent.disconnect;
 }

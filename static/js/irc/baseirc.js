@@ -90,7 +90,7 @@ function BaseIRCClient(nickname, view) {
   this.irc_QUIT = function(prefix, params) {
     var user = prefix;
     
-    var message = ANI(params, -1);
+    var message = indexFromEnd(params, -1);
     
     view.userQuit(user, message);
     
@@ -125,7 +125,7 @@ function BaseIRCClient(nickname, view) {
   }
   
   this.irc_PING = function(prefix, params) {
-    self.send("PONG :" + ANI(params, -1));
+    self.send("PONG :" + indexFromEnd(params, -1));
     
     return true;
   }
@@ -146,7 +146,7 @@ function BaseIRCClient(nickname, view) {
   this.irc_TOPIC = function(prefix, params) {
     var user = prefix;
     var channel = params[0];
-    var topic = ANI(params, -1);
+    var topic = indexFromEnd(params, -1);
     
     view.channelTopic(user, channel, topic);
     
@@ -167,7 +167,7 @@ function BaseIRCClient(nickname, view) {
   this.irc_PRIVMSG = function(prefix, params) {
     var user = prefix;
     var target = params[0];
-    var message = ANI(params, -1);
+    var message = indexFromEnd(params, -1);
     
     var ctcp = processCTCP(message);
     if(ctcp) {
@@ -200,7 +200,7 @@ function BaseIRCClient(nickname, view) {
   this.irc_NOTICE = function(prefix, params) {
     var user = prefix;
     var target = params[0];
-    var message = ANI(params, -1);
+    var message = indexFromEnd(params, -1);
     
     if(user == "") {
       view.serverNotice(message);
@@ -220,7 +220,7 @@ function BaseIRCClient(nickname, view) {
 
   this.irc_INVITE = function(prefix, params) {
     var user = prefix;
-    var channel = ANI(params, -1);
+    var channel = indexFromEnd(params, -1);
     
     view.userInvite(user, channel);
     
@@ -228,7 +228,7 @@ function BaseIRCClient(nickname, view) {
   }
 
   this.irc_ERROR = function(prefix, params) {
-    var message = ANI(params, -1);
+    var message = indexFromEnd(params, -1);
     
     view.serverError(message);
     
@@ -312,7 +312,7 @@ function BaseIRCClient(nickname, view) {
   
   this.irc_RPL_TOPIC = function(prefix, params) {
     var channel = params[1];
-    var topic = ANI(params, -1);
+    var topic = indexFromEnd(params, -1);
     
     if(self.channels[channel]) {
       view.initialTopic(channel, topic);

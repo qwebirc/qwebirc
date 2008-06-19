@@ -7,6 +7,7 @@
   <script type="text/javascript" src="js/mootools-1.2-core.js"></script>
   <script type="text/javascript" src="js/version.js"></script>
   <script type="text/javascript" src="js/jslib.js"></script>
+  <script type="text/javascript" src="js/ui/uibase.js"></script>
   <script type="text/javascript" src="js/ui/colour.js"></script>
   <script type="text/javascript" src="js/ui/basetheme.js"></script>
   <script type="text/javascript" src="js/ui/theme.js"></script>
@@ -18,32 +19,14 @@
   <script type="text/javascript" src="js/irc/commandparser.js"></script>
   <script type="text/javascript" src="js/irc/ircclient.js"></script>
   <script type="text/javascript">  
-    var ui;
-    
-    function fnp(x, data) {
-      ui.windowLine(x, data);
-    }
-
-    function updatenicklist(channel, nicks) {
-      ui.updateNickList(channel, nicks);
-    }
-    
-    function updatetopic(channel, topic) {
-      ui.updateTopic(channel, topic);
-    }
-    
     window.addEvent("domready", function() {
       var theme = new Theme();
-      ui = new UglyUI($("ircui"), theme);
-      
-      ui.newWindow("", false, "Status");
-      ui.selectTab("");
-      ui.newLine("", "", "Welcome to qwebirc v" + QWEBIRC_VERSION + " --- comments/bugs to slug@quakenet.org.", "#f99");
+      var ui = new UglyUI($("ircui"), theme);
 
-      var IRC = new IRCClient(prompt("Nickname","uberfish"), ui);
+      var IRC = new IRCClient("mcgoogle", ui);
+      
       IRC.connect();
     });
-
   </script>
 </head>
 <body>
