@@ -8,3 +8,4 @@ dropin.cache
 *.tap
 *.pyc
 *.log*
+*.pid
