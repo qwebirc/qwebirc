@@ -12,33 +12,44 @@ var IRCConnection = new Class({
     this.disconnected = false;
   },
   send: function(data) {
+    if(this.disconnected)
+      return;
     var r = new Request.JSON({url: "/e/p/" + this.sessionid + "?c=" + encodeURIComponent(data) + "&t=" + this.counter++, onComplete: function(o) {
-      if(o[0] == false)
-        alert("An error occured: " + o[1]);
-    }});
+      if(!o || (o[0] == false)) {
+        if(!this.disconnected) {
+          this.disconnected = true;
+          alert("An error occured: " + o[1]);
+        }
+      }
+    }.bind(this)});
     
     r.get();
   },
-  x: function() {
-    this.fireEvent("recv", [[false, "moo"]]);
-  },
   recv: function() {
-    if(this.disconnected)
-      return;
-      
     var r = new Request.JSON({url: "/e/s/" + this.sessionid + "?t=" + this.counter++, onComplete: function(o) {
       if(o) {
         if(o[0] == false) {
-          alert("An error occured: " + o[1]);
+          if(!this.disconnected) {
+            this.disconnected = true;
+
+            alert("An error occured: " + o[1]);
+          }
           return;
         }
         o.each(function(x) {
           this.fireEvent("recv", [x]);
         }, this);
+      } else {
+        if(!this.disconnected) {
+          this.disconnected = true;
+
+          alert("An unknown error occured.");
+        }
+        return;
       }
       
       this.recv();
-    }.bind(this)});    
+    }.bind(this)});
     r.get();
   },
   connect: function() {

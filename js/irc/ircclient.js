@@ -341,13 +341,13 @@ var IRCClient = new Class({
       }, this);
     }, this);
   },
-  disconnected: function() {
+  disconnected: function(message) {
     for(var x in this.parent.channels)
       this.ui.closeWindow(x);
 
     this.tracker = undefined;
     
-    this.newServerLine("DISCONNECT");
+    this.newServerLine("DISCONNECT", {"m": message});
   },
   supported: function(key, value) {
     if(key == "PREFIX") {

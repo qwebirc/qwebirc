@@ -15,7 +15,7 @@ def hmacfn(*args):
 
 class QWebIRCClient(basic.LineReceiver):
   delimiter = "\n"
-  
+
   def dataReceived(self, data):
     basic.LineReceiver.dataReceived(self, data.replace("\r", ""))
 
@@ -47,6 +47,7 @@ class QWebIRCClient(basic.LineReceiver):
   def connectionMade(self):
     basic.LineReceiver.connectionMade(self)
     
+    self.lastError = None
     f = self.factory.ircinit
     nick, ident, ip, realname = f["nick"], f["ident"], f["ip"], f["realname"]
     
@@ -58,9 +59,21 @@ class QWebIRCClient(basic.LineReceiver):
     self("connect")
 
   def connectionLost(self, reason):
+    if self.lastError:
+      self.disconnect("Connection to IRC server lost: %s" % self.lastError)
+    else:
+      self.disconnect("Connection to IRC server lost.")
     self.factory.client = None
     basic.LineReceiver.connectionLost(self, reason)
-    self("disconnect")
+
+  def error(self, message):
+    self.lastError = message
+    self.write("QUIT :qwebirc exception: %s" % message)
+    self.transport.loseConnection()
+
+  def disconnect(self, reason):
+    self("disconnect", reason)
+    self.factory.publisher.disconnect()
     
 class QWebIRCFactory(protocol.ClientFactory):
   protocol = QWebIRCClient
@@ -71,7 +84,14 @@ class QWebIRCFactory(protocol.ClientFactory):
     
   def write(self, data):
     self.client.write(data)
-    
+
+  def error(self, reason):
+    self.client.error(reason)
+
+  def clientConnectionFailed(self, reason):
+    protocol.ClientFactory.clientConnectionFailed(reason)
+    self.client.disconnect("Connection to IRC server failed.")
+
 def createIRC(*args, **kwargs):
   f = QWebIRCFactory(*args, **kwargs)
   reactor.connectTCP(config.IRCSERVER, config.IRCPORT, f)

@@ -29,14 +29,19 @@ var BaseIRCClient = new Class({
   
     this.send = this.connection.send.bind(this.connection);
     this.connect = this.connection.connect.bind(this.connection);
-    this.disconnect = this.connection.disconnect;
+    this.disconnect = this.connection.disconnect.bind(this.connection);
   },
   dispatch: function(data) {
     var message = data[0];
     if(message == "connect") {
       this.connected();
     } else if(message == "disconnect") {
-      this.disconnected();
+      if(data.length == 0) {
+        this.disconnected("No error!");
+      } else {
+        this.disconnected(data[1]);
+      }
+      this.disconnect();
     } else if(message == "c") {
       var command = data[1].toUpperCase();
        

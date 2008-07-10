@@ -1,3 +1,3 @@
 #!/bin/sh
 export PYTHONPATH=.:${PYTHONPATH}
-twistd qwebirc
+twistd qwebirc -n

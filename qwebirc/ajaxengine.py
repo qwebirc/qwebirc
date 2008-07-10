@@ -1,13 +1,17 @@
 from twisted.web import resource, server, static
 from twisted.names import client
 from twisted.internet import reactor
-import simplejson, md5, sys, os, ircclient, time, config
+import traceback
+import simplejson, md5, sys, os, ircclient, time, config, weakref
 
 Sessions = {}
 
 def get_session_id():
-  return md5.md5(os.urandom(16)).hexdigest()
-  
+  return md5.md5(os.urandom(16)).hexdigest()[:10]
+
+class BufferOverflowException(Exception):
+  pass
+
 def jsondump(fn):
   def decorator(*args, **kwargs):
     x = fn(*args, **kwargs)
@@ -16,6 +20,12 @@ def jsondump(fn):
     return x
   return decorator
 
+def cleanupSession(id):
+  try:
+    del Sessions[id]
+  except KeyError:
+    pass
+
 class IRCSession:
   def __init__(self, id):
     self.id = id
@@ -23,7 +33,9 @@ class IRCSession:
     self.buffer = []
     self.throttle = 0
     self.schedule = None
-    
+    self.closed = False
+    self.cleanupschedule = None
+
   def subscribe(self, channel):
     self.subscriptions.append(channel)
     self.flush()
@@ -59,14 +71,30 @@ class IRCSession:
         newsubs.append(x)
 
     self.subscriptions = newsubs
-     
+    if self.closed and not self.subscriptions:
+      cleanupSession(self.id)
+
   def event(self, data):
+    bufferlen = sum(map(len, self.buffer))
+    if bufferlen + len(data) > config.MAXBUFLEN:
+      self.buffer = []
+      self.client.error("Buffer overflow")
+      return
+
     self.buffer.append(data)
     self.flush()
     
   def push(self, data):
-    self.client.write(data)
- 
+    if not self.closed:
+      self.client.write(data)
+
+  def disconnect(self):
+    # keep the session hanging around for a few seconds so the
+    # client has a chance to see what the issue was
+    self.closed = True
+
+    reactor.callLater(5, cleanupSession, self.id)
+
 class Channel:
   def __init__(self, request):
     self.request = request
@@ -141,7 +169,17 @@ class AJAXEngine(resource.Resource):
         decoded = command.decode("utf-8")
       except UnicodeDecodeError:
         decoded = command.decode("iso-8859-1", "ignore")
-      session.push(decoded)
+
+      try:
+        session.push(decoded)
+      except AttributeError: # occurs when we haven't noticed an error
+        session.disconnect()
+        return [False, "Connection closed by server."]
+      except Exception, e: # catch all
+        session.disconnect()        
+        traceback.print_exc(file=sys.stderr)
+        return [False, "Unknown error."]
+    
       return [True]
 
     return [False, "404"]

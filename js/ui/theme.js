@@ -11,7 +11,7 @@ var DefaultTheme = {
   "SIGNON": ["Signed on!", true],
   "CONNECT": ["Connected to server.", true],
   "RAW": ["$m", true],
-  "DISCONNECT": ["Disconnected from server.", true],
+  "DISCONNECT": ["Disconnected from server: $m", true],
   "ERROR": ["ERROR: $m", true],
   "SERVERNOTICE": ["$m", true],
   "JOIN": ["$n [$h] has joined $c", true],
