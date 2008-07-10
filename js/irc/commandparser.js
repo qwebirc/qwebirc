@@ -69,11 +69,14 @@ var CommandParser = new Class({
         return;
       }
     
-      if(splitargs != undefined)
+      if((splitargs != undefined) && (args != undefined))
         args = args.splitMax(" ", splitargs);
       
-      if((minargs != undefined) && (minargs > args.length)) {
-        w.errorMessage("Insufficient arguments for command.")
+      if((minargs != undefined) && (
+           ((args != undefined) && (minargs > args.length)) ||
+           ((args == undefined) && (minargs > 0))
+         )) {
+        w.errorMessage("Insufficient arguments for command.");
         return;
       }
       
@@ -101,9 +104,11 @@ var CommandParser = new Class({
       message = "";
 
     if(message == "") {
-      this.send("PRIVMSG " + target + " :\x01" + type + "\x01");
+      if(!this.send("PRIVMSG " + target + " :\x01" + type + "\x01"))
+        return;
     } else {
-      this.send("PRIVMSG " + target + " :\x01" + type + " " + message + "\x01");
+      if(!this.send("PRIVMSG " + target + " :\x01" + type + " " + message + "\x01"))
+        return;
     }
   
     this.newTargetLine(target, "CTCP", message, {"x": type});
@@ -112,16 +117,15 @@ var CommandParser = new Class({
     var target = args[0];
     var message = args[1];
     
-    this.newTargetLine(target, "MSG", message, {});
-    
-    this.send("PRIVMSG " + target + " :" + message);
+    if(this.send("PRIVMSG " + target + " :" + message))
+      this.newTargetLine(target, "MSG", message, {});  
   }],
   cmd_NOTICE: [false, 2, 2, function(args) {
     var target = args[0];
     var message = args[1];
 
-    this.newTargetLine(target, "NOTICE", message);
-    this.send("NOTICE " + target + " :" + message);
+    if(this.send("NOTICE " + target + " :" + message))
+      this.newTargetLine(target, "NOTICE", message);
   }],
   cmd_QUERY: [false, 2, 1, function(args) {
     this.parentObject.newWindow(args[0], WINDOW_QUERY, true);

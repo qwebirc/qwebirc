@@ -142,7 +142,7 @@ var BaseIRCClient = new Class({
         
     if(nick == this.nickname)
       this.channels[channel] = true;
-    
+
     this.userJoined(user, channel);
     
     return true;

@@ -1,6 +1,6 @@
-WINDOW_STATUS = 1;
-WINDOW_QUERY = 2;
-WINDOW_CHANNEL = 3;
+var WINDOW_STATUS = 1;
+var WINDOW_QUERY = 2;
+var WINDOW_CHANNEL = 3;
 
 var UIWindow = new Class({
   Implements: [Events],

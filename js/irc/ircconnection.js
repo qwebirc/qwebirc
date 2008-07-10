@@ -13,17 +13,19 @@ var IRCConnection = new Class({
   },
   send: function(data) {
     if(this.disconnected)
-      return;
+      return false;
     var r = new Request.JSON({url: "/e/p/" + this.sessionid + "?c=" + encodeURIComponent(data) + "&t=" + this.counter++, onComplete: function(o) {
       if(!o || (o[0] == false)) {
         if(!this.disconnected) {
           this.disconnected = true;
           alert("An error occured: " + o[1]);
         }
+        return false;
       }
     }.bind(this)});
     
     r.get();
+    return true;
   },
   recv: function() {
     var r = new Request.JSON({url: "/e/s/" + this.sessionid + "?t=" + this.counter++, onComplete: function(o) {
@@ -43,7 +45,7 @@ var IRCConnection = new Class({
         if(!this.disconnected) {
           this.disconnected = true;
 
-          alert("An unknown error occured.");
+          alert("Error: the server closed the connection.");
         }
         return;
       }

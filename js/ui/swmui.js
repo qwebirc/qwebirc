@@ -104,7 +104,7 @@ var SWMUIWindow = new Class({
     var e = new Element("div");
 
     if(colour) {
-      e.addStyle("background", colour);
+      e.setStyles({"background": colour});
     } else if(this.lastcolour) {
       e.addClass("linestyle1");
     } else {

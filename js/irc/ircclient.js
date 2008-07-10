@@ -342,9 +342,11 @@ var IRCClient = new Class({
     }, this);
   },
   disconnected: function(message) {
-    for(var x in this.parent.channels)
-      this.ui.closeWindow(x);
-
+    for(var x in this.windows) {
+      var w = this.windows[x];
+      if(w.type == WINDOW_CHANNEL)
+        w.close();
+    }
     this.tracker = undefined;
     
     this.newServerLine("DISCONNECT", {"m": message});
