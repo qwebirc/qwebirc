@@ -51,7 +51,7 @@ var IRCConnection = new Class({
       
       this.recv();    
     }.bind(this)});
-    r.get();
+    r.post();
   },
   disconnect: function() {
     this.disconnected = true;

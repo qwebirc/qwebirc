@@ -89,7 +89,7 @@ class AJAXEngine(resource.Resource):
     self.prefix = prefix
 
   @jsondump
-  def render_GET(self, request):
+  def render_POST(self, request):
     path = request.path[len(self.prefix):]
     if path == "/n":
       ip = request.transport.getPeer()
@@ -110,8 +110,12 @@ class AJAXEngine(resource.Resource):
       
       Sessions[id] = session
       
-      return [True, id]
-          
+      return [True, id]    
+    return [False, "404"]
+
+  @jsondump
+  def render_GET(self, request):
+    path = request.path[len(self.prefix):]
     if path.startswith("/s/"):
       sessionid = path[3:]
       session = Sessions.get(sessionid)
@@ -141,4 +145,3 @@ class AJAXEngine(resource.Resource):
       return [True]
 
     return [False, "404"]
-
