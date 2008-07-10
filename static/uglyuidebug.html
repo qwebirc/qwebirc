@@ -25,8 +25,12 @@
       var theme = new Theme();
       var ui = new UglyUI($("ircui"), theme);
 
-      var IRC = new IRCClient({nickname: "mcgoogle"}, ui);
-      IRC.connect();
+      /* TODO: look at URI and detect nickname/channels... */
+
+      var details = ui.loginBox(function(nickname, channels) {
+        var IRC = new IRCClient({nickname: nickname, "autojoin": channels}, ui);
+        IRC.connect();
+      })
     });
   </script>
 </head>

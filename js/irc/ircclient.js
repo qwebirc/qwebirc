@@ -130,8 +130,8 @@ var IRCClient = new Class({
     this.nickname = nickname;
     this.newServerLine("SIGNON");
     
-    if(this.autojoin)
-      this.send("JOIN " + this.autojoin);
+    if(this.options.autojoin)
+      this.send("JOIN " + this.options.autojoin);
   },
   userJoined: function(user, channel) {
     var nick = user.hostToNick();

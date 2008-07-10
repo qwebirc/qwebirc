@@ -89,5 +89,26 @@ var UI = new Class({
     }
     
     delete this.windows[window.client][window.identifier];
+  },
+  loginBox: function(callback) {
+    /*
+      this shouldn't be called by overriding classes!
+      some form of user input MUST be received before an
+      IRC connection is made, else users are going to get
+      tricked into getting themselves glined
+    */
+
+    var nick = prompt("Nickname:");
+    if(!nick) {
+      alert("Aborted.");
+      return;
+    }
+
+    var chans = prompt("Channels (seperate by comma):", "#quakenetX");
+    if(chans) {
+      callback(nick, chans);
+    } else {
+      callback(nick);
+    }
   }
 });
