@@ -42,12 +42,17 @@ var UI = new Class({
     this.parentElement = parentElement;
     this.parentElement.addClass("qwebirc");
     this.parentElement.addClass("qwebirc-" + uiName);
+    this.firstClient = false;
   },
   newClient: function(client) {
     this.windows[client] = {}
     var w = this.newWindow(client, WINDOW_STATUS, "Status");
     this.selectWindow(w);
-    
+    if(!this.firstClient) {
+      this.firstClient = true;
+      w.addLine("", "qwebirc v" + QWEBIRC_VERSION + " -- Copyright (C) 2008 Chris Porter. All rights reserved.");
+      w.addLine("", "http://webchat.quakenet.org/");
+    }
     return w;
   },
   newWindow: function(client, type, name) {
