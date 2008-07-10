@@ -7,20 +7,20 @@ cat version.js jslib.js irc/ircconnection.js irc/irclib.js irc/baseirc.js irc/ir
 cat ui/swmlayout.js ui/swmui.js > ../compiled/swmui-concat.js
 cd ../compiled
 
-function error() {
+error() {
   cd ..
   rm compiled/*-compiled.js
   exit 1
 }
 
-function jarit() {
+jarit() {
   java -jar ../bin/yuicompressor-2.3.5.jar $1.js > $2-compiled.js
   if [ "$?" != 0 ]; then
     error
   fi
 }
 
-function catit() {
+catit() {
   cat js/copyright.js compiled/$1-compiled.js > static/js/$1.js
 }
 
