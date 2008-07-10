@@ -233,7 +233,7 @@ var SWMUI = new Class({
 
       this.parentElement.removeChild(box);
       this.postInitialize();
-      callback(nickname, chans);
+      callback({"nickname": nickname, "autojoin": chans});
     }.bind(this));
 
     box.appendChild(form);

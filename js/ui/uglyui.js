@@ -137,18 +137,19 @@ var UglyUI = new Class({
   Extends: UI,
   initialize: function(parentElement, theme) {
     this.parent(parentElement, UglyUIWindow, "uglyui");
-    
     this.theme = theme;
-    
+    this.parentElement = parentElement;
+  },
+  postInitialize: function() {    
     this.tabs = new Element("div");
     this.tabs.addClass("tabbar");
     
-    parentElement.appendChild(this.tabs);
+    this.parentElement.appendChild(this.tabs);
     
     this.container = new Element("div");
     this.container.addClass("container");
     
-    parentElement.appendChild(this.container);
+    this.parentElement.appendChild(this.container);
   
     var form = new Element("form");
     var inputbox = new Element("input");
@@ -160,8 +161,15 @@ var UglyUI = new Class({
       this.getActiveWindow().client.exec(inputbox.value);
       inputbox.value = "";
     }.bind(this));
-    parentElement.appendChild(form);  
+    this.parentElement.appendChild(form);  
     form.appendChild(inputbox);
     inputbox.focus();
+  },
+  loginBox: function(callbackfn) {
+    this.parent(function(options) {
+      this.postInitialize();
+      callbackfn(options);
+    }.bind(this));
   }
 });
+

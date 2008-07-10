@@ -27,10 +27,10 @@
 
       /* TODO: look at URI and detect nickname/channels... */
 
-      var details = ui.loginBox(function(nickname, channels) {
-        var IRC = new IRCClient({nickname: nickname, "autojoin": channels}, ui);
+      var details = ui.loginBox(function(options) {
+        var IRC = new IRCClient(options, ui);
         IRC.connect();
-      })
+      });
     });
   </script>
 </head>

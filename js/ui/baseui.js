@@ -105,10 +105,6 @@ var UI = new Class({
     }
 
     var chans = prompt("Channels (seperate by comma):", "#quakenetX");
-    if(chans) {
-      callback(nick, chans);
-    } else {
-      callback(nick);
-    }
+    callback({"nickname": nick, "autojoin": chans});
   }
 });
