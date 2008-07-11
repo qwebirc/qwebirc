@@ -230,6 +230,8 @@ var IRCClient = new Class({
       /* TODO: rename queries */
       this.updateNickList(c);
     }
+
+    this.newChanLine(undefined, "NICK", user, {"w": newnick});
   },
   channelTopic: function(user, channel, topic) {
     this.newChanLine(channel, "TOPIC", user, {"m": topic});

@@ -88,12 +88,15 @@ var CommandParser = new Class({
       args = ret[1];
     }
   },
-  
-  
   cmd_ME: [true, undefined, undefined, function(args) {
     if(args == undefined)
       args = "";
-    return ["SAY", "\x01ACTION " + args + "\x01"];
+
+    var target = this.parentObject.getActiveWindow().name;
+    if(!this.send("PRIVMSG " + target + " :\x01ACTION " + args + "\x01"))
+      return;
+
+    this.newTargetLine(target, "ACTION", args);
   }],
   cmd_CTCP: [false, 3, 2, function(args) {
     var target = args[0];
