@@ -18,8 +18,10 @@ var UI = new Class({
     this.selectWindow(w);
     if(!this.firstClient) {
       this.firstClient = true;
-      w.addLine("", "qwebirc v" + QWEBIRC_VERSION + " -- Copyright (C) 2008 Chris Porter. All rights reserved.");
+      w.addLine("", "qwebirc v" + QWEBIRC_VERSION);
+      w.addLine("", "Copyright (C) 2008 Chris Porter. All rights reserved.");
       w.addLine("", "http://webchat.quakenet.org/");
+      w.addLine("", "This is BETA quality software, please report bugs to slug@quakenet.org");
     }
     return w;
   },

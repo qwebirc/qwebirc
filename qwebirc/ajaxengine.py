@@ -12,6 +12,9 @@ def get_session_id():
 class BufferOverflowException(Exception):
   pass
 
+class IDGenerationException(Exception):
+  pass
+
 def jsondump(fn):
   def decorator(*args, **kwargs):
     x = fn(*args, **kwargs)
@@ -131,12 +134,17 @@ class AJAXEngine(resource.Resource):
         return [False, "Nickname not supplied"]
         
       nick = nick[0]
-      
-      id = get_session_id()
-      
+
+      for i in xrange(10):
+        id = get_session_id()
+        if not Sessions.get(id):
+          break
+      else:
+        raise IDGenerationException()
+
       session = IRCSession(id)
 
-      client = ircclient.createIRC(session, nick=nick, ident=ident, ip=ip, realname=nick)
+      client = ircclient.createIRC(session, nick=nick, ident=ident, ip=ip, realname=config.REALNAME)
       session.client = client
       
       Sessions[id] = session
