@@ -1,8 +1,8 @@
 TODO:
   - isp transparent proxy issue
   - tidy up UI
-  - connect UI (do with newUI?)
-  - better error handling server side
-  - better error handling client side
-  - figure out how to disable twisted error pages
+  - better colour scheme
   - IE6
+  - IE
+  - Safari
+  - Opera
