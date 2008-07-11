@@ -9,3 +9,4 @@ dropin.cache
 *.pyc
 *.log*
 *.pid
+defargs.conf
