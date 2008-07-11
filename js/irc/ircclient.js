@@ -141,7 +141,11 @@ var IRCClient = new Class({
       this.newWindow(channel, WINDOW_CHANNEL, true);
     this.tracker.addNickToChannel(nick, channel);
 
-    this.newChanLine(channel, "JOIN", user);
+    if(nick == this.nickname) {
+      this.newChanLine(channel, "OURJOIN", user);
+    } else {
+      this.newChanLine(channel, "JOIN", user);
+    }
     this.updateNickList(channel);
   },
   userPart: function(user, channel, message) {

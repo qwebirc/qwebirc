@@ -15,6 +15,7 @@ var DefaultTheme = {
   "ERROR": ["ERROR: $m", true],
   "SERVERNOTICE": ["$m", true],
   "JOIN": ["$n [$h] has joined $c", true],
+  "OURJOIN": ["$n [$h] has joined $c", true],
   "PART": ["$n [$h] has left $c [$m]", true],
   "KICK": ["$v was kicked from $c by $n [$m]", true],
   "MODE": ["mode/$c [$m] by $n", true],
