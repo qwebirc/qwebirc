@@ -177,49 +177,44 @@ var SWMUI = new Class({
   },
   loginBox: function(callback, initialNickname, initialChannels) {
     var box = new Element("div");
+    this.parentElement.appendChild(box);
 
     var header = new Element("h1");
     header.set("text", "qwebirc");
     box.appendChild(header);
 
     var form = new Element("form");
+    box.appendChild(form);
 
     var boxtable = new Element("table");
+    form.appendChild(boxtable);
 
-    var nickrow = new Element("tr");
-    var nicklabel = new Element("td");
-    nicklabel.set("text", "Nickname:");
-    nickrow.appendChild(nicklabel);
+    var tbody = new Element("tbody");
+    boxtable.appendChild(tbody); /* stupid IE */
 
-    var nickbox = new Element("td");
+    function createRow(label, e2) {
+      var r = new Element("tr");
+      tbody.appendChild(r);
+
+      var d1 = new Element("td");
+      if(label)
+        d1.set("text", label);
+      r.appendChild(d1);
+
+      var d2 = new Element("td");
+      r.appendChild(d2);
+      d2.appendChild(e2);
+      return d1;
+    }
+
     var nick = new Element("input");
-    nickbox.appendChild(nick);
-    nickrow.appendChild(nickbox);
-
-    var chanrow = new Element("tr");
-    var chanlabel = new Element("td");
-    chanlabel.set("text", "Channels (comma seperated):");
-    chanrow.appendChild(chanlabel);
-
-    var chanbox = new Element("td");
+    createRow("Nickname:", nick);
     var chan = new Element("input");
-    chanbox.appendChild(chan);
-    chanrow.appendChild(chanbox);
+    createRow("Channels (comma seperated):", chan);
 
-    var connrow = new Element("tr");
-    var connblank = new Element("td");
-    var connbuttontd = new Element("td");
     var connbutton = new Element("input", {"type": "submit"});
     connbutton.set("value", "Connect");
-    connbuttontd.appendChild(connbutton);
-
-    connrow.appendChild(connblank);
-    connrow.appendChild(connbuttontd);
-
-    boxtable.appendChild(nickrow);
-    boxtable.appendChild(chanrow);
-    boxtable.appendChild(connrow);
-    form.appendChild(boxtable);
+    createRow(undefined, connbutton)
 
     form.addEvent("submit", function(e) {
       new Event(e).stop();
@@ -238,9 +233,6 @@ var SWMUI = new Class({
       this.postInitialize();
       callback({"nickname": nickname, "autojoin": chans});
     }.bind(this));
-
-    box.appendChild(form);
-    this.parentElement.appendChild(box);
 
     nick.set("value", initialNickname);
     chan.set("value", initialChannels);
