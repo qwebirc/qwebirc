@@ -37,6 +37,9 @@ class IRCSession:
     self.cleanupschedule = None
 
   def subscribe(self, channel):
+    if len(self.subscriptions) >= config.MAXSUBSCRIPTIONS:
+      self.subscriptions.pop(0)
+
     self.subscriptions.append(channel)
     self.flush()
       
