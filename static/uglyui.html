@@ -6,32 +6,10 @@
   <link rel="stylesheet" href="css/colours.css" type="text/css">
   <link rel="stylesheet" href="css/uglyui.css" type="text/css">
   <script type="text/javascript" src="js/mootools-1.2-core.js"></script>
-  <!--<script type="text/javascript" src="js/debug/version.js"></script>
-  <script type="text/javascript" src="js/debug/jslib.js"></script>
-  <script type="text/javascript" src="js/debug/irc/ircconnection.js"></script>
-  <script type="text/javascript" src="js/debug/irc/irclib.js"></script>
-  <script type="text/javascript" src="js/debug/irc/baseirc.js"></script>
-  <script type="text/javascript" src="js/debug/irc/irctracker.js"></script>
-  <script type="text/javascript" src="js/debug/irc/commandparser.js"></script>
-  <script type="text/javascript" src="js/debug/irc/ircclient.js"></script>
-  <script type="text/javascript" src="js/debug/ui/baseui.js"></script>
-  <script type="text/javascript" src="js/debug/ui/colour.js"></script>
-  <script type="text/javascript" src="js/debug/ui/theme.js"></script>
-  <script type="text/javascript" src="js/debug/ui/uglyui.js"></script>-->
   <script type="text/javascript" src="js/qwebirc.js"></script>
   <script type="text/javascript" src="js/uglyui.js"></script>
-  <script type="text/javascript">  
-    window.addEvent("domready", function() {
-      var theme = new Theme();
-      var ui = new UglyUI($("ircui"), theme);
-
-      /* TODO: look at URI and detect nickname/channels... */
-
-      var details = ui.loginBox(function(options) {
-        var IRC = new IRCClient(options, ui);
-        IRC.connect();
-      });
-    });
+  <script type="text/javascript">
+    new QWebIRCInterface("ircui", UglyUI);
   </script>
 </head>
 <body>

@@ -106,7 +106,7 @@ var UglyUIWindow = new Class({
     var e = new Element("div");
 
     if(colour) {
-      e.addStyle("background", colour);
+      e.setStyles({"background": colour});
     } else if(this.lastcolour) {
       e.addClass("linestyle1");
     } else {
@@ -165,11 +165,11 @@ var UglyUI = new Class({
     form.appendChild(inputbox);
     inputbox.focus();
   },
-  loginBox: function(callbackfn) {
+  loginBox: function(callbackfn, intialNickname, initialChannels) {
     this.parent(function(options) {
       this.postInitialize();
       callbackfn(options);
-    }.bind(this));
+    }.bind(this), intialNickname, initialChannels);
   }
 });
 

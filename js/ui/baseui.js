@@ -95,7 +95,7 @@ var UI = new Class({
     
     delete this.windows[window.client][window.identifier];
   },
-  loginBox: function(callback) {
+  loginBox: function(callback, initialNickname, initialChannels) {
     /*
       this shouldn't be called by overriding classes!
       some form of user input MUST be received before an
@@ -103,13 +103,13 @@ var UI = new Class({
       tricked into getting themselves glined
     */
 
-    var nick = prompt("Nickname:");
+    var nick = prompt("Nickname:", initialNickname);
     if(!nick) {
       alert("Aborted.");
       return;
     }
 
-    var chans = prompt("Channels (seperate by comma):", "#quakenetX");
+    var chans = prompt("Channels (seperate by comma):", initialChannels);
     callback({"nickname": nick, "autojoin": chans});
   }
 });

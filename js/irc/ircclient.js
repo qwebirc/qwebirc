@@ -364,5 +364,9 @@ var IRCClient = new Class({
   },
   serverError: function(message) {
     this.newServerLine("ERROR", {"m": message});
+  },
+  quit: function(message) {
+    this.send("QUIT :" + message);
+    this.disconnect();
   }
 });

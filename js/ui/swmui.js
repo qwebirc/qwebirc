@@ -175,7 +175,7 @@ var SWMUI = new Class({
   resize: function() {
     window.fireEvent("resize");
   },
-  loginBox: function(callback) {
+  loginBox: function(callback, initialNickname, initialChannels) {
     var box = new Element("div");
 
     var header = new Element("h1");
@@ -225,6 +225,9 @@ var SWMUI = new Class({
       new Event(e).stop();
       var nickname = nick.value;
       var chans = chan.value;
+      if(chans == "#") /* sorry channel "#" :P */
+        chans = "";
+
       if(!nickname) {
         alert("You must supply a nickname.");
         nick.focus();
@@ -239,8 +242,8 @@ var SWMUI = new Class({
     box.appendChild(form);
     this.parentElement.appendChild(box);
 
-    nick.set("value", "qwebirc" + Math.ceil(Math.random() * 1000));
-    chan.set("value", "#");
+    nick.set("value", initialNickname);
+    chan.set("value", initialChannels);
 
     nick.focus();
   }

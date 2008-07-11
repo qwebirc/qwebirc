@@ -18,20 +18,9 @@
   <script type="text/javascript" src="js/debug/ui/colour.js"></script>
   <script type="text/javascript" src="js/debug/ui/theme.js"></script>
   <script type="text/javascript" src="js/debug/ui/uglyui.js"></script>
-  <!--<script type="text/javascript" src="js/qwebirc.js"></script>
-  <script type="text/javascript" src="js/uglyui.js"></script>-->
-  <script type="text/javascript">  
-    window.addEvent("domready", function() {
-      var theme = new Theme();
-      var ui = new UglyUI($("ircui"), theme);
-
-      /* TODO: look at URI and detect nickname/channels... */
-
-      var details = ui.loginBox(function(options) {
-        var IRC = new IRCClient(options, ui);
-        IRC.connect();
-      });
-    });
+  <script type="text/javascript" src="js/debug/qwebircinterface.js"></script>
+  <script type="text/javascript">
+    new QWebIRCInterface("ircui", UglyUI);
   </script>
 </head>
 <body>
