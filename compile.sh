@@ -3,7 +3,7 @@ mkdir -p compiled
 rm -f compiled/*.js
 
 cd js
-cat version.js jslib.js irc/ircconnection.js irc/irclib.js irc/baseirc.js irc/irctracker.js irc/commandparser.js irc/ircclient.js ui/baseui.js ui/colour.js ui/theme.js qwebircinterface.js > ../compiled/qwebirc-concat.js
+cat version.js jslib.js irc/ircconnection.js irc/irclib.js irc/baseircclient.js irc/irctracker.js irc/commandparser.js irc/ircclient.js ui/baseui.js ui/baseuiwindow.js ui/colour.js ui/theme.js qwebircinterface.js > ../compiled/qwebirc-concat.js
 cat ui/swmlayout.js ui/swmui.js > ../compiled/swmui-concat.js
 cd ../compiled
 
