@@ -19,22 +19,32 @@ body, html {
   background: #ddf;
 }
 
+.qwebirc-swmui .topic {
+  background: #fdf;
+}
+
 .qwebirc-swmui .entry {
+  background: #dfd;
+}
+
+.qwebirc-swmui .entry input {
   background: #dfd;
 }
 
 .qwebirc-swmui .content {
   background: #ddf;
+  overflow: auto;
 }
 
 .qwebirc-swmui .nicklist {
   background: #dff;
+  overflow: auto;
 }
 
 .qwebirc-swmui .tab {
+  position: relative;
   float: left;
   min-width: 100px;
-  width: 100px;
   display: block;
   border: 1px solid black;
   margin-right: 2px;
@@ -42,9 +52,10 @@ body, html {
 }
 
 .qwebirc-swmui .tabclose {
-  border: 1px solid black;
   margin: 2px;
+  width: 15px;
   font-size: 0.5em;
+  vertical-align: top;
 }
 
 .qwebirc-swmui .entry input {

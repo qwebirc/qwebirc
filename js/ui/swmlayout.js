@@ -4,22 +4,160 @@ var SWM_ANCHOR_BOTTOM = 0x02;
 var SWM_ANCHOR_LEFT =   0x04;
 var SWM_ANCHOR_RIGHT =  0x08;
 
-var SWMPanel = new Class({
-  initialize: function(parent, hidden) {
-    this.parent = parent;
+var SWMContainer = new Class({
+  initialize: function(parentElement) {
+    this.parentElement = parentElement;
+  },
+  getInnerSize: function() {
+//    return {x: this.element.clientWidth, y: this.element.clientHeight};
+    return this.element.getSize();
+  },
+  getOuterSize: function() {
+    return this.element.getSize();
+  },
+  appendChild: function(element) {
+    this.element.appendChild(element);
+  },
+  removeChild: function(element) {
+    this.element.removeChild(element);
+  },
+  setStyle: function(style, value) {
+    this.element.setStyle(setstyle, value);
+  },
+  removeAllChildren: function(element) {
+    while(this.element.firstChild)
+      this.removeChild(this.element.firstChild);
+  },
+  setSize: function(top, left, bottom, right) {
+    var data = {};
+
+    var outer = this.getOuterSize();
+    var inner = this.getInnerSize();
+    var p = this.parentElement.getInnerSize();
+
+    if(top != undefined && bottom != undefined) {
+      data.top = top;
+      data.height = p.y - top - bottom;
+    } else if(top == undefined) {
+      data.bottom = bottom;
+    } else { /* bottom == undefined */
+      data.top = top;
+    }
+
+    if(left != undefined && right != undefined) {
+      data.left = left;
+      data.width = p.x - left - right;
+    } else if(left == undefined) {
+      data.right = right;
+    } else { /* right == undefined */
+      data.left = left;
+    }
+
+    if(data.height)
+      data.height = data.height - (outer.y - inner.y);
+    if(data.width)
+      data.width = data.width - (outer.x - inner.x);
+
+    var data2 = {};
+    for(var k in data)
+      data2[k] = data[k] + "px";
+
+    this.element.setStyles(data2);
+    this.rework();
+  },
+  rework: function() {
+    var x = this.element.getChildren().map(function(x) {
+      return x.wmpanel;
+    });
+
+    var anchorFilter = function(x, y) {
+      return x.filter(function(z) {
+        if(z && (z.anchor == y) && !z.hidden) {
+          return true;
+        }
+      });
+    }
+
+    var top = anchorFilter(x, SWM_ANCHOR_TOP);
+    var bottom = anchorFilter(x, SWM_ANCHOR_BOTTOM);
+    var left = anchorFilter(x, SWM_ANCHOR_LEFT);
+    var right = anchorFilter(x, SWM_ANCHOR_RIGHT);
+    var none = anchorFilter(x, SWM_ANCHOR_NONE);
     
-    var element = new Element("div", {"styles": { "position": "absolute" } });
-    this.element = element;
+    var x = this.getInnerSize();
+    var y = this.getOuterSize();
+
+    var tpos = 0;
+    top.each(function(obj) {
+      obj.setSize(tpos, 0, undefined, 0);
+      tpos = tpos + obj.getOuterSize().y;
+    });
+
+    var bpos = 0;
+    bottom.each(function(obj) {
+      obj.setSize(undefined, 0, bpos, 0);
+      bpos = bpos + obj.getOuterSize().y;
+    });
+
+    var lpos = 0;
+    left.each(function(obj) {
+      obj.setSize(tpos, lpos, bpos, undefined);
+      lpos = lpos + obj.getOuterSize().x;
+    });
+
+    var rpos = 0;
+    right.each(function(obj) {
+      obj.setSize(tpos, undefined, bpos, rpos);
+      rpos = rpos + obj.getOuterSize().x;
+    });
+
+    var bpos = 0;
+    bottom.each(function(obj) {
+      obj.setSize(undefined, 0, bpos, 0);
+      bpos = bpos + obj.getOuterSize().y;
+    });
+
+    none.each(function(obj) {
+      obj.setSize(tpos, lpos, bpos, rpos);
+    });
+  }
+});
+
+var SWMFrame = new Class({
+  Extends: SWMContainer,
+  initialize: function(parentElement) {
+    this.parent(this);
+
+    this.element = new Element("div", {"styles": {
+      "position": "relative",
+      "top": "0px",
+      "left": "0px",
+      "height": "100%",
+      "width": "100%"
+    }}); 
     this.element.wmpanel = this;
-    
+
+    parentElement.appendChild(this.element);
+    this.element.addClass("swmelement");
+  }
+});
+
+var SWMPanel = new Class({
+  Extends: SWMContainer,
+  initialize: function(parentPanel, hidden) {
+    this.parent(parentPanel);
+    this.element = new Element("div", {"styles": {
+      "position": "absolute"
+    }}); 
+    this.element.wmpanel = this;
+
     if(hidden) {
       this.setHidden(true);
     } else {
       this.hidden = false;
     }
-    parent.addClass("swmelement");
     
-    parent.appendChild(this.element);
+    parentPanel.element.appendChild(this.element);
     this.anchor = SWM_ANCHOR_NONE;
   },
   setHeight: function(height) {
@@ -35,72 +173,19 @@ var SWMPanel = new Class({
     } else {
       this.element.setStyle("display", "block");
     }
+  },
+  addClass: function(class_) {
+    this.element.addClass(class_);
+  },
+  getScrollSize: function() {
+    return this.element.getScrollSize();
   }
 });
 
 window.addEvent("domready", function() {
-  function reworkLayout(container) {
-    function anchorFilter(x, anchor) {
-      return x.filter(function(y) {
-        if(y.anchor == anchor)
-          return true;
-      });
-    }
-    var x = container.getChildren().map(function(x) {
-      return x.wmpanel
-    });
-    var top = anchorFilter(x, SWM_ANCHOR_TOP);
-    var bottom = anchorFilter(x, SWM_ANCHOR_BOTTOM);
-    var none = anchorFilter(x, SWM_ANCHOR_NONE);
-
-    var left = anchorFilter(x, SWM_ANCHOR_LEFT);
-    var right = anchorFilter(x, SWM_ANCHOR_RIGHT);
-    
-    var tpos = 0;
-    for(var i=0;i<top.length;i++) {
-      if(top[i].hidden)
-        continue;
-      var obj = top[i].element;
-      obj.setStyles({"top": tpos + "px", "left": "0px", "right": "0px"});
-      tpos = tpos + obj.getSize().y;
-    }
-    
-    var bpos = 0;
-    for(var i=0;i<bottom.length;i++) {
-      if(bottom[i].hidden)
-        continue;
-      var obj = bottom[i].element;
-      obj.setStyles({"bottom": bpos + "px", "left": "0px", "right": "0px"});
-      bpos = bpos + obj.getSize().y;
-    }
-    
-    var lpos = 0;
-    for(var i=0;i<left.length;i++) {
-      if(left[i].hidden)
-        continue;
-      var obj = left[i].element;
-      obj.setStyles({"left": lpos + "px", "top": tpos + "px", "bottom": bpos + "px"});
-      lpos = lpos + obj.getSize().x;
-    }
-
-    var rpos = 0;
-    for(var i=0;i<right.length;i++) {
-      if(right[i].hidden)
-        continue;
-      var obj = right[i].element;
-      obj.setStyles({"right": rpos + "px", "top": tpos + "px", "bottom": bpos + "px"});
-      rpos = rpos + obj.getSize().x;
-    }
-
-    for(var i=0;i<none.length;i++) {
-      if(none[i].hidden)
-        continue;
-      var obj = none[i].element;
-      obj.setStyles({"left": lpos + "px", "right": rpos + "px", "top": tpos + "px", "bottom": bpos + "px"});
-    }
-  }
-  
   window.addEvent("resize", function() {
-    $$("div.swmelement").each(reworkLayout);
+    $$("div.swmelement").each(function(x) {
+      x.wmpanel.rework();
+    });
   });
 });

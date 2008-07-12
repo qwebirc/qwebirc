@@ -3,25 +3,20 @@ var SWMUIWindow = new Class({
   
   initialize: function(parentObject, client, type, name) {
     this.parent(parentObject, client, type, name);
-    this.contentPanel = new SWMPanel(parentObject.mainPanel.element, true);
-    this.contentPanel.element.addClass("content");
-    this.contentPanel.element.setStyle("overflow", "auto");
+    this.contentPanel = new SWMPanel(parentObject.mainPanel, true);
+    this.contentPanel.addClass("content");
 
     if(type == WINDOW_CHANNEL) {
-      this.nickList = new SWMPanel(this.contentPanel.element);
+      this.nickList = new SWMPanel(this.contentPanel);
       this.nickList.anchor = SWM_ANCHOR_RIGHT;
-      this.nickList.element.setStyle("overflow", "auto");
-      this.nickList.element.addClass("nicklist");
-    }
+      this.nickList.addClass("nicklist");
 
-    if(type == WINDOW_CHANNEL) {
-      this.topic = new SWMPanel(this.contentPanel.element);
+      this.topic = new SWMPanel(this.contentPanel);
       this.topic.anchor = SWM_ANCHOR_TOP;
-      this.topic.element.addClass("topic");
+      this.topic.addClass("topic");
     }
     
-    this.lines = new SWMPanel(this.contentPanel.element);
-    this.lines.element.setStyle("overflow", "auto");
+    this.lines = new SWMPanel(this.contentPanel);
     
     this.tab = new Element("span");
     this.tab.addClass("tab");
@@ -31,7 +26,7 @@ var SWMUIWindow = new Class({
       parentObject.selectWindow(this);
     }.bind(this));
 
-    parentObject.tabPanel.element.appendChild(this.tab);
+    parentObject.tabPanel.appendChild(this.tab);
     parentObject.resize();
     
     if(type != WINDOW_STATUS) {
@@ -52,26 +47,20 @@ var SWMUIWindow = new Class({
   updateNickList: function(nicks) {
     this.parent(nicks);
 
-    var n = this.nickList.element;
-    while(n.firstChild)
-      n.removeChild(n.firstChild);
-
+    this.nickList.removeAllChildren();
     nicks.each(function(nick) {
       var e = new Element("div");
-      n.appendChild(e);
+      this.nickList.appendChild(e);
       e.appendChild(document.createTextNode(nick));
-    });
+    }.bind(this));
     
     this.parentObject.resize();
   },
   updateTopic: function(topic) {
     this.parent(topic);
-    var t = this.topic.element;
-    
-    while(t.firstChild)
-      t.removeChild(t.firstChild);
 
-    Colourise(topic, t);
+    this.topic.removeAllChildren();
+    Colourise(topic, this.topic.element);
 
     this.parentObject.resize();
   },
@@ -95,8 +84,8 @@ var SWMUIWindow = new Class({
   close: function() {
     this.parent();
 
-    this.parentObject.mainPanel.element.removeChild(this.contentPanel.element);
-    this.parentObject.tabPanel.element.removeChild(this.tab);
+    this.parentObject.mainPanel.removeChild(this.contentPanel.element);
+    this.parentObject.tabPanel.removeChild(this.tab);
   },
   addLine: function(type, line, colour) {
     this.parent(type, line, colour);
@@ -117,15 +106,15 @@ var SWMUIWindow = new Class({
     Colourise(IRCTimestamp(new Date()) + " " + line, e);
     
     this.lastcolour = !this.lastcolour;
-    
+
     var prev = this.lines.element.getScroll();
     var prevbottom = this.lines.element.getScrollSize().y;
     var prevsize = this.lines.element.getSize();
-    this.lines.element.appendChild(e);
-    
+    this.lines.appendChild(e);
+  
     if(prev.y + prevsize.y == prevbottom)
       this.lines.element.scrollTo(prev.x, this.lines.element.getScrollSize().y);
-      
+    
     if(!this.active)
       this.tab.addClass("tab-highlighted");
   }
@@ -135,27 +124,31 @@ var SWMUI = new Class({
   Extends: UI,
   initialize: function(parentElement, theme) {
     this.parent(parentElement, SWMUIWindow, "swmui");
+
     this.parentElement = parentElement;
     this.theme = theme;
   },
   postInitialize: function() {
-    this.tabPanel = new SWMPanel(this.parentElement);
+    this.rootFrame = new SWMFrame(this.parentElement);
+
+    this.tabPanel = new SWMPanel(this.rootFrame);
     this.tabPanel.anchor = SWM_ANCHOR_TOP;
-    this.tabPanel.element.addClass("tabs");
+    this.tabPanel.addClass("tabs");
     
-    this.mainPanel = new SWMPanel(this.parentElement);
-    this.mainPanel.element.addClass("main");
+    this.mainPanel = new SWMPanel(this.rootFrame);
+    this.mainPanel.addClass("main");
     
-    this.entryPanel = new SWMPanel(this.parentElement);
+    this.entryPanel = new SWMPanel(this.rootFrame);
     this.entryPanel.anchor = SWM_ANCHOR_BOTTOM;
-    this.entryPanel.element.addClass("entry");
+    this.entryPanel.addClass("entry");
 
     var form = new Element("form");
     
     var inputbox = new Element("input");
+    inputbox.setStyle("border", "0px");
     
     window.addEvent("resize", function() {
-      var s = this.entryPanel.element.getSize().x - 4;
+      var s = this.entryPanel.getInnerSize().x;
       inputbox.setStyle("width", s + "px");
     }.bind(this));
 
@@ -166,7 +159,7 @@ var SWMUI = new Class({
       inputbox.value = "";
     }.bind(this));
 
-    this.entryPanel.element.appendChild(form);
+    this.entryPanel.appendChild(form);
     form.appendChild(inputbox);
     inputbox.focus();
 
