@@ -20,4 +20,4 @@ if [ "$1" != "" ]; then
   ARGS=$*
 fi
 
-twistd $PREARGS qwebirc -n $ARGS
+twistd --reactor poll $PREARGS qwebirc -n $ARGS

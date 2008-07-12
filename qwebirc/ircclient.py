@@ -88,9 +88,10 @@ class QWebIRCFactory(protocol.ClientFactory):
   def error(self, reason):
     self.client.error(reason)
 
-  def clientConnectionFailed(self, reason):
-    protocol.ClientFactory.clientConnectionFailed(reason)
-    self.client.disconnect("Connection to IRC server failed.")
+  def clientConnectionFailed(self, connector, reason):
+    protocol.ClientFactory.clientConnectionFailed(self, connector, reason)
+    self.publisher.event(["disconnect", "Connection to IRC server failed."])
+    self.publisher.disconnect()
 
 def createIRC(*args, **kwargs):
   f = QWebIRCFactory(*args, **kwargs)
