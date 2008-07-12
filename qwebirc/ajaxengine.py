@@ -181,6 +181,10 @@ class AJAXEngine(resource.Resource):
       except UnicodeDecodeError:
         decoded = command.decode("iso-8859-1", "ignore")
 
+      if len(decoded) > config.MAXLINELEN:
+        session.disconnect()
+        return [False, "Line too long"]
+
       try:
         session.push(decoded)
       except AttributeError: # occurs when we haven't noticed an error
