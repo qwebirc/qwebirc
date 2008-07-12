@@ -56,7 +56,13 @@ var IRCConnection = new Class({
   },
   connect: function() {
     var r = new Request.JSON({url: "/e/n?nick=" + encodeURIComponent(this.initialNickname) + "&r=" + Math.random() * 1024 * 1024, onComplete: function(o) {
+      if(!o) {
+        this.disconnected = true;
+        alert("Couldn't connect to remote server.");
+        return;
+      }
       if(o[0] == false) {
+        this.disconnected = true;
         alert("An error occured: " + o[1]);
         return;
       }
