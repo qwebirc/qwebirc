@@ -11,3 +11,4 @@ dropin.cache
 *.pid
 defargs.conf
 Thumbs.db
+[dD]esktop.ini
