@@ -10,3 +10,4 @@ dropin.cache
 *.log*
 *.pid
 defargs.conf
+Thumbs.db

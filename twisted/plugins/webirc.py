@@ -37,14 +37,12 @@ class QWebIRCServiceMaker(object):
   tapname = "qwebirc"
   description = "QuakeNet web-based IRC client"
   options = Options
-
   
   def makeService(self, config):
     if config['logfile']:
       site = RootSite(config['staticpath'], logPath=config['logfile'])
     else:
       site = RootSite(config['staticpath'])
-    
     
     site.displayTracebacks = not config["notracebacks"]
     if config['https']:

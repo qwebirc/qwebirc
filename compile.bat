@@ -1,4 +1,4 @@
-rem @echo off
+@echo off
 mkdir compiled
 del /q compiled\*.js
 
@@ -15,8 +15,11 @@ if not %errorlevel% == 0 goto error
 
 java -jar ..\bin\yuicompressor-2.3.5.jar swmui-concat.js > swmui-compiled.js
 if not %errorlevel% == 0 goto error
-goto ok
 
+java -jar ..\bin\yuicompressor-2.3.5.jar ..\js\ui\mochaui.js > mochaui-compiled.js
+if not %errorlevel% == 0 goto error
+
+goto ok
 :error
 cd ..
 del /q compiled\*-compiled.js
@@ -28,6 +31,7 @@ cd ..
 copy js\copyright.js + compiled\qwebirc-compiled.js /b static\js\qwebirc.js
 copy js\copyright.js + compiled\uglyui-compiled.js /b static\js\uglyui.js
 copy js\copyright.js + compiled\swmui-compiled.js /b static\js\swmui.js
+copy js\copyright.js + compiled\mochaui-compiled.js /b static\js\mochaui.js
 del /q compiled\*.js
 rmdir compiled
 
