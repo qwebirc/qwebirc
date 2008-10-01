@@ -19,19 +19,22 @@ catit() {
 jarit() {
   SRC=$1
   DST=$2
-  cd ../compiled
+  cd compiled
   java -jar ../bin/yuicompressor-2.3.5.jar $SRC.js > $DST-compiled.js
   if [ "$?" != 0 ]; then
     error
   fi
   cd ..
   catit $DST
-  rm $DST-compiled.js
+  rm compiled/$DST-compiled.js
 }
 
+cd ..
 jarit qwebirc-concat qwebirc
 jarit ../js/ui/uglyui uglyui
 jarit swmui-concat swmui
-jarit ..\js\ui\mochaui.js mochaui
+jarit ../js/ui/mochaui mochaui
+
+rm compiled/{swmui,qwebirc}-concat.js
 
 rmdir compiled
