@@ -142,7 +142,7 @@ var QMochaUI = new Class({
       
       MochaUI.Desktop = new MochaUI.Desktop();
       MochaUI.Dock = new MochaUI.Dock({
-        dockPosition: 'bottom'
+        dockPosition: "top"
       });
 
       MochaUI.Modal = new MochaUI.Modal();
