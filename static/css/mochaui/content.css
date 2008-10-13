@@ -4,13 +4,13 @@ CSS for Mocha UI
 
 Copyright:
 	Copyright (c) 2007-2008 Greg Houston, <http://greghoustondesign.com/>.
-	
+
 License:
 	MIT-style license.
 
 Note:	
 	If you are adding MochaUI to an existing site, this CSS file may not be necessary.
-   
+
 */
 
 
@@ -37,12 +37,12 @@ h2, h3, h4 {
 	margin: 0;
 	padding: 0 0 5px 0;
 	font-size: 12px;
-	font-weight: bold;	
+	font-weight: bold;
 }
 	
 h2 {
 	font-size: 14px;
-	font-weight: bold;	
+	font-weight: bold;
 }
 	
 #mochaPage h3 {
@@ -56,9 +56,9 @@ h2 {
 h4 {
 	font-size: 11px;
 }
-	
+
 a {
-	color: #0983d1;
+	color: #098ED1;
 	text-decoration: none;
 	cursor: pointer;
 }
@@ -66,7 +66,7 @@ a {
 a:hover {
 	text-decoration: none;
 }
-	
+
 p {
 	margin: 0;
 	padding: 0 0 9px 0;
@@ -75,13 +75,13 @@ p {
 .lite {
 	color: #999;
 }
-	
+
 /* List Elements */
 
 ul {
 	list-style: outside;
 	margin: 0 0 9px 16px;
-	list-style-type: square;
+	list-style-type: disc;
 }
 
 dt {
@@ -100,20 +100,20 @@ textarea, input {
 }	
 
 /* Code */
-	
+
 pre {
 	background-color: #f6f6f6;
-	color: #006600;
+	color: #060;
 	display: block;
 	font-family: 'Courier New', Courier, monospace;
 	font-size: 11px;
 	max-height: 250px;
 	overflow: auto;
-	margin: 5px 0 10px 0;
-	padding: 10px;
+	margin: 0 0 10px 0;
+	padding: 0 10px 10px 10px;
 	border: 1px solid #d1d7dc;	
 }
-	
+
 /* Dividers */
 
 hr {

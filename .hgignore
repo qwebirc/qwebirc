@@ -1,6 +1,5 @@
 syntax: glob
-static/js/uglyui.js
-static/js/swmui.js
+static/js/{ugly,swm,mocha}ui.js
 static/js/qwebirc.js
 static/js/debug
 config.py
@@ -12,3 +11,4 @@ dropin.cache
 defargs.conf
 Thumbs.db
 [dD]esktop.ini
+static/js/mochaui/mocha-compressed.js

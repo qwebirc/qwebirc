@@ -141,7 +141,10 @@ var QMochaUI = new Class({
       this.parentElement.removeChild(l);
       
       MochaUI.Desktop = new MochaUI.Desktop();
-      MochaUI.Dock = new MochaUI.Dock();
+      MochaUI.Dock = new MochaUI.Dock({
+        dockPosition: 'bottom'
+      });
+
       MochaUI.Modal = new MochaUI.Modal();
       MochaUI.options.useEffects = false;
     }.bind(this));

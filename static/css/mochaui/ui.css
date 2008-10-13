@@ -7,103 +7,141 @@ Copyright:
 	
 License:
 	MIT-style license.
-   
-*/   
+
+*/
+
+/* Layout
+---------------------------------------------------------------- */
 
 html, body {
-	height: 100%;
-	overflow: auto; /* Removes empty vertical scrollbars in IE */
-}		
+	overflow: hidden;
+}
 
 body {
 	margin: 0; /* Required */
-	background: #fff;
+	background: #fff; /* #6989b3 url(../../images/mochaui/splash.gif) center center no-repeat; */
 }
 
 #desktop {
+	visibility: hidden; 
 	position: relative;
-	top: 0;
-	left: 0;
-	width: 100%;
-	min-width: 750px; /* Helps keep header content from wrapping */		
+	min-width: 750px; /* Helps keep header content from wrapping */
 	height: 100%;
-	min-height: 100%;	
 	overflow: hidden;
-	cursor: default; /* Fix for issue in IE7. IE7 wants to use the I-bar text cursor */	
-}			  				
+	cursor: default; /* Fix for issue in IE7. IE7 wants to use the I-bar text cursor */
+}
 
 #desktopHeader {
-	background: #fff; /* Will be the margin color between toolbars */
+	background: #f1f1f1;
 }
 
 #desktopTitlebarWrapper {
-	position: relative;
-	height: 40px;
+	position: relative;	
+	height: 45px;
 	overflow: hidden;
-	background: #333 url(../images/bg-desktopTitlebar-bk.gif) repeat-x;	
+	background: #333 url(../../images/mochaui/bg-header.gif) repeat-x;
 }
-	
+
 #desktopTitlebar {
-	padding: 7px 8px 6px 125px;
-	height: 23px;
-	background: url(../images/logo.gif) no-repeat;
-	background-position: 10px 0;		
-}	
-	
+	padding: 7px 8px 6px 8px;
+	height: 32px;
+	background: url(../../images/mochaui/logo.gif) no-repeat;
+	background-position: left 0;
+}
+
 #desktopTitlebar h1.applicationTitle {
-	display: none;	
+	display: none;
 	margin: 0;
-	padding: 5px 0 0 0;
+	padding: 0 5px 0 0;
 	font-size: 20px;
+	line-height: 25px;
 	font-weight: bold;
 	color: #fff;
 }
-	
-#desktopTitlebar h1.tagline {
+
+#desktopTitlebar h2.tagline {
 	font-size: 12px;
-	color: #d9d9d9;
-	font-weight: normal;
-	padding: 5px 0 0 0;	
+	color: #b2b2b2;
+	font-weight: bold;
+	padding: 5px 0 0 0;
+	text-align: center;
 }
 
-#desktopTitlebar h1.tagline .taglineEm {
+#desktopTitlebar h2.tagline .taglineEm {
 	color: #fff;
-	font-weight: bold;	
-}	
+	font-weight: bold;
+}
 
 #topNav {
-	float: right;
-	color: #d9d9d9;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	position: absolute;
+	right: 0;
+	top: 0;
+	color: #b2b2b2;
 	text-align: right;
-	padding: 5px 5px 0 0;
+	padding: 13px 10px 0 0;
 }
 
 #topNav a {
-	color: #fff;
-	font-weight: bold;
+	color: #7DD0FA;
+	font-weight: normal;
 }
 
 #topNav a:hover {
-	color: #fff;
-	text-decoration: underline;
+	text-decoration: none;
 }
 
 /* Toolboxes */
 
-.toolbox {	
+.toolbox {
 	float: right;
-	margin-top: 3px;
-	padding: 4px 10px 0 10px;
-	border-left: 1px solid #ccc;
-	height: 20px;
-	overflow: hidden;	
-}				
+	padding: 6px 3px 0 5px;
+	height: 23px;
+	overflow: hidden;
+}
+
+div.toolbox.divider { /* Have to specify div here for IE6's sake */
+	background: url(../../images/mochaui/toolbox-divider.gif) left center no-repeat;
+	padding: 6px 3px 0 12px;
+}
+
+div.toolbox.divider2 { /* Have to specify div here for IE6's sake */
+	background: url(../../images/mochaui/toolbox-divider2.gif) left center no-repeat;
+	padding: 6px 4px 0 12px;
+}
+
+.toolbox img {
+	cursor: pointer;
+	margin-right: 6px;
+	padding: 0;
+	float: left;
+}
+
+.toolbox img.disabled {
+	cursor: default;
+}
+
+#spinnerWrapper {
+	width: 16px;
+	height: 16px;
+	background: url(../../images/mochaui/spinner-placeholder.gif) no-repeat;
+	margin-right: 5px;
+}
+
+#spinner {
+	visibility: hidden;
+	background: url(../../images/mochaui/spinner.gif) no-repeat;
+	width: 16px;
+	height: 16px;
+}
 
 /* Navbar */
 
 #desktopNavbar {
-	background: #f1f1f1;
+	background: #4C4C4C;
 	height: 30px;
+	margin: 0 0px;	
 }
 
 #desktopNavbar ul {	
@@ -114,7 +152,7 @@ body {
 }
 
 #desktopNavbar li {
-	float: left;			
+	float: left;
 }
 
 #desktopNavbar a {
@@ -123,25 +161,26 @@ body {
 	
 #desktopNavbar ul li a {
 	padding: 6px 10px 6px 10px;	
-	color: #3f3f3f;
+	color: #b2b2b2;
+	font-weight: normal;
 }
 
 #desktopNavbar ul li a:hover {
-	background-color: #ddd;
+	color: #fff;
 }
 
 #desktopNavbar ul li a.arrow-right, #desktopNavbar ul li a:hover.arrow-right {
-	background-image: url(../images/arrow-right.gif);
+	background-image: url(../../images/mochaui/arrow-right.gif);
 	background-repeat: no-repeat;
-	background-position: right 6px;	
+	background-position: right 7px;	
 } 
-	
+
 #desktopNavbar li ul {
 	padding: 2px;
-	border: 1px solid #333;
-	background: #fff;
+	border: 1px solid #3f3f3f;
+	background: #fff url(../../images/mochaui/bg-dropdown.gif) repeat-y;
 	position: absolute;
-	width: 158px;
+	width: 164px;
 	left: -999em;
 	z-index: 8000;
 }
@@ -154,16 +193,16 @@ body {
 }
 
 #desktopNavbar li ul ul { /* third-and-above-level lists */
-	margin: -22px 0 0 158px;
-} 
+	margin: -22px 0 0 164px;
+}
 
 #desktopNavbar li ul li .check {
 	position: absolute;
-	top: 7px;
+	top: 8px;
 	left: 6px;
 	width: 5px;
 	height: 5px;
-	background: #00CC33;
+	background: #555;
 	overflow: hidden;
 	line-height: 1px;
 	font-size: 1px;
@@ -171,14 +210,19 @@ body {
 
 #desktopNavbar li ul li a {
 	position: relative;
-	padding: 1px 9px 1px 19px;
+	padding: 1px 9px 1px 25px;
 	width: 130px;
-	color: #333;
+	color: #3f3f3f;
 	font-weight: normal;
 }
 
 #desktopNavbar li ul li a:hover {
-	background: #eee;
+	background: #6C98D9;
+	color: #fff;
+}
+
+#desktopNavbar li ul li a:hover .check {
+	background: #fff;
 }
 
 #desktopNavbar li:hover ul,
@@ -187,58 +231,336 @@ body {
 #desktopNavbar li li li.ieHover ul,
 #desktopNavbar li li:hover ul,
 #desktopNavbar li li li:hover ul { /* lists nested under hovered list items */
-      left: auto;
+	left: auto;
 }
 
 #desktopNavbar li:hover { /* For IE7 */
     position: static;
 }
 
-.divider {
+li.divider {
 	margin-top: 2px;
 	padding-top: 3px;	
-	border-top: 1px solid #ddd;
+	border-top: 1px solid #ebebeb;
 }	
 
 #pageWrapper {
 	position: relative;
 	overflow: hidden; /* This can be set to hidden or auto */
+	border-top: 1px solid #222;
 }
 
 /* Footer */
 #desktopFooterWrapper {
-	background: #888;
-	padding: 1px 0 0 0;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	height: 30px;
+	overflow: hidden;
+	border-top: 1px solid #222;
 }
 
 #desktopFooter {
-	font-size: 11px;
-	height: 21px;
-	padding: 4px 10px 0 10px;
-	background: #343E47;
-	color: #fff;
-	border: 1px solid #202A33;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 10px;
+	height: 24px;
+	padding: 6px 8px 0 8px;
+	background: #333;
+	color: #b2b2b2;
 }
 
 #desktopFooter a {
-	color: #fff;
-	font-weight: bold;	
+	color: #7DD0FA;
+	font-weight: normal;
 }
 
 #desktopFooter a:hover {
-	text-decoration: underline;
-}		
+	text-decoration: none;
+}
 
-/* Menus */
+/* Dock/Taskbar */
 
-.menu-right li {
-	list-style-type: none;
-	display: inline;	
-	margin: 0 0 0 15px;
+#dockWrapper {
+	display: none;
+	width: 100%;
+	border-top: 1px solid #222;
+}
+
+#dockWrapper.top {
+	border: 0;
+}
+
+#dock {
+	position: relative;
+	padding: 3px 16px 0 6px;
+	bottom: 0;
+	left: 0;
+	background: #4c4c4c;
+	min-height: 27px;
+	height: auto;
+}
+
+*html #dock {
+	height: 30px; /* Used for IE 6.0 since it does not support min-height */
+}
+
+.dockTab {
+	float: left;
+	position: relative;	
+	font-size: 11px;
+	width: 150px;
+	height: 24px;
+	margin: 0 3px 2px 0;
+	overflow: hidden;	
+	cursor: pointer;
+	background: url(../../images/mochaui/dock-tabs.gif) left top no-repeat;
+}
+
+.dockTab.activeDockTab {	
+	background-position: left -24px;
+}
+
+.dockText {
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: block;
+	font-weight: normal;
+	color: #bbb;	
+	text-align: left;
+	padding: 4px 10px 2px 10px;
+	width: 130px;
+	height: 19px;
+	overflow: hidden;
+}
+
+.dockText:hover {
+	color: #fff;
+}
+
+.dockTab.activeDockTab .dockText {
+	color: #fff;
+}
+
+#dockCanvas {
+	position: absolute;
+	top: 5px;
+	right: 3px;
+	z-index: 2;
+}
+
+#dockPlacement {
+	position: absolute;
+	top: 4px;
+	right: 8px;
+	width: 10px;
+	height: 9px;
+	opacity: 0;
+	filter: alpha(opacity=0);
+	-moz-opacity: 0;
+	background: #f00; /* for troubleshooting */
+	cursor: pointer;
+	z-index: 3; /* for IE */
+	text-align: right;
+}
+
+#dockAutoHide {
+	position: absolute;
+	top: 14px;
+	right: 8px;
+	width: 10px;
+	height: 9px;
+	opacity: 0;
+	filter: alpha(opacity=0);
+	-moz-opacity: 0;
+	background: #f00; /* for troubleshooting */
+	cursor: pointer;
+	z-index: 3; /* for IE */
+}
+
+/* Panel Layout
+---------------------------------------------------------------- */
+
+/* Columns */
+
+.column {
+	position: relative;	
+	float: left;
+	overflow: hidden;
+	background: #f1f1f1;
+}
+
+/* Panels */
+
+.panel {
+	position: relative;	
+	overflow: auto;
+	border-bottom: 1px solid #b9b9b9;
+	border-top: 0;
+}
+
+.pad {
+	position: absolute;
+	top: 0;
+	left: 0;
+	padding: 8px;
+	overflow: hidden;
+}
+
+#mainPanel {
+	background: #fff; 	
 }	
-	
-/* Windows */
-	
+
+.panel-header {
+	position: relative;	
+	background: #f1f1f1 url(../../images/mochaui/bg-panel-header.gif) repeat-x;
+	height: 30px;
+	overflow: hidden;
+	border-bottom: 1px solid #d3d3d3;		
+}
+
+.panel-headerContent {
+	padding-top: 2px;
+}	
+
+.panel-headerContent.tabs {
+	background: url(../../images/mochaui/tabs.gif) repeat-x;
+	background-position: left -68px;	
+}
+
+.panel-header h2 {
+	display: inline-block;
+	font-size: 12px;
+	margin: 0;
+	padding: 3px 8px 0 8px;
+	height: 22px;
+	overflow: hidden;
+	color: #3f3f3f;
+}
+
+.panel-header-toolbox {
+	float: right;
+	height: 26px;
+	margin: 2px 5px 5px 0;
+	text-align: right;
+}
+
+.panel-collapse {
+	background: url(../../images/mochaui/collapse-expand.gif) left top no-repeat;
+}
+
+.panel-expand {
+	background: url(../../images/mochaui/collapse-expand.gif) left -16px no-repeat;
+}
+
+.icon16 {
+	margin: 5px 0 0 2px;
+	cursor: pointer;
+}
+
+.panel-footerWrapper {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	background: #f9f9f9;
+	height: 30px;
+	overflow: hidden;
+	border-top: 1px solid #b9b9b9;
+}
+
+.panel-footer {
+	padding: 1px 0 0 8px;	
+}
+
+.panel-footerContent {
+	margin-top: 5px;
+}
+
+/* Handles */	
+
+.horizontalHandle {
+	height: 4px;
+	line-height: 1px;
+	font-size: 1px;
+	overflow: hidden;
+	background: #d1d1d1 url(../../images/mochaui/bg-handle-horizontal.gif) repeat-x;
+}
+
+.horizontalHandle.detached .handleIcon {
+	background: transparent;	
+}
+
+.horizontalHandle .handleIcon {	
+	margin: 0 auto;
+	height: 4px;
+	line-height: 1px;
+	font-size: 1px;
+	overflow: hidden;
+	background: url(../../images/mochaui/handle-icon-horizontal.gif) center center no-repeat;
+}
+
+.columnHandle {
+	min-height: 10px;	
+	float: left;
+	width: 4px;
+	overflow: hidden;
+	background: #bbb url(../../images/mochaui/handle-icon.gif) center center no-repeat;
+	border: 1px solid #9a9a9a;
+	border-top: 0;
+}
+
+/* Viewport overlays
+---------------------------------------------------------------- */
+
+#modalOverlay {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	background: #000;
+	opacity: 0;
+	filter: alpha(opacity=0);
+	-moz-opacity: 0;
+	z-index: 10000;
+}
+
+* html 	#modalOverlay {
+	position: absolute;
+}
+
+/* Fix for IE6 select z-index issue */
+#modalFix {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	opacity: 0;
+	filter: alpha(opacity=0);
+	-moz-opacity: 0;
+	z-index: 9999;
+}
+
+/* Underlay */
+
+#windowUnderlay { 
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	background: #fff;	
+}
+
+* html #windowUnderlay { 
+	position: absolute;
+}
+
+/* Windows
+---------------------------------------------------------------- */
+
 .mocha {
 	position: absolute;
 	top: 0;
@@ -271,16 +593,21 @@ body {
 }
 
 .mocha.isFocused .mochaTitlebar h3 {
-	color: #141414;	
+	color: #141414;
 }
-	
+
 .mochaToolbarWrapper {
 	width: 100%; /* For IE */
 	position: relative;
 	height: 29px;
-	background: #fff;	
+	background: #f1f1f1;	
 	overflow: hidden;
 	border-top: 1px solid #d9d9d9;
+}
+
+div.mochaToolbarWrapper.bottom {
+	border: 0;
+	border-bottom: 1px solid #d9d9d9;
 }
 
 .mochaToolbar {
@@ -288,66 +615,19 @@ body {
 	border-top: 1px solid #fff;
 }
 
-.toolbarTabs {	
-	padding: 0 5px 2px 2px;
-	background: #e4e4e4 url(../images/tabs.gif) repeat-x;
-	background-position: left -60px;	
-}
-
-.tab-menu {
-	padding-top: 1px;
-	list-style:	none;
-	margin: 0;
-	padding: 0;
-	line-height: 16px;
-	font-size: 11px;	
-}
-
-.tab-menu li {
-	display: block;
-	float: left;
-	margin:	0;
-	cursor: pointer;	
-	background: url(../images/tabs.gif) repeat-x;
-	background-position: left -30px;	
-}
-
-.tab-menu li.selected {
-	background: url(../images/tabs.gif) repeat-x;
-	background-position: left 0;	
-}
-
-.tab-menu li a {
-	display: block;
-	margin-left: 8px;
-	padding: 6px 16px 5px 10px;
-	text-align: center;
-	font-weight: normal;
-	color: #141414;
-	background: url(../images/tabs.gif) repeat-x;
-	background-position: right -30px;	
-}
-
-.tab-menu li.selected a {
-	color: #141414;
-	font-weight: bold;	
-	background: url(../images/tabs.gif) repeat-x;
-	background-position: right 0;	
-}	
-
 .mochaContentBorder {
-	border-top: 1px solid #dadada;	
+	border-top: 1px solid #dadada;
 	border-bottom: 1px solid #dadada;
 }
-	
+
 .mochaContentWrapper { /* Has a fixed height and scrollbars if required. */
 	font-size: 12px;
-	overflow: auto;	
+	overflow: auto;
 }
 	
 .mochaContent {
 	padding: 10px 12px;
-}		
+}
 
 .mocha .handle {
 	position: absolute;
@@ -359,7 +639,7 @@ body {
 	filter: alpha(opacity=0);
 	-moz-opacity: .0;
 	overflow: hidden;
-	font-size: 1px; /* For IE6 */ 	
+	font-size: 1px; /* For IE6 */
 }
 
 .mocha .corner { /* Corner resize handles */
@@ -380,8 +660,8 @@ body {
 	left: 0;
 	background: transparent;
 	z-index: -1;
-	display: none;		
-	overflow: hidden;			
+	display: none;
+	overflow: hidden;
 }
 
 .mochaControls {
@@ -391,7 +671,7 @@ body {
 	right: 8px;
 	height: 14px;
 	z-index: 4;
-	background: transparent;		
+	background: transparent;
 }
 
 .mochaCanvasControls {
@@ -399,7 +679,7 @@ body {
 	top: 8px;
 	right: 8px;	
 	z-index: 3;
-	background: transparent;		
+	background: transparent;
 }
 
 /*
@@ -417,169 +697,36 @@ body {
 	font-size: 1px;	
 	cursor: pointer;
 	z-index: 4;
-	background: #f00;	
-	margin-left: 5px;		
+	background: #f00;
+	margin-left: 5px;
 }
 
 .mochaMinimizeButton {
-	margin-left: 0;		
+	margin-left: 0;
 }
 
-.mochaMaximizeButton {	
+.mochaMaximizeButton {
 }
 
-.mochaCloseButton {		
+.mochaCloseButton {
 }
 
-.mochaLoadingIcon {
+.mochaSpinner{
+	visibility: hidden;	
 	position: absolute;
 	bottom: 7px;
-	left: 6px;	
+	left: 6px;
+	width: 16px;
+	height: 16px;
+	background: url(../../images/mochaui/spinner.gif) no-repeat;
 }
 
 .mochaIframe {
 	width: 100%;
 }  
-	
-/* Sliders */
-
-.slider {
-	clear: both;
-	position: relative;
-	font-size: 12px;
-	font-weight: bold;
-	width: 200px;
-	margin-bottom: 15px;	
-}
-
-.sliderarea {
-	position: relative;
-	height: 6px;
-	width: 200px;
-	font-size: 1px;
-	line-height: 1px;
-	background: #dfdfdf;
-	margin: 0;
-	padding: 0;
-}
- 
-.sliderknob {
-	position: absolute;
-	top: 0px;
-	height: 6px;
-	width: 13px;
-	font-size: 1px;
-	line-height: 1px;	
-	background: #888;
-	border-right: 1px solid #eee;
-	border-left: 1px solid #eee;	
-	cursor: pointer;
-	overflow: hidden;
-}
-	
-.update {
-	padding-bottom: 5px;	
-}	
-	
-.clear {
-	clear: both;
-	height: 0;
-}
-
-*html .clear {
-	height: 1%;
-	font-size: 1px;
-	line-height: 1px;
-	overflow: hidden;
-	visibility: hidden;
-}
-	
-/* Window Builder Form Elements */
-	
-#desktop form {
-	margin: 0 0 0 0;
-	padding: 5px 0 0 0;
-	width: 320px;
-}
-
-#desktop .input {
-	width: 225px;
-	padding: 1px 0 1px 3px;
-	border: 1px solid #bbb;	
-}
-
-#desktop textarea {
-	width: 225px;
-	height: 100px;
-	padding: 1px 0 1px 3px;
-	border: 1px solid #bbb;	
-}		
-
-#desktop .formLabel {
-	float: left;	
-	text-align: right;
-	width: 80px;
-	margin: 0 0 5px 0;	
-}
-	
-#desktop .formField {
-	float: right;
-	margin: 0 0 5px 0;
-	padding: 0 0 0 0;
-	width: 230px;
-}
-	
-#desktop form .number {
-	width: 40px;
-}
-	
-/* Modal Windows */
-#modalOverlay {
-	display: none;
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	background: #000;
-	opacity: 0;
-	filter: alpha(opacity=0);
-	-moz-opacity: 0;
-	z-index: 10000;
-}
-
-* html 	#modalOverlay {
-	position: absolute;
-}
-
+		
 /* Fix for IE6 select z-index issue */
-#modalFix {
-	display: none;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	opacity: 0;
-	filter: alpha(opacity=0);
-	-moz-opacity: 0;
-	z-index: 9999;
-}
-
-/* Overlay */
-
-#windowUnderlay { 
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	background: #fff;	
-}
-
-* html #windowUnderlay { 
-	position: absolute;
-}	
-
-/* Fix for IE6 select z-index issue */
-iframe.zIndexFix {
+.zIndexFix {
 	display: block;
 	position: absolute;
 	top: 0;
@@ -590,130 +737,31 @@ iframe.zIndexFix {
 	height: 100px;
 	border: 1px solid transparent;
 }
+
+/* Modals */
+
+.modal2 {
+	border: 8px solid #fff;		
+}
+
+.modal2 .mochaContentBorder {
+	border-width: 0px;
+}
 	
-/* Window Minimize Dock */
-
-#dockWrapper {
-	display: none;
-	background: #f1f1f1;
-	width: 100%;	
-}
-
-#dockWrapper.top {
-	border-top: 1px solid #d0d0d0;
-}
-
-#dock {
-	position: relative;
-	padding: 3px 15px 1px 15px;
-	bottom: 0;
-	left: 0;
-	width: 100%;
-	background: #f1f1f1;
-	border: 1px solid #f1f1f1;
-	min-height: 26px;
-	height: auto;
-   _height: 26px; /* IE 6.0 hack, for not supporting min-height */
-}
-
-.dockTab {
-	float: left;
-	font-size: 11px;
-	position: relative;
-	width: 140px;
-	height: 22px;
-	margin: 0 2px 2px 0;
-	overflow: hidden;	
-	cursor: pointer;
-	background: transparent url(../images/bg-desktopTitlebar.gif)  repeat-x;
-	border: 1px solid #c0c0c0;
-}	
-
-.dockTab.activeDockTab {
-	background: #fff;
-}	
-
-.dockText {
-	position: absolute;
-	top: 0;
-	left: 0;
-	display: block;
-	text-align: left;
-	padding: 2px 0 0 23px;
-	width: 115px;
-	height: 19px;
-	overflow: hidden;
-	background: url(../images/icons/page.gif) 2px 3px no-repeat;		
-}			
-
-#dockCanvas {
-	position: absolute;
-	top: 4px;
-	left: 2px;
-	z-index: 2;
-}
-
-#dockPlacement {
-	position: absolute;
-	top: 3px;
-	left: 2px;
-	width: 10px;
-	height: 9px;
-	opacity: 0;
-	filter: alpha(opacity=0);
-	-moz-opacity: 0;
-	background: #f00; /* for troubleshooting */
-	cursor: pointer;
-	z-index: 3; /* for IE */	
-}
-
-#dockAutoHide {
-	position: absolute;
-	top: 13px;
-	left: 2px;
-	width: 10px;
-	height: 9px;
-	opacity: 0;
-	filter: alpha(opacity=0);
-	-moz-opacity: 0;
-	background: #f00; /* for troubleshooting */
-	cursor: pointer;
-	z-index: 3; /* for IE */		
-}
-
-/* Accordian */
-
-.accordianWrapper {
-	padding: 0;
-	background: #fff;	
-}
-
-.accordianToggler {
-	margin: 0;
-	padding: 6px 10px;
-	background: #fff url(../images/bg-desktopTitlebar.gif) repeat-x;
-	font-size: 12px;
-	cursor: pointer;
-	border-top: 1px solid #e3e3e3;	
-}
-
-.topToggler {
-	border-top: none;
-}
-
-.accordianToggler.open {
-	background: #fff url(../images/bg-desktopTitlebar.gif) repeat-x;	
-}
-
-.accordianContent {
-	padding: 10px 10px 5px 10px;
-}
-
 /* Window Themes */
+
+.mocha.no-canvas {
+	background: #f1f1f1;
+	border: 2px solid #555;	
+}
+
+.mocha.no-canvas .mochaTitlebar {
+	background: #f1f1f1;	
+}
 
 .mocha.transparent .mochaTitlebar h3 {
 	color: #fff;
-	display: none;	
+	display: none;
 }
 
 .mocha.notification .mochaTitlebar {
@@ -732,6 +780,141 @@ iframe.zIndexFix {
 	font-weight: bold;
 }
 
+/* Compontents
+---------------------------------------------------------------- */
+
+/* Toolbar Tabs */
+
+.toolbarTabs {	
+	padding: 0 5px 2px 2px;
+	background: url(../../images/mochaui/tabs.gif) repeat-x;
+	background-position: left -70px;
+	overflow: visible;
+}
+
+.tab-menu {	
+	padding-top: 1px;
+	list-style:	none;
+	margin: 0;
+	padding: 0;
+	line-height: 16px;
+	font-size: 11px;
+}
+
+.tab-menu li {
+	display: block;
+	float: left;
+	margin:	0 0 5px 0;
+	cursor: pointer;	
+	background: url(../../images/mochaui/tabs.gif) repeat-x;
+	background-position: left -35px;
+}
+
+.tab-menu li.selected {
+	background: url(../../images/mochaui/tabs.gif) repeat-x;
+	background-position: left 0;
+}
+
+.tab-menu li a {
+	display: block;
+	margin-left: 8px;
+	padding: 6px 16px 5px 10px;
+	text-align: center;
+	font-weight: normal;
+	color: #141414;
+	background: url(../../images/mochaui/tabs.gif) repeat-x;
+	background-position: right -35px;	
+}
+
+.tab-menu li.selected a {
+	color: #141414;
+	font-weight: bold;	
+	background: url(../../images/mochaui/tabs.gif) repeat-x;
+	background-position: right 0;
+}
+
+/* Accordian */
+
+.accordianWrapper {
+	padding: 0;
+	background: #fff;
+}
+
+.accordianToggler {
+	margin: 0;
+	padding: 6px 10px;
+	background: #f1f1f1 url(../../images/mochaui/bg-panel-header.gif) repeat-x;
+	font-size: 12px;
+	cursor: pointer;
+	border-top: 1px solid #e3e3e3;	
+}
+
+.topToggler {
+	border-top: none;
+}
+
+.accordianToggler.open {
+	background: #fff url(../../images/mochaui/bg-panel-header.gif) repeat-x;	
+}
+
+.accordianContent {
+	padding: 10px 10px 5px 10px;
+}
+
+/* Sliders */
+
+.slider {
+	clear: both;
+	position: relative;
+	font-size: 12px;
+	font-weight: bold;
+	width: 200px;
+	margin-bottom: 15px;	
+}
+
+.sliderWrapper {
+	position: relative;
+	font-size: 1px;
+	line-height: 1px;
+	height: 9px;
+	width: 222px;
+}
+
+.sliderarea {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 7px;
+	width: 220px;
+	font-size: 1px;
+	line-height: 1px;
+	background: url(../../images/mochaui/slider-area.gif) repeat-x;
+	border: 1px solid #a3a3a3;
+	border-bottom: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+ 
+.sliderknob {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 9px;
+	width: 19px;
+	font-size: 1px;
+	line-height: 1px;	
+	background: url(../../images/mochaui/knob.gif) no-repeat;
+	cursor: pointer;
+	overflow: hidden;
+	z-index: 2;
+}
+	
+.update {
+	padding-bottom: 5px;	
+}
+
 /* Folder Tree */
 
 .tree {
@@ -741,13 +924,17 @@ iframe.zIndexFix {
 }
 
 .tree ul {
-	margin: 0;	
+	margin: 0;
 }
 
 .tree li {
 	list-style-type: none;
-	white-space: nowrap;	
+	white-space: nowrap;
 }
+
+.tree li a {
+	color: #3f3f3f;	
+}	
 
 .tree li img {
 	vertical-align: middle;
@@ -758,4 +945,111 @@ iframe.zIndexFix {
 
 .tree li span {
 	padding-left: 2px;
-}	 
+}
+
+/* View Toggle */
+
+.viewToggle {
+	position: absolute;
+	top: 4px;
+	right: 5px;
+	width: 60px;
+	text-align: right;
+}
+
+.viewToggle img.viewToggleList, .viewToggle img.viewToggleGrid {
+	width: 28px;
+	height: 22px;
+}	
+
+.viewToggle img.viewToggleList {
+	background: url(../../images/mochaui/view-toggle.gif) no-repeat;
+	background-position: 0 -66px;
+}
+
+.viewToggle img.viewToggleGrid {
+	background: url(../../images/mochaui/view-toggle.gif) no-repeat;
+	background-position: 0 0;
+}
+
+/* Miscellaneous
+---------------------------------------------------------------- */
+
+/* Window Builder Form Elements */
+	
+#desktop form {
+	margin: 0 0 0 0;
+	padding: 5px 0 0 0;
+}
+
+#newWindowForm {
+	width: 320px;
+}
+
+#desktop .input {
+	width: 225px;
+	padding: 1px 0 1px 3px;
+	border: 1px solid #bbb;	
+}
+
+#desktop textarea {
+	width: 225px;
+	height: 100px;
+	padding: 1px 0 1px 3px;
+	border: 1px solid #bbb;
+}
+
+#desktop .formLabel {
+	float: left;	
+	text-align: right;
+	width: 80px;
+	margin: 0 0 5px 0;
+}
+
+#desktop .formField {
+	float: right;
+	margin: 0 0 5px 0;
+	padding: 0 0 0 0;
+	width: 230px;
+}
+
+#desktop form .number {
+	width: 40px;
+}
+
+/* Menus */
+
+.menu-right li {
+	list-style-type: none;
+	display: inline;	
+	margin: 0 0 0 15px;
+}
+
+/* Notifications */
+
+/* Success, error & notice boxes for messages and errors. */
+.error,
+.notice, 
+.success    { padding: 8px; margin-bottom: 10px; border: 2px solid #ddd; }
+.error      { background: #FBE3E4; color: #D12F19; border-color: #FBC2C4; }
+.notice     { background: #FFF6BF; color: #817134; border-color: #FFD324; }
+.success    { background: #E6EFC2; color: #529214; border-color: #C6D880; }
+.error a    { color: #D12F19; }
+.notice a   { color: #817134; }
+.success a  { color: #529214; }
+
+
+/* Clears */
+
+.clear {
+	clear: both;
+	height: 0;
+}
+
+*html .clear {
+	height: 1%;
+	font-size: 1px;
+	line-height: 1px;
+	overflow: hidden;
+	visibility: hidden;
+}

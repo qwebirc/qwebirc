@@ -16,20 +16,29 @@ catit() {
   cat js/copyright.js compiled/$1-compiled.js > static/js/$1.js
 }
 
-jarit() {
+xjarit() {
   SRC=$1
   DST=$2
   cd compiled
-  java -jar ../bin/yuicompressor-2.3.5.jar $SRC.js > $DST-compiled.js
+  java -jar ../bin/yuicompressor-2.3.5.jar $SRC.js > $DST.js
   if [ "$?" != 0 ]; then
     error
   fi
   cd ..
+}
+
+jarit() {
+  SRC=$1
+  DST=$2-compiled
+  
+  xjarit $SRC $DST
   catit $DST
-  rm compiled/$DST-compiled.js
+  rm compiled/$DST.js
 }
 
 cd ..
+xjarit ../static/js/mochaui/mocha ../static/js/mochaui/mocha-compressed
+
 jarit qwebirc-concat qwebirc
 jarit ../js/ui/uglyui uglyui
 jarit swmui-concat swmui
