@@ -9,7 +9,17 @@ var QMochaUIWindow = new Class({
     this.form = new Element("form");
     this.inputbox = new Element("input", {styles: {border: 0, width: "100%"}});
     this.inputbox.addClass("input");
-  
+    this.scrolltimeout = null;
+    
+    this.inputbox.addEvent("focus", function() {
+      /* TODO: bring to top */
+      //alert(":O");
+      //alert(this.windowObject.windowEl);
+      //MochaUI.focusWindow.pass(this.windowObject.windowEl, this.windowObject);
+      //this.windowObject.focusWindow();
+      this.parentObject.selectWindow(this);
+    }.bind(this));
+    
     this.form.addEvent("submit", function(e) {
       new Event(e).stop();
     
@@ -20,7 +30,7 @@ var QMochaUIWindow = new Class({
     this.form.appendChild(this.inputbox);
     
     var prefs = {
-      width: 500,
+      width: 800,
       height: 400,
       title: name,
       footerHeight: 0,
@@ -29,6 +39,8 @@ var QMochaUIWindow = new Class({
       toolbarHeight: parentObject.inputHeight,
       toolbarPosition: "bottom",
       toolbarContent: "",
+      //toolbarURL: "",
+      toolbarLoadMethod: "html",
       content: this.lines,
       onFocus: function() {
         parentObject.selectWindow(this);
@@ -36,7 +48,10 @@ var QMochaUIWindow = new Class({
       onClose: function() {
         if(type == WINDOW_CHANNEL)
           this.client.exec("/PART " + name);
-
+        if($defined(this.scrolltimeout)) {
+          $clear(this.scrolltimeout);
+          this.scrolltimeout = null;
+        }
         this.close();
       }.bind(this)
     };
@@ -47,7 +62,10 @@ var QMochaUIWindow = new Class({
     var nw = new MochaUI.Window(prefs);
     /* HACK */
     var toolbar = $(nw.options.id + "_toolbar");
+    /*alert(toolbar.parentNode.getStyle("background"));*/
+    /*this.inputbox.setStyle("background", toolbar.parentNode.getStyle("background"));*/
     toolbar.appendChild(this.form);
+    this.windowObject = nw;
     
     return;
 /*    
@@ -112,19 +130,36 @@ var QMochaUIWindow = new Class({
     Colourise(IRCTimestamp(new Date()) + " " + line, e);
     
     this.lastcolour = !this.lastcolour;
-    
+
+    this.__scrollbottom(false, e);    
+    /*if(!this.active)
+      this.lines.showLoadingIcon();
+      */
+  },
+  __scrollbottom: function(timed, element) {
     var pe = this.lines.parentNode.parentNode;
-    
+    //alert(pe);
     var prev = pe.getScroll();
     var prevbottom = pe.getScrollSize().y;
     var prevsize = pe.getSize();
-    this.lines.appendChild(e);
     
-    if(prev.y + prevsize.y == prevbottom)
+    /* scroll in bursts, else the browser gets really slow */
+    if(!timed) {
+      this.lines.appendChild(element);
+      if(this.scrolltimeout || (prev.y + prevsize.y == prevbottom)) {
+        if(this.scrolltimeout)
+          $clear(this.scrolltimeout);
+        this.scrolltimeout = this.__scrollbottom.delay(10, this, true);
+      }
+    } else {
       pe.scrollTo(prev.x, pe.getScrollSize().y);
-      
-    if(!this.active)
-      this.lines.showLoadingIcon();
+      this.scrolltimeout = null;
+    }
+  },
+  select: function() {
+    this.parent();
+    
+    this.inputbox.focus();
   }
 });
 

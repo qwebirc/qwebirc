@@ -856,14 +856,16 @@ MochaUI.Windows.windowOptions = {
 	toolbarHeight:     29,
 	toolbarURL:        'pages/lipsum.html',
 	toolbarContent:    '',
-
+  toolbarLoadMethod: 'xhr',
+  
 	// Toolbar
 	toolbar2:           false,
 	toolbar2Position:   'bottom',
 	toolbar2Height:     29,
 	toolbar2URL:        'pages/lipsum.html',
 	toolbar2Content:    '',	
-
+  toolbar2LoadMethod: 'xhr',
+  
 	// Container options
 	container:         null,
 	restrict:          true,
@@ -1193,7 +1195,7 @@ MochaUI.Window = new Class({
 				'element':       this.windowEl,
 				'childElement':  this.toolbarEl,
 				'content':       this.options.toolbarContent,
-				'loadMethod':    'xhr',
+				'loadMethod':    this.options.toolbarLoadMethod,
 				'url':           this.options.toolbarURL
 			});
 		}
@@ -1204,7 +1206,7 @@ MochaUI.Window = new Class({
 				'element':       this.windowEl,
 				'childElement':  this.toolbar2El,
 				'content':       this.options.toolbar2Content,
-				'loadMethod':    'xhr',
+				'loadMethod':    this.options.toolbar2LoadMethod,
 				'url':           this.options.toolbar2URL
 			});
 		}

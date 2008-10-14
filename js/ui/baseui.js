@@ -3,7 +3,13 @@ var WINDOW_QUERY = 2;
 var WINDOW_CHANNEL = 3;
 
 var UI = new Class({
-  initialize: function(parentElement, windowClass, uiName) {
+  Implements: [Events, Options],
+  options: {
+    appTitle: "QuakeNet Web IRC",
+  },
+  initialize: function(parentElement, windowClass, uiName, options) {
+    this.setOptions(options);
+    
     this.windows = {};
     this.windowArray = [];
     this.windowClass = windowClass;
@@ -45,6 +51,7 @@ var UI = new Class({
     if(this.active)
       this.active.deselect();
     window.select();  /* calls setActiveWindow */
+    document.title = window.name + " - " + this.options.appTitle;
   },
   __closed: function(window) {
     if(window.active) {

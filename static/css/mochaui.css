@@ -1,3 +1,11 @@
 #desktop {
   visibility: visible;
 }
+
+#ircui .input {
+  background: #FFF;
+}
+
+.mochaToolbarWrapper {
+  background: #FFF;
+}
