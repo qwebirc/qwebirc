@@ -44,7 +44,7 @@ function Colourise(line, entity) {
 
   function emitEndToken() {
     if(out.length > 0) {
-      element.appendChild(document.createTextNode(out.join("")));
+      urlificate(element, out.join(""));
       entity.appendChild(element);
       out = [];
     }
