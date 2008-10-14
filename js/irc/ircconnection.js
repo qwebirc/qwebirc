@@ -1,7 +1,9 @@
 var IRCConnection = new Class({
   Implements: [Events, Options],
   options: {
-    initialNickname: "ircconnX"
+    initialNickname: "ircconnX",
+    timeout: 30000,
+    errorAlert: false,
   },
   initialize: function(options) {
     this.setOptions(options);
@@ -10,6 +12,14 @@ var IRCConnection = new Class({
     
     this.counter = 0;
     this.disconnected = false;
+
+    this.activerequest = null;
+    this.timeoutid = null;
+  },
+  __error: function(text) {
+    this.fireEvent("error", text);
+    if(this.errorAlert)
+      alert(text);
   },
   send: function(data) {
     if(this.disconnected)
@@ -18,7 +28,7 @@ var IRCConnection = new Class({
       if(!o || (o[0] == false)) {
         if(!this.disconnected) {
           this.disconnected = true;
-          alert("An error occured: " + o[1]);
+          this.__error("An error occured: " + o[1]);
         }
         return false;
       }
@@ -27,14 +37,32 @@ var IRCConnection = new Class({
     r.get();
     return true;
   },
+  __timeout: function() {
+    if(this.activerequest) {
+      this.activerequest.cancel();
+      this.activerequest = null;
+    }
+    if($defined(this.timeoutid)) {
+      $clear(this.timeoutid);
+      this.timeoutid = null;
+    }
+    this.recv();
+  },
   recv: function() {
     var r = new Request.JSON({url: "/e/s/" + this.sessionid + "?t=" + this.counter++, onComplete: function(o) {
+      this.activerequest = null;
+      if($defined(this.timeoutid)) {
+        $clear(this.timeoutid);
+        this.timeoutid = null;
+      }
+      
       if(o) {
+        this.lasttry = false;
         if(o[0] == false) {
           if(!this.disconnected) {
             this.disconnected = true;
 
-            alert("An error occured: " + o[1]);
+            this.__error("An error occured: " + o[1]);
           }
           return;
         }
@@ -43,15 +71,24 @@ var IRCConnection = new Class({
         }, this);
       } else {
         if(!this.disconnected) {
-          this.disconnected = true;
+          if(this.lasttry) {
+            this.disconnected = true;
 
-          alert("Error: the server closed the connection.");
+            this.__error("Error: the server closed the connection.");
+            return;
+          } else {
+            this.lasttry = true;
+          }
         }
-        return;
       }
       
       this.recv();
     }.bind(this)});
+
+    if(this.options.timeout)
+      this.timeoutid = this.__timeout.delay(this.options.timeout, this);
+    
+    this.activerequest = r;
     r.get();
   },
   connect: function() {
@@ -63,7 +100,7 @@ var IRCConnection = new Class({
       }
       if(o[0] == false) {
         this.disconnected = true;
-        alert("An error occured: " + o[1]);
+        this.__error("An error occured: " + o[1]);
         return;
       }
       this.sessionid = o[1];
