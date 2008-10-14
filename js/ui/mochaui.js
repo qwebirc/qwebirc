@@ -113,13 +113,15 @@ var QMochaUIWindow = new Class({
     
     this.lastcolour = !this.lastcolour;
     
-    var prev = this.lines.getScroll();
-    var prevbottom = this.lines.getScrollSize().y;
-    var prevsize = this.lines.getSize();
+    var pe = this.lines.parentNode.parentNode;
+    
+    var prev = pe.getScroll();
+    var prevbottom = pe.getScrollSize().y;
+    var prevsize = pe.getSize();
     this.lines.appendChild(e);
     
-    //if(prev.y + prevsize.y == prevbottom)
-    this.lines.scrollTo(prev.x, this.lines.getScrollSize().y);
+    if(prev.y + prevsize.y == prevbottom)
+      pe.scrollTo(prev.x, pe.getScrollSize().y);
       
     if(!this.active)
       this.lines.showLoadingIcon();
