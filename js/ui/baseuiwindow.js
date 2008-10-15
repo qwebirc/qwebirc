@@ -10,6 +10,7 @@ var UIWindow = new Class({
     this.hilighted = false;
     this.scrolltimer = null;
     this.commandhistory = this.parentObject.commandhistory;
+    this.scrolleddown = false;
     //new CommandHistory();
   },
   updateNickList: function(nicks) {
@@ -30,8 +31,17 @@ var UIWindow = new Class({
     this.parentObject.__setActiveWindow(this);
     if(this.hilighted)
       this.setHilighted(false);
+    if(this.scrolleddown)
+      this.__scrollToBottom();
   },
   deselect: function() {
+    if(!this.parentObject.singleWindow)
+      this.scrolleddown = this.__scrolledDown();
+    if($defined(this.scrolltimer)) {
+      $clear(this.scrolltimer);
+      this.scrolltimer = null;
+    }
+
     this.active = false;
   },
   addLine: function(type, line, colour, element, parent, scrollparent) {
@@ -51,27 +61,41 @@ var UIWindow = new Class({
   setHilighted: function(state) {
     this.hilighted = state;
   },
-  scrollAdd: function(element) {
-    var parent = this.lines;
-    var scrollparent = parent;
-    
-    if($defined(this.scroller))
-      scrollparent = this.scroller;
+  __scrolledDown: function() {
+    if(this.scrolltimer)
+      return true;
       
+    var parent = this.lines;
+    
     var prev = parent.getScroll();
     var prevbottom = parent.getScrollSize().y;
     var prevsize = parent.getSize();
+    //alert("1: " + (prev.y + prevsize.y) + " 2:" + prevbottom);
+    return prev.y + prevsize.y == prevbottom;
+  },
+  __scrollToBottom: function() {
+    var parent = this.lines;
+    var scrollparent = parent;
+
+    if($defined(this.scroller))
+      scrollparent = this.scroller;
+      
+    scrollparent.scrollTo(parent.getScroll().x, parent.getScrollSize().y);
+  },
+  scrollAdd: function(element) {
+    var parent = this.lines;
     
     /* scroll in bursts, else the browser gets really slow */
     if($defined(element)) {
+      var sd = this.__scrolledDown();
       parent.appendChild(element);
-      if(this.scrolltimer || (prev.y + prevsize.y == prevbottom)) {
+      if(sd) {
         if(this.scrolltimer)
           $clear(this.scrolltimer);
-        this.scrolltimer = this.scrollAdd.delay(50, this, [null, null]);
+        this.scrolltimer = this.scrollAdd.delay(50, this, [null]);
       }
     } else {
-      scrollparent.scrollTo(prev.x, parent.getScrollSize().y);
+      this.__scrollToBottom();
       this.scrolltimer = null;
     }
   },

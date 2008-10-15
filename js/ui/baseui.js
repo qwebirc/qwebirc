@@ -5,7 +5,8 @@ var WINDOW_CHANNEL = 3;
 var BaseUI = new Class({
   Implements: [Events, Options],
   options: {
-    appTitle: "QuakeNet Web IRC"
+    appTitle: "QuakeNet Web IRC",
+    singleWindow: true
   },
   initialize: function(parentElement, windowClass, uiName, options) {
     this.setOptions(options);

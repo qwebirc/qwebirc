@@ -123,11 +123,10 @@ var QUIWindow = new Class({
     Colourise(topic, t);
   },
   select: function() {
-    this.parent();
-    
     this.window.removeClass("tab-invisible");
     this.tab.removeClass("tab-unselected");
     this.tab.addClass("tab-selected");
+    this.parent();
   },
   deselect: function() {
     this.parent();
@@ -160,9 +159,9 @@ var QUIWindow = new Class({
     this.parent(state);
     
     if(state) {
-      this.tab.addClass("tab-highlighted");
+      this.tab.addClass("tab-hilighted");
     } else {
-      this.tab.removeClass("tab-highlighted");
+      this.tab.removeClass("tab-hilighted");
     }
   }
 });
