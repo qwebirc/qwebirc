@@ -3,7 +3,7 @@ var IRCConnection = new Class({
   options: {
     initialNickname: "ircconnX",
     timeout: 30000,
-    errorAlert: false,
+    errorAlert: true
   },
   initialize: function(options) {
     this.setOptions(options);

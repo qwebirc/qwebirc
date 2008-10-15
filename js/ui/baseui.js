@@ -5,7 +5,7 @@ var WINDOW_CHANNEL = 3;
 var BaseUI = new Class({
   Implements: [Events, Options],
   options: {
-    appTitle: "QuakeNet Web IRC",
+    appTitle: "QuakeNet Web IRC"
   },
   initialize: function(parentElement, windowClass, uiName, options) {
     this.setOptions(options);
@@ -95,7 +95,6 @@ var UI = new Class({
   Extends: BaseUI,
   initialize: function(parentElement, windowClass, uiName, options) {
     this.parent(parentElement, windowClass, uiName, options);
-    
     window.addEvent("keydown", function(x) {
       if(!x.alt)
         return;
