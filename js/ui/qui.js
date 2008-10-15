@@ -1,3 +1,8 @@
+/* IE SUCKS */
+var BORDER_SIZE = 3;
+var INPUT_BORDER_SIZE = 2;
+var TOPIC_BORDER_SIZE = 5;
+
 var QUIWindow = new Class({
   Extends: UIWindow,
   
@@ -6,14 +11,13 @@ var QUIWindow = new Class({
 
     this.tab = new Element("a", {"href": "#"});
     this.tab.addClass("tab");
+    parentObject.tabs.appendChild(this.tab);
     
     this.tab.appendText(name);
     this.tab.addEvent("click", function(e) {
       new Event(e).stop();
       parentObject.selectWindow(this);
     }.bind(this));
-
-    parentObject.tabs.appendChild(this.tab);
     
     if(type != WINDOW_STATUS) {
       tabclose = new Element("span");
@@ -27,6 +31,11 @@ var QUIWindow = new Class({
         this.close();
       }.bind(this));
       tabclose.set("text", "X");
+      if(BrowserVersion() == "ie7" || BrowserVersion() == "ie6") {
+      } else {
+        tabclose.setStyle("padding", "2px");
+        tabclose.setStyle("vertical-align", "top");
+      }
       this.tab.appendChild(tabclose);
     }
 
@@ -75,11 +84,10 @@ var QUIWindow = new Class({
       setAtEnd(inputbox);
     }.bind(this));
     this.inputbox = inputbox;
-    
-    var toppos = 0;
-    var rightpos = 0;
-    var bottompos = formdiv.getSize().y;
-    
+    if(BrowserVersion() == "ie7") {
+    } else {
+      this.formdiv.setStyle("bottom", "0px");
+    }
     if(type == WINDOW_CHANNEL) {
       this.topic = new Element("div");
       this.topic.addClass("topic");
@@ -92,7 +100,6 @@ var QUIWindow = new Class({
       
       this.window.appendChild(this.nicklist);
     }
-
     this.lines.addClass("lines");
     if(type == WINDOW_CHANNEL) {
       /* calls reflow */
@@ -104,17 +111,17 @@ var QUIWindow = new Class({
     this.lines.addEvent("scroll", function() {
       this.scrolleddown = this.scrolledDown();
     }.bind(this));
-    
-    window.addEvent("resize", function() {
-      if(this.scrolleddown)
-        this.scrollToBottom();
-      this.reflow();
-    }.bind(this));
+  },
+  onResize: function() {
+    if(this.scrolleddown)
+      this.scrollToBottom();
+    this.reflow();
   },
   reflow: function() {
     var toppos = 0;
     var rightpos = 0;
     var bottompos = this.formdiv.getSize().y;
+    var bv = BrowserVersion();
     
     if(this.type == WINDOW_CHANNEL) {
       toppos = this.topic.getSize().y;
@@ -125,8 +132,34 @@ var QUIWindow = new Class({
     }
     
     this.lines.setStyle("top", toppos + "px");
-    this.lines.setStyle("bottom", bottompos + "px");
-    this.lines.setStyle("right", rightpos + "px");
+    
+    if(bv == "ie6") {
+      var w = this.window.getSize().x;
+      if(w == 0) {
+        this.reflow.delay(1, this);
+        return;
+      }
+      if(this.type == WINDOW_CHANNEL)
+        this.topic.setStyle("width", (w - TOPIC_BORDER_SIZE) + "px");
+      this.formdiv.setStyle("width", (w - 2 * INPUT_BORDER_SIZE) + "px");
+      this.lines.setStyle("width", (w - rightpos) + "px");
+    } else {
+      this.lines.setStyle("right", rightpos + "px");
+    }
+    /* @IESUCKS */
+    if(bv == "ie7" || bv == "ie6") {
+      var winheight = this.window.getSize().y;
+      if(winheight == 0) {
+        this.reflow.delay(1, this);
+        return;
+      }
+      this.lines.setStyle("height", (winheight - toppos - bottompos) + "px");
+      this.formdiv.setStyle("top", (winheight - bottompos) + "px");
+      if(this.type == WINDOW_CHANNEL && (bv == "ie6"))
+        this.nicklist.setStyle("height", (winheight - toppos - bottompos) + "px");
+    } else {
+      this.lines.setStyle("bottom", bottompos + "px");
+    }
   },
   updateNickList: function(nicks) {
     this.parent(nicks);
@@ -193,7 +226,7 @@ var QUIWindow = new Class({
       e.addClass("linestyle2");
     }
     this.lastcolour = !this.lastcolour;
-        
+
     this.parent(type, line, colour, e);
   },
   setHilighted: function(state) {
@@ -210,13 +243,26 @@ var QUIWindow = new Class({
 var QUI = new Class({
   Extends: UI,
   initialize: function(parentElement, theme) {
+    if(BrowserVersion() == "ie6") {
+      if((parentElement.getStyle("top") == "0px") && (parentElement.getStyle("bottom") == "0px")) {
+        parentElement.setStyle("top", null);
+        parentElement.setStyle("height", "100%");
+      }
+    }
     this.parent(parentElement, QUIWindow, "qui");
     this.theme = theme;
     this.parentElement = parentElement;
   },
   reflow: function() {
     var tabheight = this.tabs.getSize().y;
-    this.container.setStyle("top", tabheight + "px"); 
+    var bv = BrowserVersion();
+    if(bv == "ie7" || bv == "ie6")
+      tabheight = tabheight - 2 * BORDER_SIZE;
+    this.xcontainer.setStyle("top", tabheight + "px");
+    if(bv == "ie7" || bv == "ie6") {
+      this.xcontainer.setStyle("bottom", "");
+      this.xcontainer.setStyle("height", (this.parentElement.getSize().y - (tabheight)) + "px");
+    }
   },
   postInitialize: function() {
     this.outerContainer = new Element("div");
@@ -227,15 +273,22 @@ var QUI = new Class({
     this.tabs.addClass("tabbar");
     this.outerContainer.appendChild(this.tabs);
     
-    var tester = new Element("span");
-    this.tabs.appendChild(tester);
-    
-    this.tabheight = this.tabs.getSize().y;
-    this.tabs.removeChild(tester);
-
     this.container = new Element("div");
     this.container.addClass("container");
     this.outerContainer.appendChild(this.container);
+    
+    //this.container.setStyle("background", "red");
+    //this.container.setStyle("border", "1px solid black");
+    
+    this.xcontainer = this.container;
+    
+    //this.container = new Element("div");
+    window.addEvent("resize", function() {
+      this.reflow();
+      
+      for(i=0;i<this.windowArray.length;i++)
+        this.windowArray[i].onResize();
+    }.bind(this));
   },
   loginBox: function(callbackfn, intialNickname, initialChannels, autoConnect, autoNick) {
     this.parent(function(options) {

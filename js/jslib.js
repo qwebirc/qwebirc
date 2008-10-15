@@ -65,3 +65,13 @@ function parseURI(uri) {
   
   return result;
 }
+
+function BrowserVersion() {
+  if(Browser.Engine.trident) {
+    if(Browser.Engine.version == '4')
+      return 'ie6';
+    if(Browser.Engine.version == '5')
+      return 'ie7';
+  }
+  return null;
+}

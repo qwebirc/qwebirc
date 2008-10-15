@@ -1,5 +1,5 @@
 .qwebirc-qui .tabbar {
-  border: 1px solid #c3cee0;
+  border-bottom: 1px solid #c3cee0;
   padding: 4px;
   background: #e2ecf9;
   font-size: 0.8em;
@@ -7,20 +7,15 @@
   color: #000000;
 }
 
-.qwebirc-qui .tab {
-  border: 1px solid #e2ecf9;
+.qwebirc-qui a.tab {
+  border: 1px solid #c8d2dc;
   padding: 2px;
   cursor: default;
   margin-right: 2px;
-  clear: both;
 }
 
 .qwebirc-qui a.tab {
   text-decoration: none;
-  color: #000000;
-}
-
-.qwebirc-qui tab:visited {
   color: #000000;
 }
 
@@ -42,14 +37,13 @@
 .qwebirc-qui .input input {
   border: 0px;
   margin: 2px 0px 0px 0px;
-  width: 100%;
+  width: 99%;
   font-family: Verdana, sans-serif;
 }
 
 .qwebirc-qui div.input {
   left: 0px;
   right: 0px;
-  bottom: 0px;
   position: absolute;
   border-top: 1px solid #c8d2dc;
   padding-left: 2px;
@@ -58,9 +52,7 @@
 
 .qwebirc-qui .tabclose {
   margin-left: 5px;
-  padding: 2px;
-  font-size: 0.7em;
-  vertical-align: top;
+  font-size: 0.6em;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
 }
