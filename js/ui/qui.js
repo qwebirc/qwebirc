@@ -91,7 +91,6 @@ var QUIWindow = new Class({
       this.nicklist.addClass("nicklist");
       
       this.window.appendChild(this.nicklist);
-      rightpos = this.nicklist.getSize().x;
     }
 
     this.lines.addClass("lines");
@@ -122,6 +121,7 @@ var QUIWindow = new Class({
 
       this.nicklist.setStyle("top", toppos + "px");
       this.nicklist.setStyle("bottom", (bottompos - 1) + "px");
+      rightpos = this.nicklist.getSize().x;
     }
     
     this.lines.setStyle("top", toppos + "px");
