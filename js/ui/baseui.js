@@ -74,13 +74,36 @@ var BaseUI = new Class({
     
     delete this.windows[window.client][window.identifier];
   },
-  loginBox: function(callback, initialNickname, initialChannels) {
     /*
       this shouldn't be called by overriding classes!
+      they should implement their own!
       some form of user input MUST be received before an
       IRC connection is made, else users are going to get
       tricked into getting themselves glined
     */
+  loginBox: function(callback, initialNickname, initialChannels, autoConnect, autoNick) {
+    GenericLoginBox(this.parentElement, callback, initialNickname, initialChannels, autoConnect, autoNick);
+    /*if(autoConnect) {
+      var c = initialChannels.split(",");
+      var ctext;
+      
+      if(c.length > 1) {
+        var last = c.pop();
+        ctext = c.join(", ") + " and " + last;
+      } else {
+        ctext = c[0];
+      }
+      
+      var nicktext;
+      if(autoNick) {
+        nicktext = "";
+      } else {
+        nicktext = " (as '" + initialNickname + "')"
+      }
+      if(confirm("Connect to IRC and join channels " + ctext + nicktext + "?"))
+        callback({"nickname": initialNickname, "autojoin": initialChannels});
+      return;
+    }
 
     var nick = prompt("Nickname:", initialNickname);
     if(!nick) {
@@ -90,6 +113,7 @@ var BaseUI = new Class({
 
     var chans = prompt("Channels (seperate by comma):", initialChannels);
     callback({"nickname": nick, "autojoin": chans});
+    */
   }
 });
 

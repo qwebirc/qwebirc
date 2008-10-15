@@ -4,11 +4,12 @@ var QUIWindow = new Class({
   initialize: function(parentObject, client, type, name) {
     this.parent(parentObject, client, type, name);
 
-    this.tab = new Element("span");
+    this.tab = new Element("a", {"href": "#"});
     this.tab.addClass("tab");
     
     this.tab.appendText(name);
-    this.tab.addEvent("click", function() {
+    this.tab.addEvent("click", function(e) {
+      new Event(e).stop();
       parentObject.selectWindow(this);
     }.bind(this));
 
@@ -79,20 +80,21 @@ var QUIWindow = new Class({
     var bottompos = formdiv.getSize().y;
     
     if(type == WINDOW_CHANNEL) {
+      this.topic = new Element("div");
+      this.topic.addClass("topic");
+      this.topic.set("html", "&nbsp;");
+      this.topic.setStyle("right", "0px");
+      this.window.appendChild(this.topic);
+      
+      toppos = this.topic.getSize().y;
+
       this.nicklist = new Element("div");
       this.nicklist.addClass("nicklist");
+      this.nicklist.setStyle("top", toppos + "px");
       this.nicklist.setStyle("bottom", (bottompos - 1) + "px");
       
       this.window.appendChild(this.nicklist);
       rightpos = this.nicklist.getSize().x;
-
-      this.topic = new Element("div");
-      this.topic.addClass("topic");
-      this.topic.set("html", "&nbsp;");
-      this.topic.setStyle("right", rightpos + "px");
-      this.window.appendChild(this.topic);
-      
-      toppos = this.topic.getSize().y;
     }
 
     this.lines.setStyle("top", toppos + "px");
@@ -130,7 +132,13 @@ var QUIWindow = new Class({
     while(t.firstChild)
       t.removeChild(t.firstChild);
 
-    Colourise(topic, t);
+    if(topic) {
+      Colourise(topic, "[" + topic + "]");
+    } else {
+      var e = new Element("(no topic set)");
+      e.addClass("emptytopic");
+      topic.appendChild(e);
+    }
   },
   select: function() {
     this.window.removeClass("tab-invisible");
@@ -208,10 +216,10 @@ var QUI = new Class({
     this.container.addClass("container");
     this.outerContainer.appendChild(this.container);
   },
-  loginBox: function(callbackfn, intialNickname, initialChannels) {
+  loginBox: function(callbackfn, intialNickname, initialChannels, autoConnect, autoNick) {
     this.parent(function(options) {
       this.postInitialize();
       callbackfn(options);
-    }.bind(this), intialNickname, initialChannels);
+    }.bind(this), intialNickname, initialChannels, autoConnect, autoNick);
   }
 });

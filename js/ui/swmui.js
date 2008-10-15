@@ -161,68 +161,10 @@ var SWMUI = new Class({
   resize: function() {
     window.fireEvent("resize");
   },
-  loginBox: function(callback, initialNickname, initialChannels) {
-    var box = new Element("div");
-    this.parentElement.appendChild(box);
-
-    var header = new Element("h1");
-    header.set("text", "qwebirc");
-    box.appendChild(header);
-
-    var form = new Element("form");
-    box.appendChild(form);
-
-    var boxtable = new Element("table");
-    form.appendChild(boxtable);
-
-    var tbody = new Element("tbody");
-    boxtable.appendChild(tbody); /* stupid IE */
-
-    function createRow(label, e2) {
-      var r = new Element("tr");
-      tbody.appendChild(r);
-
-      var d1 = new Element("td");
-      if(label)
-        d1.set("text", label);
-      r.appendChild(d1);
-
-      var d2 = new Element("td");
-      r.appendChild(d2);
-      d2.appendChild(e2);
-      return d1;
-    }
-
-    var nick = new Element("input");
-    createRow("Nickname:", nick);
-    var chan = new Element("input");
-    createRow("Channels (comma seperated):", chan);
-
-    var connbutton = new Element("input", {"type": "submit"});
-    connbutton.set("value", "Connect");
-    createRow(undefined, connbutton)
-
-    form.addEvent("submit", function(e) {
-      new Event(e).stop();
-      var nickname = nick.value;
-      var chans = chan.value;
-      if(chans == "#") /* sorry channel "#" :P */
-        chans = "";
-
-      if(!nickname) {
-        alert("You must supply a nickname.");
-        nick.focus();
-        return;
-      }
-
-      this.parentElement.removeChild(box);
+  loginBox: function(callback, initialNickname, initialChannels, autoConnect) {
+    this.parent(function(options) {
       this.postInitialize();
-      callback({"nickname": nickname, "autojoin": chans});
-    }.bind(this));
-
-    nick.set("value", initialNickname);
-    chan.set("value", initialChannels);
-
-    nick.focus();
+      callbackfn(options);
+    }.bind(this), intialNickname, initialChannels, autoConnect);
   }
 });

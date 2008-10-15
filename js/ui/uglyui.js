@@ -156,11 +156,11 @@ var UglyUI = new Class({
     form.appendChild(inputbox);
     inputbox.focus();
   },
-  loginBox: function(callbackfn, intialNickname, initialChannels) {
+  loginBox: function(callbackfn, intialNickname, initialChannels, autoConnect, autoNick) {
     this.parent(function(options) {
       this.postInitialize();
       callbackfn(options);
-    }.bind(this), intialNickname, initialChannels);
+    }.bind(this), intialNickname, initialChannels, autoConnect, autoNick);
   }
 });
 

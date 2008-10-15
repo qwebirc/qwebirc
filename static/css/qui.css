@@ -1,21 +1,46 @@
 .qwebirc-qui .tabbar {
-  border: 1px solid black;
+  border: 1px solid #c3cee0;
   padding: 4px;
+  background: #e2ecf9;
   font-size: 0.8em;
   font-family: Verdana, sans-serif;
+  color: #000000;
 }
 
 .qwebirc-qui .tab {
-  border: 1px black solid;
+  border: 1px solid #e2ecf9;
   padding: 2px;
   cursor: default;
   margin-right: 2px;
-  background: #eee;
   clear: both;
 }
 
+.qwebirc-qui a.tab {
+  text-decoration: none;
+  color: #000000;
+}
+
+.qwebirc-qui a.tab:visited {
+  color: #000000;
+}
+
+.qwebirc-qui .tab:hover {
+  background: #ffffff;
+  border: 1px solid #c8d2dc;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+}
+
+.qwebirc-qui .tab-selected {
+  background: #ffffff;
+  border: 1px solid #c8d2dc;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  color: #333333;
+}
+
 .qwebirc-qui .input input {
-  border: 0px solid black;
+  border: 0px;
   margin: 2px 0px 0px 0px;
   width: 100%;
   font-family: Verdana, sans-serif;
@@ -26,24 +51,29 @@
   right: 0px;
   bottom: 0px;
   position: absolute;
-  border-top: 1px solid black;
+  border-top: 1px solid #c8d2dc;
+  padding-left: 2px;
+  padding-right: 2px;
 }
 
 .qwebirc-qui .tabclose {
-  border: 1px black solid;
   margin-left: 5px;
   padding: 2px;
-  font-size: 0.5em;
+  font-size: 0.7em;
+  vertical-align: top;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
 }
 
 .qwebirc-qui .nicklist {
-  border-left: 1px solid black;
+  border-left: 1px solid #c8d2dc;
   position: absolute;
   top: 0px;
   right: 0px;
   width: 125px;
   overflow: auto;
-  background: white;
+  background: #f2f0ff;
+  color: black;
   font-family: Verdana, sans-serif;
   font-size: 0.7em;
 }
@@ -52,17 +82,13 @@
   display: none;
 }
 
-.qwebirc-qui .tab-selected {
-  background: #eeffff;
-}
-
-.qwebirc-qui .linestyle1 {
+/*.qwebirc-qui .linestyle1 {
   background: #efefef;
 }
 
 .qwebirc-qui .linestyle2 {
   background: #eeffff;
-}
+}*/
 
 .qwebirc-qui .tab-hilighted {
   color: red;
@@ -72,13 +98,21 @@
   position: absolute;
   left: 0px;
   top: 0px;
+  background-color: #F2F0FF;
+  border-bottom: 1px dashed #c8d2dc;
+}
+
+.qwebirc-qui .topic .emptytopic {
+  color: grey;
 }
 
 .qwebirc-qui .lines {
   overflow: auto;
   position: absolute;
   left: 0px;
-  font-family: Consolas, "Lucida Console", monospace, sans-serif;
+  font-family: Verdana;
+  font-size: 0.8em;
+  background: #f2f0ff;
 }
 
 .qwebirc-qui .lines div {

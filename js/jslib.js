@@ -42,3 +42,26 @@ function setAtEnd(obj) {
     obj.setSelectionRange(pos, pos); 
   } 
 }
+
+/* returns the arguments */
+function parseURI(uri) {
+  var result = {}
+
+  var start = uri.indexOf('?');
+  if(start == -1)
+    return result;
+    
+  var querystring = uri.substring(start + 1);
+  
+  var args = querystring.split("&");
+  
+  for(i=0;i<args.length;i++) {
+    var r = args[i].splitMax("=", 2);
+    if(r.length < 2)
+      continue;
+      
+    result[unescape(r[0])] = unescape(r[1]);
+  }
+  
+  return result;
+}
