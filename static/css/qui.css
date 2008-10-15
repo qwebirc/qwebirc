@@ -1,0 +1,86 @@
+.qwebirc-uglyui .tabbar {
+  border: 1px solid black;
+  padding: 4px;
+  font-family: "Lucida Console", sans-serif;
+}
+
+.qwebirc-uglyui .tab {
+  border: 1px black solid;
+  padding: 2px;
+  cursor: default;
+  margin-right: 2px;
+  background: #eee;
+  clear: both;
+}
+
+.qwebirc-uglyui .container {
+  border: 1px solid black;
+  margin: 2px 0px 0px 0px;
+  height: 480px;
+}
+
+.qwebirc-uglyui .input {
+  width: 400px;
+  border: 1px solid black;
+  margin: 2px 0px 0px 0px;
+}
+
+.qwebirc-uglyui .tabclose {
+  border: 1px black solid;
+  margin-left: 5px;
+  padding: 2px;
+  font-size: 0.5em;
+}
+
+.qwebirc-uglyui .nicklist {
+  border-left: 1px solid black;
+  width: 125px;
+  float: right;
+  height: 480px;
+  clear: both;
+  overflow: auto;
+  background: white;
+}
+
+.qwebirc-uglyui .tab-invisible {
+  display: none;
+}
+
+.qwebirc-uglyui .outercontainer {
+  font-family: Lucida Console;
+}
+
+.qwebirc-uglyui .innercontainer {
+  height: 480px;
+}
+
+.qwebirc-uglyui .topic {
+  background: #fef;
+  height: 20px;
+}
+
+.qwebirc-uglyui .tab-selected {
+  background: #eff;
+}
+
+.qwebirc-uglyui .tab-unselected {
+  background: #eee;
+}
+
+.qwebirc-uglyui .tab-highlighted {
+  color: red;
+}
+
+.qwebirc-uglyui .lines {
+  height: 460px;
+  overflow: auto;
+  word-wrap: break-word;
+}
+
+.qwebirc-uglyui .linestyle1 {
+  background: #efefef;
+}
+
+.qwebirc-uglyui .linestyle2 {
+  background: #eeffff;
+}

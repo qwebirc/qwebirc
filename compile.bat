@@ -22,6 +22,9 @@ if not %errorlevel% == 0 goto error
 java -jar ..\bin\yuicompressor-2.3.5.jar ..\js\ui\mochaui.js > mochaui-compiled.js
 if not %errorlevel% == 0 goto error
 
+java -jar ..\bin\yuicompressor-2.3.5.jar ..\js\ui\qui.js > qui-compiled.js
+if not %errorlevel% == 0 goto error
+
 goto ok
 :error
 cd ..
@@ -37,6 +40,7 @@ copy js\copyright.js + compiled\qwebirc-compiled.js /b static\js\qwebirc.js
 copy js\copyright.js + compiled\uglyui-compiled.js /b static\js\uglyui.js
 copy js\copyright.js + compiled\swmui-compiled.js /b static\js\swmui.js
 copy js\copyright.js + compiled\mochaui-compiled.js /b static\js\mochaui.js
+copy js\copyright.js + compiled\qui-compiled.js /b static\js\qui.js
 del /q compiled\*.js
 rmdir compiled
 

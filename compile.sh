@@ -43,6 +43,7 @@ jarit qwebirc-concat qwebirc
 jarit ../js/ui/uglyui uglyui
 jarit swmui-concat swmui
 jarit ../js/ui/mochaui mochaui
+jarit ../js/ui/qui qui
 
 rm compiled/{swmui,qwebirc}-concat.js
 
