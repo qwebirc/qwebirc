@@ -17,8 +17,8 @@ catit() {
 }
 
 xjarit() {
-  SRC=$1
-  DST=$2
+  local SRC=$1
+  local DST=$2
   cd compiled
   java -jar ../bin/yuicompressor-2.3.5.jar $SRC.js > $DST.js
   if [ "$?" != 0 ]; then
@@ -29,11 +29,11 @@ xjarit() {
 
 jarit() {
   SRC=$1
-  DST=$2-compiled
+  DST=$2
   
-  xjarit $SRC $DST
+  xjarit $SRC $DST-compiled
   catit $DST
-  rm compiled/$DST.js
+  rm compiled/$DST-compiled.js
 }
 
 cd ..
