@@ -9,6 +9,8 @@ var UIWindow = new Class({
     this.identifier = identifier;
     this.hilighted = false;
     this.scrolltimer = null;
+    this.commandhistory = this.parentObject.commandhistory;
+    //new CommandHistory();
   },
   updateNickList: function(nicks) {
   },
@@ -72,5 +74,9 @@ var UIWindow = new Class({
       scrollparent.scrollTo(prev.x, parent.getScrollSize().y);
       this.scrolltimer = null;
     }
+  },
+  historyExec: function(line) {
+    this.commandhistory.addLine(line);
+    this.client.exec(line);
   }
 });

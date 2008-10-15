@@ -4,7 +4,7 @@ del /q compiled\*.js
 
 cd js
 copy version.js + jslib.js + irc\ircconnection.js + irc\irclib.js + irc\baseircclient.js + irc\irctracker.js + irc\commandparser.js + irc\ircclient.js + ui\baseui.js + ui\baseuiwindow.js + ui\colour.js + ui\url.js + ui\theme.js + qwebircinterface.js ..\compiled\qwebirc-concat.js /b
-copy ui\swmlayout.js + ui\swmui.js ..\compiled\swmui-concat.js /b
+copy ui\swmlayout.js + ui\swmui.js + irc\commandhistory.js ..\compiled\swmui-concat.js /b
 cd ..\compiled
 
 java -jar ..\bin\yuicompressor-2.3.5.jar ..\static\js\mochaui\mocha.js > mocha-compressed.js

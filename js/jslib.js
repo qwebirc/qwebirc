@@ -29,3 +29,16 @@ String.prototype.splitMax = function(by, max) {
   
   return newitems;
 }
+
+function setAtEnd(obj) {
+  pos = obj.value.length;
+  
+  if(obj.createTextRange) { 
+    var range = obj.createTextRange(); 
+    range.move("character", pos); 
+    range.select(); 
+  } else if(obj.selectionStart) { 
+    obj.focus(); 
+    obj.setSelectionRange(pos, pos); 
+  } 
+}

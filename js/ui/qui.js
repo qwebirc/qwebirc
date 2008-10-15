@@ -44,17 +44,35 @@ var QUIWindow = new Class({
     
     var form = new Element("form");
     var inputbox = new Element("input");
+    
     formdiv.addClass("input");
   
     form.addEvent("submit", function(e) {
       new Event(e).stop();
     
-      this.client.exec(inputbox.value);
+      this.historyExec(inputbox.value);
       inputbox.value = "";
     }.bind(this));
     formdiv.appendChild(form);
     form.appendChild(inputbox);
     
+    inputbox.addEvent("keypress", function(e) {
+      var result;
+      if(e.key == "up") {
+        result = this.commandhistory.nextLine();
+      } else if(e.key == "down") {
+        result = this.commandhistory.prevLine();
+      } else {
+        return;
+      }
+      
+      new Event(e).stop();
+      if(!result)
+        result = ""
+      inputbox.value = result;
+      setAtEnd(inputbox);
+    }.bind(this));
+
     var toppos = 0;
     var rightpos = 0;
     var bottompos = formdiv.getSize().y;

@@ -17,6 +17,7 @@ var BaseUI = new Class({
     this.parentElement.addClass("qwebirc");
     this.parentElement.addClass("qwebirc-" + uiName);
     this.firstClient = false;
+    this.commandhistory = new CommandHistory();
   },
   newClient: function(client) {
     this.windows[client] = {}
