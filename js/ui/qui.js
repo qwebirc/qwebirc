@@ -136,7 +136,7 @@ var QUIWindow = new Class({
 var QUI = new Class({
   Extends: UI,
   initialize: function(parentElement, theme) {
-    this.parent(parentElement, UglyUIWindow, "uglyui");
+    this.parent(parentElement, QUIWindow, "qui");
     this.theme = theme;
     this.parentElement = parentElement;
   },
