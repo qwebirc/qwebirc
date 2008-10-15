@@ -1,8 +1,4 @@
-TODO:
-  - isp transparent proxy issue
-  - tidy up UI
-  - better colour scheme
-  - IE6
-  - IE
-  - Safari
-  - Opera
+IE7
+IE6
+ping timeout bug?
+opera weirdness

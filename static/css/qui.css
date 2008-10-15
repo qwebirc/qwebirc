@@ -98,12 +98,20 @@
   position: absolute;
   left: 0px;
   top: 0px;
+  right: 0px;
   background-color: #F2F0FF;
   border-bottom: 1px dashed #c8d2dc;
 }
 
 .qwebirc-qui .topic .emptytopic {
   color: grey;
+}
+
+.qwebirc-qui .topic {
+  color: grey;
+  font-family: Verdana, sans-serif;
+  padding-left: 5px;
+  font-size: 0.7em;
 }
 
 .qwebirc-qui .lines {
@@ -180,4 +188,9 @@
   width: 100%;
   vertical-align: top;
   text-align: center;
+}
+
+.qwebirc-qui form {
+  margin: 0px;
+  padding: 0px;
 }

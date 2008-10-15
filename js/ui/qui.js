@@ -42,6 +42,7 @@ var QUIWindow = new Class({
     
     var formdiv = new Element("div");
     this.window.appendChild(formdiv);  
+    this.formdiv = formdiv;
     
     var form = new Element("form");
     var inputbox = new Element("input");
@@ -83,24 +84,23 @@ var QUIWindow = new Class({
       this.topic = new Element("div");
       this.topic.addClass("topic");
       this.topic.set("html", "&nbsp;");
-      this.topic.setStyle("right", "0px");
+      
       this.window.appendChild(this.topic);
       
-      toppos = this.topic.getSize().y;
-
       this.nicklist = new Element("div");
       this.nicklist.addClass("nicklist");
-      this.nicklist.setStyle("top", toppos + "px");
-      this.nicklist.setStyle("bottom", (bottompos - 1) + "px");
       
       this.window.appendChild(this.nicklist);
       rightpos = this.nicklist.getSize().x;
     }
 
-    this.lines.setStyle("top", toppos + "px");
-    this.lines.setStyle("bottom", bottompos + "px");
-    this.lines.setStyle("right", rightpos + "px");
     this.lines.addClass("lines");
+    if(type == WINDOW_CHANNEL) {
+      /* calls reflow */
+      this.updateTopic("");
+    } else {
+      this.reflow();
+    }
     
     this.lines.addEvent("scroll", function() {
       this.scrolleddown = this.scrolledDown();
@@ -109,7 +109,24 @@ var QUIWindow = new Class({
     window.addEvent("resize", function() {
       if(this.scrolleddown)
         this.scrollToBottom();
+      this.reflow();
     }.bind(this));
+  },
+  reflow: function() {
+    var toppos = 0;
+    var rightpos = 0;
+    var bottompos = this.formdiv.getSize().y;
+    
+    if(this.type == WINDOW_CHANNEL) {
+      toppos = this.topic.getSize().y;
+
+      this.nicklist.setStyle("top", toppos + "px");
+      this.nicklist.setStyle("bottom", (bottompos - 1) + "px");
+    }
+    
+    this.lines.setStyle("top", toppos + "px");
+    this.lines.setStyle("bottom", bottompos + "px");
+    this.lines.setStyle("right", rightpos + "px");
   },
   updateNickList: function(nicks) {
     this.parent(nicks);
@@ -133,17 +150,21 @@ var QUIWindow = new Class({
       t.removeChild(t.firstChild);
 
     if(topic) {
-      Colourise(topic, "[" + topic + "]");
+      Colourise("[" + topic + "]", t);
     } else {
-      var e = new Element("(no topic set)");
+      var e = new Element("div");
+      e.set("text", "(no topic set)");
       e.addClass("emptytopic");
-      topic.appendChild(e);
+      t.appendChild(e);
     }
+    this.reflow();
   },
   select: function() {
     this.window.removeClass("tab-invisible");
     this.tab.removeClass("tab-unselected");
     this.tab.addClass("tab-selected");
+    this.reflow();
+
     this.parent();
     
     this.inputbox.focus();
