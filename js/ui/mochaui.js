@@ -9,7 +9,6 @@ var QMochaUIWindow = new Class({
     this.form = new Element("form");
     this.inputbox = new Element("input", {styles: {border: 0, width: "100%"}});
     this.inputbox.addClass("input");
-    this.scrolltimeout = null;
     
     this.inputbox.addEvent("focus", function() {
       /* TODO: bring to top */
@@ -50,10 +49,6 @@ var QMochaUIWindow = new Class({
       onClose: function() {
         if(type == WINDOW_CHANNEL)
           this.client.exec("/PART " + name);
-        if($defined(this.scrolltimeout)) {
-          $clear(this.scrolltimeout);
-          this.scrolltimeout = null;
-        }
         this.close();
       }.bind(this)
     };
@@ -87,6 +82,8 @@ var QMochaUIWindow = new Class({
     /*this.inputbox.setStyle("background", toolbar.parentNode.getStyle("background"));*/
     toolbar.appendChild(this.form);
     this.windowObject = nw;
+    
+    this.scroller = this.lines.parentNode.parentNode;
     
     return;
 /*    
@@ -133,8 +130,6 @@ var QMochaUIWindow = new Class({
     Colourise(topic, t);
   },
   addLine: function(type, line, colour) {
-    this.parent(type, line, colour);
-    
     var e = new Element("div");
 
     if(colour) {
@@ -144,20 +139,18 @@ var QMochaUIWindow = new Class({
     } else {
       e.addClass("linestyle2");
     }
-    
-    if(type)
-      line = this.parentObject.theme.message(type, line);
-    
-    Colourise(IRCTimestamp(new Date()) + " " + line, e);
-    
     this.lastcolour = !this.lastcolour;
 
-    this.__scrollbottom(false, e);  
-    
-    if(!this.active)
-      this.__setAlert(true);
+    this.parent(type, line, colour, e, this.lines);
   },
-  __setAlert: function(state) {
+  select: function() {
+    this.parent();
+    
+    this.inputbox.focus();
+  },
+  setHilighted: function(state) {
+    this.parent(state);
+    
     if(state) {
       this.titleText.setStyle("color", "#ff0000");
       this.tabText.setStyle("background-color", "#ff0000");
@@ -166,34 +159,7 @@ var QMochaUIWindow = new Class({
       this.titleText.setStyle("color", null);
       this.tabText.setStyle("background-color", null);
       this.tabText.setStyle("color", null);
-    }
-  },
-  __scrollbottom: function(timed, element) {
-    var pe = this.lines.parentNode.parentNode;
-    //alert(pe);
-    var prev = pe.getScroll();
-    var prevbottom = pe.getScrollSize().y;
-    var prevsize = pe.getSize();
-    
-    /* scroll in bursts, else the browser gets really slow */
-    if(!timed) {
-      this.lines.appendChild(element);
-      if(this.scrolltimeout || (prev.y + prevsize.y == prevbottom)) {
-        if(this.scrolltimeout)
-          $clear(this.scrolltimeout);
-        this.scrolltimeout = this.__scrollbottom.delay(10, this, true);
-      }
-    } else {
-      pe.scrollTo(prev.x, pe.getScrollSize().y);
-      this.scrolltimeout = null;
-    }
-  },
-  select: function() {
-    this.parent();
-    
-    this.__setAlert(false);
-    
-    this.inputbox.focus();
+    }    
   }
 });
 

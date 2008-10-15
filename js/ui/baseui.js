@@ -2,7 +2,7 @@ var WINDOW_STATUS = 1;
 var WINDOW_QUERY = 2;
 var WINDOW_CHANNEL = 3;
 
-var UI = new Class({
+var BaseUI = new Class({
   Implements: [Events, Options],
   options: {
     appTitle: "QuakeNet Web IRC",
@@ -88,5 +88,37 @@ var UI = new Class({
 
     var chans = prompt("Channels (seperate by comma):", initialChannels);
     callback({"nickname": nick, "autojoin": chans});
+  }
+});
+
+var UI = new Class({
+  Extends: BaseUI,
+  initialize: function(parentElement, windowClass, uiName, options) {
+    this.parent(parentElement, windowClass, uiName, options);
+    
+    window.addEvent("keydown", function(x) {
+      if(!x.alt)
+        return;
+        
+      if(x.key == "a" || x.key == "A") {
+        for(var i=0;i<this.windowArray.length;i++) {
+          if(this.windowArray[i].hilighted) {
+            this.selectWindow(this.windowArray[i]);
+            break;
+          }
+        }
+      } else if(x.key >= '0' && x.key <= '9') {
+        number = x.key - '0';
+        if(number == 0)
+          number = 10
+          
+        number = number - 1;
+        
+        if(number >= this.windowArray.length)
+          return;
+          
+        this.selectWindow(this.windowArray[number]);
+      }
+    }.bind(this));
   }
 });

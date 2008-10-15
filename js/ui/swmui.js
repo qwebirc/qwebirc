@@ -16,7 +16,8 @@ var SWMUIWindow = new Class({
       this.topic.addClass("topic");
     }
     
-    this.lines = new SWMPanel(this.contentPanel);
+    this.xlines = new SWMPanel(this.contentPanel);
+    this.lines = this.xlines.element;
     
     this.tab = new Element("span");
     this.tab.addClass("tab");
@@ -69,7 +70,6 @@ var SWMUIWindow = new Class({
 
     this.contentPanel.setHidden(false);
     this.parentObject.resize();
-    this.tab.removeClass("tab-highlighted");
     this.tab.removeClass("tab-unselected");
     this.tab.addClass("tab-selected");
   },
@@ -88,8 +88,6 @@ var SWMUIWindow = new Class({
     this.parentObject.tabPanel.removeChild(this.tab);
   },
   addLine: function(type, line, colour) {
-    this.parent(type, line, colour);
-    
     var e = new Element("div");
 
     if(colour) {
@@ -100,23 +98,18 @@ var SWMUIWindow = new Class({
       e.addClass("linestyle2");
     }
     
-    if(type)
-      line = this.parentObject.theme.message(type, line);
-    
-    Colourise(IRCTimestamp(new Date()) + " " + line, e);
-    
     this.lastcolour = !this.lastcolour;
 
-    var prev = this.lines.element.getScroll();
-    var prevbottom = this.lines.element.getScrollSize().y;
-    var prevsize = this.lines.element.getSize();
-    this.lines.appendChild(e);
-  
-    if(prev.y + prevsize.y == prevbottom)
-      this.lines.element.scrollTo(prev.x, this.lines.element.getScrollSize().y);
+    this.parent(type, line, colour, e);
+  },
+  setHilighted: function(state) {
+    this.parent(state);
     
-    if(!this.active)
+    if(state) {
       this.tab.addClass("tab-highlighted");
+    } else {
+      this.tab.removeClass("tab-highlighted");
+    }
   }
 });
 

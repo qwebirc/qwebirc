@@ -83,8 +83,7 @@ var UglyUIWindow = new Class({
     this.parent();
     
     this.outerContainer.removeClass("tab-invisible");
-    this.tab.removeClass("tab-unselected");
-    this.tab.removeClass("tab-highlighted");
+    this.tab.removeClass("tab-unselected");    
     this.tab.addClass("tab-selected");
   },
   deselect: function() {
@@ -101,8 +100,6 @@ var UglyUIWindow = new Class({
     this.parentObject.tabs.removeChild(this.tab);
   },
   addLine: function(type, line, colour) {
-    this.parent(type, line, colour);
-    
     var e = new Element("div");
 
     if(colour) {
@@ -112,24 +109,18 @@ var UglyUIWindow = new Class({
     } else {
       e.addClass("linestyle2");
     }
-    
-    if(type)
-      line = this.parentObject.theme.message(type, line);
-    
-    Colourise(IRCTimestamp(new Date()) + " " + line, e);
-    
     this.lastcolour = !this.lastcolour;
     
-    var prev = this.lines.getScroll();
-    var prevbottom = this.lines.getScrollSize().y;
-    var prevsize = this.lines.getSize();
-    this.lines.appendChild(e);
+    this.parent(type, line, colour, e);
+  },
+  setHilighted: function(state) {
+    this.parent(state);
     
-    if(prev.y + prevsize.y == prevbottom)
-      this.lines.scrollTo(prev.x, this.lines.getScrollSize().y);
-      
-    if(!this.active)
+    if(state) {
       this.tab.addClass("tab-highlighted");
+    } else {
+      this.tab.removeClass("tab-highlighted");
+    }
   }
 });
 
