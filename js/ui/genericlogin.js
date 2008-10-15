@@ -4,6 +4,7 @@ function GenericLoginBox(parentElement, callback, initialNickname, initialChanne
   } else {
     LoginBox(parentElement, callback, initialNickname, initialChannels);
   }
+  
 }
 
 function ConfirmBox(parentElement, callback, initialNickname, initialChannels, autoNick) {
@@ -11,8 +12,11 @@ function ConfirmBox(parentElement, callback, initialNickname, initialChannels, a
   box.addClass("confirmbox");
   parentElement.appendChild(box);
 
+  var tbody = new Element("tbody");
+  box.appendChild(tbody);
+  
   var tr = new Element("tr");
-  box.appendChild(tr);
+  tbody.appendChild(tr);
   tr.addClass("tr1");
   
   var text = new Element("td");
@@ -44,7 +48,7 @@ function ConfirmBox(parentElement, callback, initialNickname, initialChannels, a
   text.appendChild(document.createTextNode(" click 'Connect'."));
 
   var tr = new Element("tr");
-  box.appendChild(tr);
+  tbody.appendChild(tr);
   tr.addClass("tr2");
   
   var td = new Element("td");
@@ -68,24 +72,24 @@ function LoginBox(parentElement, callback, initialNickname, initialChannels) {
   parentElement.appendChild(box);
   box.addClass("loginbox");
   
+  var tbody = new Element("tbody");
+  box.appendChild(tbody);
+  
   var tr = new Element("tr");
-  box.appendChild(tr);
+  tbody.appendChild(tr);
   tr.addClass("tr1");
   
   var td = new Element("td");
   tr.appendChild(td);
   td.set("html", "<h1>Connect to IRC</h1>");  
-  
-  
+    
   var tr = new Element("tr");
+  tbody.appendChild(tr);
   tr.addClass("tr2");
   
   var td = new Element("td");
-
-  box.appendChild(tr);
-  
-  var td = new Element("td");
   tr.appendChild(td);
+  
   var form = new Element("form");
   td.appendChild(form);
 
