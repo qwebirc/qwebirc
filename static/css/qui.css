@@ -20,7 +20,7 @@
   color: #000000;
 }
 
-.qwebirc-qui a.tab:visited {
+.qwebirc-qui tab:visited {
   color: #000000;
 }
 
@@ -90,7 +90,7 @@
   background: #eeffff;
 }*/
 
-.qwebirc-qui .tab-hilighted {
+.qwebirc-qui a.tab-hilighted {
   color: red;
 }
 

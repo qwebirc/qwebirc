@@ -44,10 +44,9 @@ var UIWindow = new Class({
 
     this.active = false;
   },
-  addLine: function(type, line, colour, element, parent, scrollparent) {
+  addLine: function(type, line, colour, element) {
     if(!this.active && !this.hilighted)
       this.setHilighted(true);
-    
     if(type)
       line = this.parentObject.theme.message(type, line);
     

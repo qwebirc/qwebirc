@@ -23,6 +23,8 @@ var CommandParser = new Class({
     if(!window) {
       type = "TARGETED" + type;
       target = false;
+      this.parentObject.newActiveLine("OUR" + type, extra);
+      return;
     } else if(window.type == WINDOW_CHANNEL) {
       type = "CHAN" + type;
     } else {
