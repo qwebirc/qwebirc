@@ -7,10 +7,17 @@ function GenericLoginBox(parentElement, callback, initialNickname, initialChanne
 }
 
 function ConfirmBox(parentElement, callback, initialNickname, initialChannels, autoNick) {
-  var box = new Element("div");
-  box.addStyle("confirmbox");
+  var box = new Element("table");
+  box.addClass("confirmbox");
   parentElement.appendChild(box);
 
+  var tr = new Element("tr");
+  box.appendChild(tr);
+  tr.addClass("tr1");
+  
+  var text = new Element("td");
+  tr.appendChild(text);
+  
   var nick = new Element("b");
   nick.set("text", initialNickname);
   
@@ -27,7 +34,6 @@ function ConfirmBox(parentElement, callback, initialNickname, initialChannels, a
   var channels = new Element("b");
   channels.set("text", ctext);
   
-  var text = new Element("div");
   text.appendChild(document.createTextNode("To connect to IRC and join channels "));
   text.appendChild(channels);
   
@@ -37,10 +43,15 @@ function ConfirmBox(parentElement, callback, initialNickname, initialChannels, a
   }    
   text.appendChild(document.createTextNode(" click 'Connect'."));
 
-  box.appendChild(text);
+  var tr = new Element("tr");
+  box.appendChild(tr);
+  tr.addClass("tr2");
   
+  var td = new Element("td");
+  tr.appendChild(td);
+
   var form = new Element("form");
-  box.appendChild(form);
+  td.appendChild(form);
   
   var yes = new Element("input", {"type": "submit", "value": "Connect"});
   form.appendChild(yes);
@@ -53,16 +64,30 @@ function ConfirmBox(parentElement, callback, initialNickname, initialChannels, a
 }
 
 function LoginBox(parentElement, callback, initialNickname, initialChannels) {
-  var box = new Element("div");
+  var box = new Element("table");
   parentElement.appendChild(box);
-  box.addStyle("loginbox");
+  box.addClass("loginbox");
   
-  var header = new Element("h1");
-  header.set("text", "Connect to IRC");
-  box.appendChild(header);
+  var tr = new Element("tr");
+  box.appendChild(tr);
+  tr.addClass("tr1");
+  
+  var td = new Element("td");
+  tr.appendChild(td);
+  td.set("html", "<h1>Connect to IRC</h1>");  
+  
+  
+  var tr = new Element("tr");
+  tr.addClass("tr2");
+  
+  var td = new Element("td");
 
+  box.appendChild(tr);
+  
+  var td = new Element("td");
+  tr.appendChild(td);
   var form = new Element("form");
-  box.appendChild(form);
+  td.appendChild(form);
 
   var boxtable = new Element("table");
   form.appendChild(boxtable);
@@ -88,7 +113,7 @@ function LoginBox(parentElement, callback, initialNickname, initialChannels) {
   var nick = new Element("input");
   createRow("Nickname:", nick);
   var chan = new Element("input");
-  createRow("Channels (comma seperated):", chan);
+  createRow("Channels:", chan);
 
   var connbutton = new Element("input", {"type": "submit"});
   connbutton.set("value", "Connect");

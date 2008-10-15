@@ -137,3 +137,47 @@
   right: 0px;
   bottom: 0px;
 }
+
+.qwebirc-qui .loginbox {
+  font-family: Verdana, sans-serif;
+  height: 100%;
+  width: 100%;
+  vertical-align: middle;
+}
+
+.qwebirc-qui .loginbox .tr1 {
+  width: 100%;
+  vertical-align: bottom;
+  text-align: center;
+}
+
+.qwebirc-qui .loginbox .tr2 {
+  width: 100%;
+  vertical-align: top;
+  text-align: center;
+}
+
+.qwebirc-qui .loginbox .tr2 table {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+}
+
+.qwebirc-qui .confirmbox {
+  font-family: Verdana, sans-serif;
+  height: 100%;
+  width: 100%;
+  vertical-align: middle;
+}
+
+.qwebirc-qui .confirmbox .tr1 td {
+  width: 100%;
+  vertical-align: bottom;
+  text-align: center;
+}
+
+.qwebirc-qui .confirmbox .tr2 td {
+  width: 100%;
+  vertical-align: top;
+  text-align: center;
+}
