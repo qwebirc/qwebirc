@@ -10,7 +10,7 @@ var UIWindow = new Class({
     this.hilighted = false;
     this.scrolltimer = null;
     this.commandhistory = this.parentObject.commandhistory;
-    this.scrolleddown = false;
+    this.scrolleddown = true;
     //new CommandHistory();
   },
   updateNickList: function(nicks) {
@@ -32,11 +32,11 @@ var UIWindow = new Class({
     if(this.hilighted)
       this.setHilighted(false);
     if(this.scrolleddown)
-      this.__scrollToBottom();
+      this.scrollToBottom();
   },
   deselect: function() {
     if(!this.parentObject.singleWindow)
-      this.scrolleddown = this.__scrolledDown();
+      this.scrolleddown = this.scrolledDown();
     if($defined(this.scrolltimer)) {
       $clear(this.scrolltimer);
       this.scrolltimer = null;
@@ -61,7 +61,7 @@ var UIWindow = new Class({
   setHilighted: function(state) {
     this.hilighted = state;
   },
-  __scrolledDown: function() {
+  scrolledDown: function() {
     if(this.scrolltimer)
       return true;
       
@@ -70,10 +70,10 @@ var UIWindow = new Class({
     var prev = parent.getScroll();
     var prevbottom = parent.getScrollSize().y;
     var prevsize = parent.getSize();
-    //alert("1: " + (prev.y + prevsize.y) + " 2:" + prevbottom);
+    
     return prev.y + prevsize.y == prevbottom;
   },
-  __scrollToBottom: function() {
+  scrollToBottom: function() {
     var parent = this.lines;
     var scrollparent = parent;
 
@@ -87,7 +87,7 @@ var UIWindow = new Class({
     
     /* scroll in bursts, else the browser gets really slow */
     if($defined(element)) {
-      var sd = this.__scrolledDown();
+      var sd = this.scrolledDown();
       parent.appendChild(element);
       if(sd) {
         if(this.scrolltimer)
@@ -95,7 +95,7 @@ var UIWindow = new Class({
         this.scrolltimer = this.scrollAdd.delay(50, this, [null]);
       }
     } else {
-      this.__scrollToBottom();
+      this.scrollToBottom();
       this.scrolltimer = null;
     }
   },

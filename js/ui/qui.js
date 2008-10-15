@@ -72,7 +72,8 @@ var QUIWindow = new Class({
       inputbox.value = result;
       setAtEnd(inputbox);
     }.bind(this));
-
+    this.inputbox = inputbox;
+    
     var toppos = 0;
     var rightpos = 0;
     var bottompos = formdiv.getSize().y;
@@ -98,6 +99,15 @@ var QUIWindow = new Class({
     this.lines.setStyle("bottom", bottompos + "px");
     this.lines.setStyle("right", rightpos + "px");
     this.lines.addClass("lines");
+    
+    this.lines.addEvent("scroll", function() {
+      this.scrolleddown = this.scrolledDown();
+    }.bind(this));
+    
+    window.addEvent("resize", function() {
+      if(this.scrolleddown)
+        this.scrollToBottom();
+    }.bind(this));
   },
   updateNickList: function(nicks) {
     this.parent(nicks);
@@ -127,6 +137,8 @@ var QUIWindow = new Class({
     this.tab.removeClass("tab-unselected");
     this.tab.addClass("tab-selected");
     this.parent();
+    
+    this.inputbox.focus();
   },
   deselect: function() {
     this.parent();
