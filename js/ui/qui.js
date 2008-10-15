@@ -3,34 +3,7 @@ var QUIWindow = new Class({
   
   initialize: function(parentObject, client, type, name) {
     this.parent(parentObject, client, type, name);
-        
-    this.outerContainer = new Element("div");
-    this.outerContainer.addClass("outercontainer");
-    this.outerContainer.addClass("tab-invisible");
-    
-    parentObject.container.appendChild(this.outerContainer);
-    
-    if(type == WINDOW_CHANNEL) {
-      this.nicklist = new Element("div");
-      this.nicklist.addClass("nicklist");
-      
-      this.outerContainer.appendChild(this.nicklist);
-    }
-    
-    var innerContainer = new Element("div");
-    innerContainer.addClass("innercontainer");
-    this.outerContainer.appendChild(innerContainer);
-    
-    if(type == WINDOW_CHANNEL) {
-      this.topic = new Element("div");
-      this.topic.addClass("topic");
-      innerContainer.appendChild(this.topic);
-    }
-    
-    this.lines = new Element("div");
-    this.lines.addClass("lines");
-    innerContainer.appendChild(this.lines);
-    
+
     this.tab = new Element("span");
     this.tab.addClass("tab");
     
@@ -55,6 +28,58 @@ var QUIWindow = new Class({
       tabclose.set("text", "X");
       this.tab.appendChild(tabclose);
     }
+
+    this.parentObject.reflow();
+    
+    this.window = new Element("div");
+    this.window.addClass("window");
+    parentObject.container.appendChild(this.window);
+    
+    this.lines = new Element("div");
+    this.lines.addClass("lines");
+    this.window.appendChild(this.lines);
+    
+    var formdiv = new Element("div");
+    this.window.appendChild(formdiv);  
+    
+    var form = new Element("form");
+    var inputbox = new Element("input");
+    formdiv.addClass("input");
+  
+    form.addEvent("submit", function(e) {
+      new Event(e).stop();
+    
+      this.client.exec(inputbox.value);
+      inputbox.value = "";
+    }.bind(this));
+    formdiv.appendChild(form);
+    form.appendChild(inputbox);
+    
+    var toppos = 0;
+    var rightpos = 0;
+    var bottompos = formdiv.getSize().y;
+    
+    if(type == WINDOW_CHANNEL) {
+      this.nicklist = new Element("div");
+      this.nicklist.addClass("nicklist");
+      this.nicklist.setStyle("bottom", (bottompos - 1) + "px");
+      
+      this.window.appendChild(this.nicklist);
+      rightpos = this.nicklist.getSize().x;
+
+      this.topic = new Element("div");
+      this.topic.addClass("topic");
+      this.topic.set("html", "&nbsp;");
+      this.topic.setStyle("right", rightpos + "px");
+      this.window.appendChild(this.topic);
+      
+      toppos = this.topic.getSize().y;
+    }
+
+    this.lines.setStyle("top", toppos + "px");
+    this.lines.setStyle("bottom", bottompos + "px");
+    this.lines.setStyle("right", rightpos + "px");
+    this.lines.addClass("lines");
   },
   updateNickList: function(nicks) {
     this.parent(nicks);
@@ -82,27 +107,24 @@ var QUIWindow = new Class({
   select: function() {
     this.parent();
     
-    this.outerContainer.removeClass("tab-invisible");
+    this.window.removeClass("tab-invisible");
     this.tab.removeClass("tab-unselected");
-    this.tab.removeClass("tab-highlighted");
     this.tab.addClass("tab-selected");
   },
   deselect: function() {
     this.parent();
     
-    this.outerContainer.addClass("tab-invisible");
+    this.window.addClass("tab-invisible");
     this.tab.removeClass("tab-selected");
     this.tab.addClass("tab-unselected");
   },
   close: function() {
     this.parent();
     
-    this.parentObject.container.removeChild(this.outerContainer);
+    this.parentObject.container.removeChild(this.window);
     this.parentObject.tabs.removeChild(this.tab);
   },
   addLine: function(type, line, colour) {
-    this.parent(type, line, colour);
-    
     var e = new Element("div");
 
     if(colour) {
@@ -112,24 +134,18 @@ var QUIWindow = new Class({
     } else {
       e.addClass("linestyle2");
     }
-    
-    if(type)
-      line = this.parentObject.theme.message(type, line);
-    
-    Colourise(IRCTimestamp(new Date()) + " " + line, e);
-    
     this.lastcolour = !this.lastcolour;
+        
+    this.parent(type, line, colour, e);
+  },
+  setHilighted: function(state) {
+    this.parent(state);
     
-    var prev = this.lines.getScroll();
-    var prevbottom = this.lines.getScrollSize().y;
-    var prevsize = this.lines.getSize();
-    this.lines.appendChild(e);
-    
-    if(prev.y + prevsize.y == prevbottom)
-      this.lines.scrollTo(prev.x, this.lines.getScrollSize().y);
-      
-    if(!this.active)
+    if(state) {
       this.tab.addClass("tab-highlighted");
+    } else {
+      this.tab.removeClass("tab-highlighted");
+    }
   }
 });
 
@@ -140,30 +156,28 @@ var QUI = new Class({
     this.theme = theme;
     this.parentElement = parentElement;
   },
-  postInitialize: function() {    
+  reflow: function() {
+    var tabheight = this.tabs.getSize().y;
+    this.container.setStyle("top", tabheight + "px"); 
+  },
+  postInitialize: function() {
+    this.outerContainer = new Element("div");
+    this.outerContainer.addClass("outercontainer");
+    this.parentElement.appendChild(this.outerContainer);
+        
     this.tabs = new Element("div");
     this.tabs.addClass("tabbar");
+    this.outerContainer.appendChild(this.tabs);
     
-    this.parentElement.appendChild(this.tabs);
+    var tester = new Element("span");
+    this.tabs.appendChild(tester);
     
+    this.tabheight = this.tabs.getSize().y;
+    this.tabs.removeChild(tester);
+
     this.container = new Element("div");
     this.container.addClass("container");
-    
-    this.parentElement.appendChild(this.container);
-  
-    var form = new Element("form");
-    var inputbox = new Element("input");
-    inputbox.addClass("input");
-  
-    form.addEvent("submit", function(e) {
-      new Event(e).stop();
-    
-      this.getActiveWindow().client.exec(inputbox.value);
-      inputbox.value = "";
-    }.bind(this));
-    this.parentElement.appendChild(form);  
-    form.appendChild(inputbox);
-    inputbox.focus();
+    this.outerContainer.appendChild(this.container);
   },
   loginBox: function(callbackfn, intialNickname, initialChannels) {
     this.parent(function(options) {
@@ -172,4 +186,3 @@ var QUI = new Class({
     }.bind(this), intialNickname, initialChannels);
   }
 });
-
