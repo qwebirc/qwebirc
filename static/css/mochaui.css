@@ -9,3 +9,8 @@
 .mochaToolbarWrapper {
   background: #FFF;
 }
+
+.hidenewwin {
+  visibility: hide;
+  opacity: 0;
+}

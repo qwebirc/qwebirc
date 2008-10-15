@@ -42,6 +42,8 @@ var QMochaUIWindow = new Class({
       //toolbarURL: "",
       toolbarLoadMethod: "html",
       content: this.lines,
+      minimized: true,
+      addClass: "hidenewwin",
       onFocus: function() {
         parentObject.selectWindow(this);
       }.bind(this),
@@ -59,9 +61,28 @@ var QMochaUIWindow = new Class({
     if(type == WINDOW_STATUS)
       prefs.closable = false;
     
+    /* HACK */
+/*    var oldIndexLevel = MochaUI.Windows.indexLevel;
+    
+    var focus = false;
+    var oldfocus = MochaUI.focusWindow;
+    if(!focus) {
+      MochaUI.Windows.indexLevel = 0;
+      MochaUI.focusWindow = null;
+    }
+  */  
     var nw = new MochaUI.Window(prefs);
+    
+    /*if(!focus) {
+      MochaUI.Windows.indexLevel = oldIndexLevel;
+      MochaUI.focusWindow = oldfocus;
+    }*/
+    
     /* HACK */
     var toolbar = $(nw.options.id + "_toolbar");
+    this.titleText = $(nw.options.id + "_title");
+    this.tabText = $(nw.options.id + "_dockTabText");
+    
     /*alert(toolbar.parentNode.getStyle("background"));*/
     /*this.inputbox.setStyle("background", toolbar.parentNode.getStyle("background"));*/
     toolbar.appendChild(this.form);
@@ -131,10 +152,21 @@ var QMochaUIWindow = new Class({
     
     this.lastcolour = !this.lastcolour;
 
-    this.__scrollbottom(false, e);    
-    /*if(!this.active)
-      this.lines.showLoadingIcon();
-      */
+    this.__scrollbottom(false, e);  
+    
+    if(!this.active)
+      this.__setAlert(true);
+  },
+  __setAlert: function(state) {
+    if(state) {
+      this.titleText.setStyle("color", "#ff0000");
+      this.tabText.setStyle("background-color", "#ff0000");
+      this.tabText.setStyle("color", "#000000");
+    } else {
+      this.titleText.setStyle("color", null);
+      this.tabText.setStyle("background-color", null);
+      this.tabText.setStyle("color", null);
+    }
   },
   __scrollbottom: function(timed, element) {
     var pe = this.lines.parentNode.parentNode;
@@ -158,6 +190,8 @@ var QMochaUIWindow = new Class({
   },
   select: function() {
     this.parent();
+    
+    this.__setAlert(false);
     
     this.inputbox.focus();
   }
