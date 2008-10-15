@@ -27,15 +27,15 @@ var UIWindow = new Class({
     this.active = true;
     this.parentObject.__setActiveWindow(this);
     if(this.hilighted)
-      this.setHilighted.pass(false, this);
+      this.setHilighted(false);
   },
   deselect: function() {
     this.active = false;
   },
   addLine: function(type, line, colour, element, parent, scrollparent) {
     if(!this.active && !this.hilighted)
-      this.setHilighted.pass(true, this);
-
+      this.setHilighted(true);
+    
     if(type)
       line = this.parentObject.theme.message(type, line);
     
@@ -66,7 +66,7 @@ var UIWindow = new Class({
       if(this.scrolltimer || (prev.y + prevsize.y == prevbottom)) {
         if(this.scrolltimer)
           $clear(this.scrolltimer);
-        this.scrolltimer = this.scrollAdd.delay(10, this, [null, null]);
+        this.scrolltimer = this.scrollAdd.delay(50, this, [null, null]);
       }
     } else {
       scrollparent.scrollTo(prev.x, parent.getScrollSize().y);
@@ -74,4 +74,3 @@ var UIWindow = new Class({
     }
   }
 });
-
