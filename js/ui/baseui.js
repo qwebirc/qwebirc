@@ -102,6 +102,7 @@ var UI = new Class({
         return;
         
       if(x.key == "a" || x.key == "A") {
+        new Event(x).stop();
         for(var i=0;i<this.windowArray.length;i++) {
           if(this.windowArray[i].hilighted) {
             this.selectWindow(this.windowArray[i]);
@@ -109,6 +110,8 @@ var UI = new Class({
           }
         }
       } else if(x.key >= '0' && x.key <= '9') {
+        new Event(x).stop();
+        
         number = x.key - '0';
         if(number == 0)
           number = 10
