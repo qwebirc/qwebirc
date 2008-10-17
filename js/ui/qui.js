@@ -3,32 +3,46 @@ var QJSUI = new Class({
     this.parent = parent;
     this.sizer = $defined(sizer)?sizer:parent;
     
-    this.create(class_);
-
+    this.class_ = class_;
+    this.create();
+    
     window.addEvent("resize", function() {
       this.reflow();
       this.reflow.delay(100, this);
     }.bind(this));
   },
-  create: function(class_) {
-    var XE = function(classes) {
-      var l = new Element("div");
-      l.addClass(class_);
-      l.addClass("dynamicpanel");
+  applyClasses: function(pos, l) {
+    l.addClass("dynamicpanel");
+    
+    l.addClass(this.class_);
+    if(pos == "middle") {
+      l.addClass("leftboundpanel");
+    } else if(pos == "top") {
+      l.addClass("topboundpanel");
+      l.addClass("widepanel");
+    } else if(pos == "topic") {
+      l.addClass("widepanel");
+    } else if(pos == "right") {
+      l.addClass("rightboundpanel");
+    } else if(pos == "bottom") {
+      l.addClass("bottomboundpanel");
+      l.addClass("widepanel");
+    }
+  },
+  create: function() {
+    var XE = function(pos) {
+      var element = new Element("div");
+      this.applyClasses(pos, element);
       
-      classes.split(" ").each(function(x) {
-        l.addClass(x);
-      });
-      
-      this.parent.appendChild(l);
-      return l;
+      this.parent.appendChild(element);
+      return element;
     }.bind(this);
     
-    this.top = XE("widepanel topboundpanel");
-    this.topic = XE("widepanel");
-    this.middle = XE("leftboundpanel");
-    this.right = XE("rightboundpanel");
-    this.bottom = XE("bottomboundpanel widepanel");
+    this.top = XE("top");
+    this.topic = XE("topic");
+    this.middle = XE("middle");
+    this.right = XE("right");
+    this.bottom = XE("bottom");
   },
   reflow: function() {
     var bottom = this.bottom;
@@ -112,6 +126,8 @@ var QUIWindow = new Class({
     }
 
     this.lines = new Element("div");
+    //this.parentObject.qjsui.applyClasses("middle", lines);
+    
     this.lines.addClass("lines");
     this.lines.addClass("tab-invisible");
     parentObject.lines.appendChild(this.lines);
@@ -184,6 +200,8 @@ var QUIWindow = new Class({
     this.tab.removeClass("tab-unselected");
     this.tab.addClass("tab-selected");
 
+    //this.parentObject.lines.parentNode.replaceChild(this.parentObject.lines, this.lines);
+    
     this.lines.removeClass("tab-invisible");
     if(this.nicklist) {
       this.nicklist.removeClass("tab-invisible");
