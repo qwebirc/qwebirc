@@ -1,4 +1,4 @@
-.qwebirc-qui .tabbar {
+/*.qwebirc-qui .tabbar {
   border-bottom: 1px solid #c3cee0;
   padding: 4px;
   background: #e2ecf9;
@@ -74,13 +74,13 @@
   display: none;
 }
 
-/*.qwebirc-qui .linestyle1 {
+.qwebirc-qui .linestyle1 {
   background: #efefef;
 }
 
 .qwebirc-qui .linestyle2 {
   background: #eeffff;
-}*/
+}
 
 .qwebirc-qui a.tab-hilighted {
   color: red;
@@ -180,6 +180,65 @@
   width: 100%;
   vertical-align: top;
   text-align: center;
+}
+
+.qwebirc-qui form {
+  margin: 0px;
+  padding: 0px;
+}
+*/
+
+body {
+  margin: 0;
+}
+.qwebirc-qui .dynamicpanel {
+  position: absolute;
+}
+.qwebirc-qui .widepanel, .leftboundpanel {
+  left: 0px;
+}
+.qwebirc-qui .widepanel {
+  width: 100%;
+}
+.qwebirc-qui .topboundpanel {
+  top: 0px;
+}
+.qwebirc-qui .rightboundpanel {
+  /*right: 0px;*/
+}
+.qwebirc-qui .bottomboundpanel {
+  color: red;
+}
+
+.qwebirc-qui .lines {
+  overflow: auto;
+  font-family: Verdana;
+  font-size: 0.8em;
+  background: #f2f0ff;
+}
+
+.qwebirc-qui .nicklist {
+  overflow: auto;
+  background: red;
+}
+
+.qwebirc-qui .tabbar {
+  /*border-bottom: 1px solid #c3cee0;*/
+  background: #e2ecf9;
+  font-size: 0.8em;
+  font-family: Verdana, sans-serif;
+  color: #000000;
+}
+
+.qwebirc-qui .tab-invisible {
+  display: none;
+}
+
+.qwebirc-qui .input input {
+  border: 0px;
+  margin: 2px 0px 0px 0px;
+  width: 99%;
+  font-family: Verdana, sans-serif;
 }
 
 .qwebirc-qui form {
