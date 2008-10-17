@@ -157,7 +157,7 @@ var CommandParser = new Class({
       "This software contains the following third party portions:",
       "- MooTools v1.2 --- Copyright (C) 2006-2008 Valerio Proietti, MIT license.",
       "",
-      "Thank you for flying QuakeNet.",
+      "Thank you for flying QuakeNet!",
       "",
     ];
     
