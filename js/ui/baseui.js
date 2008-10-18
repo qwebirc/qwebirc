@@ -66,7 +66,9 @@ var BaseUI = new Class({
         this.windowArray = [];
       } else {
         var index = this.windowArray.indexOf(window);
-        if(index == 0) {
+        if(index == -1) {
+          return;
+        } else if(index == 0) {
           this.selectWindow(this.windowArray[1]);
         } else {
           this.selectWindow(this.windowArray[index - 1]);
@@ -188,5 +190,19 @@ var UI = new Class({
       return this.embeddedWindow.bind(this);
 
     return null;
+  }
+});
+
+var NewLoginUI = new Class({
+  Extends: UI,
+  loginBox: function(callbackfn, initialNickname, initialChannels, autoConnect, autoNick) {
+    this.postInitialize();
+    var w = this.newCustomWindow("Connect", true, WINDOW_CONNECT);
+    var callback = function(args) {
+      w.close();
+      callbackfn(args);
+    };
+    
+    GenericLoginBox(w.lines, callback, initialNickname, initialChannels, autoConnect, autoNick);
   }
 });

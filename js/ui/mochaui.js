@@ -6,34 +6,37 @@ var QMochaUIWindow = new Class({
 
     this.lines = new Element("div", {styles: {overflow: "auto", "width": "90"}});
 
-    this.form = new Element("form");
-    this.inputbox = new Element("input", {styles: {border: 0, width: "100%"}});
-    this.inputbox.addClass("input");
+    var toolbar = type != WINDOW_CUSTOM && type != WINDOW_CONNECT;
     
-    this.inputbox.addEvent("focus", function() {
-      /* TODO: bring to top */
-      //alert(":O");
-      //alert(this.windowObject.windowEl);
-      //MochaUI.focusWindow.pass(this.windowObject.windowEl, this.windowObject);
-      //this.windowObject.focusWindow();
-      this.parentObject.selectWindow(this);
-    }.bind(this));
+    if(toolbar) {
+      this.form = new Element("form");
+      this.inputbox = new Element("input", {styles: {border: 0, width: "100%"}});
+      this.inputbox.addClass("input");
     
-    this.form.addEvent("submit", function(e) {
-      new Event(e).stop();
+      this.inputbox.addEvent("focus", function() {
+        /* TODO: bring to top */
+        //alert(":O");
+        //alert(this.windowObject.windowEl);
+        //MochaUI.focusWindow.pass(this.windowObject.windowEl, this.windowObject);
+        //this.windowObject.focusWindow();
+        this.parentObject.selectWindow(this);
+      }.bind(this));
     
-      this.client.exec(this.inputbox.value);
-      this.inputbox.value = "";
-    }.bind(this));
-    //this.container.appendChild(form);  
-    this.form.appendChild(this.inputbox);
+      this.form.addEvent("submit", function(e) {
+        new Event(e).stop();
+      
+        this.client.exec(this.inputbox.value);
+        this.inputbox.value = "";
+      }.bind(this));
+      //this.container.appendChild(form);  
+      this.form.appendChild(this.inputbox);
+    }
     
     var prefs = {
       width: 800,
       height: 400,
       title: name,
       footerHeight: 0,
-      toolbar: true,
       container: $("pageWrapper"),
       toolbarHeight: parentObject.inputHeight,
       toolbarPosition: "bottom",
@@ -53,8 +56,8 @@ var QMochaUIWindow = new Class({
       }.bind(this)
     };
     
-    if(type == WINDOW_STATUS)
-      prefs.closable = false;
+    prefs.toolbar = toolbar;
+    prefs.closable = type != WINDOW_STATUS && type != WINDOW_CONNECT;
     
     /* HACK */
 /*    var oldIndexLevel = MochaUI.Windows.indexLevel;
@@ -67,6 +70,7 @@ var QMochaUIWindow = new Class({
     }
   */  
     var nw = new MochaUI.Window(prefs);
+    this.window = nw;
     
     /*if(!focus) {
       MochaUI.Windows.indexLevel = oldIndexLevel;
@@ -74,13 +78,15 @@ var QMochaUIWindow = new Class({
     }*/
     
     /* HACK */
-    var toolbar = $(nw.options.id + "_toolbar");
+    if(toolbar) {
+      var toolbar = $(nw.options.id + "_toolbar");
+      toolbar.appendChild(this.form);
+    }
     this.titleText = $(nw.options.id + "_title");
     this.tabText = $(nw.options.id + "_dockTabText");
     
     /*alert(toolbar.parentNode.getStyle("background"));*/
     /*this.inputbox.setStyle("background", toolbar.parentNode.getStyle("background"));*/
-    toolbar.appendChild(this.form);
     this.windowObject = nw;
     
     this.scroller = this.lines.parentNode.parentNode;
@@ -146,7 +152,8 @@ var QMochaUIWindow = new Class({
   select: function() {
     this.parent();
     
-    this.inputbox.focus();
+    if(this.inputbox)
+      this.inputbox.focus();
   },
   setHilighted: function(state) {
     this.parent(state);
@@ -160,11 +167,16 @@ var QMochaUIWindow = new Class({
       this.tabText.setStyle("background-color", null);
       this.tabText.setStyle("color", null);
     }    
-  }
+  },
+  close: function() {
+    this.parent();
+    
+    MochaUI.closeWindow(this.window.windowEl);
+  },
 });
 
 var QMochaUI = new Class({
-  Extends: UI,
+  Extends: NewLoginUI,
     initialize: function(parentElement, theme) {
     this.parent(parentElement, QMochaUIWindow, "mochaui");
     this.theme = theme;
@@ -216,11 +228,5 @@ var QMochaUI = new Class({
     this.parentElement.appendChild(form);  
     form.appendChild(inputbox);
     inputbox.focus();
-  },
-  loginBox: function(callbackfn, intialNickname, initialChannels, autoConnect, autoNick) {
-    this.parent(function(options) {
-      this.postInitialize();
-      callbackfn(options);
-    }.bind(this), intialNickname, initialChannels, autoConnect);
   }
 });

@@ -41,7 +41,7 @@ var UglyUIWindow = new Class({
 
     parentObject.tabs.appendChild(this.tab);
     
-    if(type != WINDOW_STATUS) {
+    if(type != WINDOW_STATUS && type != WINDOW_CONNECT) {
       tabclose = new Element("span");
       tabclose.addClass("tabclose");
       tabclose.addEvent("click", function(e) {
@@ -85,6 +85,7 @@ var UglyUIWindow = new Class({
     this.outerContainer.removeClass("tab-invisible");
     this.tab.removeClass("tab-unselected");    
     this.tab.addClass("tab-selected");
+    this.parentObject.showInput(this.type != WINDOW_CONNECT && this.type != WINDOW_CUSTOM);
   },
   deselect: function() {
     this.parent();
@@ -125,7 +126,7 @@ var UglyUIWindow = new Class({
 });
 
 var UglyUI = new Class({
-  Extends: UI,
+  Extends: NewLoginUI,
   initialize: function(parentElement, theme) {
     this.parent(parentElement, UglyUIWindow, "uglyui");
     this.theme = theme;
@@ -143,6 +144,8 @@ var UglyUI = new Class({
     this.parentElement.appendChild(this.container);
   
     var form = new Element("form");
+    this.form = form;
+    
     var inputbox = new Element("input");
     inputbox.addClass("input");
   
@@ -156,11 +159,8 @@ var UglyUI = new Class({
     form.appendChild(inputbox);
     inputbox.focus();
   },
-  loginBox: function(callbackfn, intialNickname, initialChannels, autoConnect, autoNick) {
-    this.parent(function(options) {
-      this.postInitialize();
-      callbackfn(options);
-    }.bind(this), intialNickname, initialChannels, autoConnect, autoNick);
+  showInput: function(state) {
+    this.form.setStyle("display", state?"block":"none");
   }
 });
 

@@ -30,7 +30,7 @@ var SWMUIWindow = new Class({
     parentObject.tabPanel.appendChild(this.tab);
     parentObject.resize();
     
-    if(type != WINDOW_STATUS) {
+    if(type != WINDOW_STATUS && type != WINDOW_CONNECT) {
       tabclose = new Element("span");
       tabclose.addClass("tabclose");
       tabclose.addEvent("click", function(e) {
@@ -72,6 +72,7 @@ var SWMUIWindow = new Class({
     this.parentObject.resize();
     this.tab.removeClass("tab-unselected");
     this.tab.addClass("tab-selected");
+    this.parentObject.showInput(this.type == WINDOW_CONNECT || this.type == WINDOW_CUSTOM);
   },
   deselect: function() {
     this.parent();
@@ -114,7 +115,7 @@ var SWMUIWindow = new Class({
 });
 
 var SWMUI = new Class({
-  Extends: UI,
+  Extends: NewLoginUI,
   initialize: function(parentElement, theme) {
     this.parent(parentElement, SWMUIWindow, "swmui");
 
@@ -158,13 +159,11 @@ var SWMUI = new Class({
 
     this.resize();
   },
+  showInput: function(state) {
+    this.entryPanel.setHidden(state);
+    this.resize();
+  },
   resize: function() {
     window.fireEvent("resize");
-  },
-  loginBox: function(callback, initialNickname, initialChannels, autoConnect) {
-    this.parent(function(options) {
-      this.postInitialize();
-      callbackfn(options);
-    }.bind(this), intialNickname, initialChannels, autoConnect);
   }
 });
