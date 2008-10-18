@@ -1,6 +1,9 @@
 var WINDOW_STATUS = 1;
 var WINDOW_QUERY = 2;
 var WINDOW_CHANNEL = 3;
+var WINDOW_CUSTOM = 4;
+var WINDOW_CONNECT = 5;
+var CUSTOM_CLIENT = "custom";
 
 var BaseUI = new Class({
   Implements: [Events, Options],
@@ -12,6 +15,7 @@ var BaseUI = new Class({
     this.setOptions(options);
     
     this.windows = {};
+    this.windows[CUSTOM_CLIENT] = {};
     this.windowArray = [];
     this.windowClass = windowClass;
     this.parentElement = parentElement;
@@ -149,12 +153,40 @@ var UI = new Class({
       }
     }.bind(this));
   },
-  urlDispatcher: function(name) {
-    if(name == "embedded") {
-      return function() {
-        alert("embedded!");
-      };
-    }
-    return null;
+  newCustomWindow: function(name, select, type) {
+    if(!type)
+      type = WINDOW_CUSTOM;
+      
+    var w = this.newWindow(CUSTOM_CLIENT, type, name);
+    w.addEvent("close", function(w) {
+      delete this.windows[name];
+    }.bind(this));
+    
+    if(select)
+      this.selectWindow(w);  
+      
+    return w;
   },
+  embeddedWindow: function() {
+    if(this.embedded) {
+      this.selectWindow(this.embedded)
+      return;
+    }
+    
+    this.embedded = this.newCustomWindow("Embedded wizard", true);
+    this.embedded.addEvent("close", function() {
+      this.embedded = null;
+    }.bind(this));
+        
+    var ew = new WebmasterGuide({parent: this.embedded.lines});
+    ew.addEvent("close", function() {
+      this.embedded.close();
+    }.bind(this));
+  },
+  urlDispatcher: function(name) {
+    if(name == "embedded")
+      return this.embeddedWindow.bind(this);
+
+    return null;
+  }
 });

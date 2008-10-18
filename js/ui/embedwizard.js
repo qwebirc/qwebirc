@@ -169,6 +169,7 @@ var WebmasterGuide = new Class({
       var url = this.generateURL();
       
       alink.href = url;
+      alink.target = "new";
       alink.appendChild(document.createTextNode(url));
       abox.value = "<iframe src=\"" + url + "\"></iframe>";
       
