@@ -46,6 +46,13 @@ qwebirc.irc.IRCClient = new Class({
   newActiveLine: function(type, data) {
     this.ui.getActiveWindow().addLine(type, data);
   },
+  newTargetOrActiveLine: function(target, type, data) {
+    if(this.getWindow(target)) {
+      this.newLine(target, type, data);
+    } else {
+      this.newActiveLine(type, data);
+    }
+  },
   updateNickList: function(channel) {
     var n1 = this.tracker.getChannel(channel);
     var names = new Array();
@@ -267,11 +274,7 @@ qwebirc.irc.IRCClient = new Class({
       return;
     }
     
-    if(this.getWindow(nick)) {
-      this.newLine(nick, "PRIVCTCP", {"m": args, "x": type, "h": host, "n": nick, "-": this.nickname});
-    } else {
-      this.newActiveLine("PRIVCTCP", {"m": args, "x": type, "h": host, "n": nick, "-": this.nickname});
-    }
+    this.newTargetOrActiveLine(nick, "PRIVCTCP", {"m": args, "x": type, "h": host, "n": nick, "-": this.nickname});
   },
   userCTCPReply: function(user, type, args) {
     var nick = user.hostToNick();
@@ -279,11 +282,7 @@ qwebirc.irc.IRCClient = new Class({
     if(args == undefined)
       args = "";
     
-    if(this.getWindow(nick)) {
-      this.newLine(nick, "CTCPREPLY", {"m": args, "x": type, "h": host, "n": nick, "-": this.nickname});
-    } else {
-      this.newActiveLine("CTCPREPLY", {"m": args, "x": type, "h": host, "n": nick, "-": this.nickname});
-    }
+    this.newTargetOrActiveLine(nick, "CTCPREPLY", {"m": args, "x": type, "h": host, "n": nick, "-": this.nickname});
   },
   channelPrivmsg: function(user, channel, message) {
     this.newChanLine(channel, "CHANMSG", user, {"m": message});
@@ -306,11 +305,7 @@ qwebirc.irc.IRCClient = new Class({
     var nick = user.hostToNick();
     var host = user.hostToHost();
 
-    if(this.getWindow(nick)) {
-      this.newLine(nick, "PRIVNOTICE", {"m": message, "h": host, "n": nick});
-    } else {
-      this.newActiveLine("PRIVNOTICE", {"m": message, "h": host, "n": nick});
-    }
+    this.newTargetOrActiveLine(nick, "PRIVNOTICE", {"m": message, "h": host, "n": nick});
   },
   userInvite: function(user, channel) {
     var nick = user.hostToNick();
@@ -374,5 +369,57 @@ qwebirc.irc.IRCClient = new Class({
   quit: function(message) {
     this.send("QUIT :" + message);
     this.disconnect();
+  },
+  awayMessage: function(nick, message) {
+    this.newLine(nick, "AWAY", {"n": nick, "m": message});
+  },
+  whois: function(nick, type, data) {
+    var ndata = {"n": nick};
+    var mtype;
+    
+    var xsend = function() {
+      this.newTargetOrActiveLine(nick, "WHOIS" + mtype, ndata);
+    }.bind(this);
+    
+    if(type == "user") {
+      mtype = "USER";
+      ndata.h = data.ident + "@" + data.hostname;
+      xsend();
+      mtype = "REALNAME";
+      ndata.m = data.realname;
+    } else if(type == "server") {
+      mtype = "SERVER";
+      ndata.x = data.server;
+      ndata.m = data.serverdesc;
+    } else if(type == "oper") {
+      mtype = "OPER";
+    } else if(type == "idle") {
+      mtype = "IDLE";
+      ndata.x = qwebirc.util.longtoduration(data.idle);
+      ndata.m = qwebirc.irc.IRCDate(new Date(data.connected * 1000));
+    } else if(type == "channels") {
+      mtype = "CHANNELS";
+      ndata.m = data.channels;
+    } else if(type == "account") {
+      mtype = "ACCOUNT";
+      ndata.m = data.account;
+    } else if(type == "away") {
+      mtype = "AWAY";
+      ndata.m = data.away;
+    } else if(type == "opername") {
+      mtype = "OPERNAME";
+      ndata.m = data.opername;
+    } else if(type == "actually") {
+      mtype = "ACTUALLY";
+      ndata.m = data.hostname;
+      ndata.x = data.ip;
+    } else if(type == "end") {
+      mtype = "END";
+    } else {
+      return false;
+    }
+    
+    xsend();
+    return true;
   }
 });

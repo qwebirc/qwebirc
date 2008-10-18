@@ -68,7 +68,7 @@ qwebirc.ui.QUI = new Class({
       this.lastcvalue = result;
         
       inputbox.value = result;
-      setAtEnd(inputbox);
+      qwebirc.util.setAtEnd(inputbox);
     }.bind(this));
   },
   setLines: function(lines) {

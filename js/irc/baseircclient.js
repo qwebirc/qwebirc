@@ -1,5 +1,3 @@
-qwebirc.irc.Numerics = {"001": "RPL_WELCOME", "433": "ERR_NICKNAMEINUSE", "004": "RPL_MYINFO", "005": "RPL_ISUPPORT", "353": "RPL_NAMREPLY", "366": "RPL_ENDOFNAMES", "331": "RPL_NOTOPIC", "332": "RPL_TOPIC", "333": "RPL_TOPICWHOTIME"};
-
 qwebirc.irc.RegisteredCTCPs = {
   "VERSION": function(x) {
     return "qwebirc v" + qwebirc.VERSION + ", copyright (C) Chris Porter 2008 -- user agent: " + Browser.Engine.name + " (" + Browser.Platform.name + ")";
@@ -319,6 +317,68 @@ qwebirc.irc.BaseIRCClient = new Class({
     }
   },  
   irc_RPL_TOPICWHOTIME: function(prefix, params) {
+    return true;
+  },
+  irc_RPL_WHOISUSER: function(prefix, params) {
+    var nick = params[1];
+    this.whoisNick = nick;
+
+    return this.whois(nick, "user", {ident: params[2], hostname: params[3], realname: params.indexFromEnd(-1)});
+  },  
+  irc_RPL_WHOISSERVER: function(prefix, params) {
+    var nick = params[1];
+    var server = params[2];
+    var serverdesc = params.indexFromEnd(-1);
+
+    return this.whois(nick, "server", {server: params[2], serverdesc: params.indexFromEnd(-1)});
+  },  
+  irc_RPL_WHOISOPERATOR: function(prefix, params) {
+    var nick = params[1];
+    var text = params.indexFromEnd(-1);
+
+    return this.whois(nick, "oper", {opertext: params.indexFromEnd(-1)});
+  },  
+  irc_RPL_WHOISIDLE: function(prefix, params) {
+    var nick = params[1];
+
+    return this.whois(nick, "idle", {idle: params[2], connected: params[3]});
+  },  
+  irc_RPL_WHOISCHANNELS: function(prefix, params) {
+    var nick = params[1];
+
+    return this.whois(nick, "channels", {channels: params.indexFromEnd(-1)});
+  },  
+  irc_RPL_WHOISACCOUNT: function(prefix, params) {
+    var nick = params[1];
+
+    return this.whois(nick, "account", {account: params[2]});
+  },  
+  irc_RPL_WHOISACTUALLY: function(prefix, params) {
+    var nick = params[1];
+
+    return this.whois(nick, "actually", {hostmask: params[2], ip: params[3]});
+  },  
+  irc_RPL_WHOISOPERNAME: function(prefix, params) {
+    var nick = params[1];
+    var opername = params[2];
+
+    return this.whois(nick, "opername", {opername: params[2]});
+  },  
+  irc_RPL_ENDOFWHOIS: function(prefix, params) {
+    var nick = params[1];
+    var text = params.indexFromEnd(-1);
+    this.whoisNick = null;
+    
+    return this.whois(nick, "end", {});
+  },
+  irc_RPL_AWAY: function(prefix, params) {
+    var nick = params[1];
+    var text = params.indexFromEnd(-1);
+
+    if(this.whoisNick && (this.whoisNick == nick))
+      return this.whois(nick, "away", {"away": text});
+      
+    this.awayMessage(nick, text);
     return true;
   }
 });

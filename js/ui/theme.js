@@ -43,7 +43,19 @@ qwebirc.ui.themes.Default = {
   "CTCPREPLY": ["CTCP $x reply from $n: $m"],
   "OURCHANCTCP": ["[ctcp($t)] $x $m"],
   "OURPRIVCTCP": ["[ctcp($t)] $x $m"],
-  "OURTARGETEDCTCP": ["[ctcp($t)] $x $m"]
+  "OURTARGETEDCTCP": ["[ctcp($t)] $x $m"],
+  "WHOISUSER": ["$B$n$B [$h]", true],
+  "WHOISREALNAME": [" realname : $m", true],
+  "WHOISCHANNELS": [" channels : $m", true],
+  "WHOISSERVER": [" server   : $x [$m]", true],
+  "WHOISACCOUNT": [" account  : $m", true],
+  "WHOISIDLE": [" idle     : $x [connected: $m]", true],
+  "WHOISAWAY": [" away     : $m", true],
+  "WHOISOPER": ["          : $BIRC Operator$B", true],
+  "WHOISOPERNAME": [" operedas : $m", true],
+  "WHOISACTUALLY": [" realhost : $m [ip: $x]", true],
+  "WHOISEND": ["End of WHOIS", true],
+  "AWAY": ["$n is away: $m", true]
 };
 
 qwebirc.ui.Theme = new Class({

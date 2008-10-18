@@ -90,3 +90,26 @@ qwebirc.util.MonthsOfYear = {
   10: "Nov",
   11: "Dec"
 };
+
+qwebirc.util.NBSPCreate = function(text, element) {
+  var e = text.split("  ");
+  for(var i=0;i<e.length;i++) {
+    var tn = document.createTextNode(e[i]);
+    element.appendChild(tn);
+    
+    if(i != e.length - 1) {
+      var e2 = new Element("span");
+      e2.set("html", "&nbsp;&nbsp;");
+      element.appendChild(e2);
+    }
+  }
+};
+
+qwebirc.util.longtoduration = function(l) {
+  var seconds = l % 60;
+  var minutes = l / 60;
+  var hours = minutes / 60;
+  var days = hours / 24;
+  
+  return days + " days " + hours + " hours " + minutes + " minutes " + seconds + " seconds";
+}

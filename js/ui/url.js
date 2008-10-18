@@ -23,7 +23,7 @@ qwebirc.ui.urlificate = function(element, text, execfn, cmdfn) {
   };
   
   var appendText = function(text) {
-    element.appendChild(document.createTextNode(text));  
+    qwebirc.util.NBSPCreate(text, element);
   };
   
   var appendChan = function(text) {
