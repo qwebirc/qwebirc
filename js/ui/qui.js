@@ -1,7 +1,93 @@
-/* IE SUCKS */
-var BORDER_SIZE = 3;
-var INPUT_BORDER_SIZE = 2;
-var TOPIC_BORDER_SIZE = 5;
+var QJSUI = new Class({
+  initialize: function(class_, parent, sizer) {
+    this.parent = parent;
+    this.sizer = $defined(sizer)?sizer:parent;
+    
+    this.class_ = class_;
+    this.create();
+    
+    window.addEvent("resize", function() {
+      this.reflow();
+      this.reflow.delay(100, this);
+    }.bind(this));
+  },
+  applyClasses: function(pos, l) {
+    l.addClass("dynamicpanel");
+    
+    l.addClass(this.class_);
+    if(pos == "middle") {
+      l.addClass("leftboundpanel");
+    } else if(pos == "top") {
+      l.addClass("topboundpanel");
+      l.addClass("widepanel");
+    } else if(pos == "topic") {
+      l.addClass("widepanel");
+    } else if(pos == "right") {
+      l.addClass("rightboundpanel");
+    } else if(pos == "bottom") {
+      l.addClass("bottomboundpanel");
+      l.addClass("widepanel");
+    }
+  },
+  create: function() {
+    var XE = function(pos) {
+      var element = new Element("div");
+      this.applyClasses(pos, element);
+      
+      this.parent.appendChild(element);
+      return element;
+    }.bind(this);
+    
+    this.top = XE("top");
+    this.topic = XE("topic");
+    this.middle = XE("middle");
+    this.right = XE("right");
+    this.bottom = XE("bottom");
+  },
+  reflow: function() {
+    var bottom = this.bottom;
+    var middle = this.middle;
+    var right = this.right;
+    var topic = this.topic;
+    var top = this.top;
+    
+    var topicsize = topic.getSize();
+    var topsize = top.getSize();
+    var rightsize = right.getSize();
+    var bottomsize = bottom.getSize();
+    var docsize = this.sizer.getSize();
+    
+    var mheight = (docsize.y - topsize.y - bottomsize.y - topicsize.y);
+    var mwidth = (docsize.x - rightsize.x);
+
+    topic.setStyle("top", topsize.y + "px");
+    
+    middle.setStyle("top", (topsize.y + topicsize.y) + "px");
+    if(mheight > 0) {
+      middle.setStyle("height", mheight + "px");
+      right.setStyle("height", mheight + "px");
+    }
+    
+    if(mwidth > 0) {
+      middle.setStyle("width", mwidth + "px");
+    } else {
+      alert(mwidth);
+    }
+    right.setStyle("top", (topsize.y + topicsize.y) + "px");
+    right.setStyle("left", mwidth + "px");
+    
+    bottom.setStyle("top", (docsize.y - bottomsize.y) + "px");
+  },
+  showChannel: function(state) {
+    var display = "none";
+    if(state)
+      display = "block";
+
+    this.right.setStyle("display", display);
+    this.topic.setStyle("display", display);
+    //this.reflow.delay(0, this);
+  }
+});
 
 var QUIWindow = new Class({
   Extends: UIWindow,
@@ -39,127 +125,41 @@ var QUIWindow = new Class({
       this.tab.appendChild(tabclose);
     }
 
-    this.parentObject.reflow();
-    
-    this.window = new Element("div");
-    this.window.addClass("window");
-    parentObject.container.appendChild(this.window);
-    
     this.lines = new Element("div");
+    //this.parentObject.qjsui.applyClasses("middle", lines);
+    
     this.lines.addClass("lines");
-    this.window.appendChild(this.lines);
-    
-    var formdiv = new Element("div");
-    this.window.appendChild(formdiv);  
-    this.formdiv = formdiv;
-    
-    var form = new Element("form");
-    var inputbox = new Element("input");
-    
-    formdiv.addClass("input");
-  
-    form.addEvent("submit", function(e) {
-      new Event(e).stop();
-    
-      this.historyExec(inputbox.value);
-      inputbox.value = "";
+    this.lines.addClass("tab-invisible");
+    parentObject.lines.appendChild(this.lines);
+    this.lines.addEvent("scroll", function() {
+      this.scrolleddown = this.scrolledDown();
     }.bind(this));
-    formdiv.appendChild(form);
-    form.appendChild(inputbox);
     
-    inputbox.addEvent("keypress", function(e) {
-      var result;
-      if(e.key == "up") {
-        result = this.commandhistory.nextLine();
-      } else if(e.key == "down") {
-        result = this.commandhistory.prevLine();
-      } else {
-        return;
-      }
-      
-      new Event(e).stop();
-      if(!result)
-        result = ""
-      inputbox.value = result;
-      setAtEnd(inputbox);
-    }.bind(this));
-    this.inputbox = inputbox;
-    if(BrowserVersion() == "ie7") {
-    } else {
-      this.formdiv.setStyle("bottom", "0px");
-    }
     if(type == WINDOW_CHANNEL) {
       this.topic = new Element("div");
       this.topic.addClass("topic");
+      this.topic.addClass("tab-invisible");
       this.topic.set("html", "&nbsp;");
-      
-      this.window.appendChild(this.topic);
+      parentObject.topic.appendChild(this.topic);
       
       this.nicklist = new Element("div");
       this.nicklist.addClass("nicklist");
-      
-      this.window.appendChild(this.nicklist);
+      this.nicklist.addClass("tab-invisible");
+      parentObject.nicklist.appendChild(this.nicklist);
     }
-    this.lines.addClass("lines");
+    
     if(type == WINDOW_CHANNEL) {
-      /* calls reflow */
       this.updateTopic("");
     } else {
       this.reflow();
     }
-    
-    this.lines.addEvent("scroll", function() {
-      this.scrolleddown = this.scrolledDown();
-    }.bind(this));
+  },
+  reflow: function() {
+    this.parentObject.reflow();
   },
   onResize: function() {
     if(this.scrolleddown)
       this.scrollToBottom();
-    this.reflow();
-  },
-  reflow: function() {
-    var toppos = 0;
-    var rightpos = 0;
-    var bottompos = this.formdiv.getSize().y;
-    var bv = BrowserVersion();
-    
-    if(this.type == WINDOW_CHANNEL) {
-      toppos = this.topic.getSize().y;
-
-      this.nicklist.setStyle("top", toppos + "px");
-      this.nicklist.setStyle("bottom", (bottompos - 1) + "px");
-      rightpos = this.nicklist.getSize().x;
-    }
-    
-    this.lines.setStyle("top", toppos + "px");
-    
-    if(bv == "ie6") {
-      var w = this.window.getSize().x;
-      if(w == 0) {
-        this.reflow.delay(1, this);
-        return;
-      }
-      if(this.type == WINDOW_CHANNEL)
-        this.topic.setStyle("width", (w - TOPIC_BORDER_SIZE) + "px");
-      this.formdiv.setStyle("width", (w - 2 * INPUT_BORDER_SIZE) + "px");
-      this.lines.setStyle("width", (w - rightpos) + "px");
-    } else {
-      this.lines.setStyle("right", rightpos + "px");
-    }
-    /* @IESUCKS */
-    if(bv == "ie7" || bv == "ie6") {
-      var winheight = this.window.getSize().y;
-      if(winheight == 0) {
-        this.reflow.delay(1, this);
-        return;
-      }
-      this.lines.setStyle("height", (winheight - toppos - bottompos) + "px");
-      this.formdiv.setStyle("top", (winheight - bottompos) + "px");
-      if(this.type == WINDOW_CHANNEL && (bv == "ie6"))
-        this.nicklist.setStyle("height", (winheight - toppos - bottompos) + "px");
-    } else {
-      this.lines.setStyle("bottom", bottompos + "px");
-    }
   },
   updateNickList: function(nicks) {
     this.parent(nicks);
@@ -192,27 +192,47 @@ var QUIWindow = new Class({
     }
     this.reflow();
   },
+  showChannel: function() {
+    this.parentObject.qjsui.showChannel($defined(this.nicklist));
+    this.reflow();
+  },
   select: function() {
-    this.window.removeClass("tab-invisible");
     this.tab.removeClass("tab-unselected");
     this.tab.addClass("tab-selected");
-    this.reflow();
 
+    //this.parentObject.lines.parentNode.replaceChild(this.parentObject.lines, this.lines);
+    
+    this.lines.removeClass("tab-invisible");
+    if(this.nicklist) {
+      this.nicklist.removeClass("tab-invisible");
+      this.topic.removeClass("tab-invisible");
+    }
+    this.showChannel();
     this.parent();
     
-    this.inputbox.focus();
+    this.parentObject.inputbox.focus();
   },
   deselect: function() {
     this.parent();
     
-    this.window.addClass("tab-invisible");
+    this.lines.addClass("tab-invisible");
+    if(this.nicklist) {
+      this.nicklist.addClass("tab-invisible");
+      this.topic.addClass("tab-invisible");
+    }
     this.tab.removeClass("tab-selected");
     this.tab.addClass("tab-unselected");
+    
+    //this.showChannel();
   },
   close: function() {
     this.parent();
     
-    this.parentObject.container.removeChild(this.window);
+    this.parentObject.lines.removeChild(this.lines);
+    if(this.nicklist) {
+      this.parentObject.nicklist.removeChild(this.nicklist);
+      this.parentObject.topic.removeChild(this.topic);
+    }
     this.parentObject.tabs.removeChild(this.tab);
   },
   addLine: function(type, line, colour) {
@@ -243,51 +263,75 @@ var QUIWindow = new Class({
 var QUI = new Class({
   Extends: UI,
   initialize: function(parentElement, theme) {
-    if(BrowserVersion() == "ie6") {
-      if((parentElement.getStyle("top") == "0px") && (parentElement.getStyle("bottom") == "0px")) {
-        parentElement.setStyle("top", null);
-        parentElement.setStyle("height", "100%");
-      }
-    }
     this.parent(parentElement, QUIWindow, "qui");
     this.theme = theme;
     this.parentElement = parentElement;
   },
   reflow: function() {
-    var tabheight = this.tabs.getSize().y;
-    var bv = BrowserVersion();
-    if(bv == "ie7" || bv == "ie6")
-      tabheight = tabheight - 2 * BORDER_SIZE;
-    this.xcontainer.setStyle("top", tabheight + "px");
-    if(bv == "ie7" || bv == "ie6") {
-      this.xcontainer.setStyle("bottom", "");
-      this.xcontainer.setStyle("height", (this.parentElement.getSize().y - (tabheight)) + "px");
-    }
+    //alert("REFLOW");
+    this.qjsui.reflow();
   },
   postInitialize: function() {
-    this.outerContainer = new Element("div");
-    this.outerContainer.addClass("outercontainer");
-    this.parentElement.appendChild(this.outerContainer);
+    this.qjsui = new QJSUI("qwebirc-qui", this.parentElement, document);
+    
+    this.qjsui.top.addClass("tabbar");
+    
+    this.qjsui.bottom.addClass("input");
+    this.qjsui.right.addClass("nicklist");
+    this.qjsui.topic.addClass("topic");
+    this.qjsui.middle.addClass("lines");
+    
+    this.tabs = this.qjsui.top;
+    this.topic = this.qjsui.topic;
+    this.lines = this.qjsui.middle;
+    this.nicklist = this.qjsui.right;
+    this.input = this.qjsui.bottom;
+    this.createInput();
+    this.reflow();
+  },
+  createInput: function() {
+    var form = new Element("form");
+    this.input.appendChild(form);
+    form.addClass("input");
+    
+    var inputbox = new Element("input");
+    form.appendChild(inputbox);
+    this.inputbox = inputbox;
+    
+    form.addEvent("submit", function(e) {
+      new Event(e).stop();
+    
+      if(inputbox.value == "")
+        return;
         
-    this.tabs = new Element("div");
-    this.tabs.addClass("tabbar");
-    this.outerContainer.appendChild(this.tabs);
+      this.getActiveWindow().historyExec(inputbox.value);
+      inputbox.value = "";
+    }.bind(this));
     
-    this.container = new Element("div");
-    this.container.addClass("container");
-    this.outerContainer.appendChild(this.container);
-    
-    //this.container.setStyle("background", "red");
-    //this.container.setStyle("border", "1px solid black");
-    
-    this.xcontainer = this.container;
-    
-    //this.container = new Element("div");
-    window.addEvent("resize", function() {
-      this.reflow();
+    inputbox.addEvent("keydown", function(e) {
+      var resultfn;
+      var cvalue = inputbox.value;
+
+      if(e.key == "up") {
+        resultfn = this.commandhistory.upLine;
+      } else if(e.key == "down") {
+        resultfn = this.commandhistory.downLine;
+      } else {
+        return;
+      }
       
-      for(i=0;i<this.windowArray.length;i++)
-        this.windowArray[i].onResize();
+      if((cvalue != "") && (this.lastcvalue != cvalue))
+        this.commandhistory.addLine(cvalue, true);
+      
+      var result = resultfn.bind(this.commandhistory)();
+      
+      new Event(e).stop();
+      if(!result)
+        result = "";
+      this.lastcvalue = result;
+        
+      inputbox.value = result;
+      setAtEnd(inputbox);
     }.bind(this));
   },
   loginBox: function(callbackfn, intialNickname, initialChannels, autoConnect, autoNick) {

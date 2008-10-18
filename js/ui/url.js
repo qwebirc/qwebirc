@@ -1,31 +1,61 @@
-var url_re = /https?:\/\/([-\w\.]+)+(:\d+)?(\/([\w/_\.]*(\?\S+)?)?)?/;
+function urlificate(element, text, execfn) {
+  var punct_re = /(\.*|\,|;)$/;
 
-function urlificate(element, text) {
-  function appendText(text) {
-    element.appendChild(document.createTextNode(text));  
-  }
-  function appendA(text) {
-    var a = document.createElement("a");
-    a.href = text;
-    a.target = "new";
-    a.appendChild(document.createTextNode(text));
+  var txtprocess = function(text, regex, appendfn, matchfn) {
+    for(;;) {
+      var index = text.search(regex);
+      if(index == -1) {
+       appendfn(text);
+       break;
+      }
+      var match = text.match(regex);
+      
+      var before = text.substring(0, index);
+      var matched = match[0];
+      var after = text.substring(index + matched.length);
     
-    element.appendChild(a);
-  }
-  
-  for(;;) {
-    var index = text.search(url_re);
-    if(index == -1) {
-      appendText(text);
-      break;
+      appendfn(before);
+      var more = matchfn(matched);
+      if(!more)
+        more = "";
+      text = more + after;
     }
-    var match = text.match(url_re);
+  };
   
-    before = text.substring(0, index);
-    matched = match[0];
-    after = text.substring(index + matched.length);
-    text = after;
-    appendText(before);
-    appendA(matched, before);
-  }
+  var appendText = function(text) {
+    element.appendChild(document.createTextNode(text));  
+  };
+  
+  var appendChan = function(text) {
+    var newtext = text.replace(punct_re, "");
+    var punct = text.substring(newtext.length);
+
+    var a = new Element("a");
+    a.href = "#";
+    a.addEvent("click", function(e) {
+      new Event(e).stop();
+      execfn("/JOIN " + newtext);
+    });
+    a.appendChild(document.createTextNode(newtext));
+    element.appendChild(a);
+    
+    return punct;
+  };
+
+  var appendURL = function(text) {  
+    var newtext = text.replace(punct_re, "");
+    var punct = text.substring(newtext.length);
+    
+    var a = new Element("a");
+    a.href = newtext;
+    a.target = "new";
+    a.appendChild(document.createTextNode(newtext));
+    element.appendChild(a);
+    
+    return punct;
+  };
+
+  txtprocess(text, /\bhttp:\/\/[^ ]+/, function(text) {
+    txtprocess(text, /\B#[^ ,]+/, appendText, appendChan);
+  }, appendURL);
 }

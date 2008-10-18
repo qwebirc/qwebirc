@@ -90,6 +90,7 @@ var CommandParser = new Class({
       args = ret[1];
     }
   },
+  /* [require_active_window, splitintoXargs, minargs, function] */
   cmd_ME: [true, undefined, undefined, function(args) {
     if(args == undefined)
       args = "";
@@ -143,6 +144,27 @@ var CommandParser = new Class({
       args = "";
       
     return ["PRIVMSG", this.parentObject.getActiveWindow().name + " " + args]
+  }],
+  cmd_ABOUT: [false, undefined, undefined, function(args) {
+    var target = this.parentObject.getActiveWindow().name;
+    
+    var lines = [
+      "",
+      "qwebirc v" + QWEBIRC_VERSION,
+      "Copyright (C) 2008 Chris Porter. All rights reserved.",
+      "http://webchat.quakenet.org/",
+      "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
+      "This software contains the following third party portions:",
+      "- MooTools v1.2 --- Copyright (C) 2006-2008 Valerio Proietti, MIT license.",
+      "",
+      "Thank you for flying QuakeNet!",
+      "",
+    ];
+    
+    var aw = this.parentObject.getActiveWindow();
+    lines.forEach(function(x) {
+      aw.addLine("", x);
+    });
   }],
   KICK: [true, 3, 2, function(args) {
     var channel = args[0];

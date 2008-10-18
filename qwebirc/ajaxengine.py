@@ -41,7 +41,7 @@ class IRCSession:
 
   def subscribe(self, channel):
     if len(self.subscriptions) >= config.MAXSUBSCRIPTIONS:
-      self.subscriptions.pop(0)
+      self.subscriptions.pop(0).close()
 
     self.subscriptions.append(channel)
     self.flush()
@@ -110,6 +110,9 @@ class SingleUseChannel(Channel):
     self.request.write(data)
     self.request.finish()
     return False
+    
+  def close(self):
+    self.request.finish()
     
 class MultipleUseChannel(Channel):
   def write(self, data):

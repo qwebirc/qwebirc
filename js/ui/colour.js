@@ -1,4 +1,4 @@
-function Colourise(line, entity) {
+function Colourise(line, entity, execfn) {
   var fg;
   var bg;
   var underline = false;
@@ -44,7 +44,7 @@ function Colourise(line, entity) {
 
   function emitEndToken() {
     if(out.length > 0) {
-      urlificate(element, out.join(""));
+      urlificate(element, out.join(""), execfn);
       entity.appendChild(element);
       out = [];
     }

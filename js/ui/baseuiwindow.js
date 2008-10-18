@@ -50,7 +50,7 @@ var UIWindow = new Class({
     if(type)
       line = this.parentObject.theme.message(type, line);
     
-    Colourise(IRCTimestamp(new Date()) + " " + line, element);
+    Colourise(IRCTimestamp(new Date()) + " " + line, element, this.client.exec);
     
     this.scrollAdd(element);
   },

@@ -1,3 +1,5 @@
+/* This could do with a rewrite from scratch. */
+
 var IRCConnection = new Class({
   Implements: [Events, Options],
   options: {
@@ -38,9 +40,15 @@ var IRCConnection = new Class({
     return true;
   },
   __timeout: function() {
+    if(this.lastactiverequest) {
+      this.lastactiverequest.cancel();
+      this.lastactiverequest = null;
+      alert("warning: last active request");
+    }
     if(this.activerequest) {
-      this.activerequest.cancel();
-      this.activerequest = null;
+      this.lastactiverequest = this.activerequest;
+      /*this.activerequest.cancel();
+      this.activerequest = null;*/
     }
     if($defined(this.timeoutid)) {
       $clear(this.timeoutid);
@@ -50,13 +58,17 @@ var IRCConnection = new Class({
   },
   recv: function() {
     var r = new Request.JSON({url: "/e/s/" + this.sessionid + "?t=" + this.counter++, onComplete: function(o) {
-      this.activerequest = null;
+      if(this.lastactiverequest != r) 
+        this.activerequest = null;
+        
       if($defined(this.timeoutid)) {
         $clear(this.timeoutid);
         this.timeoutid = null;
       }
-      
+
       if(o) {
+        if(this.lastactiverequest == r)
+          this.lastactiverequest = null;
         this.lasttry = false;
         if(o[0] == false) {
           if(!this.disconnected) {
@@ -70,6 +82,10 @@ var IRCConnection = new Class({
           this.fireEvent("recv", [x]);
         }, this);
       } else {
+        if(this.lastactiverequest == r) {
+          this.lastactiverequest = null;
+          return;
+        }
         if(!this.disconnected) {
           if(this.lasttry) {
             this.disconnected = true;

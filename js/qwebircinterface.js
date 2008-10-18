@@ -44,12 +44,15 @@ var QWebIRCInterface = new Class({
           supplied = true;
         }
         
-        if(nick) {
+        if($defined(nick)) {
           inick = nick;
           autoNick = false;
         }
+        
+        if(supplied && args["prompt"])
+          supplied = false;
       }
-
+      
       var details = ui_.loginBox(callback, inick, ichans, supplied, autoNick);
     }.bind(this));
   }
