@@ -133,7 +133,7 @@ var SWMFrame = new Class({
       "top": "0px",
       "left": "0px",
       "height": "100%",
-      "width": "100%",
+      "width": "100%"
     }}); 
     this.element.wmpanel = this;
 
