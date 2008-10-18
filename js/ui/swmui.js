@@ -115,7 +115,7 @@ qwebirc.ui.SWMUI.Window = new Class({
     this.parent(topic);
 
     this.topic.removeAllChildren();
-    Colourise(topic, this.topic.element);
+    qwebirc.ui.Colourise(topic, this.topic.element);
 
     this.parentObject.resize();
   },

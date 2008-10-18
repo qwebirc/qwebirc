@@ -302,7 +302,12 @@ qwebirc.irc.BaseIRCClient = new Class({
     return true;
   },
   irc_RPL_NOTOPIC: function(prefix, params) {
-    return true;
+    var channel = params[1];
+
+    if(this.channels[channel]) {
+      this.initialTopic(channel, "");
+      return true;
+    }
   },  
   irc_RPL_TOPIC: function(prefix, params) {
     var channel = params[1];

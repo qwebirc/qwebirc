@@ -189,7 +189,7 @@ qwebirc.ui.MochaUI.Window = new Class({
     while(t.firstChild)
       t.removeChild(t.firstChild);
 
-    Colourise(topic, t);
+    qwebirc.ui.Colourise(topic, t);
   },
   addLine: function(type, line, colour) {
     var e = new Element("div");

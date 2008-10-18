@@ -43,7 +43,6 @@ qwebirc.irc.IRCConnection = new Class({
     if(this.lastactiverequest) {
       this.lastactiverequest.cancel();
       this.lastactiverequest = null;
-      alert("warning: last active request");
     }
     if(this.activerequest) {
       this.lastactiverequest = this.activerequest;
@@ -111,7 +110,7 @@ qwebirc.irc.IRCConnection = new Class({
     var r = new Request.JSON({url: "/e/n?nick=" + encodeURIComponent(this.initialNickname) + "&r=" + Math.random() * 1024 * 1024, onComplete: function(o) {
       if(!o) {
         this.disconnected = true;
-        alert("Couldn't connect to remote server.");
+        this.__error("Couldn't connect to remote server.");
         return;
       }
       if(o[0] == false) {

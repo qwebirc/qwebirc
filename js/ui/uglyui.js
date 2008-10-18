@@ -116,7 +116,7 @@ qwebirc.ui.UglyUI.Window = new Class({
     while(t.firstChild)
       t.removeChild(t.firstChild);
 
-    Colourise(topic, t);
+    qwebirc.ui.Colourise(topic, t);
   },
   select: function() {
     this.parent();

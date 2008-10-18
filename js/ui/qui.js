@@ -276,7 +276,7 @@ qwebirc.ui.QUI.Window = new Class({
       t.removeChild(t.firstChild);
 
     if(topic) {
-      Colourise("[" + topic + "]", t);
+      qwebirc.ui.Colourise("[" + topic + "]", t);
     } else {
       var e = new Element("div");
       e.set("text", "(no topic set)");
