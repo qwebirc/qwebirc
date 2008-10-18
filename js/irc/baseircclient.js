@@ -1,19 +1,19 @@
-var Numerics = {"001": "RPL_WELCOME", "433": "ERR_NICKNAMEINUSE", "004": "RPL_MYINFO", "005": "RPL_ISUPPORT", "353": "RPL_NAMREPLY", "366": "RPL_ENDOFNAMES", "331": "RPL_NOTOPIC", "332": "RPL_TOPIC", "333": "RPL_TOPICWHOTIME"};
+qwebirc.irc.Numerics = {"001": "RPL_WELCOME", "433": "ERR_NICKNAMEINUSE", "004": "RPL_MYINFO", "005": "RPL_ISUPPORT", "353": "RPL_NAMREPLY", "366": "RPL_ENDOFNAMES", "331": "RPL_NOTOPIC", "332": "RPL_TOPIC", "333": "RPL_TOPICWHOTIME"};
 
-var RegisteredCTCPs = {
+qwebirc.irc.RegisteredCTCPs = {
   "VERSION": function(x) {
-    return "qwebirc v" + QWEBIRC_VERSION + ", copyright (C) Chris Porter 2008 -- user agent: " + Browser.Engine.name + " (" + Browser.Platform.name + ")";
+    return "qwebirc v" + qwebirc.VERSION + ", copyright (C) Chris Porter 2008 -- user agent: " + Browser.Engine.name + " (" + Browser.Platform.name + ")";
   },
   "USERINFO": function(x) { return "qwebirc"; },
-  "TIME": function(x) { return IRCTime(new Date()); },
+  "TIME": function(x) { return qwebirc.irc.IRCTime(new Date()); },
   "PING": function(x) { return x; },
   "CLIENTINFO": function(x) { return "PING VERSION TIME USERINFO CLIENTINFO"; }
 };
 
-var BaseIRCClient = new Class({
+qwebirc.irc.BaseIRCClient = new Class({
   Implements: [Options],
   options: {
-    nickname: "WCunset"
+    nickname: "qwebirc"
   },
   initialize: function(options) {
     this.setOptions(options);
@@ -25,7 +25,7 @@ var BaseIRCClient = new Class({
     this.channels = {}
     this.nextctcp = 0;    
 
-    this.connection = new IRCConnection({initialNickname: this.nickname, onRecv: this.dispatch.bind(this)});
+    this.connection = new qwebirc.irc.IRCConnection({initialNickname: this.nickname, onRecv: this.dispatch.bind(this)});
   
     this.send = this.connection.send.bind(this.connection);
     this.connect = this.connection.connect.bind(this.connection);
@@ -47,7 +47,7 @@ var BaseIRCClient = new Class({
        
       var prefix = data[2];
       var sl = data[3];
-      var n = Numerics[command];
+      var n = qwebirc.irc.Numerics[command];
       
       var x = n;
       if(!n)
@@ -176,7 +176,7 @@ var BaseIRCClient = new Class({
     if(ctcp) {
       var type = ctcp[0].toUpperCase();
       
-      var replyfn = RegisteredCTCPs[type];
+      var replyfn = qwebirc.irc.RegisteredCTCPs[type];
       if(replyfn) {
         var t = new Date().getTime() / 1000;
         if(t > this.nextctcp)

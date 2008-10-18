@@ -1,8 +1,8 @@
-function NickChanEntry() {
+qwebirc.irc.NickChanEntry = function() {
   this.prefixes = "";
 }
 
-var IRCTracker = new Class({
+qwebirc.irc.IRCTracker = new Class({
   initialize: function() {
     this.channels = {};
     this.nicknames = {};
@@ -40,7 +40,7 @@ var IRCTracker = new Class({
     return nc;
   },
   addNickToChannel: function(nick, channel) {
-    var nc = new NickChanEntry();
+    var nc = new qwebirc.irc.NickChanEntry();
 
     var n = this.getOrCreateNick(nick);
     n[channel] = nc;

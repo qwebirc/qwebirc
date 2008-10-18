@@ -1,10 +1,10 @@
-var SWM_ANCHOR_NONE =   0x00;
-var SWM_ANCHOR_TOP =    0x01;
-var SWM_ANCHOR_BOTTOM = 0x02;
-var SWM_ANCHOR_LEFT =   0x04;
-var SWM_ANCHOR_RIGHT =  0x08;
+qwebirc.ui.SWMUI.SWM_ANCHOR_NONE =   0x00;
+qwebirc.ui.SWMUI.SWM_ANCHOR_TOP =    0x01;
+qwebirc.ui.SWMUI.SWM_ANCHOR_BOTTOM = 0x02;
+qwebirc.ui.SWMUI.SWM_ANCHOR_LEFT =   0x04;
+qwebirc.ui.SWMUI.SWM_ANCHOR_RIGHT =  0x08;
 
-var SWMContainer = new Class({
+qwebirc.ui.SWMUI.Container = new Class({
   initialize: function(parentElement) {
     this.parentElement = parentElement;
   },
@@ -78,11 +78,11 @@ var SWMContainer = new Class({
       });
     }
 
-    var top = anchorFilter(x, SWM_ANCHOR_TOP);
-    var bottom = anchorFilter(x, SWM_ANCHOR_BOTTOM);
-    var left = anchorFilter(x, SWM_ANCHOR_LEFT);
-    var right = anchorFilter(x, SWM_ANCHOR_RIGHT);
-    var none = anchorFilter(x, SWM_ANCHOR_NONE);
+    var top = anchorFilter(x, qwebirc.ui.SWMUI.SWM_ANCHOR_TOP);
+    var bottom = anchorFilter(x, qwebirc.ui.SWMUI.SWM_ANCHOR_BOTTOM);
+    var left = anchorFilter(x, qwebirc.ui.SWMUI.SWM_ANCHOR_LEFT);
+    var right = anchorFilter(x, qwebirc.ui.SWMUI.SWM_ANCHOR_RIGHT);
+    var none = anchorFilter(x, qwebirc.ui.SWMUI.SWM_ANCHOR_NONE);
     
     var x = this.getInnerSize();
     var y = this.getOuterSize();
@@ -123,8 +123,8 @@ var SWMContainer = new Class({
   }
 });
 
-var SWMFrame = new Class({
-  Extends: SWMContainer,
+qwebirc.ui.SWMUI.Frame = new Class({
+  Extends: qwebirc.ui.SWMUI.Container,
   initialize: function(parentElement) {
     this.parent(this);
 
@@ -142,8 +142,8 @@ var SWMFrame = new Class({
   }
 });
 
-var SWMPanel = new Class({
-  Extends: SWMContainer,
+qwebirc.ui.SWMUI.Panel = new Class({
+  Extends: qwebirc.ui.SWMUI.Container,
   initialize: function(parentPanel, hidden) {
     this.parent(parentPanel);
     this.element = new Element("div", {"styles": {
@@ -158,7 +158,7 @@ var SWMPanel = new Class({
     }
     
     parentPanel.element.appendChild(this.element);
-    this.anchor = SWM_ANCHOR_NONE;
+    this.anchor = qwebirc.ui.SWMUI.SWM_ANCHOR_NONE;
   },
   setHeight: function(height) {
     this.height = height;

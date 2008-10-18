@@ -30,7 +30,7 @@ String.prototype.splitMax = function(by, max) {
   return newitems;
 }
 
-function setAtEnd(obj) {
+qwebirc.util.setAtEnd = function(obj) {
   pos = obj.value.length;
   
   if(obj.createTextRange) { 
@@ -44,7 +44,7 @@ function setAtEnd(obj) {
 }
 
 /* returns the arguments */
-function parseURI(uri) {
+qwebirc.util.parseURI = function(uri) {
   var result = {}
 
   var start = uri.indexOf('?');
@@ -66,12 +66,27 @@ function parseURI(uri) {
   return result;
 }
 
-function BrowserVersion() {
-  if(Browser.Engine.trident) {
-    if(Browser.Engine.version == '4')
-      return 'ie6';
-    if(Browser.Engine.version == '5')
-      return 'ie7';
-  }
-  return null;
-}
+qwebirc.util.DaysOfWeek = {
+  0: "Sun",
+  1: "Mon",
+  2: "Tue",
+  3: "Wed",
+  4: "Thu",
+  5: "Fri",
+  6: "Sat"
+};
+
+qwebirc.util.MonthsOfYear = {
+  0: "Jan",
+  1: "Feb",
+  2: "Mar",
+  3: "Apr",
+  4: "May",
+  5: "Jun",
+  6: "Jul",
+  7: "Aug",
+  8: "Sep",
+  9: "Oct",
+  10: "Nov",
+  11: "Dec"
+};

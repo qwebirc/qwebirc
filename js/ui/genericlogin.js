@@ -1,13 +1,12 @@
-function GenericLoginBox(parentElement, callback, initialNickname, initialChannels, autoConnect, autoNick) {
+qwebirc.ui.GenericLoginBox = function(parentElement, callback, initialNickname, initialChannels, autoConnect, autoNick) {
   if(autoConnect) {
-    ConfirmBox(parentElement, callback, initialNickname, initialChannels, autoNick);
+    qwebirc.ui.ConfirmBox(parentElement, callback, initialNickname, initialChannels, autoNick);
   } else {
-    LoginBox(parentElement, callback, initialNickname, initialChannels);
+    qwebirc.ui.LoginBox(parentElement, callback, initialNickname, initialChannels);
   }
-  
 }
 
-function ConfirmBox(parentElement, callback, initialNickname, initialChannels, autoNick) {
+qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initialChannels, autoNick) {
   var box = new Element("table");
   box.addClass("confirmbox");
   parentElement.appendChild(box);
@@ -67,7 +66,7 @@ function ConfirmBox(parentElement, callback, initialNickname, initialChannels, a
   });
 }
 
-function LoginBox(parentElement, callback, initialNickname, initialChannels) {
+qwebirc.ui.LoginBox = function(parentElement, callback, initialNickname, initialChannels) {
   var box = new Element("table");
   parentElement.appendChild(box);
   box.addClass("loginbox");

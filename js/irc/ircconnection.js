@@ -1,6 +1,6 @@
 /* This could do with a rewrite from scratch. */
 
-var IRCConnection = new Class({
+qwebirc.irc.IRCConnection = new Class({
   Implements: [Events, Options],
   options: {
     initialNickname: "ircconnX",

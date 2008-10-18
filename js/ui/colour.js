@@ -1,4 +1,4 @@
-function Colourise(line, entity, execfn, cmdfn) {
+qwebirc.ui.Colourise = function(line, entity, execfn, cmdfn) {
   var fg;
   var bg;
   var underline = false;
@@ -44,7 +44,7 @@ function Colourise(line, entity, execfn, cmdfn) {
 
   function emitEndToken() {
     if(out.length > 0) {
-      urlificate(element, out.join(""), execfn, cmdfn);
+      qwebirc.ui.urlificate(element, out.join(""), execfn, cmdfn);
       entity.appendChild(element);
       out = [];
     }

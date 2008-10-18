@@ -1,4 +1,4 @@
-var UIWindow = new Class({
+qwebirc.ui.Window = new Class({
   Implements: [Events],
   initialize: function(parentObject, client, type, name, identifier) {
     this.parentObject = parentObject;
@@ -50,7 +50,7 @@ var UIWindow = new Class({
     if(type)
       line = this.parentObject.theme.message(type, line);
     
-    Colourise(IRCTimestamp(new Date()) + " " + line, element, this.client.exec, this.parentObject.urlDispatcher.bind(this.parentObject));
+    qwebirc.ui.Colourise(qwebirc.irc.IRCTimestamp(new Date()) + " " + line, element, this.client.exec, this.parentObject.urlDispatcher.bind(this.parentObject));
     
     this.scrollAdd(element);
   },

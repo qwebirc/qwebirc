@@ -1,5 +1,44 @@
-var UglyUIWindow = new Class({
-  Extends: UIWindow,
+qwebirc.ui.UglyUI = new Class({
+  Extends: qwebirc.ui.NewLoginUI,
+  initialize: function(parentElement, theme) {
+    this.parent(parentElement, qwebirc.ui.UglyUI.Window, "uglyui");
+    this.theme = theme;
+    this.parentElement = parentElement;
+  },
+  postInitialize: function() {    
+    this.tabs = new Element("div");
+    this.tabs.addClass("tabbar");
+    
+    this.parentElement.appendChild(this.tabs);
+    
+    this.container = new Element("div");
+    this.container.addClass("container");
+    
+    this.parentElement.appendChild(this.container);
+  
+    var form = new Element("form");
+    this.form = form;
+    
+    var inputbox = new Element("input");
+    inputbox.addClass("input");
+  
+    form.addEvent("submit", function(e) {
+      new Event(e).stop();
+    
+      this.getActiveWindow().client.exec(inputbox.value);
+      inputbox.value = "";
+    }.bind(this));
+    this.parentElement.appendChild(form);  
+    form.appendChild(inputbox);
+    inputbox.focus();
+  },
+  showInput: function(state) {
+    this.form.setStyle("display", state?"block":"none");
+  }
+});
+
+qwebirc.ui.UglyUI.Window = new Class({
+  Extends: qwebirc.ui.Window,
   
   initialize: function(parentObject, client, type, name) {
     this.parent(parentObject, client, type, name);
@@ -10,7 +49,7 @@ var UglyUIWindow = new Class({
     
     parentObject.container.appendChild(this.outerContainer);
     
-    if(type == WINDOW_CHANNEL) {
+    if(type == qwebirc.ui.WINDOW_CHANNEL) {
       this.nicklist = new Element("div");
       this.nicklist.addClass("nicklist");
       
@@ -21,7 +60,7 @@ var UglyUIWindow = new Class({
     innerContainer.addClass("innercontainer");
     this.outerContainer.appendChild(innerContainer);
     
-    if(type == WINDOW_CHANNEL) {
+    if(type == qwebirc.ui.WINDOW_CHANNEL) {
       this.topic = new Element("div");
       this.topic.addClass("topic");
       innerContainer.appendChild(this.topic);
@@ -41,13 +80,13 @@ var UglyUIWindow = new Class({
 
     parentObject.tabs.appendChild(this.tab);
     
-    if(type != WINDOW_STATUS && type != WINDOW_CONNECT) {
+    if(type != qwebirc.ui.WINDOW_STATUS && type != qwebirc.ui.WINDOW_CONNECT) {
       tabclose = new Element("span");
       tabclose.addClass("tabclose");
       tabclose.addEvent("click", function(e) {
         new Event(e).stop();
         
-        if(type == WINDOW_CHANNEL)
+        if(type == qwebirc.ui.WINDOW_CHANNEL)
           this.client.exec("/PART " + name);
 
         this.close();
@@ -85,7 +124,7 @@ var UglyUIWindow = new Class({
     this.outerContainer.removeClass("tab-invisible");
     this.tab.removeClass("tab-unselected");    
     this.tab.addClass("tab-selected");
-    this.parentObject.showInput(this.type != WINDOW_CONNECT && this.type != WINDOW_CUSTOM);
+    this.parentObject.showInput(this.type != qwebirc.ui.WINDOW_CONNECT && this.type != qwebirc.ui.WINDOW_CUSTOM);
   },
   deselect: function() {
     this.parent();
@@ -122,45 +161,6 @@ var UglyUIWindow = new Class({
     } else {
       this.tab.removeClass("tab-highlighted");
     }
-  }
-});
-
-var UglyUI = new Class({
-  Extends: NewLoginUI,
-  initialize: function(parentElement, theme) {
-    this.parent(parentElement, UglyUIWindow, "uglyui");
-    this.theme = theme;
-    this.parentElement = parentElement;
-  },
-  postInitialize: function() {    
-    this.tabs = new Element("div");
-    this.tabs.addClass("tabbar");
-    
-    this.parentElement.appendChild(this.tabs);
-    
-    this.container = new Element("div");
-    this.container.addClass("container");
-    
-    this.parentElement.appendChild(this.container);
-  
-    var form = new Element("form");
-    this.form = form;
-    
-    var inputbox = new Element("input");
-    inputbox.addClass("input");
-  
-    form.addEvent("submit", function(e) {
-      new Event(e).stop();
-    
-      this.getActiveWindow().client.exec(inputbox.value);
-      inputbox.value = "";
-    }.bind(this));
-    this.parentElement.appendChild(form);  
-    form.appendChild(inputbox);
-    inputbox.focus();
-  },
-  showInput: function(state) {
-    this.form.setStyle("display", state?"block":"none");
   }
 });
 

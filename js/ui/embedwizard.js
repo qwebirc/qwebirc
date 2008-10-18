@@ -1,4 +1,4 @@
-var WebmasterGuideStep = new Class({
+qwebirc.ui.EmbedWizardStep = new Class({
   Implements: [Options, Events],
   options: {
     "title": "",
@@ -28,7 +28,7 @@ var WebmasterGuideStep = new Class({
   }
 });
 
-var WebmasterGuide = new Class({
+qwebirc.ui.EmbedWizard = new Class({
   Implements: [Options, Events],
   options: {
     parent: null,
@@ -85,7 +85,7 @@ var WebmasterGuide = new Class({
     return cell;
   },
   newStep: function(options) {
-    return new WebmasterGuideStep(this, options);
+    return new qwebirc.ui.EmbedWizardStep(this, options);
   },
   newRadio: function(parent, text, name, selected) {
     var p = new Element("div");

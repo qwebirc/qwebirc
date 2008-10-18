@@ -1,4 +1,4 @@
-var QWebIRCInterface = new Class({
+qwebirc.ui.Interface = new Class({
   Implements: [Options],
   options: {
     initialNickname: "qwebirc" + Math.ceil(Math.random() * 100000),
@@ -10,13 +10,13 @@ var QWebIRCInterface = new Class({
     this.setOptions(options);
 
     window.addEvent("domready", function() {
-      var ui_ = new ui($(element), new Theme(this.options.theme));
+      var ui_ = new ui($(element), new qwebirc.ui.Theme(this.options.theme));
       var inick = this.options.initialNickname;
       var ichans = this.options.initialChannels;
       var autoNick = true;
       
       var callback = function(options) {
-        var IRC = new IRCClient(options, ui_);
+        var IRC = new qwebirc.irc.IRCClient(options, ui_);
         IRC.connect();
         window.addEvent("beforeunload", function() {
           IRC.quit("Page closed");
@@ -25,7 +25,7 @@ var QWebIRCInterface = new Class({
 
       var supplied = false; 
       if(this.options.searchURL) {
-        var args = parseURI(String(document.location));
+        var args = qwebirc.util.parseURI(String(document.location));
         
         var chans = args["channels"];
         var nick = args["nick"];

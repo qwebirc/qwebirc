@@ -1,22 +1,76 @@
-var SWMUIWindow = new Class({
-  Extends: UIWindow,
+qwebirc.ui.SWMUI = new Class({
+  Extends: qwebirc.ui.NewLoginUI,
+  initialize: function(parentElement, theme) {
+    this.parent(parentElement, qwebirc.ui.SWMUI.Window, "swmui");
+
+    this.parentElement = parentElement;
+    this.theme = theme;
+  },
+  postInitialize: function() {
+    this.rootFrame = new qwebirc.ui.SWMUI.Frame(this.parentElement);
+
+    this.tabPanel = new qwebirc.ui.SWMUI.Panel(this.rootFrame);
+    this.tabPanel.anchor = qwebirc.ui.SWMUI.SWM_ANCHOR_TOP;
+    this.tabPanel.addClass("tabs");
+    
+    this.mainPanel = new qwebirc.ui.SWMUI.Panel(this.rootFrame);
+    this.mainPanel.addClass("main");
+    
+    this.entryPanel = new qwebirc.ui.SWMUI.Panel(this.rootFrame);
+    this.entryPanel.anchor = qwebirc.ui.SWMUI.SWM_ANCHOR_BOTTOM;
+    this.entryPanel.addClass("entry");
+
+    var form = new Element("form");
+    
+    var inputbox = new Element("input");
+    inputbox.setStyle("border", "0px");
+    
+    window.addEvent("resize", function() {
+      var s = this.entryPanel.getInnerSize().x;
+      inputbox.setStyle("width", s + "px");
+    }.bind(this));
+
+    form.addEvent("submit", function(e) {
+      new Event(e).stop();
+    
+      this.getActiveWindow().client.exec(inputbox.value);
+      inputbox.value = "";
+    }.bind(this));
+
+    this.entryPanel.appendChild(form);
+    form.appendChild(inputbox);
+    inputbox.focus();
+
+    this.resize();
+  },
+  showInput: function(state) {
+    this.entryPanel.setHidden(state);
+    this.resize();
+  },
+  resize: function() {
+    window.fireEvent("resize");
+  }
+});
+
+qwebirc.ui.SWMUI.Window = new Class({
+  Extends: qwebirc.ui.Window,
   
   initialize: function(parentObject, client, type, name) {
     this.parent(parentObject, client, type, name);
-    this.contentPanel = new SWMPanel(parentObject.mainPanel, true);
+    this.contentPanel = new qwebirc.ui.SWMUI.Panel(parentObject.mainPanel, true);
     this.contentPanel.addClass("content");
 
-    if(type == WINDOW_CHANNEL) {
-      this.nickList = new SWMPanel(this.contentPanel);
-      this.nickList.anchor = SWM_ANCHOR_RIGHT;
+    if(type == qwebirc.ui.WINDOW_CHANNEL) {
+      this.nickList = new qwebirc.ui.SWMUI.Panel(this.contentPanel);
+      this.nickList.anchor = qwebirc.ui.SWMUI.SWM_ANCHOR_RIGHT;
       this.nickList.addClass("nicklist");
 
-      this.topic = new SWMPanel(this.contentPanel);
-      this.topic.anchor = SWM_ANCHOR_TOP;
+      this.topic = new qwebirc.ui.SWMUI.Panel(this.contentPanel);
+      this.topic.anchor = qwebirc.ui.SWMUI.SWM_ANCHOR_TOP;
       this.topic.addClass("topic");
     }
     
-    this.xlines = new SWMPanel(this.contentPanel);
+    this.xlines = new qwebirc.ui.SWMUI.Panel(this.contentPanel);
     this.lines = this.xlines.element;
     
     this.tab = new Element("span");
@@ -30,13 +84,13 @@ var SWMUIWindow = new Class({
     parentObject.tabPanel.appendChild(this.tab);
     parentObject.resize();
     
-    if(type != WINDOW_STATUS && type != WINDOW_CONNECT) {
+    if(type != qwebirc.ui.WINDOW_STATUS && type != qwebirc.ui.WINDOW_CONNECT) {
       tabclose = new Element("span");
       tabclose.addClass("tabclose");
       tabclose.addEvent("click", function(e) {
         new Event(e).stop();
         
-        if(type == WINDOW_CHANNEL)
+        if(type == qwebirc.ui.WINDOW_CHANNEL)
           this.client.exec("/PART " + name);
 
         this.close();
@@ -72,7 +126,7 @@ var SWMUIWindow = new Class({
     this.parentObject.resize();
     this.tab.removeClass("tab-unselected");
     this.tab.addClass("tab-selected");
-    this.parentObject.showInput(this.type == WINDOW_CONNECT || this.type == WINDOW_CUSTOM);
+    this.parentObject.showInput(this.type == qwebirc.ui.WINDOW_CONNECT || this.type == qwebirc.ui.WINDOW_CUSTOM);
   },
   deselect: function() {
     this.parent();
@@ -111,59 +165,5 @@ var SWMUIWindow = new Class({
     } else {
       this.tab.removeClass("tab-highlighted");
     }
-  }
-});
-
-var SWMUI = new Class({
-  Extends: NewLoginUI,
-  initialize: function(parentElement, theme) {
-    this.parent(parentElement, SWMUIWindow, "swmui");
-
-    this.parentElement = parentElement;
-    this.theme = theme;
-  },
-  postInitialize: function() {
-    this.rootFrame = new SWMFrame(this.parentElement);
-
-    this.tabPanel = new SWMPanel(this.rootFrame);
-    this.tabPanel.anchor = SWM_ANCHOR_TOP;
-    this.tabPanel.addClass("tabs");
-    
-    this.mainPanel = new SWMPanel(this.rootFrame);
-    this.mainPanel.addClass("main");
-    
-    this.entryPanel = new SWMPanel(this.rootFrame);
-    this.entryPanel.anchor = SWM_ANCHOR_BOTTOM;
-    this.entryPanel.addClass("entry");
-
-    var form = new Element("form");
-    
-    var inputbox = new Element("input");
-    inputbox.setStyle("border", "0px");
-    
-    window.addEvent("resize", function() {
-      var s = this.entryPanel.getInnerSize().x;
-      inputbox.setStyle("width", s + "px");
-    }.bind(this));
-
-    form.addEvent("submit", function(e) {
-      new Event(e).stop();
-    
-      this.getActiveWindow().client.exec(inputbox.value);
-      inputbox.value = "";
-    }.bind(this));
-
-    this.entryPanel.appendChild(form);
-    form.appendChild(inputbox);
-    inputbox.focus();
-
-    this.resize();
-  },
-  showInput: function(state) {
-    this.entryPanel.setHidden(state);
-    this.resize();
-  },
-  resize: function() {
-    window.fireEvent("resize");
   }
 });

@@ -1,7 +1,7 @@
-var IRCClient = new Class({
-  Extends: BaseIRCClient,
+qwebirc.irc.IRCClient = new Class({
+  Extends: qwebirc.irc.BaseIRCClient,
   options: {
-    nickname: "WCunset",
+    nickname: "qwebirc",
     autojoin: ""
   },
   initialize: function(options, ui) {
@@ -13,7 +13,7 @@ var IRCClient = new Class({
     this.modeprefixes = "ov";
     this.windows = {};
     
-    this.commandparser = new CommandParser(this);
+    this.commandparser = new qwebirc.irc.CommandParser(this);
     this.exec = this.commandparser.dispatch.bind(this.commandparser);
 
     this.statusWindow = this.ui.newClient(this);
@@ -126,7 +126,7 @@ var IRCClient = new Class({
     this.newServerLine("RAW", {"n": "numeric", "m": params.slice(1).join(" ")});
   },
   signedOn: function(nickname) {
-    this.tracker = new IRCTracker();
+    this.tracker = new qwebirc.irc.IRCTracker();
     this.nickname = nickname;
     this.newServerLine("SIGNON");
     

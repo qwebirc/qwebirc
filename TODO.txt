@@ -1,4 +1,2 @@
-IE7
-IE6
-ping timeout bug?
-opera weirdness
+make pretty again.
+swmui window bug

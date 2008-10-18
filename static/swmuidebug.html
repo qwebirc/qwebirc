@@ -5,6 +5,7 @@
   <link rel="stylesheet" href="css/colours.css" type="text/css">
   <link rel="stylesheet" href="css/swmui.css" type="text/css">
   <script type="text/javascript" src="js/mootools-1.2-core.js"></script>
+  <script type="text/javascript" src="js/debug/qwebirc.js"></script>
   <script type="text/javascript" src="js/debug/version.js"></script>
   <script type="text/javascript" src="js/debug/jslib.js"></script>
   <script type="text/javascript" src="js/debug/irc/ircconnection.js"></script>
@@ -21,11 +22,11 @@
   <script type="text/javascript" src="js/debug/ui/theme.js"></script>
   <script type="text/javascript" src="js/debug/ui/genericlogin.js"></script>
   <script type="text/javascript" src="js/debug/ui/embedwizard.js"></script>
-  <script type="text/javascript" src="js/debug/ui/swmlayout.js"></script>
   <script type="text/javascript" src="js/debug/ui/swmui.js"></script>
+  <script type="text/javascript" src="js/debug/ui/swmlayout.js"></script>
   <script type="text/javascript" src="js/debug/qwebircinterface.js"></script>
   <script type="text/javascript">
-    new QWebIRCInterface("ircui", SWMUI);
+    var ui = new qwebirc.ui.Interface("ircui", qwebirc.ui.SWMUI);
   </script>
 </head>
 <body>

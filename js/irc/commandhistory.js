@@ -1,4 +1,4 @@
-var CommandHistory = new Class({
+qwebirc.irc.CommandHistory = new Class({
   Implements: [Options],
   options: {
     lines: 20

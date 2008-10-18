@@ -1,5 +1,5 @@
 /* don't even attempt to use a $! */
-var DefaultTheme = {
+qwebirc.ui.theme.Default = {
   "PREFIX": ["$C4==$O "],
   "SIGNON": ["Signed on!", true],
   "CONNECT": ["Connected to server.", true],

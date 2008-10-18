@@ -1,4 +1,4 @@
-var ThemeControlCodeMap = {
+qwebirc.ui.themes.ThemeControlCodeMap = {
   "C": "\x03",
   "B": "\x02",
   "U": "\x1F",
@@ -6,7 +6,7 @@ var ThemeControlCodeMap = {
   "$": "$"
 };
 
-var DefaultTheme = {
+qwebirc.ui.themes.Default = {
   "PREFIX": ["$C4==$O "],
   "SIGNON": ["Signed on!", true],
   "CONNECT": ["Connected to server.", true],
@@ -46,12 +46,12 @@ var DefaultTheme = {
   "OURTARGETEDCTCP": ["[ctcp($t)] $x $m"]
 };
 
-var Theme = new Class({
+qwebirc.ui.Theme = new Class({
   initialize: function(themeDict) {
     this.__theme = {};
     
-    for(var k in DefaultTheme)
-      this.__theme[k] = DefaultTheme[k];
+    for(var k in qwebirc.ui.themes.Default)
+      this.__theme[k] = qwebirc.ui.themes.Default[k];
   
     if(themeDict)
       for(var k in themeDict)
@@ -78,7 +78,7 @@ var Theme = new Class({
       if(c == "$" && (i <= n.length - 1)) {
         var c2 = n[++i];
 
-        var o = ThemeControlCodeMap[c2];
+        var o = qwebirc.ui.themes.ThemeControlCodeMap[c2];
         if(!o)
           o = h[c2];
         if(o)

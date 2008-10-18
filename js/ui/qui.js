@@ -1,4 +1,94 @@
-var QJSUI = new Class({
+qwebirc.ui.QUI = new Class({
+  Extends: qwebirc.ui.NewLoginUI,
+  initialize: function(parentElement, theme) {
+    this.parent(parentElement, qwebirc.ui.QUI.Window, "qui");
+    this.theme = theme;
+    this.parentElement = parentElement;
+  },
+  postInitialize: function() {
+    this.qjsui = new qwebirc.ui.QUI.JSUI("qwebirc-qui", this.parentElement);
+    
+    this.qjsui.top.addClass("tabbar");
+    
+    this.qjsui.bottom.addClass("input");
+    this.qjsui.right.addClass("nicklist");
+    this.qjsui.topic.addClass("topic");
+    this.qjsui.middle.addClass("lines");
+    
+    this.tabs = this.qjsui.top;
+    this.origtopic = this.topic = this.qjsui.topic;
+    this.origlines = this.lines = this.qjsui.middle;
+    this.orignicklist = this.nicklist = this.qjsui.right;
+    
+    this.input = this.qjsui.bottom;
+    this.reflow = this.qjsui.reflow.bind(this.qjsui);
+    
+    this.createInput();
+    this.reflow();
+  },
+  createInput: function() {
+    var form = new Element("form");
+    this.input.appendChild(form);
+    form.addClass("input");
+    
+    var inputbox = new Element("input");
+    form.appendChild(inputbox);
+    this.inputbox = inputbox;
+    
+    form.addEvent("submit", function(e) {
+      new Event(e).stop();
+    
+      if(inputbox.value == "")
+        return;
+        
+      this.getActiveWindow().historyExec(inputbox.value);
+      inputbox.value = "";
+    }.bind(this));
+    
+    inputbox.addEvent("keydown", function(e) {
+      var resultfn;
+      var cvalue = inputbox.value;
+
+      if(e.key == "up") {
+        resultfn = this.commandhistory.upLine;
+      } else if(e.key == "down") {
+        resultfn = this.commandhistory.downLine;
+      } else {
+        return;
+      }
+      
+      if((cvalue != "") && (this.lastcvalue != cvalue))
+        this.commandhistory.addLine(cvalue, true);
+      
+      var result = resultfn.bind(this.commandhistory)();
+      
+      new Event(e).stop();
+      if(!result)
+        result = "";
+      this.lastcvalue = result;
+        
+      inputbox.value = result;
+      setAtEnd(inputbox);
+    }.bind(this));
+  },
+  setLines: function(lines) {
+    this.lines.parentNode.replaceChild(lines, this.lines);
+    this.qjsui.middle = this.lines = lines;
+  },
+  setChannelItems: function(nicklist, topic) {
+    if(!$defined(nicklist)) {
+      nicklist = this.orignicklist;
+      topic = this.origtopic;
+    }
+    this.nicklist.parentNode.replaceChild(nicklist, this.nicklist);
+    this.qjsui.right = this.nicklist = nicklist;
+
+    this.topic.parentNode.replaceChild(topic, this.topic);
+    this.qjsui.topic = this.topic = topic;
+  }
+});
+
+qwebirc.ui.QUI.JSUI = new Class({
   initialize: function(class_, parent, sizer) {
     this.parent = parent;
     this.sizer = $defined(sizer)?sizer:parent;
@@ -98,8 +188,8 @@ var QJSUI = new Class({
   }
 });
 
-var QUIWindow = new Class({
-  Extends: UIWindow,
+qwebirc.ui.QUI.Window = new Class({
+  Extends: qwebirc.ui.Window,
   
   initialize: function(parentObject, client, type, name) {
     this.parent(parentObject, client, type, name);
@@ -114,13 +204,14 @@ var QUIWindow = new Class({
       parentObject.selectWindow(this);
     }.bind(this));
     
-    if(type != WINDOW_STATUS && type != WINDOW_CONNECT) {
-      tabclose = new Element("span");
+    if(type != qwebirc.ui.WINDOW_STATUS && type != qwebirc.ui.WINDOW_CONNECT) {
+      var tabclose = new Element("span");
+      tabclose.set("text", "X");
       tabclose.addClass("tabclose");
       tabclose.addEvent("click", function(e) {
         new Event(e).stop();
         
-        if(type == WINDOW_CHANNEL)
+        if(type == qwebirc.ui.WINDOW_CHANNEL)
           this.client.exec("/PART " + name);
 
         this.close();
@@ -137,7 +228,7 @@ var QUIWindow = new Class({
       this.scrolleddown = this.scrolledDown();
     }.bind(this));
     
-    if(type == WINDOW_CHANNEL) {
+    if(type == qwebirc.ui.WINDOW_CHANNEL) {
       this.topic = new Element("div");
       this.topic.addClass("topic");
       this.topic.addClass("tab-invisible");
@@ -150,7 +241,7 @@ var QUIWindow = new Class({
       this.parentObject.qjsui.applyClasses("nicklist", this.nicklist);
     }
     
-    if(type == WINDOW_CHANNEL) {
+    if(type == qwebirc.ui.WINDOW_CHANNEL) {
       this.updateTopic("");
     } else {
       this.reflow();
@@ -195,7 +286,7 @@ var QUIWindow = new Class({
     this.reflow();
   },
   select: function() {
-    var inputVisible = this.type != WINDOW_CONNECT && this.type != WINDOW_CUSTOM;
+    var inputVisible = this.type != qwebirc.ui.WINDOW_CONNECT && this.type != qwebirc.ui.WINDOW_CUSTOM;
     
     this.tab.removeClass("tab-unselected");
     this.tab.addClass("tab-selected");
@@ -245,95 +336,5 @@ var QUIWindow = new Class({
     } else {
       this.tab.removeClass("tab-hilighted");
     }
-  }
-});
-
-var QUI = new Class({
-  Extends: NewLoginUI,
-  initialize: function(parentElement, theme) {
-    this.parent(parentElement, QUIWindow, "qui");
-    this.theme = theme;
-    this.parentElement = parentElement;
-  },
-  postInitialize: function() {
-    this.qjsui = new QJSUI("qwebirc-qui", this.parentElement);
-    
-    this.qjsui.top.addClass("tabbar");
-    
-    this.qjsui.bottom.addClass("input");
-    this.qjsui.right.addClass("nicklist");
-    this.qjsui.topic.addClass("topic");
-    this.qjsui.middle.addClass("lines");
-    
-    this.tabs = this.qjsui.top;
-    this.origtopic = this.topic = this.qjsui.topic;
-    this.origlines = this.lines = this.qjsui.middle;
-    this.orignicklist = this.nicklist = this.qjsui.right;
-    
-    this.input = this.qjsui.bottom;
-    this.reflow = this.qjsui.reflow.bind(this.qjsui);
-    
-    this.createInput();
-    this.reflow();
-  },
-  createInput: function() {
-    var form = new Element("form");
-    this.input.appendChild(form);
-    form.addClass("input");
-    
-    var inputbox = new Element("input");
-    form.appendChild(inputbox);
-    this.inputbox = inputbox;
-    
-    form.addEvent("submit", function(e) {
-      new Event(e).stop();
-    
-      if(inputbox.value == "")
-        return;
-        
-      this.getActiveWindow().historyExec(inputbox.value);
-      inputbox.value = "";
-    }.bind(this));
-    
-    inputbox.addEvent("keydown", function(e) {
-      var resultfn;
-      var cvalue = inputbox.value;
-
-      if(e.key == "up") {
-        resultfn = this.commandhistory.upLine;
-      } else if(e.key == "down") {
-        resultfn = this.commandhistory.downLine;
-      } else {
-        return;
-      }
-      
-      if((cvalue != "") && (this.lastcvalue != cvalue))
-        this.commandhistory.addLine(cvalue, true);
-      
-      var result = resultfn.bind(this.commandhistory)();
-      
-      new Event(e).stop();
-      if(!result)
-        result = "";
-      this.lastcvalue = result;
-        
-      inputbox.value = result;
-      setAtEnd(inputbox);
-    }.bind(this));
-  },
-  setLines: function(lines) {
-    this.lines.parentNode.replaceChild(lines, this.lines);
-    this.qjsui.middle = this.lines = lines;
-  },
-  setChannelItems: function(nicklist, topic) {
-    if(!$defined(nicklist)) {
-      nicklist = this.orignicklist;
-      topic = this.origtopic;
-    }
-    this.nicklist.parentNode.replaceChild(nicklist, this.nicklist);
-    this.qjsui.right = this.nicklist = nicklist;
-
-    this.topic.parentNode.replaceChild(topic, this.topic);
-    this.qjsui.topic = this.topic = topic;
   }
 });

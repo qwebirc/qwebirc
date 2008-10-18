@@ -12,6 +12,7 @@
   <script type="text/javascript" src="js/mootools-1.2-core.js"></script>
   <script type="text/javascript" src="js/mootools-1.2-more.js"></script>
   <script type="text/javascript" src="js/mochaui/mocha.js"></script>
+  <script type="text/javascript" src="js/debug/qwebirc.js"></script>
   <script type="text/javascript" src="js/debug/version.js"></script>
   <script type="text/javascript" src="js/debug/jslib.js"></script>
   <script type="text/javascript" src="js/debug/irc/ircconnection.js"></script>
@@ -31,7 +32,7 @@
   <script type="text/javascript" src="js/debug/ui/mochaui.js"></script>
   <script type="text/javascript" src="js/debug/qwebircinterface.js"></script>
   <script type="text/javascript">
-    new QWebIRCInterface("ircui", QMochaUI);
+    var ui = new qwebirc.ui.Interface("ircui", qwebirc.ui.MochaUI);
   </script>
 </head>
 <body scroll="no">

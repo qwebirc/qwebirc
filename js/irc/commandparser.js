@@ -1,4 +1,4 @@
-var CommandParser = new Class({
+qwebirc.irc.CommandParser = new Class({
   initialize: function(parentObject) {
     this.aliases = {
       "J": "JOIN",

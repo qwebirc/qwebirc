@@ -1,12 +1,68 @@
-var QMochaUIWindow = new Class({
-  Extends: UIWindow,
+qwebirc.ui.MochaUI = new Class({
+  Extends: qwebirc.ui.NewLoginUI,
+  initialize: function(parentElement, theme) {
+    this.parent(parentElement, qwebirc.ui.MochaUI.Window, "mochaui");
+    this.theme = theme;
+    this.parentElement = parentElement;
+    
+    window.addEvent("domready", function() {
+      /* determine input size */
+      var l = new Element("input", {styles: {border: 0}});
+      this.parentElement.appendChild(l);
+      this.inputHeight = l.getSize().y;
+      this.parentElement.removeChild(l);
+      
+      MochaUI.Desktop = new MochaUI.Desktop();
+      MochaUI.Dock = new MochaUI.Dock({
+        dockPosition: "top"
+      });
+
+      MochaUI.Modal = new MochaUI.Modal();
+      MochaUI.options.useEffects = false;
+    }.bind(this));
+    
+    window.addEvent("unload", function() {
+      if(MochaUI)
+        MochaUI.garbageCleanUp();
+    });
+  },
+  postInitialize: function() {    
+    return;
+    this.tabs = new Element("div");
+    this.tabs.addClass("tabbar");
+    
+    this.parentElement.appendChild(this.tabs);
+    
+    this.container = new Element("div");
+    this.container.addClass("container");
+    
+    this.parentElement.appendChild(this.container);
+  
+    var form = new Element("form");
+    var inputbox = new Element("input");
+    inputbox.addClass("input");
+  
+    form.addEvent("submit", function(e) {
+      new Event(e).stop();
+    
+      this.getActiveWindow().client.exec(inputbox.value);
+      inputbox.value = "";
+    }.bind(this));
+    this.parentElement.appendChild(form);  
+    form.appendChild(inputbox);
+    inputbox.focus();
+  }
+});
+
+qwebirc.ui.MochaUI.Window = new Class({
+  Extends: qwebirc.ui.Window,
   
   initialize: function(parentObject, client, type, name) {
     this.parent(parentObject, client, type, name);
 
     this.lines = new Element("div", {styles: {overflow: "auto", "width": "90"}});
 
-    var toolbar = type != WINDOW_CUSTOM && type != WINDOW_CONNECT;
+    var toolbar = (type != qwebirc.ui.WINDOW_CUSTOM) && (type != qwebirc.ui.WINDOW_CONNECT);
     
     if(toolbar) {
       this.form = new Element("form");
@@ -50,14 +106,14 @@ var QMochaUIWindow = new Class({
         parentObject.selectWindow(this);
       }.bind(this),
       onClose: function() {
-        if(type == WINDOW_CHANNEL)
+        if(type == qwebirc.ui.WINDOW_CHANNEL)
           this.client.exec("/PART " + name);
         this.close();
       }.bind(this)
     };
     
     prefs.toolbar = toolbar;
-    prefs.closable = type != WINDOW_STATUS && type != WINDOW_CONNECT;
+    prefs.closable = type != qwebirc.ui.WINDOW_STATUS && type != qwebirc.ui.WINDOW_CONNECT;
     
     /* HACK */
 /*    var oldIndexLevel = MochaUI.Windows.indexLevel;
@@ -173,60 +229,4 @@ var QMochaUIWindow = new Class({
     
     MochaUI.closeWindow(this.window.windowEl);
   },
-});
-
-var QMochaUI = new Class({
-  Extends: NewLoginUI,
-    initialize: function(parentElement, theme) {
-    this.parent(parentElement, QMochaUIWindow, "mochaui");
-    this.theme = theme;
-    this.parentElement = parentElement;
-    
-    window.addEvent("domready", function() {
-      /* determine input size */
-      var l = new Element("input", {styles: {border: 0}});
-      this.parentElement.appendChild(l);
-      this.inputHeight = l.getSize().y;
-      this.parentElement.removeChild(l);
-      
-      MochaUI.Desktop = new MochaUI.Desktop();
-      MochaUI.Dock = new MochaUI.Dock({
-        dockPosition: "top"
-      });
-
-      MochaUI.Modal = new MochaUI.Modal();
-      MochaUI.options.useEffects = false;
-    }.bind(this));
-    
-    window.addEvent("unload", function() {
-      if(MochaUI)
-        MochaUI.garbageCleanUp();
-    });
-  },
-  postInitialize: function() {    
-    return;
-    this.tabs = new Element("div");
-    this.tabs.addClass("tabbar");
-    
-    this.parentElement.appendChild(this.tabs);
-    
-    this.container = new Element("div");
-    this.container.addClass("container");
-    
-    this.parentElement.appendChild(this.container);
-  
-    var form = new Element("form");
-    var inputbox = new Element("input");
-    inputbox.addClass("input");
-  
-    form.addEvent("submit", function(e) {
-      new Event(e).stop();
-    
-      this.getActiveWindow().client.exec(inputbox.value);
-      inputbox.value = "";
-    }.bind(this));
-    this.parentElement.appendChild(form);  
-    form.appendChild(inputbox);
-    inputbox.focus();
-  }
 });
