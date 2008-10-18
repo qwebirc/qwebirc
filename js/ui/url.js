@@ -30,7 +30,7 @@ function urlificate(element, text, execfn) {
     var newtext = text.replace(punct_re, "");
     var punct = text.substring(newtext.length);
 
-    var a = document.createElement("a");
+    var a = new Element("a");
     a.href = "#";
     a.addEvent("click", function(e) {
       new Event(e).stop();
@@ -46,7 +46,7 @@ function urlificate(element, text, execfn) {
     var newtext = text.replace(punct_re, "");
     var punct = text.substring(newtext.length);
     
-    var a = document.createElement("a");
+    var a = new Element("a");
     a.href = newtext;
     a.target = "new";
     a.appendChild(document.createTextNode(newtext));
