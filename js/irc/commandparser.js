@@ -25,7 +25,7 @@ qwebirc.irc.CommandParser = new Class({
       target = false;
       this.parentObject.newActiveLine("OUR" + type, extra);
       return;
-    } else if(window.type == WINDOW_CHANNEL) {
+    } else if(window.type == qwebirc.ui.WINDOW_CHANNEL) {
       type = "CHAN" + type;
     } else {
       type = "PRIV" + type;
@@ -66,7 +66,7 @@ qwebirc.irc.CommandParser = new Class({
       var fn = cmdopts[3];
       
       var w = this.parentObject.getActiveWindow();
-      if(activewin && w.type == WINDOW_STATUS) {
+      if(activewin && w.type == qwebirc.ui.WINDOW_STATUS) {
         w.errorMessage("Can't use this command in this window");
         return;
       }
@@ -134,7 +134,7 @@ qwebirc.irc.CommandParser = new Class({
       this.newTargetLine(target, "NOTICE", message);
   }],
   cmd_QUERY: [false, 2, 1, function(args) {
-    this.parentObject.newWindow(args[0], WINDOW_QUERY, true);
+    this.parentObject.newWindow(args[0], qwebirc.ui.WINDOW_QUERY, true);
 
     if((args.length > 1) && (args[1] != ""))
       return ["SAY", args[1]];

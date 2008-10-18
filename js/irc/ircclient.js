@@ -138,7 +138,7 @@ qwebirc.irc.IRCClient = new Class({
     var host = user.hostToHost();
     
     if((nick == this.nickname) && !this.getWindow(channel))
-      this.newWindow(channel, WINDOW_CHANNEL, true);
+      this.newWindow(channel, qwebirc.ui.WINDOW_CHANNEL, true);
     this.tracker.addNickToChannel(nick, channel);
 
     if(nick == this.nickname) {
@@ -262,7 +262,7 @@ qwebirc.irc.IRCClient = new Class({
       args = "";
     
     if(type == "ACTION") {      
-      this.newWindow(nick, WINDOW_QUERY);
+      this.newWindow(nick, qwebirc.ui.WINDOW_QUERY);
       this.newLine(nick, "PRIVACTION", {"m": args, "x": type, "h": host, "n": nick});
       return;
     }
@@ -295,7 +295,7 @@ qwebirc.irc.IRCClient = new Class({
     var nick = user.hostToNick();
     var host = user.hostToHost();
     
-    this.newWindow(nick, WINDOW_QUERY);
+    this.newWindow(nick, qwebirc.ui.WINDOW_QUERY);
     
     this.newLine(nick, "PRIVMSG", {"m": message, "h": host, "n": nick});
   },
@@ -350,7 +350,7 @@ qwebirc.irc.IRCClient = new Class({
   disconnected: function(message) {
     for(var x in this.windows) {
       var w = this.windows[x];
-      if(w.type == WINDOW_CHANNEL)
+      if(w.type == qwebirc.ui.WINDOW_CHANNEL)
         w.close();
     }
     this.tracker = undefined;
