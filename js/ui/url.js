@@ -1,4 +1,4 @@
-function urlificate(element, text, execfn) {
+function urlificate(element, text, execfn, cmdfn) {
   var punct_re = /(\.*|\,|;)$/;
 
   var txtprocess = function(text, regex, appendfn, matchfn) {
@@ -15,7 +15,7 @@ function urlificate(element, text, execfn) {
       var after = text.substring(index + matched.length);
     
       appendfn(before);
-      var more = matchfn(matched);
+      var more = matchfn(matched, appendfn);
       if(!more)
         more = "";
       text = more + after;
@@ -42,20 +42,53 @@ function urlificate(element, text, execfn) {
     return punct;
   };
 
-  var appendURL = function(text) {  
-    var newtext = text.replace(punct_re, "");
-    var punct = text.substring(newtext.length);
+  var appendURL = function(text, appendfn) {  
+    var url = text.replace(punct_re, "");
+    var punct = text.substring(url.length);
+    
+    var href = "";
+    var fn = null;
+    var target = "new";
+    var disptext = url;
+    
+    var ma = url.match(/^qwebirc:\/\/(.*)$/);
+    if(ma) {
+      var m = ma[1].match(/^([^\/]+)\/(.+)$/);
+      if(!m) {
+        appendfn(text);
+        return; 
+      }
+      
+      var cmd = cmdfn(m[1]);
+      if(cmd) {
+        url = "#";
+        fn = cmd;
+        disptext = unescape(m[2]);
+        target = null;
+      } else {
+        appendfn(text);
+        return;
+      }
+    } else {
+      if(url.match(/^www\./))
+        url = "http://" + url;
+    }
     
     var a = new Element("a");
-    a.href = newtext;
-    a.target = "new";
-    a.appendChild(document.createTextNode(newtext));
+    a.href = url;
+    
+    if(target)
+      a.target = target;
+    a.appendChild(document.createTextNode(disptext));
+    
     element.appendChild(a);
+    if($defined(fn))
+      a.addEvent("click", function(e) { new Event(e).stop(); fn(disptext); });
     
     return punct;
   };
 
-  txtprocess(text, /\bhttp:\/\/[^ ]+/, function(text) {
+  txtprocess(text, /\b((https?|ftp|qwebirc):\/\/|www\.)[^ ]+/, function(text) {
     txtprocess(text, /\B#[^ ,]+/, appendText, appendChan);
   }, appendURL);
 }

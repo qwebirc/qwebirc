@@ -148,5 +148,13 @@ var UI = new Class({
         this.selectWindow(this.windowArray[number]);
       }
     }.bind(this));
-  }
+  },
+  urlDispatcher: function(name) {
+    if(name == "embedded") {
+      return function() {
+        alert("embedded!");
+      };
+    }
+    return null;
+  },
 });
