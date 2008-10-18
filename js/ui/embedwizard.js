@@ -117,7 +117,7 @@ var WebmasterGuide = new Class({
       "first": "Enter the channels you would like the client to join on startup:",
       "hint": "You can supply multiple channels by seperating them with a comma, e.g.:",
       "example": "#rogue,#eu-mage",
-      middle: this.chanBox,
+      middle: this.chanBox
     }).addEvent("show", af);
     
     var customnickDiv = new Element("div");
@@ -137,7 +137,7 @@ var WebmasterGuide = new Class({
       "title": "Display connect dialog?",
       "first": "Do you want the user to be shown the connect dialog (with the values you have supplied pre-entered) or just a connect confirmation?",
       middle: promptdiv,
-      "hint": "You need to display the dialog if you want the user to be able to set their nickname before connecting.",
+      "hint": "You need to display the dialog if you want the user to be able to set their nickname before connecting."
     });
     
     this.connectdialogr = this.newRadio(promptdiv, "Show the connect dialog.", "prompt", true);

@@ -6,15 +6,16 @@ var QJSUI = new Class({
     this.class_ = class_;
     this.create();
     
+    this.reflowevent = null;
+    
     window.addEvent("resize", function() {
-      this.reflow();
-      this.reflow.delay(100, this);
+      this.reflow(100);
     }.bind(this));
   },
   applyClasses: function(pos, l) {
-    l.addClass("dynamicpanel");
-    
+    l.addClass("dynamicpanel");    
     l.addClass(this.class_);
+
     if(pos == "middle") {
       l.addClass("leftboundpanel");
     } else if(pos == "top") {
@@ -44,7 +45,16 @@ var QJSUI = new Class({
     this.right = XE("right");
     this.bottom = XE("bottom");
   },
-  reflow: function() {
+  reflow: function(delay) {
+    if(!delay)
+      delay = 1;
+      
+    if(this.reflowevent)
+      $clear(this.reflowevent);
+    this.__reflow();
+    this.reflowevent = this.__reflow.delay(delay, this);
+  },
+  __reflow: function() {
     var bottom = this.bottom;
     var middle = this.middle;
     var right = this.right;
@@ -68,11 +78,8 @@ var QJSUI = new Class({
       right.setStyle("height", mheight + "px");
     }
     
-    if(mwidth > 0) {
+    if(mwidth > 0)
       middle.setStyle("width", mwidth + "px");
-    } else {
-      alert(mwidth);
-    }
     right.setStyle("top", (topsize.y + topicsize.y) + "px");
     right.setStyle("left", mwidth + "px");
     
@@ -85,7 +92,9 @@ var QJSUI = new Class({
 
     this.right.setStyle("display", display);
     this.topic.setStyle("display", display);
-    //this.reflow.delay(0, this);
+  },
+  showInput: function(state) {
+    this.bottom.setStyle("display", state?"block":"none");
   }
 });
 
@@ -105,7 +114,7 @@ var QUIWindow = new Class({
       parentObject.selectWindow(this);
     }.bind(this));
     
-    if(type != WINDOW_STATUS) {
+    if(type != WINDOW_STATUS && type != WINDOW_CONNECT) {
       tabclose = new Element("span");
       tabclose.addClass("tabclose");
       tabclose.addEvent("click", function(e) {
@@ -116,21 +125,14 @@ var QUIWindow = new Class({
 
         this.close();
       }.bind(this));
-      tabclose.set("text", "X");
-      if(BrowserVersion() == "ie7" || BrowserVersion() == "ie6") {
-      } else {
-        tabclose.setStyle("padding", "2px");
-        tabclose.setStyle("vertical-align", "top");
-      }
+
       this.tab.appendChild(tabclose);
     }
 
     this.lines = new Element("div");
-    //this.parentObject.qjsui.applyClasses("middle", lines);
-    
+    this.parentObject.qjsui.applyClasses("middle", this.lines);
     this.lines.addClass("lines");
-    this.lines.addClass("tab-invisible");
-    parentObject.lines.appendChild(this.lines);
+    
     this.lines.addEvent("scroll", function() {
       this.scrolleddown = this.scrolledDown();
     }.bind(this));
@@ -140,12 +142,12 @@ var QUIWindow = new Class({
       this.topic.addClass("topic");
       this.topic.addClass("tab-invisible");
       this.topic.set("html", "&nbsp;");
-      parentObject.topic.appendChild(this.topic);
+      this.parentObject.qjsui.applyClasses("topic", this.topic);
       
       this.nicklist = new Element("div");
       this.nicklist.addClass("nicklist");
       this.nicklist.addClass("tab-invisible");
-      parentObject.nicklist.appendChild(this.nicklist);
+      this.parentObject.qjsui.applyClasses("nicklist", this.nicklist);
     }
     
     if(type == WINDOW_CHANNEL) {
@@ -192,47 +194,33 @@ var QUIWindow = new Class({
     }
     this.reflow();
   },
-  showChannel: function() {
-    this.parentObject.qjsui.showChannel($defined(this.nicklist));
-    this.reflow();
-  },
   select: function() {
+    var inputVisible = this.type != WINDOW_CONNECT && this.type != WINDOW_CUSTOM;
+    
     this.tab.removeClass("tab-unselected");
     this.tab.addClass("tab-selected");
 
-    //this.parentObject.lines.parentNode.replaceChild(this.parentObject.lines, this.lines);
+    this.parentObject.setLines(this.lines);
+    this.parentObject.setChannelItems(this.nicklist, this.topic);
+    this.parentObject.qjsui.showInput(inputVisible);
+    this.parentObject.qjsui.showChannel($defined(this.nicklist));
+
+    this.reflow();
     
-    this.lines.removeClass("tab-invisible");
-    if(this.nicklist) {
-      this.nicklist.removeClass("tab-invisible");
-      this.topic.removeClass("tab-invisible");
-    }
-    this.showChannel();
     this.parent();
     
-    this.parentObject.inputbox.focus();
+    if(inputVisible)
+      this.parentObject.inputbox.focus();
   },
   deselect: function() {
     this.parent();
     
-    this.lines.addClass("tab-invisible");
-    if(this.nicklist) {
-      this.nicklist.addClass("tab-invisible");
-      this.topic.addClass("tab-invisible");
-    }
     this.tab.removeClass("tab-selected");
     this.tab.addClass("tab-unselected");
-    
-    //this.showChannel();
   },
   close: function() {
     this.parent();
     
-    this.parentObject.lines.removeChild(this.lines);
-    if(this.nicklist) {
-      this.parentObject.nicklist.removeChild(this.nicklist);
-      this.parentObject.topic.removeChild(this.topic);
-    }
     this.parentObject.tabs.removeChild(this.tab);
   },
   addLine: function(type, line, colour) {
@@ -261,18 +249,14 @@ var QUIWindow = new Class({
 });
 
 var QUI = new Class({
-  Extends: UI,
+  Extends: NewLoginUI,
   initialize: function(parentElement, theme) {
     this.parent(parentElement, QUIWindow, "qui");
     this.theme = theme;
     this.parentElement = parentElement;
   },
-  reflow: function() {
-    //alert("REFLOW");
-    this.qjsui.reflow();
-  },
   postInitialize: function() {
-    this.qjsui = new QJSUI("qwebirc-qui", this.parentElement, document);
+    this.qjsui = new QJSUI("qwebirc-qui", this.parentElement);
     
     this.qjsui.top.addClass("tabbar");
     
@@ -282,10 +266,13 @@ var QUI = new Class({
     this.qjsui.middle.addClass("lines");
     
     this.tabs = this.qjsui.top;
-    this.topic = this.qjsui.topic;
-    this.lines = this.qjsui.middle;
-    this.nicklist = this.qjsui.right;
+    this.origtopic = this.topic = this.qjsui.topic;
+    this.origlines = this.lines = this.qjsui.middle;
+    this.orignicklist = this.nicklist = this.qjsui.right;
+    
     this.input = this.qjsui.bottom;
+    this.reflow = this.qjsui.reflow.bind(this.qjsui);
+    
     this.createInput();
     this.reflow();
   },
@@ -334,10 +321,19 @@ var QUI = new Class({
       setAtEnd(inputbox);
     }.bind(this));
   },
-  loginBox: function(callbackfn, intialNickname, initialChannels, autoConnect, autoNick) {
-    this.parent(function(options) {
-      this.postInitialize();
-      callbackfn(options);
-    }.bind(this), intialNickname, initialChannels, autoConnect, autoNick);
+  setLines: function(lines) {
+    this.lines.parentNode.replaceChild(lines, this.lines);
+    this.qjsui.middle = this.lines = lines;
+  },
+  setChannelItems: function(nicklist, topic) {
+    if(!$defined(nicklist)) {
+      nicklist = this.orignicklist;
+      topic = this.origtopic;
+    }
+    this.nicklist.parentNode.replaceChild(nicklist, this.nicklist);
+    this.qjsui.right = this.nicklist = nicklist;
+
+    this.topic.parentNode.replaceChild(topic, this.topic);
+    this.qjsui.topic = this.topic = topic;
   }
 });

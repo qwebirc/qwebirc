@@ -89,37 +89,6 @@ var BaseUI = new Class({
     */
   loginBox: function(callback, initialNickname, initialChannels, autoConnect, autoNick) {
     GenericLoginBox(this.parentElement, callback, initialNickname, initialChannels, autoConnect, autoNick);
-    /*if(autoConnect) {
-      var c = initialChannels.split(",");
-      var ctext;
-      
-      if(c.length > 1) {
-        var last = c.pop();
-        ctext = c.join(", ") + " and " + last;
-      } else {
-        ctext = c[0];
-      }
-      
-      var nicktext;
-      if(autoNick) {
-        nicktext = "";
-      } else {
-        nicktext = " (as '" + initialNickname + "')"
-      }
-      if(confirm("Connect to IRC and join channels " + ctext + nicktext + "?"))
-        callback({"nickname": initialNickname, "autojoin": initialChannels});
-      return;
-    }
-
-    var nick = prompt("Nickname:", initialNickname);
-    if(!nick) {
-      alert("Aborted.");
-      return;
-    }
-
-    var chans = prompt("Channels (seperate by comma):", initialChannels);
-    callback({"nickname": nick, "autojoin": chans});
-    */
   }
 });
 
@@ -166,7 +135,7 @@ var UI = new Class({
     
     if(select)
       this.selectWindow(w);  
-      
+
     return w;
   },
   embeddedWindow: function() {
@@ -175,7 +144,7 @@ var UI = new Class({
       return;
     }
     
-    this.embedded = this.newCustomWindow("Embedded wizard", true);
+    this.embedded = this.newCustomWindow("Embedding wizard", true);
     this.embedded.addEvent("close", function() {
       this.embedded = null;
     }.bind(this));
