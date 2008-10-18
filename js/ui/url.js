@@ -1,5 +1,5 @@
 qwebirc.ui.urlificate = function(element, text, execfn, cmdfn) {
-  var punct_re = /(\.*|\,|;)$/;
+  var punct_re = /(\.*|\,|;|\])$/;
 
   var txtprocess = function(text, regex, appendfn, matchfn) {
     for(;;) {

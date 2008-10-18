@@ -268,15 +268,13 @@ qwebirc.ui.QUI.Window = new Class({
     });
   },
   updateTopic: function(topic) {
-    this.parent(topic);
-    
     var t = this.topic;
     
     while(t.firstChild)
       t.removeChild(t.firstChild);
 
     if(topic) {
-      qwebirc.ui.Colourise("[" + topic + "]", t);
+      this.parent(topic, t);
     } else {
       var e = new Element("div");
       e.set("text", "(no topic set)");

@@ -15,7 +15,8 @@ qwebirc.ui.Window = new Class({
   },
   updateNickList: function(nicks) {
   },
-  updateTopic: function(topic)  {
+  updateTopic: function(topic, element)  {
+    qwebirc.ui.Colourise("[" + topic + "]", element, this.client.exec, this.parentObject.urlDispatcher.bind(this.parentObject));
   },
   close: function() {
     if($defined(this.scrolltimer)) {
