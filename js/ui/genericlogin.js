@@ -58,6 +58,7 @@ qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initi
   
   var yes = new Element("input", {"type": "submit", "value": "Connect"});
   form.appendChild(yes);
+  yes.focus();
   
   form.addEvent("submit", function(e) {
     new Event(e).stop();

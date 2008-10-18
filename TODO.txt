@@ -1,1 +1,4 @@
-make pretty again.
+better highlighting
+sound
+padding
+prettify wizard
