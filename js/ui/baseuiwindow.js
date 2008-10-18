@@ -70,6 +70,10 @@ var UIWindow = new Class({
     var prevbottom = parent.getScrollSize().y;
     var prevsize = parent.getSize();
     
+    /* fixes an IE bug */
+    if(prevbottom < prevsize.y)
+      prevbottom = prevsize.y;
+      
     return prev.y + prevsize.y == prevbottom;
   },
   scrollToBottom: function() {
