@@ -3,3 +3,6 @@ sound
 padding
 prettify wizard
 should close() if > 2 connections are made
+double click -> query
+tab completion
+options for notices and stuff

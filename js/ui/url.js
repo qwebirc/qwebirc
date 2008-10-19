@@ -1,4 +1,4 @@
-qwebirc.ui.urlificate = function(element, text, execfn, cmdfn) {
+qwebirc.ui.urlificate = function(element, text, execfn, cmdfn, window) {
   var punct_re = /(\.*|\,|;|\])$/;
 
   var txtprocess = function(text, regex, appendfn, matchfn) {
@@ -59,7 +59,7 @@ qwebirc.ui.urlificate = function(element, text, execfn, cmdfn) {
         return; 
       }
       
-      var cmd = cmdfn(m[1]);
+      var cmd = cmdfn(m[1], window);
       if(cmd) {
         url = "#";
         fn = cmd;

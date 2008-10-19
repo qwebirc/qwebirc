@@ -162,8 +162,21 @@ qwebirc.ui.StandardUI = new Class({
   }
 });
 
-qwebirc.ui.NewLoginUI = new Class({
+qwebirc.ui.QuakeNetUI = new Class({
   Extends: qwebirc.ui.StandardUI,
+  urlDispatcher: function(name, window) {
+    if(name == "qwhois") {
+      return function(auth) {
+        this.client.exec("/MSG Q whois #" + auth);
+      }.bind(window);
+    }
+    
+    return this.parent(name);
+  }
+});
+
+qwebirc.ui.NewLoginUI = new Class({
+  Extends: qwebirc.ui.QuakeNetUI,
   loginBox: function(callbackfn, initialNickname, initialChannels, autoConnect, autoNick) {
     this.postInitialize();
     var w = this.newCustomWindow("Connect", true, qwebirc.ui.WINDOW_CONNECT);

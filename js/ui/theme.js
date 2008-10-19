@@ -48,7 +48,7 @@ qwebirc.ui.themes.Default = {
   "WHOISREALNAME": [" realname : $m", true],
   "WHOISCHANNELS": [" channels : $m", true],
   "WHOISSERVER": [" server   : $x [$m]", true],
-  "WHOISACCOUNT": [" account  : $m", true],
+  "WHOISACCOUNT": [" account  : qwebirc://qwhois/$m", true],
   "WHOISIDLE": [" idle     : $x [connected: $m]", true],
   "WHOISAWAY": [" away     : $m", true],
   "WHOISOPER": ["          : $BIRC Operator$B", true],

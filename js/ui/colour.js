@@ -1,4 +1,4 @@
-qwebirc.ui.Colourise = function(line, entity, execfn, cmdfn) {
+qwebirc.ui.Colourise = function(line, entity, execfn, cmdfn, window) {
   var fg;
   var bg;
   var underline = false;
@@ -44,7 +44,7 @@ qwebirc.ui.Colourise = function(line, entity, execfn, cmdfn) {
 
   function emitEndToken() {
     if(out.length > 0) {
-      qwebirc.ui.urlificate(element, out.join(""), execfn, cmdfn);
+      qwebirc.ui.urlificate(element, out.join(""), execfn, cmdfn, window);
       entity.appendChild(element);
       out = [];
     }
