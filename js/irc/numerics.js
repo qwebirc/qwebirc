@@ -18,5 +18,6 @@ qwebirc.irc.Numerics = {
   "338": "RPL_WHOISACTUALLY",
   "343": "RPL_WHOISOPERNAME",
   "301": "RPL_AWAY",
-  "401": "ERR_NOSUCHNICK"
+  "401": "ERR_NOSUCHNICK",
+  "404": "ERR_CANNOTSENDTOCHAN"
 };

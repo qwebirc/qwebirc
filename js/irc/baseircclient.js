@@ -28,6 +28,8 @@ qwebirc.irc.BaseIRCClient = new Class({
     this.send = this.connection.send.bind(this.connection);
     this.connect = this.connection.connect.bind(this.connection);
     this.disconnect = this.connection.disconnect.bind(this.connection);
+    
+    this.setupGenericErrors();
   },
   dispatch: function(data) {
     var message = data[0];
@@ -371,10 +373,16 @@ qwebirc.irc.BaseIRCClient = new Class({
     
     return this.whois(nick, "end", {});
   },
-  irc_ERR_NOSUCHNICK: function(prefix, params) {
-    var nick = params[1];
+  irc_generic_error: function(prefix, params) {
+    var target = params[1];
+    var message = params.indexFromEnd(-1);
     
-    return this.whois(nick, "nosuchnick", {});
+    this.genericerror(target, message);
+    return true;
+  },
+  setupGenericErrors: function() {
+    this.irc_ERR_NOSUCHNICK = this.irc_ERR_CANNOTSENDTOCHAN = this.irc_generic_error;
+    return true;
   },
   irc_RPL_AWAY: function(prefix, params) {
     var nick = params[1];
