@@ -55,16 +55,12 @@ String.prototype.hostToHost = function() {
 }
 
 qwebirc.irc.IRCTimestamp = function(d) {
-  function pad(x) {
-    x = "" + x;
-    if(x.length == 1)
-      return "0" + x;
-    return x
-  }
-  
-  return "[" + pad(d.getHours()) + ":" + pad(d.getMinutes()) + "]";
+  return "[" + qwebirc.util.pad(d.getHours()) + ":" + qwebirc.util.pad(d.getMinutes()) + "]";
 }
 
 qwebirc.irc.IRCDate = function(d) {
+  var pad = qwebirc.util.pad;
+  
+  alert(qwebirc.util.DaysOfWeek[d.getDay()]);
   return qwebirc.util.DaysOfWeek[d.getDay()] + " " + qwebirc.util.MonthsOfYear[d.getMonth()] + " " + pad(d.getDate()) + " "  + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds()) + " " + d.getFullYear();
 }
