@@ -175,12 +175,34 @@ qwebirc.irc.CommandParser = new Class({
     
     this.send("KICK " + channel + " " + target + " :" + message);
   }],
-  cmd_PART: [true, 1, 0, function(args) {
-    var channel = this.parentObject.getActiveWindow().name;
+  cmd_PART: [false, 2, 0, function(args) {
+    var w = this.parentObject.getActiveWindow();
     var message = "";
-
-    if(args)    
-      message = args[0];
+    var channel;
+    
+    if(w.type == qwebirc.ui.WINDOW_STATUS) {
+      if(!args || args.length == 0) {
+        w.errorMessage("Insufficient arguments for command.");
+        return;
+      }
+      channel = args[0];  
+      if(args.length > 1)
+        message = args[1];
+    } else {
+      if(!args || args.length == 0) {
+        channel = w.name;
+      } else {
+        var isChan = args[0].charAt(0) == '#';
+        if(isChan) {
+          channel = args[0];
+          if(args.length > 1)
+            message = args[1];
+        } else {
+          channel = w.name;
+          message = args.join(" ");
+        }
+      }
+    }
     
     this.send("PART " + channel + " :" + message);
   }]
