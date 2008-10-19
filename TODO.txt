@@ -2,3 +2,4 @@ better highlighting
 sound
 padding
 prettify wizard
+should close() if > 2 connections are made
