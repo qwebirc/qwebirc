@@ -12,3 +12,4 @@ defargs.conf
 Thumbs.db
 [dD]esktop.ini
 static/js/mochaui/mocha-compressed.js
+static/{ugly,swm,mocha,q}ui{,debug}.js

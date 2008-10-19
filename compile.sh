@@ -1,4 +1,6 @@
 #!/bin/sh
+python pagegen.py
+
 mkdir -p compiled
 rm -f compiled/*.js
 

@@ -1,4 +1,6 @@
 @echo off
+
+pagegen.py
 mkdir compiled
 del /q compiled\*.js
 

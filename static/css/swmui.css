@@ -84,3 +84,9 @@ body, html {
 .qwebirc-swmui .tab-unselected {
   background: #eee;
 }
+
+#swmui {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
