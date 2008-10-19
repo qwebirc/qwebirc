@@ -107,9 +107,9 @@ qwebirc.util.NBSPCreate = function(text, element) {
 
 qwebirc.util.longtoduration = function(l) {
   var seconds = l % 60;
-  var minutes = Math.round(l / 60);
-  var hours = Math.round(minutes / 60);
-  var days = Math.round(hours / 24);
+  var minutes = Math.round((l % 3600) / 60);
+  var hours = Math.round((l % (3600 * 24)) / 3600);
+  var days = Math.round(l / (24*3600));
   
   return days + " days " + hours + " hours " + minutes + " minutes " + seconds + " seconds";
 }
