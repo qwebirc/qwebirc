@@ -166,7 +166,7 @@ qwebirc.irc.CommandParser = new Class({
       aw.addLine("", x);
     });
   }],
-  KICK: [true, 3, 2, function(args) {
+  cmd_KICK: [true, 3, 2, function(args) {
     var channel = args[0];
     var target = args[1];
     var message = args[2];
@@ -174,5 +174,14 @@ qwebirc.irc.CommandParser = new Class({
       message = "";
     
     this.send("KICK " + channel + " " + target + " :" + message);
+  }],
+  cmd_PART: [true, 1, 0, function(args) {
+    var channel = this.parentObject.getActiveWindow().name;
+    var message = "";
+
+    if(args)    
+      message = args[0];
+    
+    this.send("PART " + channel + " :" + message);
   }]
 });
