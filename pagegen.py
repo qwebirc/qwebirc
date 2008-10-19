@@ -12,7 +12,7 @@ UIs = {
     "class": "QUI",
     "uifiles": ["qui"],
     "doctype": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"" + "\n" \
-      "\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"
+      "  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"
   },
   "mochaui": {
     "class": "MochaUI",
@@ -77,17 +77,18 @@ def producehtml(name, debug):
   js = jslist(name, debug)
   css = csslist(name)
   
-  csshtml = "\n".join("  <link rel=\"stylesheet\" href=\"%s\" type=\"text/css\">" % x for x in css)
+  csshtml = "\n".join("  <link rel=\"stylesheet\" href=\"%s\" type=\"text/css\"/>" % x for x in css)
   jshtml = "\n".join("  <script type=\"text/javascript\" src=\"%s\"></script>" % x for x in js)
 
   div = ui.get("div", "")
   customjs = ui.get("customjs", "")
 
   return """%s
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <title>QuakeNet Web IRC</title>
-  <link rel="icon" type="image/png" href="images/favicon.png">
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+  <link rel="icon" type="image/png" href="images/favicon.png"/>
 %s%s
 %s
   <script type="text/javascript">
