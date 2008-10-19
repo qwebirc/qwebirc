@@ -79,7 +79,7 @@ body {
 
 .qwebirc-qui .lines {
   overflow: auto;
-  font-family: Consolas, Verdana, sans-serif, "sans serif";
+  font-family: Consolas, "Lucida Console", Verdana, monospace, sans-serif, "sans serif";
   font-size: 0.8em;
   background: #f2f0ff;
 }
@@ -177,6 +177,10 @@ body {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   color: #333333;
+}
+
+.qwebirc-qui a.tab-hilighted {
+  color: red;
 }
 
 .qwebirc-qui div.input {
