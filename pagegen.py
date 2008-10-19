@@ -87,6 +87,7 @@ def producehtml(name, debug):
 <html>
 <head>
   <title>QuakeNet Web IRC</title>
+  <link rel="icon" type="image/png" href="images/favicon.png">
 %s%s
 %s
   <script type="text/javascript">
