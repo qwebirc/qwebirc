@@ -73,11 +73,10 @@ qwebirc.ui.BaseUI = new Class({
         } else {
           this.selectWindow(this.windowArray[index - 1]);
         }
-        
-        this.windowArray = this.windowArray.erase(window);
       }
     }
     
+    this.windowArray = this.windowArray.erase(window);
     delete this.windows[window.client][window.identifier];
   },
     /*
