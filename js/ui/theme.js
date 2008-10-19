@@ -55,7 +55,8 @@ qwebirc.ui.themes.Default = {
   "WHOISOPERNAME": [" operedas : $m", true],
   "WHOISACTUALLY": [" realhost : $m [ip: $x]", true],
   "WHOISEND": ["End of WHOIS", true],
-  "AWAY": ["$n is away: $m", true]
+  "AWAY": ["$n is away: $m", true],
+  "WHOISNOSUCHNICK": ["No such nick: $n", true]
 };
 
 qwebirc.ui.Theme = new Class({

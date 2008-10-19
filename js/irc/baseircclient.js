@@ -371,6 +371,11 @@ qwebirc.irc.BaseIRCClient = new Class({
     
     return this.whois(nick, "end", {});
   },
+  irc_ERR_NOSUCHNICK: function(prefix, params) {
+    var nick = params[1];
+    
+    return this.whois(nick, "nosuchnick", {});
+  },
   irc_RPL_AWAY: function(prefix, params) {
     var nick = params[1];
     var text = params.indexFromEnd(-1);

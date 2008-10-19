@@ -415,6 +415,8 @@ qwebirc.irc.IRCClient = new Class({
       ndata.x = data.ip;
     } else if(type == "end") {
       mtype = "END";
+    } else if(type == "nosuchnick") {
+      mtype = "NOSUCHNICK";
     } else {
       return false;
     }
