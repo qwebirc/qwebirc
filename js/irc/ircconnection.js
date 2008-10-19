@@ -20,7 +20,7 @@ qwebirc.irc.IRCConnection = new Class({
   },
   __error: function(text) {
     this.fireEvent("error", text);
-    if(this.errorAlert)
+    if(this.options.errorAlert)
       alert(text);
   },
   send: function(data) {
