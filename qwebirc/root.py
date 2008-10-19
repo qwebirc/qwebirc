@@ -1,5 +1,5 @@
 from ajaxengine import AJAXEngine
-
+import mimetypes
 from twisted.web import resource, server, static
 
 class RootResource(resource.Resource):
@@ -15,3 +15,6 @@ class RootSite(server.Site):
 
     root.primaryChild = static.File(path)
     root.putChild("e", AJAXEngine("/e"))
+
+mimetypes.types_map[".ico"] = "image/vnd.microsoft.icon"
+
