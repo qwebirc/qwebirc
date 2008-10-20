@@ -102,13 +102,18 @@ qwebirc.ui.StandardUI = new Class({
         return;
         
       if(x.key == "a" || x.key == "A") {
+        var highestNum = 0;
+        var highestIndex = -1;
         new Event(x).stop();
         for(var i=0;i<this.windowArray.length;i++) {
-          if(this.windowArray[i].hilighted) {
-            this.selectWindow(this.windowArray[i]);
-            break;
+          var h = this.windowArray[i].hilighted;
+          if(h > highestNum) {
+            highestIndex = i;
+            highestNum = h;
           }
         }
+        if(highestIndex > -1)
+          this.selectWindow(this.windowArray[highestIndex]);
       } else if(x.key >= '0' && x.key <= '9') {
         new Event(x).stop();
         
