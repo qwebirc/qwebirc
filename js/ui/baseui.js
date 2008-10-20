@@ -96,7 +96,7 @@ qwebirc.ui.StandardUI = new Class({
   initialize: function(parentElement, windowClass, uiName, options) {
     this.parent(parentElement, windowClass, uiName, options);
     window.addEvent("keydown", function(x) {
-      if(!x.alt)
+      if(!x.alt || x.control)
         return;
         
       if(x.key == "a" || x.key == "A") {
