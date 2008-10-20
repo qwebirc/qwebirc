@@ -124,6 +124,16 @@ qwebirc.irc.IRCClient = new Class({
     
     nickchanentry.prefixes = prefixes.join("");
   },
+  stripPrefix: function(nick) {
+    var l = nick.charAt(0);
+    if(!l)
+      return nick;
+      
+    if(this.prefixes.indexOf(l) != -1)
+      return nick.substring(1);
+      
+    return nick;
+  },
   removePrefix: function(nickchanentry, prefix) {
     nickchanentry.prefixes = nickchanentry.prefixes.replaceAll(prefix, "");
   },

@@ -140,3 +140,11 @@ RegExp.escape = function(text) {
   
   return text.replace(arguments.callee.sRE, '\\$1');
 }
+
+qwebirc.ui.insertAt = function(position, parent, element) {
+  if(!parent.childNodes || (position >= parent.childNodes.length)) {
+    parent.appendChild(element);
+  } else {
+    parent.insertBefore(element, parent.childNodes[position]);
+  }
+}

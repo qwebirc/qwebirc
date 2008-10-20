@@ -16,6 +16,7 @@ qwebirc.ui.Window = new Class({
     this.scrolltimer = null;
     this.commandhistory = this.parentObject.commandhistory;
     this.scrolleddown = true;
+    this.lastNickHash = {};
     //new CommandHistory();
   },
   updateNickList: function(nicks) {
@@ -123,6 +124,32 @@ qwebirc.ui.Window = new Class({
       this.scrollToBottom();
       this.scrolltimer = null;
     }
+  },
+  updateNickList: function(nicks) {
+    var nickHash = {};
+    var added = [];
+    var lnh = this.lastNickHash;
+    
+    for(var i=0;i<nicks.length;i++) {
+      var n = nicks[i];
+      var l = lnh[n];
+      if(!l) {
+        l = this.nickListAdd(n, i);
+        if(!l)
+          l = 1;
+      }
+      nickHash[n] = l;
+    }
+    
+    for(var k in lnh)
+      if(!nickHash[k])
+        this.nickListRemove(k, lnh[k]);
+        
+    this.lastNickHash = nickHash;
+  },
+  nickListAdd: function(position, nick) {
+  },
+  nickListRemove: function(nick, stored) {
   },
   historyExec: function(line) {
     this.commandhistory.addLine(line);

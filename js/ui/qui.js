@@ -196,6 +196,7 @@ qwebirc.ui.QUI.Window = new Class({
 
     this.tab = new Element("a", {"href": "#"});
     this.tab.addClass("tab");
+    this.tab.addEvent("focus", this.tab.blur);
     parentObject.tabs.appendChild(this.tab);
     
     this.tab.appendText(name);
@@ -216,7 +217,7 @@ qwebirc.ui.QUI.Window = new Class({
 
         this.close();
       }.bind(this));
-
+      
       this.tab.appendChild(tabclose);
     }
 
@@ -235,9 +236,16 @@ qwebirc.ui.QUI.Window = new Class({
       this.topic.set("html", "&nbsp;");
       this.parentObject.qjsui.applyClasses("topic", this.topic);
       
+      this.prevNick = null;
       this.nicklist = new Element("div");
       this.nicklist.addClass("nicklist");
       this.nicklist.addClass("tab-invisible");
+      this.nicklist.addEvent("click", function(x) {
+        if(this.prevNick) {
+          this.prevNick.removeClass("selected");
+          this.prevNick = null;
+        }
+      }.bind(this));
       this.parentObject.qjsui.applyClasses("nicklist", this.nicklist);
     }
     
@@ -254,18 +262,33 @@ qwebirc.ui.QUI.Window = new Class({
     if(this.scrolleddown)
       this.scrollToBottom();
   },
-  updateNickList: function(nicks) {
-    this.parent(nicks);
+  nickListAdd: function(nick, position) {
+    var e = new Element("a");
+    qwebirc.ui.insertAt(position, this.nicklist, e);
     
-    var n = this.nicklist;
-    while(n.firstChild)
-      n.removeChild(n.firstChild);
-
-    nicks.each(function(nick) {
-      var e = new Element("div");
-      n.appendChild(e);
-      e.appendChild(document.createTextNode(nick));
-    });
+    e.href = "#";
+    e.appendChild(document.createTextNode(nick));
+    
+    e.realNick = this.client.stripPrefix(nick);
+    
+    e.addEvent("click", function(x) {
+      if(this.prevNick)
+        this.prevNick.removeClass("selected");
+      this.prevNick = e;
+      e.addClass("selected");
+      new Event(x).stop();
+    }.bind(this));
+    e.addEvent("dblclick", function(x) {
+      new Event(x).stop();
+      this.client.exec("/QUERY " + e.realNick);
+    }.bind(this));
+    
+    e.addEvent("focus", e.blur);
+    
+    return e;
+  },
+  nickListRemove: function(nick, stored) {
+    this.nicklist.removeChild(stored);
   },
   updateTopic: function(topic) {
     var t = this.topic;

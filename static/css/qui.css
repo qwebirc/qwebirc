@@ -84,19 +84,6 @@ body {
   background: #f2f0ff;
 }
 
-.qwebirc-qui .nicklist {
-  border-left: 1px solid #c8d2dc;
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  width: 125px;
-  overflow: auto;
-  background: #f2f0ff;
-  color: black;
-  font-family: Verdana, sans-serif;
-  font-size: 0.7em;
-}
-
 .qwebirc-qui .tabbar {
   border-bottom: 1px solid #c3cee0;
   background: #e2ecf9;
@@ -131,11 +118,11 @@ body {
 }
 
 .qwebirc-qui .topic .emptytopic {
-  color: grey;
+  color: gray;
 }
 
 .qwebirc-qui .topic {
-  color: grey;
+  color: gray;
   font-family: Verdana, sans-serif;
   padding-left: 5px;
   font-size: 0.7em;
@@ -204,4 +191,37 @@ body {
 
 .qwebirc-qui a.tab-hilight-us {
   color: red;
+}
+
+.qwebirc-qui .nicklist {
+  border-left: 1px solid #c8d2dc;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 125px;
+  overflow: auto;
+  background: #f2f0ff;
+  color: black;
+  font-family: Verdana, sans-serif;
+  font-size: 0.7em;
+}
+
+.qwebirc-qui .nicklist a {
+  display: block;
+  color: black;
+  text-decoration: none;
+  cursor: default;
+  border-top: 1px solid #f2f0ff;
+  border-bottom: 1px solid #f2f0ff;
+  padding-left: 1px;
+}
+
+.qwebirc-qui .nicklist a.selected {
+  display: block;
+  color: black;
+  background: white;
+  text-decoration: none;
+  border-top: #c8d2dc 1px solid;
+  border-bottom: #c8d2dc 1px solid;
+  cursor: default;
 }
