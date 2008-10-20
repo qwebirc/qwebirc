@@ -96,7 +96,10 @@ def producehtml(name, debug):
   </script>
 </head>
 <body>
-  <div id="ircui">%s
+  <div id="ircui">
+    <noscript>
+      <div id="noscript">Javascript is required to use IRC.</div>
+    </noscript>%s
   </div>
 </body>
 </html>

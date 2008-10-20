@@ -225,3 +225,9 @@ body {
   border-bottom: #c8d2dc 1px solid;
   cursor: default;
 }
+
+div#noscript {
+  text-align: center;
+  font-family: Verdana, sans-serif;
+  font-weight: bold;
+}

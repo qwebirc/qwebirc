@@ -3,5 +3,4 @@ padding
 prettify wizard
 tab completion
 options for notices and stuff
-noscript
 @+ in nick shown in text
