@@ -196,7 +196,8 @@ qwebirc.ui.QUI.Window = new Class({
 
     this.tab = new Element("a", {"href": "#"});
     this.tab.addClass("tab");
-    this.tab.addEvent("focus", this.tab.blur);
+    this.tab.addEvent("focus", function() { this.blur() }.bind(this.tab));;
+    
     parentObject.tabs.appendChild(this.tab);
     
     this.tab.appendText(name);
@@ -283,7 +284,7 @@ qwebirc.ui.QUI.Window = new Class({
       this.client.exec("/QUERY " + e.realNick);
     }.bind(this));
     
-    e.addEvent("focus", e.blur);
+    e.addEvent("focus", function() { this.blur() }.bind(e));
     
     return e;
   },
