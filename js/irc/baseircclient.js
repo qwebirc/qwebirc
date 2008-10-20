@@ -381,7 +381,7 @@ qwebirc.irc.BaseIRCClient = new Class({
     return true;
   },
   setupGenericErrors: function() {
-    this.irc_ERR_NOSUCHNICK = this.irc_ERR_CANNOTSENDTOCHAN = this.irc_generic_error;
+    this.irc_ERR_CHANOPPRIVSNEEDED = this.irc_ERR_NOSUCHNICK = this.irc_ERR_CANNOTSENDTOCHAN = this.irc_generic_error;
     return true;
   },
   irc_RPL_AWAY: function(prefix, params) {
