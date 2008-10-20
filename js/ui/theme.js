@@ -3,7 +3,7 @@ qwebirc.ui.themes.ThemeControlCodeMap = {
   "B": "\x02",
   "U": "\x1F",
   "O": "\x0F",
-  "[": "qwebirc://",
+  "[": "qwebirc://whois/",
   "]": "/",
   "$": "$"
 };
