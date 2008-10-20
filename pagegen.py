@@ -1,7 +1,7 @@
 import os, sys
 
 IRC_BASE = ["ircconnection", "irclib", "numerics", "baseircclient", "irctracker", "commandparser", "ircclient", "commandhistory"]
-UI_BASE = ["baseui", "baseuiwindow", "colour", "url", "theme", "genericlogin", "embedwizard", "hilightcontroller"]
+UI_BASE = ["baseui", "baseuiwindow", "colour", "url", "theme", "genericlogin", "embedwizard", "hilightcontroller", "menuitems"]
 
 DEBUG_BASE = ["qwebirc", "version", "jslib", ["irc/%s" % x for x in IRC_BASE], ["ui/%s" % x for x in UI_BASE], "qwebircinterface"]
 BUILD_BASE = ["qwebirc"]

@@ -241,12 +241,7 @@ qwebirc.ui.QUI.Window = new Class({
       this.nicklist = new Element("div");
       this.nicklist.addClass("nicklist");
       this.nicklist.addClass("tab-invisible");
-      this.nicklist.addEvent("click", function(x) {
-        if(this.prevNick) {
-          this.prevNick.removeClass("selected");
-          this.prevNick = null;
-        }
-      }.bind(this));
+      this.nicklist.addEvent("click", this.removePrevMenu.bind(this));
       this.parentObject.qjsui.applyClasses("nicklist", this.nicklist);
     }
     
@@ -263,6 +258,40 @@ qwebirc.ui.QUI.Window = new Class({
     if(this.scrolleddown)
       this.scrollToBottom();
   },
+  createMenu: function(nick, parent) {
+    var e = document.createElement("div");
+    parent.appendChild(e);
+    e.addClass("menu");
+    
+    qwebirc.ui.MENU_ITEMS.forEach(function(x) {
+      var e2 = document.createElement("a");
+      e.appendChild(e2);
+      
+      e2.href = "#";
+      e2.set("text", "- " + x[0]);
+      
+      e2.addEvent("focus", function() { this.blur() }.bind(e2));
+      e2.addEvent("click", function(ev) { new Event(ev.stop()); this.menuClick(x[1]); }.bind(this));
+    }.bind(this));
+    return e;
+  },
+  menuClick: function(fn) {
+    /*
+    this.prevNick.removeChild(this.prevNick.menu);
+    this.prevNick.menu = null;
+    */
+    fn.bind(this)(this.prevNick.realNick);
+    this.removePrevMenu();
+  },
+  removePrevMenu: function() {
+    if(!this.prevNick)
+      return;
+      
+    this.prevNick.removeClass("selected");
+    if(this.prevNick.menu)
+      this.prevNick.removeChild(this.prevNick.menu);
+    this.prevNick = null;
+  },
   nickListAdd: function(nick, position) {
     var e = new Element("a");
     qwebirc.ui.insertAt(position, this.nicklist, e);
@@ -273,10 +302,10 @@ qwebirc.ui.QUI.Window = new Class({
     e.realNick = this.client.stripPrefix(nick);
     
     e.addEvent("click", function(x) {
-      if(this.prevNick)
-        this.prevNick.removeClass("selected");
+      this.removePrevMenu();
       this.prevNick = e;
       e.addClass("selected");
+      e.menu = this.createMenu(x.realNick, e);
       new Event(x).stop();
     }.bind(this));
     e.addEvent("dblclick", function(x) {

@@ -198,7 +198,7 @@ body {
   position: absolute;
   top: 0px;
   right: 0px;
-  width: 125px;
+  width: 140px;
   overflow: auto;
   background: #f2f0ff;
   color: black;
@@ -230,4 +230,13 @@ div#noscript {
   text-align: center;
   font-family: Verdana, sans-serif;
   font-weight: bold;
+}
+
+.qwebirc-qui .nicklist div.menu {
+  margin: 0px 0px 0px 5px;
+}
+
+.qwebirc-qui .nicklist div.menu a {
+  border-bottom: 0;
+  border-top: 0;
 }
