@@ -146,16 +146,16 @@ qwebirc.irc.CommandParser = new Class({
     return ["PRIVMSG", this.parentObject.getActiveWindow().name + " " + args]
   }],
   cmd_ABOUT: [false, undefined, undefined, function(args) {
-    var target = this.parentObject.getActiveWindow().name;
-    
     var lines = [
       "",
-      "qwebirc v" + QWEBIRC_VERSION,
+      "qwebirc v" + qwebirc.VERSION,
       "Copyright (C) 2008 Chris Porter. All rights reserved.",
       "http://webchat.quakenet.org/",
       "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
-      "This software contains the following third party portions:",
-      "- MooTools v1.2 --- Copyright (C) 2006-2008 Valerio Proietti, MIT license.",
+      "",
+      "This software contains portions by the following third parties:",
+      "- MooTools v1.2 -- http://mootools.net/",
+      "  Copyright (C) 2006-2008 Valerio Proietti, MIT license.",
       "",
       "Thank you for flying QuakeNet!",
       "",
@@ -163,17 +163,43 @@ qwebirc.irc.CommandParser = new Class({
     
     var aw = this.parentObject.getActiveWindow();
     lines.forEach(function(x) {
-      aw.addLine("", x);
-    });
+      this.parentObject.newActiveLine("", x);
+    }.bind(this));
   }],
-  cmd_KICK: [true, 3, 2, function(args) {
-    var channel = args[0];
-    var target = args[1];
-    var message = args[2];
-    if(!message)
-      message = "";
+  cmd_QUOTE: [false, 1, 1, function(args) {
+    this.send(args[0]);
+  }],
+  cmd_KICK: [true, 2, 1, function(args) {
+    var channel = this.parentObject.getActiveWindow().name;
+    
+    var message = "";
+    var target = args[0];
+    
+    if(args.length == 2)
+      message = args[1];
     
     this.send("KICK " + channel + " " + target + " :" + message);
+  }],
+  automode: function(direction, mode, args) {
+    var channel = this.parentObject.getActiveWindow().name;
+
+    var modes = direction;
+    for(var i=0;i<args.length;i++)
+      modes = modes + mode;
+      
+    this.send("MODE " + channel + " " + modes + " " + args.join(" "));
+  },
+  cmd_OP: [true, 6, 1, function(args) {
+    this.automode("+", "o", args);
+  }],
+  cmd_DEOP: [true, 6, 1, function(args) {
+    this.automode("-", "o", args);
+  }],
+  cmd_VOICE: [true, 6, 1, function(args) {
+    this.automode("+", "v", args);
+  }],
+  cmd_DEVOICE: [true, 6, 1, function(args) {
+    this.automode("-", "v", args);
   }],
   cmd_PART: [false, 2, 0, function(args) {
     var w = this.parentObject.getActiveWindow();
