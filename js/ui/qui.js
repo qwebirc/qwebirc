@@ -259,12 +259,12 @@ qwebirc.ui.QUI.Window = new Class({
       this.scrollToBottom();
   },
   createMenu: function(nick, parent) {
-    var e = document.createElement("div");
+    var e = new Element("div");
     parent.appendChild(e);
     e.addClass("menu");
     
     qwebirc.ui.MENU_ITEMS.forEach(function(x) {
-      var e2 = document.createElement("a");
+      var e2 = new Element("a");
       e.appendChild(e2);
       
       e2.href = "#";
