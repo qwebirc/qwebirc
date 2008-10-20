@@ -3,6 +3,8 @@ qwebirc.ui.themes.ThemeControlCodeMap = {
   "B": "\x02",
   "U": "\x1F",
   "O": "\x0F",
+  "[": "qwebirc://",
+  "]": "/",
   "$": "$"
 };
 
@@ -14,39 +16,39 @@ qwebirc.ui.themes.Default = {
   "DISCONNECT": ["Disconnected from server: $m", true],
   "ERROR": ["ERROR: $m", true],
   "SERVERNOTICE": ["$m", true],
-  "JOIN": ["$n [$h] has joined $c", true],
-  "OURJOIN": ["$n [$h] has joined $c", true],
-  "PART": ["$n [$h] has left $c [$m]", true],
-  "KICK": ["$v was kicked from $c by $n [$m]", true],
-  "MODE": ["mode/$c [$m] by $n", true],
-  "QUIT": ["$n [$h] has quit [$m]", true],
-  "NICK": ["$n has changed nick to $w", true],
-  "TOPIC": ["$n changed the topic of $c to: $m", true],
+  "JOIN": ["$N [$h] has joined $c", true],
+  "OURJOIN": ["$N [$h] has joined $c", true],
+  "PART": ["$N [$h] has left $c [$m]", true],
+  "KICK": ["$v was kicked from $c by $N [$m]", true],
+  "MODE": ["mode/$c [$m] by $N", true],
+  "QUIT": ["$N [$h] has quit [$m]", true],
+  "NICK": ["$n has changed nick to $[$w$]", true],
+  "TOPIC": ["$N changed the topic of $c to: $m", true],
   "UMODE": ["MODE $n $m", true],
-  "INVITE": ["$n invites you to join $c", true],
+  "INVITE": ["$N invites you to join $c", true],
   "HILIGHT": ["$C4"],
   "HILIGHTEND": ["$O"],
-  "CHANMSG": ["<$z$n$Z> $m"],
-  "PRIVMSG": ["<$z$n$Z> $m"],
-  "CHANNOTICE": ["-$z$n$Z:$c- $m"],
-  "PRIVNOTICE": ["-$z$n$Z- $m"],
-  "OURCHANMSG": ["<$z$n$Z> $m"],
-  "OURPRIVMSG": ["<$z$n$Z> $m"],
-  "OURTARGETEDMSG": ["*$z$t$Z* $m"],
-  "OURTARGETEDNOTICE": ["[notice($z$t$Z)] $m"],
-  "OURCHANNOTICE": ["-$z$n$Z:$t- $m"],
-  "OURPRIVNOTICE": ["-$z$n$Z- $m"],
-  "OURCHANACTION": [" * $z$n$Z $m"],
-  "OURPRIVACTION": [" * $z$n$Z $m"],
-  "CHANACTION": [" * $z$n$Z $m"],
-  "PRIVACTION": [" * $z$n$Z $m"],
-  "CHANCTCP": ["$n [$h] requested CTCP $x from $c: $m"],
-  "PRIVCTCP": ["$n [$h] requested CTCP $x from $-: $m"],
-  "CTCPREPLY": ["CTCP $x reply from $n: $m"],
+  "CHANMSG": ["<$($N$)> $m"],
+  "PRIVMSG": ["<$($N$)> $m"],
+  "CHANNOTICE": ["-$($N$):$c- $m"],
+  "PRIVNOTICE": ["-$($N$)- $m"],
+  "OURCHANMSG": ["<$N> $m"],
+  "OURPRIVMSG": ["<$N> $m"],
+  "OURTARGETEDMSG": ["*$[$t$]* $m"],
+  "OURTARGETEDNOTICE": ["[notice($[$t$])] $m"],
+  "OURCHANNOTICE": ["-$N:$t- $m"],
+  "OURPRIVNOTICE": ["-$N- $m"],
+  "OURCHANACTION": [" * $N $m"],
+  "OURPRIVACTION": [" * $N $m"],
+  "CHANACTION": [" * $($N$) $m"],
+  "PRIVACTION": [" * $($N$) $m"],
+  "CHANCTCP": ["$N [$h] requested CTCP $x from $c: $m"],
+  "PRIVCTCP": ["$N [$h] requested CTCP $x from $-: $m"],
+  "CTCPREPLY": ["CTCP $x reply from $N: $m"],
   "OURCHANCTCP": ["[ctcp($t)] $x $m"],
   "OURPRIVCTCP": ["[ctcp($t)] $x $m"],
   "OURTARGETEDCTCP": ["[ctcp($t)] $x $m"],
-  "WHOISUSER": ["$B$n$B [$h]", true],
+  "WHOISUSER": ["$B$N$B [$h]", true],
   "WHOISREALNAME": [" realname : $m", true],
   "WHOISCHANNELS": [" channels : $m", true],
   "WHOISSERVER": [" server   : $x [$m]", true],
@@ -57,7 +59,7 @@ qwebirc.ui.themes.Default = {
   "WHOISOPERNAME": [" operedas : $m", true],
   "WHOISACTUALLY": [" realhost : $m [ip: $x]", true],
   "WHOISEND": ["End of WHOIS", true],
-  "AWAY": ["$n is away: $m", true],
+  "AWAY": ["$N is away: $m", true],
   "GENERICERROR": ["$m: $t", true],
   "GENERICMESSAGE": ["$m", true]
 };
@@ -84,12 +86,12 @@ qwebirc.ui.Theme = new Class({
     
     this.__ccmap = qwebirc.util.dictCopy(qwebirc.ui.themes.ThemeControlCodeMap);
     this.__ccmaph = qwebirc.util.dictCopy(this.__ccmap);
+
+    this.__ccmap["("] = "";
+    this.__ccmap[")"] = "";
     
-    this.__ccmap["z"] = "";
-    this.__ccmap["Z"] = "";
-    
-    this.__ccmaph["z"] = this.message("HILIGHT", {}, this.__ccmap);
-    this.__ccmaph["Z"] = this.message("HILIGHTEND", {}, this.__ccmap);
+    this.__ccmaph["("] = this.message("HILIGHT", {}, this.__ccmap);
+    this.__ccmaph[")"] = this.message("HILIGHTEND", {}, this.__ccmap);
   },
   __dollarSubstitute: function(x, h, mapper) {
     var msg = [];
@@ -119,6 +121,9 @@ qwebirc.ui.Theme = new Class({
     } else {
       map = this.__ccmap;
     }
+    
+    if(data && data["n"])
+      data["N"] = "qwebirc://whois/" + data.n + "/";
     return this.__dollarSubstitute(this.__theme[type], data, map);
   }
 });

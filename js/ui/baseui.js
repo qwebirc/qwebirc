@@ -162,7 +162,7 @@ qwebirc.ui.StandardUI = new Class({
   },
   urlDispatcher: function(name) {
     if(name == "embedded")
-      return this.embeddedWindow.bind(this);
+      return ["a", this.embeddedWindow.bind(this)];
 
     return null;
   }
@@ -172,9 +172,14 @@ qwebirc.ui.QuakeNetUI = new Class({
   Extends: qwebirc.ui.StandardUI,
   urlDispatcher: function(name, window) {
     if(name == "qwhois") {
-      return function(auth) {
+      return ["a", function(auth) {
         this.client.exec("/MSG Q whois #" + auth);
-      }.bind(window);
+      }.bind(window)];
+    }
+    if(name == "whois") {
+      return ["span", function(nick) {
+        this.client.exec("/WHOIS " + nick);
+      }.bind(window)];
     }
     
     return this.parent(name);

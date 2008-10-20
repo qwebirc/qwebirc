@@ -78,6 +78,7 @@ body {
 }
 
 .qwebirc-qui .lines {
+  color: black;
   overflow: auto;
   font-family: Consolas, "Lucida Console", Verdana, monospace, sans-serif, "sans serif";
   font-size: 0.8em;
@@ -239,4 +240,9 @@ div#noscript {
 .qwebirc-qui .nicklist div.menu a {
   border-bottom: 0;
   border-top: 0;
+}
+
+.qwebirc-qui .hyperlink-whois {
+	cursor: pointer;
+	cursor: hand;
 }

@@ -50,10 +50,12 @@ qwebirc.ui.urlificate = function(element, text, execfn, cmdfn, window) {
     var fn = null;
     var target = "new";
     var disptext = url;
+    var elementType = "a";
+    var addClass;
     
     var ma = url.match(/^qwebirc:\/\/(.*)$/);
     if(ma) {
-      var m = ma[1].match(/^([^\/]+)\/(.+)$/);
+      var m = ma[1].match(/^([^\/]+)\/([^\/]+)\/?(.*)$/);
       if(!m) {
         appendfn(text);
         return; 
@@ -61,24 +63,37 @@ qwebirc.ui.urlificate = function(element, text, execfn, cmdfn, window) {
       
       var cmd = cmdfn(m[1], window);
       if(cmd) {
-        url = "#";
-        fn = cmd;
+        addClass = m[1];
+        elementType = cmd[0];
+        if(cmd[0] != "a") {
+          url = null;
+        } else {
+          url = "#";
+        }
+        fn = cmd[1];
         disptext = unescape(m[2]);
         target = null;
       } else {
         appendfn(text);
         return;
       }
+      if(m[3])
+        punct = m[3] + punct;
     } else {
       if(url.match(/^www\./))
         url = "http://" + url;
     }
     
-    var a = new Element("a");
-    a.href = url;
+    var a = new Element(elementType);
+    if(addClass)
+      a.addClass("hyperlink-" + addClass);
+      
+    if(url) {
+      a.href = url;
     
-    if(target)
-      a.target = target;
+      if(target)
+        a.target = target;
+    }
     a.appendChild(document.createTextNode(disptext));
     
     element.appendChild(a);
