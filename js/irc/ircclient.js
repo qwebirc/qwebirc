@@ -235,14 +235,18 @@ qwebirc.irc.IRCClient = new Class({
     this.tracker.renameNick(oldnick, newnick);
 
     var channels = this.tracker.getNick(newnick);
+    var found = false;
     
     for(var c in channels) {
+      var found = true;
+      
       this.newChanLine(c, "NICK", user, {"w": newnick});
       /* TODO: rename queries */
       this.updateNickList(c);
     }
 
-    this.newChanLine(undefined, "NICK", user, {"w": newnick});
+    if(!found)
+      this.newChanLine(undefined, "NICK", user, {"w": newnick});
   },
   channelTopic: function(user, channel, topic) {
     this.newChanLine(channel, "TOPIC", user, {"m": topic});
