@@ -393,5 +393,11 @@ qwebirc.irc.BaseIRCClient = new Class({
       
     this.awayMessage(nick, text);
     return true;
+  },
+  irc_RPL_NOWAWAY: function(prefix, params) {
+    this.awayStatus(true, params.indexFromEnd(-1));
+  },
+  irc_RPL_UNAWAY: function(prefix, params) {
+    this.awayStatus(false, params.indexFromEnd(-1));
   }
 });

@@ -56,7 +56,8 @@ qwebirc.ui.themes.Default = {
   "WHOISACTUALLY": [" realhost : $m [ip: $x]", true],
   "WHOISEND": ["End of WHOIS", true],
   "AWAY": ["$n is away: $m", true],
-  "GENERICERROR": ["$m: $t", true]
+  "GENERICERROR": ["$m: $t", true],
+  "GENERICMESSAGE": ["$m", true],
 };
 
 qwebirc.ui.Theme = new Class({

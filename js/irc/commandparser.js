@@ -4,7 +4,9 @@ qwebirc.irc.CommandParser = new Class({
       "J": "JOIN",
       "K": "KICK",
       "MSG": "PRIVMSG",
-      "Q": "QUERY"
+      "Q": "QUERY",
+      "BACK": "AWAY",
+      "HOP": "CYCLE"
     };
     
     this.send = parentObject.send;
@@ -200,6 +202,18 @@ qwebirc.irc.CommandParser = new Class({
   }],
   cmd_DEVOICE: [true, 6, 1, function(args) {
     this.automode("-", "v", args);
+  }],
+  cmd_TOPIC: [true, 1, 1, function(args) {
+    this.send("TOPIC " + this.parentObject.getActiveWindow().name + " :" + args[0]);
+  }],
+  cmd_AWAY: [false, 1, 0, function(args) {
+    this.send("AWAY :" + (args?args[0]:""));
+  }],
+  cmd_CYCLE: [true, 1, 0, function(args) {
+    var c = this.parentObject.getActiveWindow().name;
+    
+    this.send("PART " + c + " :" + (args?args[0]:"rejoining. . ."));
+    this.send("JOIN " + c);
   }],
   cmd_PART: [false, 2, 0, function(args) {
     var w = this.parentObject.getActiveWindow();
