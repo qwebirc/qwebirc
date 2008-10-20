@@ -25,6 +25,8 @@ qwebirc.ui.BaseUI = new Class({
     this.commandhistory = new qwebirc.irc.CommandHistory();
   },
   newClient: function(client) {
+    client.hilightController = new qwebirc.ui.HilightController(client);
+    
     this.windows[client] = {}
     var w = this.newWindow(client, qwebirc.ui.WINDOW_STATUS, "Status");
     this.selectWindow(w);

@@ -179,10 +179,6 @@ body {
   color: #333333;
 }
 
-.qwebirc-qui a.tab-hilighted {
-  color: red;
-}
-
 .qwebirc-qui div.input {
   border-top: 1px solid #c3cee0;
   padding-left: 3px;
@@ -196,4 +192,16 @@ body {
   padding-left: 3px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
+}
+
+.qwebirc-qui a.tab-hilight-activity {
+  color: green;
+}
+
+.qwebirc-qui a.tab-hilight-speech {
+  color: blue;
+}
+
+.qwebirc-qui a.tab-hilight-us {
+  color: red;
 }

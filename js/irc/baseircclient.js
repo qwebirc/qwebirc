@@ -373,15 +373,15 @@ qwebirc.irc.BaseIRCClient = new Class({
     
     return this.whois(nick, "end", {});
   },
-  irc_generic_error: function(prefix, params) {
+  irc_genericError: function(prefix, params) {
     var target = params[1];
     var message = params.indexFromEnd(-1);
     
-    this.genericerror(target, message);
+    this.genericError(target, message);
     return true;
   },
   setupGenericErrors: function() {
-    this.irc_ERR_CHANOPPRIVSNEEDED = this.irc_ERR_NOSUCHNICK = this.irc_ERR_CANNOTSENDTOCHAN = this.irc_generic_error;
+    this.irc_ERR_CHANOPPRIVSNEEDED = this.irc_ERR_NOSUCHNICK = this.irc_ERR_CANNOTSENDTOCHAN = this.irc_genericError;
     return true;
   },
   irc_RPL_AWAY: function(prefix, params) {

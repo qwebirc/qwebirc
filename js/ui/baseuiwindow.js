@@ -1,3 +1,8 @@
+qwebirc.ui.HILIGHT_NONE = 0;
+qwebirc.ui.HILIGHT_ACTIVITY = 1;
+qwebirc.ui.HILIGHT_SPEECH = 2;
+qwebirc.ui.HILIGHT_US = 3;
+
 qwebirc.ui.Window = new Class({
   Implements: [Events],
   initialize: function(parentObject, client, type, name, identifier) {
@@ -7,7 +12,7 @@ qwebirc.ui.Window = new Class({
     this.active = false;
     this.client = client;
     this.identifier = identifier;
-    this.hilighted = false;
+    this.hilighted = qwebirc.ui.HILIGHT_NONE;
     this.scrolltimer = null;
     this.commandhistory = this.parentObject.commandhistory;
     this.scrolleddown = true;
@@ -31,7 +36,7 @@ qwebirc.ui.Window = new Class({
     this.active = true;
     this.parentObject.__setActiveWindow(this);
     if(this.hilighted)
-      this.setHilighted(false);
+      this.setHilighted(qwebirc.ui.HILIGHT_NONE);
     if(this.scrolleddown)
       this.scrollToBottom();
   },
@@ -46,20 +51,36 @@ qwebirc.ui.Window = new Class({
     this.active = false;
   },
   addLine: function(type, line, colour, element) {
-    if(!this.active && !this.hilighted)
-      this.setHilighted(true);
+    var hilight = qwebirc.ui.HILIGHT_NONE;
+    if(type) {
+      hilight = qwebirc.ui.HILIGHT_ACTIVITY;
+      
+      if(type.match(/(NOTICE|ACTION|MSG)$/)) {
+        if(this.type == qwebirc.ui.WINDOW_QUERY) {
+          hilight = qwebirc.ui.HILIGHT_US
+        } else if(!type.match(/^OUR/) && this.client.hilightController.match(line["m"])) {
+          hilight = qwebirc.ui.HILIGHT_US;
+        } else {
+          hilight = qwebirc.ui.HILIGHT_SPEECH;
+        }
+      }
+    }
+
+    if(!this.active && (hilight != qwebirc.ui.HILIGHT_NONE))
+      this.setHilighted(hilight);
+
     if(type)
-      line = this.parentObject.theme.message(type, line);
+      line = this.parentObject.theme.message(type, line, hilight == qwebirc.ui.HILIGHT_US);
     
     qwebirc.ui.Colourise(qwebirc.irc.IRCTimestamp(new Date()) + " " + line, element, this.client.exec, this.parentObject.urlDispatcher.bind(this.parentObject), this);
-    
     this.scrollAdd(element);
   },
   errorMessage: function(message) {
     this.addLine("", message, "red");
   },
   setHilighted: function(state) {
-    this.hilighted = state;
+    if(state == qwebirc.ui.HILIGHT_NONE || state >= this.hilighted)
+      this.hilighted = state;
   },
   scrolledDown: function() {
     if(this.scrolltimer)

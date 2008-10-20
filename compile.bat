@@ -5,7 +5,7 @@ mkdir compiled
 del /q compiled\*.js
 
 cd js
-copy qwebirc.js + version.js + jslib.js + irc\ircconnection.js + irc\irclib.js + irc\numerics.js + irc\baseircclient.js + irc\irctracker.js + irc\commandparser.js + irc\ircclient.js + ui\baseui.js + ui\baseuiwindow.js + ui\colour.js + ui\url.js + ui\theme.js + ui\genericlogin.js + ui\embedwizard.js + qwebircinterface.js + irc\commandhistory.js ..\compiled\qwebirc-concat.js /b
+copy qwebirc.js + version.js + jslib.js + irc\ircconnection.js + irc\irclib.js + irc\numerics.js + irc\baseircclient.js + irc\irctracker.js + irc\commandparser.js + irc\ircclient.js + ui\baseui.js + ui\baseuiwindow.js + ui\colour.js + ui\url.js + ui\theme.js + ui\genericlogin.js + ui\embedwizard.js + qwebircinterface.js + irc\commandhistory.js + ui\hilightcontroller.js ..\compiled\qwebirc-concat.js /b
 copy ui\swmui.js + ui\swmlayout.js ..\compiled\swmui-concat.js /b
 cd ..\compiled
 

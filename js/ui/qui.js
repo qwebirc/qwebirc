@@ -327,12 +327,27 @@ qwebirc.ui.QUI.Window = new Class({
     this.parent(type, line, colour, e);
   },
   setHilighted: function(state) {
-    this.parent(state);
+    laststate = this.hilighted;
     
-    if(state) {
-      this.tab.addClass("tab-hilighted");
-    } else {
-      this.tab.removeClass("tab-hilighted");
+    this.parent(state);
+
+    if(state == laststate)
+      return;
+      
+    this.tab.removeClass("tab-hilight-activity");
+    this.tab.removeClass("tab-hilight-us");
+    this.tab.removeClass("tab-hilight-speech");
+    
+    switch(this.hilighted) {
+      case qwebirc.ui.HILIGHT_US:
+        this.tab.addClass("tab-hilight-us");
+        break;
+      case qwebirc.ui.HILIGHT_SPEECH:
+        this.tab.addClass("tab-hilight-speech");
+        break;
+      case qwebirc.ui.HILIGHT_ACTIVITY:
+        this.tab.addClass("tab-hilight-activity");
+        break;
     }
   }
 });

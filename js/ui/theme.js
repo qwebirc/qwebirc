@@ -24,20 +24,22 @@ qwebirc.ui.themes.Default = {
   "TOPIC": ["$n changed the topic of $c to: $m", true],
   "UMODE": ["MODE $n $m", true],
   "INVITE": ["$n invites you to join $c", true],
-  "CHANMSG": ["<$n> $m"],
-  "PRIVMSG": ["<$n> $m"],
-  "CHANNOTICE": ["-$n:$c- $m"],
-  "PRIVNOTICE": ["-$n- $m"],
-  "OURCHANMSG": ["<$n> $m"],
-  "OURPRIVMSG": ["<$n> $m"],
-  "OURTARGETEDMSG": ["*$t* $m"],
-  "OURTARGETEDNOTICE": ["[notice($t)] $m"],
-  "OURCHANNOTICE": ["-$n:$t- $m"],
-  "OURPRIVNOTICE": ["-$n- $m"],
-  "OURCHANACTION": [" * $n $m"],
-  "OURPRIVACTION": [" * $n $m"],
-  "CHANACTION": [" * $n $m"],
-  "PRIVACTION": [" * $n $m"],
+  "HILIGHT": ["$C4"],
+  "HILIGHTEND": ["$O"],
+  "CHANMSG": ["<$z$n$Z> $m"],
+  "PRIVMSG": ["<$z$n$Z> $m"],
+  "CHANNOTICE": ["-$z$n$Z:$c- $m"],
+  "PRIVNOTICE": ["-$z$n$Z- $m"],
+  "OURCHANMSG": ["<$z$n$Z> $m"],
+  "OURPRIVMSG": ["<$z$n$Z> $m"],
+  "OURTARGETEDMSG": ["*$z$t$Z* $m"],
+  "OURTARGETEDNOTICE": ["[notice($z$t$Z)] $m"],
+  "OURCHANNOTICE": ["-$z$n$Z:$t- $m"],
+  "OURPRIVNOTICE": ["-$z$n$Z- $m"],
+  "OURCHANACTION": [" * $z$n$Z $m"],
+  "OURPRIVACTION": [" * $z$n$Z $m"],
+  "CHANACTION": [" * $z$n$Z $m"],
+  "PRIVACTION": [" * $z$n$Z $m"],
   "CHANCTCP": ["$n [$h] requested CTCP $x from $c: $m"],
   "PRIVCTCP": ["$n [$h] requested CTCP $x from $-: $m"],
   "CTCPREPLY": ["CTCP $x reply from $n: $m"],
@@ -62,11 +64,8 @@ qwebirc.ui.themes.Default = {
 
 qwebirc.ui.Theme = new Class({
   initialize: function(themeDict) {
-    this.__theme = {};
+    this.__theme = qwebirc.util.dictCopy(qwebirc.ui.themes.Default);
     
-    for(var k in qwebirc.ui.themes.Default)
-      this.__theme[k] = qwebirc.ui.themes.Default[k];
-  
     if(themeDict)
       for(var k in themeDict)
         this.__theme[k] = themeDict[k];
@@ -82,8 +81,17 @@ qwebirc.ui.Theme = new Class({
         this.__theme[k] = data[0];
       }
     }
+    
+    this.__ccmap = qwebirc.util.dictCopy(qwebirc.ui.themes.ThemeControlCodeMap);
+    this.__ccmaph = qwebirc.util.dictCopy(this.__ccmap);
+    
+    this.__ccmap["z"] = "";
+    this.__ccmap["Z"] = "";
+    
+    this.__ccmaph["z"] = this.message("HILIGHT", {}, this.__ccmap);
+    this.__ccmaph["Z"] = this.message("HILIGHTEND", {}, this.__ccmap);
   },
-  __dollarSubstitute: function(x, h) {
+  __dollarSubstitute: function(x, h, mapper) {
     var msg = [];
 
     var n = x.split("");
@@ -92,7 +100,7 @@ qwebirc.ui.Theme = new Class({
       if(c == "$" && (i <= n.length - 1)) {
         var c2 = n[++i];
 
-        var o = qwebirc.ui.themes.ThemeControlCodeMap[c2];
+        var o = mapper[c2];
         if(!o)
           o = h[c2];
         if(o)
@@ -104,11 +112,13 @@ qwebirc.ui.Theme = new Class({
     
     return msg.join("");
   },
-  message: function(type, data) {
-    var msg = this.__theme[type];
-    
-    msg = this.__dollarSubstitute(msg, data);
-
-    return msg;
+  message: function(type, data, hilight) {
+    var map;
+    if(hilight) {
+      map = this.__ccmaph;
+    } else {
+      map = this.__ccmap;
+    }
+    return this.__dollarSubstitute(this.__theme[type], data, map);
   }
 });

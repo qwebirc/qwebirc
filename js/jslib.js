@@ -7,6 +7,14 @@ Array.prototype.indexFromEnd = function(d) {
   return p[d];
 }
 
+qwebirc.util.dictCopy = function(d) {
+  var n = {};
+  for(var k in d)
+    n[k] = d[k];
+
+  return n;
+}
+
 /* how horribly inefficient */
 String.prototype.replaceAll = function(f, t) {
   var i = this.indexOf(f);
@@ -119,4 +127,16 @@ qwebirc.util.pad = function(x) {
   if(x.length == 1)
     return "0" + x;
   return x
+}
+
+RegExp.escape = function(text) {
+  if(!arguments.callee.sRE) {
+    var specials = [
+      '/', '.', '*', '+', '?', '|',
+      '(', ')', '[', ']', '{', '}', '\\'
+    ];
+    arguments.callee.sRE = new RegExp('(\\' + specials.join('|\\') + ')', 'g');
+  }
+  
+  return text.replace(arguments.callee.sRE, '\\$1');
 }

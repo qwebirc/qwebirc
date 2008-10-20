@@ -426,7 +426,7 @@ qwebirc.irc.IRCClient = new Class({
     xsend();
     return true;
   },
-  genericerror: function(target, message) {
+  genericError: function(target, message) {
     this.newTargetOrActiveLine(target, "GENERICERROR", {m: message, t: target});
   },
   awayStatus: function(state, message) {
