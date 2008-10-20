@@ -24,21 +24,19 @@ qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initi
   var nick = new Element("b");
   nick.set("text", initialNickname);
   
-  var c = initialChannels.split(",");
-  var ctext;
+  var c = initialChannels.split(" ")[0].split(",");
   
-  if(c.length > 1) { 
-    var last = c.pop();
-    ctext = c.join(", ") + " and " + last;
-  } else {
-    ctext = c.join(", ");
+  text.appendChild(document.createTextNode("To connect to IRC and join channel" + ((c.length>1)?"s":"") + " "));
+
+  for(var i=0;i<c.length;i++) {
+    if((c.length > 1) && (i == c.length - 1)) {
+      text.appendChild(document.createTextNode(" and "));
+    } else if(i > 0) {
+      text.appendChild(document.createTextNode(", "));
+    }
+    text.appendChild(new Element("b").set("text", c[i]));
+    
   }
-  
-  var channels = new Element("b");
-  channels.set("text", ctext);
-  
-  text.appendChild(document.createTextNode("To connect to IRC and join channels "));
-  text.appendChild(channels);
   
   if(!autoNick) {
     text.appendChild(document.createTextNode(" as "));

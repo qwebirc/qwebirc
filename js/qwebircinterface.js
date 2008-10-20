@@ -31,7 +31,9 @@ qwebirc.ui.Interface = new Class({
         var nick = args["nick"];
 
         if(chans) {
-          chans = chans.split(",");
+          var cdata = chans.split(" ");
+          
+          chans = cdata[0].split(",");
           var chans2 = [];
           
           for(i=0;i<chans.length;i++) {
@@ -40,7 +42,8 @@ qwebirc.ui.Interface = new Class({
             if(chans[i].charAt(0) != '#')
               chans2[i] = "#" + chans2[i]
           }
-          ichans = chans2.join(",");
+          cdata[0] = chans2.join(",");
+          ichans = cdata.join(" ");
           supplied = true;
         }
         
