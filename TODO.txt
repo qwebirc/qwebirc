@@ -5,4 +5,3 @@ tab completion
 options for notices and stuff
 noscript
 @+ in nick shown in text
-hilight in query bug fix

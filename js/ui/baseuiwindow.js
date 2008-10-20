@@ -53,15 +53,19 @@ qwebirc.ui.Window = new Class({
   },
   addLine: function(type, line, colour, element) {
     var hilight = qwebirc.ui.HILIGHT_NONE;
+    var lhilight = false;
+    
     if(type) {
       hilight = qwebirc.ui.HILIGHT_ACTIVITY;
       
       if(type.match(/(NOTICE|ACTION|MSG)$/)) {
         if(this.type == qwebirc.ui.WINDOW_QUERY) {
-          hilight = qwebirc.ui.HILIGHT_US
-        } else if(!type.match(/^OUR/) && this.client.hilightController.match(line["m"])) {
           hilight = qwebirc.ui.HILIGHT_US;
-        } else {
+        }
+        if(!type.match(/^OUR/) && this.client.hilightController.match(line["m"])) {
+          lhilight = true;
+          hilight = qwebirc.ui.HILIGHT_US;
+        } else if(hilight != qwebirc.ui.HILIGHT_US) {
           hilight = qwebirc.ui.HILIGHT_SPEECH;
         }
       }
@@ -71,7 +75,7 @@ qwebirc.ui.Window = new Class({
       this.setHilighted(hilight);
 
     if(type)
-      line = this.parentObject.theme.message(type, line, hilight == qwebirc.ui.HILIGHT_US);
+      line = this.parentObject.theme.message(type, line, lhilight);
     
     qwebirc.ui.Colourise(qwebirc.irc.IRCTimestamp(new Date()) + " " + line, element, this.client.exec, this.parentObject.urlDispatcher.bind(this.parentObject), this);
     this.scrollAdd(element);
