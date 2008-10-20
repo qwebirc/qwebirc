@@ -302,6 +302,11 @@ qwebirc.ui.QUI.Window = new Class({
     e.realNick = this.client.stripPrefix(nick);
     
     e.addEvent("click", function(x) {
+      if(this.prevNick == e) {
+        this.removePrevMenu();
+        return;
+      }
+      
       this.removePrevMenu();
       this.prevNick = e;
       e.addClass("selected");

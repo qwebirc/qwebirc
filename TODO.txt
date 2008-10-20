@@ -4,4 +4,4 @@ prettify wizard
 tab completion
 options for notices and stuff
 @+ in nick shown in text
-right click menus
+
