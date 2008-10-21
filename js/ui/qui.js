@@ -283,11 +283,21 @@ qwebirc.ui.QUI.Window = new Class({
     fn.bind(this)(this.prevNick.realNick);
     this.removePrevMenu();
   },
+  moveMenuClass: function() {
+    if(!this.prevNick)
+      return;
+    if(this.nicklist.firstChild == this.prevNick) {
+      this.prevNick.removeClass("selected-middle");
+    } else {
+      this.prevNick.addClass("selected-middle");
+    }
+  },
   removePrevMenu: function() {
     if(!this.prevNick)
       return;
       
     this.prevNick.removeClass("selected");
+    this.prevNick.removeClass("selected-middle");
     if(this.prevNick.menu)
       this.prevNick.removeChild(this.prevNick.menu);
     this.prevNick = null;
@@ -310,6 +320,7 @@ qwebirc.ui.QUI.Window = new Class({
       this.removePrevMenu();
       this.prevNick = e;
       e.addClass("selected");
+      this.moveMenuClass();
       e.menu = this.createMenu(x.realNick, e);
       new Event(x).stop();
     }.bind(this));
@@ -319,11 +330,12 @@ qwebirc.ui.QUI.Window = new Class({
     }.bind(this));
     
     e.addEvent("focus", function() { this.blur() }.bind(e));
-    
+    this.moveMenuClass();
     return e;
   },
   nickListRemove: function(nick, stored) {
     this.nicklist.removeChild(stored);
+    this.moveMenuClass();
   },
   updateTopic: function(topic) {
     var t = this.topic;

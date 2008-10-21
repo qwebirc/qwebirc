@@ -222,9 +222,12 @@ body {
   color: black;
   background: white;
   text-decoration: none;
-  border-top: #c8d2dc 1px solid;
   border-bottom: #c8d2dc 1px solid;
   cursor: default;
+}
+
+.qwebirc-qui .nicklist a.selected-middle {
+  border-top: #c8d2dc 1px solid;
 }
 
 div#noscript {
