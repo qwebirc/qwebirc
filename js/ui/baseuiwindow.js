@@ -130,10 +130,17 @@ qwebirc.ui.Window = new Class({
     }
   },
   updateNickList: function(nicks) {
-    var nickHash = {};
+    var nickHash = {}, present = {};
     var added = [];
     var lnh = this.lastNickHash;
     
+    for(var i=0;i<nicks.length;i++)
+      present[nicks[i]] = 1;
+    
+    for(var k in lnh)
+      if(!present[k])
+        this.nickListRemove(k, lnh[k]);
+        
     for(var i=0;i<nicks.length;i++) {
       var n = nicks[i];
       var l = lnh[n];
@@ -145,10 +152,6 @@ qwebirc.ui.Window = new Class({
       nickHash[n] = l;
     }
     
-    for(var k in lnh)
-      if(!nickHash[k])
-        this.nickListRemove(k, lnh[k]);
-        
     this.lastNickHash = nickHash;
   },
   nickListAdd: function(position, nick) {
