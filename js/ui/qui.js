@@ -23,6 +23,19 @@ qwebirc.ui.QUI = new Class({
     this.input = this.qjsui.bottom;
     this.reflow = this.qjsui.reflow.bind(this.qjsui);
     
+    this.tabs.addEvent("mousewheel", function(x) {
+      var event = new Event(x);
+      
+      /* up */
+      if(event.wheel > 0) {
+        this.nextWindow();
+      } else if(event.wheel < 0) {
+        /* down */
+        this.prevWindow();        
+      }
+      event.stop();
+    }.bind(this));
+    
     this.createInput();
     this.reflow();
   },

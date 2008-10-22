@@ -61,6 +61,29 @@ qwebirc.ui.BaseUI = new Class({
     window.select();  /* calls setActiveWindow */
     document.title = window.name + " - " + this.options.appTitle;
   },
+  nextWindow: function(direction) {
+    if(this.windowArray.length == 0 || !this.active)
+      return;
+      
+    if(!direction)
+      direction = 1;
+      
+    var index = this.windowArray.indexOf(this.active);
+    if(index == -1)
+      return;
+      
+    index = index + direction;
+    if(index < 0) {
+      index = this.windowArray.length - 1;
+    } else if(index >= this.windowArray.length) {
+      index = 0;
+    }
+    
+    this.selectWindow(this.windowArray[index]);
+  },
+  prevWindow: function() {
+    this.nextWindow(-1);
+  },
   __closed: function(window) {
     if(window.active) {
       this.active = undefined;
@@ -127,6 +150,10 @@ qwebirc.ui.StandardUI = new Class({
           return;
           
         this.selectWindow(this.windowArray[number]);
+      } else if(x.key == "left") {
+        this.prevWindow();
+      } else if(x.key == "right") {
+        this.nextWindow();
       }
     }.bind(this));
   },
