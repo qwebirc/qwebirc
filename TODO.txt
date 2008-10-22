@@ -5,3 +5,4 @@ tab completion
 options for notices and stuff
 @+ in nick shown in text
 scroll pos isn't saved when you go between tabs if not at bottom.
+fix embedding wizard in IE
