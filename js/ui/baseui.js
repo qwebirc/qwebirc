@@ -124,9 +124,12 @@ qwebirc.ui.StandardUI = new Class({
       if(!x.alt || x.control)
         return;
         
+      var success = false;
       if(x.key == "a" || x.key == "A") {
         var highestNum = 0;
         var highestIndex = -1;
+        success = true;
+        
         new Event(x).stop();
         for(var i=0;i<this.windowArray.length;i++) {
           var h = this.windowArray[i].hilighted;
@@ -138,7 +141,7 @@ qwebirc.ui.StandardUI = new Class({
         if(highestIndex > -1)
           this.selectWindow(this.windowArray[highestIndex]);
       } else if(x.key >= '0' && x.key <= '9') {
-        new Event(x).stop();
+        success = true;
         
         number = x.key - '0';
         if(number == 0)
@@ -152,9 +155,13 @@ qwebirc.ui.StandardUI = new Class({
         this.selectWindow(this.windowArray[number]);
       } else if(x.key == "left") {
         this.prevWindow();
+        success = true;
       } else if(x.key == "right") {
         this.nextWindow();
+        success = true;
       }
+      if(success)
+        new Event(x).stop();      
     }.bind(this));
   },
   newCustomWindow: function(name, select, type) {
