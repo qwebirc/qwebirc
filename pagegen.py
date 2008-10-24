@@ -5,12 +5,14 @@ UI_BASE = ["baseui", "baseuiwindow", "colour", "url", "theme", "genericlogin", "
 
 DEBUG_BASE = ["qwebirc", "version", "jslib", ["irc/%s" % x for x in IRC_BASE], ["ui/%s" % x for x in UI_BASE], "qwebircinterface"]
 BUILD_BASE = ["qwebirc"]
-JS_BASE = ["mootools-1.2-core"]
+JS_BASE = ["mootools-1.2.1-core"]
 
 UIs = {
   "qui": {
     "class": "QUI",
     "uifiles": ["qui"],
+    "extra": ["mootools-1.2-sortables"],
+    "buildextra": ["mootools-1.2-sortables"],
     "doctype": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"" + "\n" \
       "  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"
   },
