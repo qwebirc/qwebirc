@@ -2,7 +2,10 @@ sound
 padding
 prettify wizard
 tab completion
+tab dragging
 options for notices and stuff
+nick only/chan only
 @+ in nick shown in text
 scroll pos isn't saved when you go between tabs if not at bottom.
 fix embedding wizard in IE
+undo closed tab

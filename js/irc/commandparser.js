@@ -209,6 +209,9 @@ qwebirc.irc.CommandParser = new Class({
   cmd_AWAY: [false, 1, 0, function(args) {
     this.send("AWAY :" + (args?args[0]:""));
   }],
+  cmd_QUIT: [false, 1, 0, function(args) {
+    this.send("QUIT :" + (args?args[0]:""));
+  }],
   cmd_CYCLE: [true, 1, 0, function(args) {
     var c = this.parentObject.getActiveWindow().name;
     
