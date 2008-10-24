@@ -1,5 +1,6 @@
 qwebirc.irc.NickChanEntry = function() {
   this.prefixes = "";
+  this.lastSpoke = 0;
 }
 
 qwebirc.irc.IRCTracker = new Class({
@@ -31,7 +32,7 @@ qwebirc.irc.IRCTracker = new Class({
     return c;
   },
   getOrCreateNickOnChannel: function(nick, channel) {
-    var n = this.getNick(nick);
+    var n = this.getOrCreateNick(nick);
     
     var nc = n[channel];
     if(!nc)
@@ -39,6 +40,13 @@ qwebirc.irc.IRCTracker = new Class({
       
     return nc;
   },
+  getNickOnChannel: function(nick, channel) {
+    var n = this.getNick(nick);
+    if(!n)
+      return;
+      
+    return n[channel];
+  }
   addNickToChannel: function(nick, channel) {
     var nc = new qwebirc.irc.NickChanEntry();
 
@@ -104,5 +112,28 @@ qwebirc.irc.IRCTracker = new Class({
     
     this.nicknames[newnick] = this.nicknames[oldnick];
     delete this.nicknames[oldnick];
+  },
+  updateLastSpoke: function(nick, channel, time) {
+    var nc = this.getNickOnChannel(nick, channel);
+    if(nc)
+      nc.lastSpoke = time;
+  },
+  getSortedByLastSpoke: function(channel) {
+    var sorter = function(a, b) {
+      return b.lastSpoke - a.lastSpoke;
+    };
+    
+    var c = getChannel(channel);
+    if(!c)
+      return;
+      
+    var n = [];
+    for(var i=0;i<c.length;i++)
+      n.push(c[k]);
+      
+    n.sort(sorter);
+    
+    return n;
   }
 });
+ 

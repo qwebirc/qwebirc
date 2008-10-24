@@ -299,6 +299,7 @@ qwebirc.irc.IRCClient = new Class({
     this.newTargetOrActiveLine(nick, "CTCPREPLY", {"m": args, "x": type, "h": host, "n": nick, "-": this.nickname});
   },
   channelPrivmsg: function(user, channel, message) {
+    this.tracker.updateLastSpoke(user.hostToNick(), new Date().getTime()); 
     this.newChanLine(channel, "CHANMSG", user, {"m": message});
   },
   channelNotice: function(user, channel, message) {
