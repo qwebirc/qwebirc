@@ -2,7 +2,8 @@ qwebirc.irc.IRCClient = new Class({
   Extends: qwebirc.irc.BaseIRCClient,
   options: {
     nickname: "qwebirc",
-    autojoin: ""
+    autojoin: "",
+    maxnicks: 10
   },
   initialize: function(options, ui) {
     this.parent(options);
@@ -17,6 +18,7 @@ qwebirc.irc.IRCClient = new Class({
     this.exec = this.commandparser.dispatch.bind(this.commandparser);
 
     this.statusWindow = this.ui.newClient(this);
+    this.lastNicks = [];
   },
   newLine: function(window, type, data) {
     if(!data)
@@ -299,7 +301,7 @@ qwebirc.irc.IRCClient = new Class({
     this.newTargetOrActiveLine(nick, "CTCPREPLY", {"m": args, "x": type, "h": host, "n": nick, "-": this.nickname});
   },
   channelPrivmsg: function(user, channel, message) {
-    this.tracker.updateLastSpoke(user.hostToNick(), new Date().getTime()); 
+    this.tracker.updateLastSpoke(user.hostToNick(), channel, new Date().getTime()); 
     this.newChanLine(channel, "CHANMSG", user, {"m": message});
   },
   channelNotice: function(user, channel, message) {
@@ -310,7 +312,7 @@ qwebirc.irc.IRCClient = new Class({
     var host = user.hostToHost();
     
     this.newWindow(nick, qwebirc.ui.WINDOW_QUERY);
-    
+    this.pushLastNick(nick);
     this.newLine(nick, "PRIVMSG", {"m": message, "h": host, "n": nick});
   },
   serverNotice: function(message) {
@@ -442,5 +444,15 @@ qwebirc.irc.IRCClient = new Class({
   },
   awayStatus: function(state, message) {
     this.newActiveLine("GENERICMESSAGE", {m: message});
+  },
+  pushLastNick: function(nick) {
+    var i = this.lastNicks.indexOf(nick);
+    if(i != -1) {
+      this.lastNicks.splice(i, 1);
+    } else {
+      if(this.lastNicks.length == this.options.maxnicks)
+        this.lastNicks.pop();
+    }
+    this.lastNicks.unshift(nick);
   }
 });
