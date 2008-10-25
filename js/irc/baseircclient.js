@@ -56,7 +56,7 @@ qwebirc.irc.BaseIRCClient = new Class({
       var o = this["irc_" + n];
       
       if(o) {
-        var r = o.attempt([prefix, sl], this);
+        var r = o.run([prefix, sl], this);
         if(!r)
           this.rawNumeric(command, prefix, sl);
       } else {

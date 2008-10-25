@@ -46,7 +46,7 @@ qwebirc.irc.IRCTracker = new Class({
       return;
       
     return n[channel];
-  }
+  },
   addNickToChannel: function(nick, channel) {
     var nc = new qwebirc.irc.NickChanEntry();
 
@@ -115,25 +115,29 @@ qwebirc.irc.IRCTracker = new Class({
   },
   updateLastSpoke: function(nick, channel, time) {
     var nc = this.getNickOnChannel(nick, channel);
-    if(nc)
+    if($defined(nc))
       nc.lastSpoke = time;
   },
   getSortedByLastSpoke: function(channel) {
     var sorter = function(a, b) {
-      return b.lastSpoke - a.lastSpoke;
+      return b[1].lastSpoke - a[1].lastSpoke;
     };
     
-    var c = getChannel(channel);
+    var c = this.getChannel(channel);
     if(!c)
       return;
       
     var n = [];
-    for(var i=0;i<c.length;i++)
-      n.push(c[k]);
-      
-    n.sort(sorter);
+    for(var k in c)
+      n.push([k, c[k]]);
     
-    return n;
+    n.sort(sorter);
+
+    var n2 = [];
+    for(var i=0;i<n.length;i++)
+      n2.push(n[i][0]);
+    
+    return n2;
   }
 });
  
