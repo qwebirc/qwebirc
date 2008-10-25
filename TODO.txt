@@ -9,3 +9,4 @@ nick only/chan only
 scroll pos isn't saved when you go between tabs if not at bottom.
 fix embedding wizard in IE
 undo closed tab
+memory leaks

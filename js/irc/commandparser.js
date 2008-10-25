@@ -84,7 +84,7 @@ qwebirc.irc.CommandParser = new Class({
         return;
       }
       
-      var ret = fn.attempt([args], this);
+      var ret = fn.run([args], this);
       if(ret == undefined)
         return;
         
@@ -125,7 +125,7 @@ qwebirc.irc.CommandParser = new Class({
     var target = args[0];
     var message = args[1];
     
-    if(this.parentObject.isChannel(target))
+    if(!this.parentObject.isChannel(target))
       this.parentObject.pushLastNick(target);
     if(this.send("PRIVMSG " + target + " :" + message))
       this.newTargetLine(target, "MSG", message, {});  

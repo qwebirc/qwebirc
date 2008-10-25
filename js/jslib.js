@@ -38,19 +38,6 @@ String.prototype.splitMax = function(by, max) {
   return newitems;
 }
 
-qwebirc.util.setAtEnd = function(obj) {
-  pos = obj.value.length;
-  
-  if(obj.createTextRange) { 
-    var range = obj.createTextRange(); 
-    range.move("character", pos); 
-    range.select(); 
-  } else if(obj.selectionStart) { 
-    obj.focus(); 
-    obj.setSelectionRange(pos, pos); 
-  } 
-}
-
 /* returns the arguments */
 qwebirc.util.parseURI = function(uri) {
   var result = {}
@@ -147,4 +134,36 @@ qwebirc.ui.insertAt = function(position, parent, element) {
   } else {
     parent.insertBefore(element, parent.childNodes[position]);
   }
+}
+
+qwebirc.util.setAt = function(obj, pos) {
+  if($defined(obj.selectionStart)) { 
+    obj.focus(); 
+    obj.setSelectionRange(pos, pos); 
+  } else if(obj.createTextRange) { 
+    var range = obj.createTextRange(); 
+    range.move("character", pos); 
+    range.select();
+  }
+}
+
+qwebirc.util.setAtEnd = function(obj) {
+  qwebirc.util.setAt(obj.value.length);
+}
+
+qwebirc.util.getCaretPos = function(element) {
+  if($defined(element.selectionStart))
+    return element.selectionStart;
+    
+  if(document.selection) {
+    element.focus();
+    var sel = document.selection.createRange();
+    sel.moveStart("character", -element.value.length);
+    return sel.text.length;
+  }
+}
+
+qwebirc.util.browserVersion = function() {
+  //return "engine: " + Browser.Engine.name + " platform: " + Browser.Platform.name + " user agent: " + navigator.userAgent;
+  return navigator.userAgent;
 }

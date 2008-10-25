@@ -1,6 +1,6 @@
 qwebirc.irc.RegisteredCTCPs = {
   "VERSION": function(x) {
-    return "qwebirc v" + qwebirc.VERSION + ", copyright (C) Chris Porter 2008 -- user agent: " + Browser.Engine.name + " (" + Browser.Platform.name + ")";
+    return "qwebirc v" + qwebirc.VERSION + ", copyright (C) Chris Porter 2008 -- " + qwebirc.util.browserVersion();
   },
   "USERINFO": function(x) { return "qwebirc"; },
   "TIME": function(x) { return qwebirc.irc.IRCTime(new Date()); },
@@ -65,7 +65,7 @@ qwebirc.irc.BaseIRCClient = new Class({
     }
   },
   isChannel: function(target) {
-    var c = target.chatAt(0);
+    var c = target.charAt(0);
     return c == '#';
   },
   irc_RPL_WELCOME: function(prefix, params) {
