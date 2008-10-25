@@ -64,7 +64,10 @@ qwebirc.irc.BaseIRCClient = new Class({
       }
     }
   },
-
+  isChannel: function(target) {
+    var c = target.chatAt(0);
+    return c == '#';
+  },
   irc_RPL_WELCOME: function(prefix, params) {
     this.nickname = params[0];
     

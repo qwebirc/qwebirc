@@ -125,6 +125,8 @@ qwebirc.irc.CommandParser = new Class({
     var target = args[0];
     var message = args[1];
     
+    if(this.parentObject.isChannel(target))
+      this.parentObject.pushLastNick(target);
     if(this.send("PRIVMSG " + target + " :" + message))
       this.newTargetLine(target, "MSG", message, {});  
   }],
@@ -240,7 +242,7 @@ qwebirc.irc.CommandParser = new Class({
       if(!args || args.length == 0) {
         channel = w.name;
       } else {
-        var isChan = args[0].charAt(0) == '#';
+        var isChan = this.parentObject.isChannel(args[0]);
         if(isChan) {
           channel = args[0];
           if(args.length > 1)
