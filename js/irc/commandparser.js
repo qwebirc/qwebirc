@@ -220,6 +220,9 @@ qwebirc.irc.CommandParser = new Class({
     this.send("PART " + c + " :" + (args?args[0]:"rejoining. . ."));
     this.send("JOIN " + c);
   }],
+  cmd_UMODE: [false, 1, 0, function(args) {
+    this.send("MODE " + this.parentObject.getNickname() + (args?(" " + args[0]):""));
+  }],
   cmd_CLEAR: [false, undefined, undefined, function(args) {
     var w = this.parentObject.getActiveWindow().lines;
     while(w.childNodes.length > 0)

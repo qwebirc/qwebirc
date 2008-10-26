@@ -17,7 +17,7 @@ qwebirc.ui.Window = new Class({
     this.commandhistory = this.parentObject.commandhistory;
     this.scrolleddown = true;
     this.lastNickHash = {};
-    //new CommandHistory();
+    this.lastSelected = null;
   },
   updateNickList: function(nicks) {
   },
@@ -40,6 +40,7 @@ qwebirc.ui.Window = new Class({
       this.setHilighted(qwebirc.ui.HILIGHT_NONE);
     if(this.scrolleddown)
       this.scrollToBottom();
+    this.lastSelected = new Date();
   },
   deselect: function() {
     if(!this.parentObject.singleWindow)
