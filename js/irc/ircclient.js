@@ -272,7 +272,7 @@ qwebirc.irc.IRCClient = new Class({
       args = "";
 
     if(type == "ACTION") {
-      this.tracker.updateLastSpoke(nick, channel, new Date().getTime()); 
+      this.tracker.updateLastSpoke(user.hostToNick(), channel, new Date().getTime()); 
       this.newChanLine(channel, "CHANACTION", user, {"m": args, "c": channel});
       return;
     }
