@@ -54,22 +54,33 @@ qwebirc.ui.QUI = new Class({
       if(inputbox.value == "")
         return;
         
+      this.resetTabComplete();
       this.getActiveWindow().historyExec(inputbox.value);
       inputbox.value = "";
     }.bind(this));
     
+    inputbox.addEvent("focus", this.resetTabComplete.bind(this));
+    inputbox.addEvent("mousedown", this.resetTabComplete.bind(this));
+    
     inputbox.addEvent("keydown", function(e) {
       var resultfn;
       var cvalue = inputbox.value;
-
+      
       if(e.key == "up") {
         resultfn = this.commandhistory.upLine;
       } else if(e.key == "down") {
         resultfn = this.commandhistory.downLine;
+      } else if(e.key == "tab") {
+        new Event(e).stop();
+        this.tabComplete(inputbox);
+        return;
       } else {
+        /* ideally alt and other keys wouldn't break this */
+        this.resetTabComplete();
         return;
       }
       
+      this.resetTabComplete();
       if((cvalue != "") && (this.lastcvalue != cvalue))
         this.commandhistory.addLine(cvalue, true);
       
@@ -230,6 +241,8 @@ qwebirc.ui.QUI.Window = new Class({
           this.client.exec("/PART " + name);
 
         this.close();
+        
+        parentObject.inputbox.focus();
       }.bind(this));
       
       this.tab.appendChild(tabclose);

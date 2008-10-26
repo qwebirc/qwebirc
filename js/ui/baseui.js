@@ -120,6 +120,9 @@ qwebirc.ui.StandardUI = new Class({
   Extends: qwebirc.ui.BaseUI,
   initialize: function(parentElement, windowClass, uiName, options) {
     this.parent(parentElement, windowClass, uiName, options);
+
+    this.tabCompleter = new qwebirc.ui.TabCompleterFactory(this);
+
     window.addEvent("keydown", function(x) {
       if(!x.alt || x.control)
         return;
@@ -199,6 +202,12 @@ qwebirc.ui.StandardUI = new Class({
       return ["a", this.embeddedWindow.bind(this)];
 
     return null;
+  },
+  tabComplete: function(element) {
+    this.tabCompleter.tabComplete(element);
+  },
+  resetTabComplete: function() {
+    this.tabCompleter.reset();
   }
 });
 

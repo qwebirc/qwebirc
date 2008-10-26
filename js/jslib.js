@@ -136,7 +136,7 @@ qwebirc.ui.insertAt = function(position, parent, element) {
   }
 }
 
-qwebirc.util.setAt = function(obj, pos) {
+qwebirc.util.setCaretPos = function(obj, pos) {
   if($defined(obj.selectionStart)) { 
     obj.focus(); 
     obj.setSelectionRange(pos, pos); 
@@ -148,7 +148,7 @@ qwebirc.util.setAt = function(obj, pos) {
 }
 
 qwebirc.util.setAtEnd = function(obj) {
-  qwebirc.util.setAt(obj.value.length);
+  qwebirc.util.setCaretPos(obj.value.length);
 }
 
 qwebirc.util.getCaretPos = function(element) {
@@ -166,4 +166,40 @@ qwebirc.util.getCaretPos = function(element) {
 qwebirc.util.browserVersion = function() {
   //return "engine: " + Browser.Engine.name + " platform: " + Browser.Platform.name + " user agent: " + navigator.userAgent;
   return navigator.userAgent;
+}
+
+qwebirc.util.getEnclosedWord = function(text, position) {
+  var l = text.split("");
+  var buf = [];
+  
+  if(text == "")
+    return;
+
+  var start = position - 1;
+  if(start < 0) {
+    /* special case: starting with space */    
+    start = 0;
+  } else {
+    /* work back until we find the first space */
+    for(;start>=0;start--) {
+      if(l[start] == ' ') {
+        start = start + 1;
+        break;
+      }
+    }
+  }
+  
+  if(start < 0)
+    start = 0;
+    
+  var s = text.substring(start);
+  var pos = s.indexOf(" ");
+  if(pos != -1)
+    s = s.substring(0, pos);
+    
+  return [start, s];
+}
+
+String.prototype.startsWith = function(what) {
+  return this.substring(0, what.length) == what;
 }

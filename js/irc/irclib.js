@@ -63,3 +63,7 @@ qwebirc.irc.IRCDate = function(d) {
   
   return qwebirc.util.DaysOfWeek[d.getDay()] + " " + qwebirc.util.MonthsOfYear[d.getMonth()] + " " + pad(d.getDate()) + " "  + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds()) + " " + d.getFullYear();
 }
+
+String.prototype.toIRCCompletion = function() {
+  return this.toIRCLower().replace(/[^\w]+/g, "");
+}

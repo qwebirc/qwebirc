@@ -5,7 +5,7 @@ mkdir -p compiled
 rm -f compiled/*.js
 
 cd js
-cat qwebirc.js version.js jslib.js irc/ircconnection.js irc/irclib.js irc/numerics.js irc/baseircclient.js irc/irctracker.js irc/commandparser.js irc/ircclient.js ui/baseui.js ui/baseuiwindow.js ui/colour.js ui/url.js ui/theme.js ui/genericlogin.js ui/embedwizard.js irc/commandhistory.js ui/hilightcontroller.js ui/menuitems.js qwebircinterface.js > ../compiled/qwebirc-concat.js
+cat qwebirc.js version.js jslib.js irc/ircconnection.js irc/irclib.js irc/numerics.js irc/baseircclient.js irc/irctracker.js irc/commandparser.js irc/ircclient.js ui/baseui.js ui/baseuiwindow.js ui/colour.js ui/url.js ui/theme.js ui/genericlogin.js ui/embedwizard.js irc/commandhistory.js ui/hilightcontroller.js ui/menuitems.js ui/tabcompleter.js qwebircinterface.js > ../compiled/qwebirc-concat.js
 cat ui/swmui.js ui/swmlayout.js > ../compiled/swmui-concat.js
 
 error() {
