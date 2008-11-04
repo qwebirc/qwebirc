@@ -7,7 +7,7 @@ import simplejson, md5, sys, os, ircclient, time, config, weakref
 Sessions = {}
 
 def get_session_id():
-  return md5.md5(os.urandom(16)).hexdigest()[:10]
+  return md5.md5(os.urandom(16)).hexdigest()
 
 class BufferOverflowException(Exception):
   pass
