@@ -18,16 +18,17 @@ class AJAXException(Exception):
 class IDGenerationException(Exception):
   pass
 
+NOT_DONE_YET = None
+
 def jsondump(fn):
   def decorator(*args, **kwargs):
     try:
       x = fn(*args, **kwargs)
-      if x == server.NOT_DONE_YET:
-        return x
-      x = [True, x]
+      if x is None:
+        return server.NOT_DONE_YET
+      x = (True, x)
     except AJAXException, e:
-      print e
-      x = [False, e[0]]
+      x = (False, e[0])
       
     return simplejson.dumps(x)
   return decorator
@@ -183,7 +184,7 @@ class AJAXEngine(resource.Resource):
     
   def subscribe(self, request):
     self.getSession(request).subscribe(SingleUseChannel(request))
-    return server.NOT_DONE_YET
+    return NOT_DONE_YET
 
   def push(self, request):
     command = request.args.get("c")
