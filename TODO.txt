@@ -1,6 +1,4 @@
 O sound
-improve padding in main window
-prettify wizard
 fix embedding wizard in IE
 tab dragging
 O options pane (notices, sound, query behaviour, @+ in nick shown in chantext, etc)

@@ -192,6 +192,7 @@ qwebirc.ui.StandardUI = new Class({
       this.embedded = null;
     }.bind(this));
         
+    this.embedded.lines.addClass("embeddedwizard");
     var ew = new qwebirc.ui.EmbedWizard({parent: this.embedded.lines});
     ew.addEvent("close", function() {
       this.embedded.close();

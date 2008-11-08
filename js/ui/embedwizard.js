@@ -60,10 +60,7 @@ qwebirc.ui.EmbedWizard = new Class({
     exampleRow.appendChild(this.example);
     
     var nextRow = this.newRow();
-    nextRow.setStyle("position", "absolute");
-    nextRow.setStyle("bottom", "0px");
-    nextRow.setStyle("right", "0px");
-    nextRow.setStyle("margin", "3px");
+    nextRow.addClass("wizardcontrols");
     var backBtn = new Element("input");
     backBtn.type = "submit";
     backBtn.value = "< Back";
@@ -90,11 +87,16 @@ qwebirc.ui.EmbedWizard = new Class({
   newRadio: function(parent, text, name, selected) {
     var p = new Element("div");
     parent.appendChild(p);
-      
-    var r = new Element("input");
-    r.type = "radio";
-    r.name = name;
-    
+
+    var r;
+    if(Browser.Engine.trident) {
+      r = document.createElement("<input type=\"radio\" name=\" + escape(name) + \"" + (selected?" checked":"") + "/>");
+    } else {    
+      r = new Element("input");
+      r.type = "radio";
+      r.name = name;
+    }    
+
     if(selected)
       r.checked = true;
       
@@ -104,7 +106,19 @@ qwebirc.ui.EmbedWizard = new Class({
     return r;
   },
   addSteps: function() {
-    var af = function() { this.options.middle.focus(); };
+    var af = function(select) {
+      if(Browser.Engine.trident) {
+        var f = function() {
+          this.focus();
+          if(select)
+            this.select();
+        };
+        f.delay(100, this, []);
+      } else {
+        this.focus();
+        this.select();
+      }
+    };
   
     this.welcome = this.newStep({
       "title": "Welcome!",
@@ -112,13 +126,14 @@ qwebirc.ui.EmbedWizard = new Class({
     });
     
     this.chanBox = new Element("input");
+    this.chanBox.addClass("text");
     this.chans = this.newStep({
       "title": "Set channels",
       "first": "Enter the channels you would like the client to join on startup:",
       "hint": "You can supply multiple channels by seperating them with a comma, e.g.:",
       "example": "#rogue,#eu-mage",
       middle: this.chanBox
-    }).addEvent("show", af);
+    }).addEvent("show", af.bind(this.chanBox));
     
     var customnickDiv = new Element("div");
     this.customnick = this.newStep({
@@ -144,6 +159,7 @@ qwebirc.ui.EmbedWizard = new Class({
     this.connectdialogr = this.newRadio(promptdiv, "Show the connect dialog.", "prompt");
     
     this.nicknameBox = new Element("input");
+    this.nicknameBox.addClass("text");
     this.nickname = this.newStep({
       "title": "Set nickname",
       "first": "Enter the nickname you would like the client to use by default:",
@@ -156,7 +172,7 @@ qwebirc.ui.EmbedWizard = new Class({
         return true;
       }.bind(this),
       middle: this.nicknameBox
-    }).addEvent("show", af);
+    }).addEvent("show", af.bind(this.nicknameBox));
 
     var codeDiv = new Element("div");
     this.finish = this.newStep({
@@ -166,12 +182,13 @@ qwebirc.ui.EmbedWizard = new Class({
     }).addEvent("show", function() {
       var alink = new Element("a");
       var abox = new Element("input");
-      var url = this.generateURL();
+      abox.addClass("iframetext");
+      var url = this.generateURL(false);
       
       alink.href = url;
       alink.target = "new";
       alink.appendChild(document.createTextNode(url));
-      abox.value = "<iframe src=\"" + url + "\"></iframe>";
+      abox.value = "<iframe src=\"" + url + "\" width=\"647\" height=\"400\"></iframe>";
       
       var mBox = [
         alink,
@@ -187,6 +204,11 @@ qwebirc.ui.EmbedWizard = new Class({
       mBox.forEach(function(x) {
         codeDiv.appendChild(x);
       });
+      
+      af.bind(abox)(true);
+      abox.addEvent("click", function() {
+        this.select();
+      }.bind(abox));
     }.bind(this));
 
     this.updateSteps();

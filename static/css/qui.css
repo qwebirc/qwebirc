@@ -253,3 +253,26 @@ div#noscript {
 	cursor: pointer;
 	cursor: hand;
 }
+
+.qwebirc-qui div.embeddedwizard {
+  padding-left: 5px;
+  padding-top: 2px;
+}
+
+.qwebirc-qui .embeddedwizard input.text {
+  width: 300px;
+}
+
+.qwebirc-qui .embeddedwizard input.iframetext {
+  width: 95%;
+}
+
+.qwebirc-qui .embeddedwizard div.wizardcontrols {
+  position: absolute;
+  bottom: 3px;
+  right: 6px;
+}
+
+.qwebirc-qui .embeddedwizard .wizardcontrols input {
+  width: 70px;
+}
