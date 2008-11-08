@@ -128,8 +128,8 @@ qwebirc.ui.EmbedWizard = new Class({
       middle: customnickDiv
     });
 
-    this.randnick = this.newRadio(customnickDiv, "Use a random nickname, e.g. qwebirc12883.", "nick", true);
-    this.choosenick = this.newRadio(customnickDiv, "Make the user choose a nickname.", "nick");
+    this.choosenick = this.newRadio(customnickDiv, "Make the user choose a nickname.", "nick", true);
+    this.randnick = this.newRadio(customnickDiv, "Use a random nickname, e.g. qwebirc12883.", "nick");
     this.presetnick = this.newRadio(customnickDiv, "Use a preset nickname of your choice.", "nick");
     
     var promptdiv = new Element("form");
@@ -140,8 +140,8 @@ qwebirc.ui.EmbedWizard = new Class({
       "hint": "You need to display the dialog if you want the user to be able to set their nickname before connecting."
     });
     
-    this.connectdialogr = this.newRadio(promptdiv, "Show the connect dialog.", "prompt", true);
-    var autoconnect = this.newRadio(promptdiv, "Connect without displaying the dialog.", "prompt");
+    var autoconnect = this.newRadio(promptdiv, "Connect without displaying the dialog.", "prompt", true);
+    this.connectdialogr = this.newRadio(promptdiv, "Show the connect dialog.", "prompt");
     
     this.nicknameBox = new Element("input");
     this.nickname = this.newStep({
@@ -201,7 +201,8 @@ qwebirc.ui.EmbedWizard = new Class({
       this.steps.push(this.nickname);
       
     this.steps.push(this.chans);
-    if(!this.choosenick.checked)
+    
+    if(this.chanBox.value != "" && !this.choosenick.checked)
       this.steps.push(this.connectdialog);
     
     this.steps.push(this.finish);
@@ -240,20 +241,19 @@ qwebirc.ui.EmbedWizard = new Class({
   generateURL: function() {
     var chans = this.chanBox.value;
     var nick = this.nicknameBox.value;
-    var connectdialog = this.connectdialogr.checked || this.choosenick.checked;
-    
+    var connectdialog = this.connectdialogr.checked && chans != "" && !this.choosenick.checked;
+
     var URL = [];
     if(this.presetnick.checked) {
       URL.push("nick=" + escape(nick));
-    } else if(this.choosenick.checked) {
-      URL.push("nick=");
+    } else if(!this.choosenick.checked) {
+      URL.push("randomnick=1");
     }
     
     if(chans) {
       var d = chans.split(",");
       var d2 = [];
       
-      /* WTB map */
       d.forEach(function(x) {
         if(x.charAt(0) == '#')
           x = x.substring(1);
@@ -267,6 +267,6 @@ qwebirc.ui.EmbedWizard = new Class({
     if(connectdialog)
       URL.push("prompt=1");
 
-    return this.options.baseURL + "?" + URL.join("&");
+    return this.options.baseURL + (URL.length>0?"?":"") + URL.join("&");
   }
 });

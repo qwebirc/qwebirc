@@ -11,9 +11,6 @@ qwebirc.ui.Interface = new Class({
 
     window.addEvent("domready", function() {
       var ui_ = new ui($(element), new qwebirc.ui.Theme(this.options.theme));
-      var inick = this.options.initialNickname;
-      var ichans = this.options.initialChannels;
-      var autoNick = true;
       
       var callback = function(options) {
         var IRC = new qwebirc.irc.IRCClient(options, ui_);
@@ -23,13 +20,18 @@ qwebirc.ui.Interface = new Class({
         });
       };
 
-      var supplied = false; 
+      var inick = null;
+      var ichans = this.options.initialChannels;
+      var autoConnect = false;
+      
       if(this.options.searchURL) {
         var args = qwebirc.util.parseURI(String(document.location));
         
         var chans = args["channels"];
         var nick = args["nick"];
 
+        var canAutoConnect = false;
+        
         if(chans) {
           var cdata = chans.split(" ");
           
@@ -44,19 +46,43 @@ qwebirc.ui.Interface = new Class({
           }
           cdata[0] = chans2.join(",");
           ichans = cdata.join(" ");
-          supplied = true;
+          canAutoConnect = true;
         }
         
-        if($defined(nick)) {
+        if($defined(nick))
           inick = nick;
-          autoNick = false;
-        }
         
-        if(supplied && args["prompt"])
-          supplied = false;
+        if(args["randomnick"] && args["randomnick"] == 1)
+          inick = this.options.initialNickname;
+          
+        /* we only consider autoconnecting if the nick hasn't been supplied, or it has and it's not "" */
+        if(canAutoConnect && (!$defined(inick) || ($defined(inick) && (inick != "")))) {
+          var p = args["prompt"];
+          var pdefault = false;
+          
+          if(!$defined(p) || p == "") {
+            pdefault = true;
+            p = false;
+          } else if(p == "0") {
+            p = false;
+          } else {
+            p = true;
+          }
+          
+          /* autoconnect if we have channels and nick but only if prompt != 1 */
+          if($defined(inick) && !p) {
+            autoConnect = true;
+          } else if(!pdefault && !p) { /* OR if prompt=0, but not prompt=(nothing) */
+            autoConnect = true;
+          }
+        }
       }
+  
+      var usingAutoNick = !$defined(nick);
+      if(usingAutoNick && autoConnect)
+        inick = this.options.initialNickname;
       
-      var details = ui_.loginBox(callback, inick, ichans, supplied, autoNick);
+      var details = ui_.loginBox(callback, inick, ichans, autoConnect, usingAutoNick);
     }.bind(this));
   }
 });

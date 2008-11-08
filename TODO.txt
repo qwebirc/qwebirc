@@ -1,11 +1,10 @@
-sound
+O sound
 improve padding in main window
 prettify wizard
 fix embedding wizard in IE
 tab dragging
-options pane (notices, sound, query behaviour, @+ in nick shown in chantext, etc)
-nick only/chan only???
-authgate integration
+O options pane (notices, sound, query behaviour, @+ in nick shown in chantext, etc)
+O authgate integration
 scroll pos isn't saved when you go between tabs if not at bottom.
 scroll pos not saved on resize (percentage)
 undo closed tab
