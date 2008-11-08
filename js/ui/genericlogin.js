@@ -51,18 +51,23 @@ qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initi
   var td = new Element("td");
   tr.appendChild(td);
 
-  var form = new Element("form");
-  td.appendChild(form);
-  
   var yes = new Element("input", {"type": "submit", "value": "Connect"});
-  form.appendChild(yes);
+  td.appendChild(yes);
   yes.focus();
-  
-  form.addEvent("submit", function(e) {
-    new Event(e).stop();
+  yes.addEvent("click", function(e) {
     parentElement.removeChild(box);
     callback({"nickname": initialNickname, "autojoin": initialChannels});
   });
+  
+  var user = Cookie.read("user")
+  if(!$defined(user)) {
+    var auth = new Element("input", {"type": "submit", "value": "Log in"});
+    td.appendChild(auth);
+    auth.addEvent("click", function(e) {
+      var cookie = Cookie.write("redirect", document.location);
+      document.location = "./auth/";
+    });
+  }
 }
 
 qwebirc.ui.LoginBox = function(parentElement, callback, initialNickname, initialChannels) {

@@ -1,8 +1,8 @@
 from twisted.web import resource, server, static
 from twisted.names import client
 from twisted.internet import reactor
-import traceback
-import simplejson, md5, sys, os, ircclient, time, config, weakref
+from authgateengine import login_optional
+import simplejson, md5, sys, os, ircclient, time, config, weakref, traceback
 
 Sessions = {}
 
@@ -148,9 +148,15 @@ class AJAXEngine(resource.Resource):
 #    return self.render_POST(request)
   
   def newConnection(self, request):
+    ticket = login_optional(request)
+    
     _, ip, port = request.transport.getPeer()
 
-    nick, ident = request.args.get("nick"), "webchat"
+    nick, ident, realname = request.args.get("nick"), "webchat", config.REALNAME
+    
+    if not ticket is None:
+      realname = "%s (%s:%d:%s)" % (realname, ticket.username, ticket.id, ticket.authflags)
+      
     if not nick:
       raise AJAXException("Nickname not supplied")
       
@@ -165,7 +171,7 @@ class AJAXEngine(resource.Resource):
 
     session = IRCSession(id)
 
-    client = ircclient.createIRC(session, nick=nick, ident=ident, ip=ip, realname=config.REALNAME)
+    client = ircclient.createIRC(session, nick=nick, ident=ident, ip=ip, realname=realname)
     session.client = client
     
     Sessions[id] = session

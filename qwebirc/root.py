@@ -1,4 +1,5 @@
 from ajaxengine import AJAXEngine
+from authgateengine import AuthgateEngine
 import mimetypes
 from twisted.web import resource, server, static
 
@@ -15,6 +16,7 @@ class RootSite(server.Site):
 
     root.primaryChild = static.File(path)
     root.putChild("e", AJAXEngine("/e"))
+    root.putChild("auth", AuthgateEngine("/auth"))
 
 mimetypes.types_map[".ico"] = "image/vnd.microsoft.icon"
 
