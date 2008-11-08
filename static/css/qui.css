@@ -249,9 +249,13 @@ div#noscript {
   border-top: 0;
 }
 
-.qwebirc-qui .hyperlink-whois {
-	cursor: pointer;
-	cursor: hand;
+.qwebirc-qui .hyperlink-whois, .hyperlink-qwhois, .hyperlink-channel {
+  cursor: pointer;
+  cursor: hand;
+}
+
+.qwebirc-qui .hyperlink-whois:hover, .hyperlink-qwhois:hover, .hyperlink-channel:hover {
+  text-decoration: underline;
 }
 
 .qwebirc-qui div.embeddedwizard {

@@ -30,8 +30,9 @@ qwebirc.ui.urlificate = function(element, text, execfn, cmdfn, window) {
     var newtext = text.replace(punct_re, "");
     var punct = text.substring(newtext.length);
 
-    var a = new Element("a");
+    var a = new Element("span");
     a.href = "#";
+    a.addClass("hyperlink-channel");
     a.addEvent("click", function(e) {
       new Event(e).stop();
       execfn("/JOIN " + newtext);

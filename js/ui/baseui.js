@@ -216,7 +216,7 @@ qwebirc.ui.QuakeNetUI = new Class({
   Extends: qwebirc.ui.StandardUI,
   urlDispatcher: function(name, window) {
     if(name == "qwhois") {
-      return ["a", function(auth) {
+      return ["span", function(auth) {
         this.client.exec("/MSG Q whois #" + auth);
       }.bind(window)];
     }
