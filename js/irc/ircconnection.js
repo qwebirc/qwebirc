@@ -46,8 +46,11 @@ qwebirc.irc.IRCConnection = new Class({
     
     var r = new Request.JSON({
       url: "/e/" + url + "?r=" + this.cacheAvoidance + "&t=" + this.counter++,
-      onComplete: onComplete,
+      onComplete: onComplete
     });
+    
+    /* try to minimise the amount of headers */
+    r.headers = new Hash;
     
     if(Browser.Engine.trident)
       r.setHeader("If-Modified-Since", "Sat, 1 Jan 2000 00:00:00 GMT");

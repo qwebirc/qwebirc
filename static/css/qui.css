@@ -4,6 +4,10 @@ body {
   overflow: hidden;
 }
 
+html {
+  overflow: hidden;
+}
+
 #ircui {
   position: absolute;
   left: 0px;
