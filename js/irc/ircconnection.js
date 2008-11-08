@@ -23,10 +23,24 @@ qwebirc.irc.IRCConnection = new Class({
     if(this.options.errorAlert)
       alert(text);
   },
+  newRequest: function(url, args, onComplete) {
+    var r = new Request.JSON({
+      url: "/e/" + url + "?r=" + this.cacheAvoidance + "&t=" + this.counter++,
+      onComplete: onComplete,
+    });
+    
+    if(Browser.Engine.trident)
+      r.setHeader("If-Modified-Since", "Sat, 1 Jan 2000 00:00:00 GMT");
+
+    return {"send": function() {
+      //r.get();
+      r.send(args);
+    }};
+  },
   send: function(data) {
     if(this.disconnected)
       return false;
-    var r = new Request.JSON({url: "/e/p/" + this.sessionid + "?c=" + encodeURIComponent(data) + "&t=" + this.counter++, onComplete: function(o) {
+    var r = this.newRequest("p", "s=" + this.sessionid + "&c=" + encodeURIComponent(data), false, function(o) {
       if(!o || (o[0] == false)) {
         if(!this.disconnected) {
           this.disconnected = true;
@@ -34,9 +48,8 @@ qwebirc.irc.IRCConnection = new Class({
         }
         return false;
       }
-    }.bind(this)});
-    
-    r.get();
+    }.bind(this));
+    r.send();
     return true;
   },
   __timeout: function() {
@@ -56,7 +69,7 @@ qwebirc.irc.IRCConnection = new Class({
     this.recv();
   },
   recv: function() {
-    var r = new Request.JSON({url: "/e/s/" + this.sessionid + "?t=" + this.counter++, onComplete: function(o) {
+    var r = this.newRequest("s", "s=" + this.sessionid, function(o) {
       if(this.lastactiverequest != r) 
         this.activerequest = null;
         
@@ -98,16 +111,18 @@ qwebirc.irc.IRCConnection = new Class({
       }
       
       this.recv();
-    }.bind(this)});
+    }.bind(this));
 
     if(this.options.timeout)
       this.timeoutid = this.__timeout.delay(this.options.timeout, this);
     
     this.activerequest = r;
-    r.get();
+    r.send();
   },
   connect: function() {
-    var r = new Request.JSON({url: "/e/n?nick=" + encodeURIComponent(this.initialNickname) + "&r=" + Math.random() * 1024 * 1024, onComplete: function(o) {
+    this.cacheAvoidance = qwebirc.util.randHexString(16);
+    
+    var r = this.newRequest("n", "nick=" + encodeURIComponent(this.initialNickname), function(o) {
       if(!o) {
         this.disconnected = true;
         this.__error("Couldn't connect to remote server.");
@@ -121,8 +136,9 @@ qwebirc.irc.IRCConnection = new Class({
       this.sessionid = o[1];
       
       this.recv();    
-    }.bind(this)});
-    r.post();
+    }.bind(this));
+    
+    r.send();
   },
   disconnect: function() {
     this.disconnected = true;

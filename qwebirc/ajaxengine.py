@@ -12,15 +12,24 @@ def get_session_id():
 class BufferOverflowException(Exception):
   pass
 
+class AJAXException(Exception):
+  pass
+  
 class IDGenerationException(Exception):
   pass
 
 def jsondump(fn):
   def decorator(*args, **kwargs):
-    x = fn(*args, **kwargs)
-    if isinstance(x, list):
-      return simplejson.dumps(x)
-    return x
+    try:
+      x = fn(*args, **kwargs)
+      if x == server.NOT_DONE_YET:
+        return x
+      x = [True, x]
+    except AJAXException, e:
+      print e
+      x = [False, e[0]]
+      
+    return simplejson.dumps(x)
   return decorator
 
 def cleanupSession(id):
@@ -128,76 +137,83 @@ class AJAXEngine(resource.Resource):
   @jsondump
   def render_POST(self, request):
     path = request.path[len(self.prefix):]
-    if path == "/n":
-      ip = request.transport.getPeer()
-      ip = ip[1]
+    if path[0] == "/":
+      handler = self.COMMANDS.get(path[1:])
+      if handler is not None:
+        return handler(self, request)
+    raise AJAXException("404")
 
-      nick, ident = request.args.get("nick"), "webchat"
-      if not nick:
-        return [False, "Nickname not supplied"]
-        
-      nick = nick[0]
+#  def render_GET(self, request):
+#    return self.render_POST(request)
+  
+  def newConnection(self, request):
+    _, ip, port = request.transport.getPeer()
 
-      for i in xrange(10):
-        id = get_session_id()
-        if not Sessions.get(id):
-          break
-      else:
-        raise IDGenerationException()
-
-      session = IRCSession(id)
-
-      client = ircclient.createIRC(session, nick=nick, ident=ident, ip=ip, realname=config.REALNAME)
-      session.client = client
+    nick, ident = request.args.get("nick"), "webchat"
+    if not nick:
+      raise AJAXException("Nickname not supplied")
       
-      Sessions[id] = session
-      
-      return [True, id]    
-    return [False, "404"]
+    nick = nick[0]
 
-  @jsondump
-  def render_GET(self, request):
-    path = request.path[len(self.prefix):]
-    if path.startswith("/s/"):
-      sessionid = path[3:]
-      session = Sessions.get(sessionid)
-      
-      if not session:
-        return [False, "Bad session ID"]
+    for i in xrange(10):
+      id = get_session_id()
+      if not Sessions.get(id):
+        break
+    else:
+      raise IDGenerationException()
 
-      session.subscribe(SingleUseChannel(request))
-      return server.NOT_DONE_YET
-    if path.startswith("/p/"):
-      command = request.args.get("c")
-      if not command:
-        return [False, "No command specified"]
+    session = IRCSession(id)
 
-      command = command[0]
-      
-      sessionid = path[3:]
-      session = Sessions.get(sessionid)
-      if not session:
-        return [False, "Bad session ID"]
-
-      try:
-        decoded = command.decode("utf-8")
-      except UnicodeDecodeError:
-        decoded = command.decode("iso-8859-1", "ignore")
-
-      if len(decoded) > config.MAXLINELEN:
-        session.disconnect()
-        return [False, "Line too long"]
-
-      try:
-        session.push(decoded)
-      except AttributeError: # occurs when we haven't noticed an error
-        session.disconnect()
-        return [False, "Connection closed by server."]
-      except Exception, e: # catch all
-        session.disconnect()        
-        traceback.print_exc(file=sys.stderr)
-        return [False, "Unknown error."]
+    client = ircclient.createIRC(session, nick=nick, ident=ident, ip=ip, realname=config.REALNAME)
+    session.client = client
     
-      return [True]
+    Sessions[id] = session
+    
+    return id
+  
+  def getSession(self, request):
+    sessionid = request.args.get("s")
+    if sessionid is None:
+      raise AJAXException("Bad session ID")
+      
+    session = Sessions.get(sessionid[0])
+    if not session:
+      raise AJAXException("Bad session ID")
+    return session
+    
+  def subscribe(self, request):
+    self.getSession(request).subscribe(SingleUseChannel(request))
+    return server.NOT_DONE_YET
 
-    return [False, "404"]
+  def push(self, request):
+    command = request.args.get("c")
+    if command is None:
+      raise AJAXException("No command specified")
+
+    command = command[0]
+    
+    session = self.getSession(request)
+
+    try:
+      decoded = command.decode("utf-8")
+    except UnicodeDecodeError:
+      decoded = command.decode("iso-8859-1", "ignore")
+
+    if len(decoded) > config.MAXLINELEN:
+      session.disconnect()
+      raise AJAXException("Line too long")
+
+    try:
+      session.push(decoded)
+    except AttributeError: # occurs when we haven't noticed an error
+      session.disconnect()
+      raise AJAXException("Connection closed by server.")
+    except Exception, e: # catch all
+      session.disconnect()        
+      traceback.print_exc(file=sys.stderr)
+      raise AJAXException("Unknown error.")
+  
+    return True
+  
+  COMMANDS = dict(p=push, n=newConnection, s=subscribe)
+  

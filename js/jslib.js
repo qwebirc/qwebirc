@@ -203,3 +203,16 @@ qwebirc.util.getEnclosedWord = function(text, position) {
 String.prototype.startsWith = function(what) {
   return this.substring(0, what.length) == what;
 }
+
+/* NOT cryptographically secure! */
+qwebirc.util.randHexString = function(numBytes) {
+  var getByte = function() {
+    return (((1+Math.random())*0x100)|0).toString(16).substring(1);
+  };
+  
+  var l = [];
+  for(var i=0;i<numBytes;i++)
+    l.push(getByte());
+  
+  return l.join("");
+}
