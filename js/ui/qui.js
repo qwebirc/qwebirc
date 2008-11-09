@@ -260,7 +260,12 @@ qwebirc.ui.QUI.Window = new Class({
       
       tabclose.addEvent("click", close);
       this.tab.addEvent("mouseup", function(e) {
-        if(e.event.button == 1)
+        var button = 1;
+        
+        if(Browser.Engine.trident)
+          button = 4;
+
+        if(e.event.button == button)
           close(e);
       }.bind(this));
       
