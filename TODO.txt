@@ -2,7 +2,7 @@ UI:
   tab dragging
   undo closed tab
   [ ] style flashing
-
+  
 Authing:
   Finish integration
   Fix up state inconsistency if backend is restarted (state is stored in user cookie and not refreshed except on login).
