@@ -16,6 +16,7 @@ qwebirc.ui.Window = new Class({
     this.scrolltimer = null;
     this.commandhistory = this.parentObject.commandhistory;
     this.scrolleddown = true;
+    this.scrollpos = null;
     this.lastNickHash = {};
     this.lastSelected = null;
   },
@@ -38,19 +39,31 @@ qwebirc.ui.Window = new Class({
     this.parentObject.__setActiveWindow(this);
     if(this.hilighted)
       this.setHilighted(qwebirc.ui.HILIGHT_NONE);
-    if(this.scrolleddown)
-      this.scrollToBottom();
+      
+    this.resetScrollPos();
     this.lastSelected = new Date();
   },
   deselect: function() {
-    if(!this.parentObject.singleWindow)
-      this.scrolleddown = this.scrolledDown();
+    this.setScrollPos();
     if($defined(this.scrolltimer)) {
       $clear(this.scrolltimer);
       this.scrolltimer = null;
     }
 
     this.active = false;
+  },
+  resetScrollPos: function() {
+    if(this.scrolleddown) {
+      this.scrollToBottom();
+    } else if($defined(this.scrollpos)) {
+      this.getScrollParent().scrollTo(this.scrollpos.x, this.scrollpos.y);
+    }
+  },
+  setScrollPos: function() {
+    if(!this.parentObject.singleWindow) {
+      this.scrolleddown = this.scrolledDown();
+      this.scrollpos = this.lines.getScroll();
+    }
   },
   addLine: function(type, line, colour, element) {
     var hilight = qwebirc.ui.HILIGHT_NONE;
@@ -104,12 +117,16 @@ qwebirc.ui.Window = new Class({
       
     return prev.y + prevsize.y == prevbottom;
   },
-  scrollToBottom: function() {
-    var parent = this.lines;
-    var scrollparent = parent;
+  getScrollParent: function() {
+    var scrollparent = this.lines;
 
     if($defined(this.scroller))
       scrollparent = this.scroller;
+    return scrollparent;
+  },
+  scrollToBottom: function() {
+    var parent = this.lines;
+    var scrollparent = this.getScrollParent();
       
     scrollparent.scrollTo(parent.getScroll().x, parent.getScrollSize().y);
   },
