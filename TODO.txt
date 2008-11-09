@@ -1,9 +1,20 @@
-O sound
-tab dragging
-O options pane (notices, sound, query behaviour, @+ in nick shown in chantext, etc)
-authgate integration
-undo closed tab
-[ ] style flashing
-O last position line
-/msg $ goes to status, as does /notice $
-Authgate: fix up state inconsistency if backend is restarted (state is stored in user cookie and not refreshed except on login).
+UI:
+  tab dragging
+  undo closed tab
+  [ ] style flashing
+
+Authing:
+  Finish integration
+  Fix up state inconsistency if backend is restarted (state is stored in user cookie and not refreshed except on login).
+
+IRC:  
+  /msg $ goes to status, as does /notice $
+
+Options pane:
+  Finish!
+  Various options:
+    - notices going to active window
+    - query behaviour
+    - @+ in nick shown in chantext
+  Sound
+  Last position line
