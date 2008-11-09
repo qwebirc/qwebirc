@@ -7,7 +7,11 @@ qwebirc.ui.QUI = new Class({
   },
   postInitialize: function() {
     this.qjsui = new qwebirc.ui.QUI.JSUI("qwebirc-qui", this.parentElement);
-    
+    this.qjsui.addEvent("reflow", function() {
+      var w = this.getActiveWindow();
+      if($defined(w))
+        w.onResize();
+    }.bind(this));
     this.qjsui.top.addClass("tabbar");
     
     this.qjsui.bottom.addClass("input");
@@ -113,6 +117,7 @@ qwebirc.ui.QUI = new Class({
 });
 
 qwebirc.ui.QUI.JSUI = new Class({
+  Implements: [Events],
   initialize: function(class_, parent, sizer) {
     this.parent = parent;
     this.sizer = $defined(sizer)?sizer:parent;
@@ -198,6 +203,7 @@ qwebirc.ui.QUI.JSUI = new Class({
     right.setStyle("left", mwidth + "px");
     
     bottom.setStyle("top", (docsize.y - bottomsize.y) + "px");
+    this.fireEvent("reflow");
   },
   showChannel: function(state) {
     var display = "none";

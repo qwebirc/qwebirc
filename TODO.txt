@@ -1,11 +1,9 @@
 O sound
 tab dragging
 O options pane (notices, sound, query behaviour, @+ in nick shown in chantext, etc)
-O authgate integration
-scroll pos not saved on resize (percentage)
+authgate integration
 undo closed tab
-memory leaks
 [ ] style flashing
-last position line
+O last position line
 /msg $ goes to status, as does /notice $
 Authgate: fix up state inconsistency if backend is restarted (state is stored in user cookie and not refreshed except on login).
