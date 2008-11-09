@@ -19,6 +19,7 @@ qwebirc.ui.Window = new Class({
     this.scrollpos = null;
     this.lastNickHash = {};
     this.lastSelected = null;
+    this.closed = false;
   },
   updateNickList: function(nicks) {
   },
@@ -26,6 +27,8 @@ qwebirc.ui.Window = new Class({
     qwebirc.ui.Colourise("[" + topic + "]", element, this.client.exec, this.parentObject.urlDispatcher.bind(this.parentObject), this);
   },
   close: function() {
+    this.closed = true;
+    
     if($defined(this.scrolltimer)) {
       $clear(this.scrolltimer);
       this.scrolltimer = null;

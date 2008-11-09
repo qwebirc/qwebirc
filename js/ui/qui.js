@@ -233,6 +233,10 @@ qwebirc.ui.QUI.Window = new Class({
     this.tab.appendText(name);
     this.tab.addEvent("click", function(e) {
       new Event(e).stop();
+      
+      if(this.closed)
+        return;
+        
       parentObject.selectWindow(this);
     }.bind(this));
     
@@ -240,15 +244,24 @@ qwebirc.ui.QUI.Window = new Class({
       var tabclose = new Element("span");
       tabclose.set("text", "X");
       tabclose.addClass("tabclose");
-      tabclose.addEvent("click", function(e) {
+      var close = function(e) {
         new Event(e).stop();
         
+        if(this.closed)
+          return;
+          
         if(type == qwebirc.ui.WINDOW_CHANNEL)
           this.client.exec("/PART " + name);
 
         this.close();
         
         parentObject.inputbox.focus();
+      }.bind(this);
+      
+      tabclose.addEvent("click", close);
+      this.tab.addEvent("mouseup", function(e) {
+        if(e.event.button == 1)
+          close(e);
       }.bind(this));
       
       this.tab.appendChild(tabclose);
