@@ -2,6 +2,7 @@ UI:
   tab dragging
   undo closed tab
   [ ] style flashing
+  block backspace
   
 Authing:
   Finish integration
@@ -9,7 +10,8 @@ Authing:
 
 IRC:  
   /msg $ goes to status, as does /notice $
-
+  Nick in use should go to active window.
+  
 Options pane:
   Finish!
   Various options:

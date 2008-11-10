@@ -11,8 +11,8 @@ UIs = {
   "qui": {
     "class": "QUI",
     "uifiles": ["qui"],
-    "extra": ["mootools-1.2-sortables"],
-    "buildextra": ["mootools-1.2-sortables"],
+    "extra": ["mootools-1.2-more"],
+    "buildextra": ["mootools-1.2-more"],
     "doctype": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"" + "\n" \
       "  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"
   },
