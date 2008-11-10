@@ -122,7 +122,9 @@ qwebirc.ui.StandardUI = new Class({
     this.parent(parentElement, windowClass, uiName, options);
 
     this.tabCompleter = new qwebirc.ui.TabCompleterFactory(this);
-
+    this.uiOptions = new qwebirc.ui.Options();
+    this.customWindows = {};
+    
     window.addEvent("keydown", function(x) {
       if(!x.alt || x.control)
         return;
@@ -181,26 +183,42 @@ qwebirc.ui.StandardUI = new Class({
 
     return w;
   },
-  embeddedWindow: function() {
-    if(this.embedded) {
-      this.selectWindow(this.embedded)
+  addCustomWindow: function(windowName, class_, cssClass, options) {
+    if(!$defined(options))
+      options = {};
+      
+    if(this.customWindows[windowName]) {
+      this.selectWindow(this.customWindows[windowName]);
       return;
     }
     
-    this.embedded = this.newCustomWindow("Embedding wizard", true);
-    this.embedded.addEvent("close", function() {
-      this.embedded = null;
+    var d = this.newCustomWindow(windowName, true);
+    this.customWindows[windowName] = d;
+    
+    d.addEvent("close", function() {
+      this.customWindows[windowName] = null;
     }.bind(this));
         
-    this.embedded.lines.addClass("embeddedwizard");
-    var ew = new qwebirc.ui.EmbedWizard({parent: this.embedded.lines});
+    if(cssClass)
+      d.lines.addClass(cssClass);
+      
+    var ew = new class_(d.lines, options);
     ew.addEvent("close", function() {
-      this.embedded.close();
+      d.close();
     }.bind(this));
+  },
+  embeddedWindow: function() {
+    this.addCustomWindow("Embedded Wizard", qwebirc.ui.EmbedWizard, "embeddedwizard");
+  },
+  optionsWindow: function() {
+    this.addCustomWindow("Options", qwebirc.ui.OptionsPane, "optionspane", this.uiOptions);
   },
   urlDispatcher: function(name) {
     if(name == "embedded")
       return ["a", this.embeddedWindow.bind(this)];
+      
+    if(name == "options")
+      return ["a", this.optionsWindow.bind(this)];
 
     return null;
   },
@@ -225,7 +243,6 @@ qwebirc.ui.QuakeNetUI = new Class({
         this.client.exec("/WHOIS " + nick);
       }.bind(window)];
     }
-    
     return this.parent(name);
   }
 });
