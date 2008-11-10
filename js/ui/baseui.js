@@ -52,6 +52,13 @@ qwebirc.ui.BaseUI = new Class({
   getActiveWindow: function() {
     return this.active;
   },
+  getActiveIRCWindow: function(client) {
+    if(!this.active || this.active.type == qwebirc.ui.WINDOW_CUSTOM) {
+      return this.windows[client][""];
+    } else {
+      return this.active;
+    }
+  },  
   __setActiveWindow: function(window) {
     this.active = window;
   },

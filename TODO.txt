@@ -3,6 +3,7 @@ UI:
   undo closed tab
   [ ] style flashing
   block backspace
+  scrolling is broken
   
 Authing:
   Finish integration

@@ -46,7 +46,7 @@ qwebirc.irc.IRCClient = new Class({
     this.statusWindow.addLine(type, data);
   },
   newActiveLine: function(type, data) {
-    this.ui.getActiveWindow().addLine(type, data);
+    this.getActiveWindow().addLine(type, data);
   },
   newTargetOrActiveLine: function(target, type, data) {
     if(this.getWindow(target)) {
@@ -107,7 +107,7 @@ qwebirc.irc.IRCClient = new Class({
     return w;
   },
   getActiveWindow: function() {
-    return this.ui.getActiveWindow();
+    return this.ui.getActiveIRCWindow(this);
   },
   getNickname: function() {
     return this.nickname;
