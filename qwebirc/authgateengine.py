@@ -1,6 +1,8 @@
 from authgate import twisted as authgate
 from twisted.web import resource, server, static
-import config, urlparse, urllib
+import config, urlparse, urllib, rijndael, ciphers, hashlib, re
+
+BLOCK_SIZE = 128/8
 
 class AuthgateEngine(resource.Resource):
   isLeaf = True
@@ -24,6 +26,10 @@ class AuthgateEngine(resource.Resource):
       # only used for informational purposes, the backend stores this seperately
       # so if the user changes it just their front end will be messed up!
       request.addCookie("user", ticket.username, path="/")
+
+      qt = ticket.get("qticket")
+      if not qt is None:
+        getSessionData(request)["qticket"] = decodeQTicket(qt)
       
       location = request.getCookie("redirect")
       if location is None:
@@ -38,6 +44,28 @@ class AuthgateEngine(resource.Resource):
       
     return server.NOT_DONE_YET
     
+def decodeQTicket(qticket, p=re.compile("\x00*$"), cipher=rijndael.rijndael(hashlib.sha256(config.QTICKETKEY).digest()[:16])):
+  def decrypt(data):
+    l = len(data)
+    if l < BLOCK_SIZE * 2 or l % BLOCK_SIZE != 0:
+      raise Exception("Bad qticket.")
+    
+    iv, data = data[:16], data[16:]
+    cbc = ciphers.CBC(cipher, iv)
+  
+    # technically this is a flawed padding algorithm as it allows chopping at BLOCK_SIZE, we don't
+    # care about that though!
+    b = range(0, l-BLOCK_SIZE, BLOCK_SIZE)
+    for i, v in enumerate(b):
+      q = cbc.decrypt(data[v:v+BLOCK_SIZE])
+      if i == len(b) - 1:
+        print repr(q), re.sub(p, "", q)
+        yield re.sub(p, "", q)
+      else:
+        print repr(q)
+        yield q
+  return "".join(decrypt(qticket))
+  
 def getSessionData(request):
   return authgate.get_session_data(request)
   

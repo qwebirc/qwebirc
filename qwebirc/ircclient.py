@@ -31,7 +31,11 @@ class QWebIRCClient(basic.LineReceiver):
       self.handleCommand(command, prefix, params)
     except irc.IRCBadMessage:
       self.badMessage(line, *sys.exc_info())
-        
+      
+    if command == "001" and self.__perform:
+      for x in self.__perform:
+        self.write(x)
+      
   def badMessage(self, args):
     self("badmessage", args)
   
@@ -50,6 +54,7 @@ class QWebIRCClient(basic.LineReceiver):
     self.lastError = None
     f = self.factory.ircinit
     nick, ident, ip, realname = f["nick"], f["ident"], f["ip"], f["realname"]
+    self.__perform = f.get("perform")
     
     hmac = hmacfn(ident, ip)
     self.write("USER %s bleh bleh %s %s :%s" % (ident, ip, hmac, realname))

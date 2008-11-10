@@ -1,7 +1,7 @@
 from twisted.web import resource, server, static
 from twisted.names import client
 from twisted.internet import reactor
-from authgateengine import login_optional
+from authgateengine import login_optional, getSessionData
 import simplejson, md5, sys, os, ircclient, time, config, weakref, traceback
 
 Sessions = {}
@@ -171,7 +171,13 @@ class AJAXEngine(resource.Resource):
 
     session = IRCSession(id)
 
-    client = ircclient.createIRC(session, nick=nick, ident=ident, ip=ip, realname=realname)
+    qticket = getSessionData(request).get("qticket")
+    if qticket is None:
+      perform = None
+    else:
+      perform = ["PRIVMSG %s :TICKETAUTH %s" % (config.QBOT, qticket)]
+
+    client = ircclient.createIRC(session, nick=nick, ident=ident, ip=ip, realname=realname, perform=perform)
     session.client = client
     
     Sessions[id] = session
