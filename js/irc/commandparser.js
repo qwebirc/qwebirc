@@ -103,6 +103,15 @@ qwebirc.irc.CommandParser = new Class({
     };
   },
   
+  newUIWindow: function(property) {
+    var p = this.parentObject.ui[property];
+    if(!$defined(p)) {
+      this.getActiveWindow().errorMessage("Current UI does not support that command.");
+    } else {
+      p.bind(this.parentObject.ui)();
+    }
+  },
+  
   /* [require_active_window, splitintoXargs, minargs, function] */
   cmd_ME: [true, undefined, undefined, function(args) {
     if(args == undefined)
@@ -184,6 +193,12 @@ qwebirc.irc.CommandParser = new Class({
     lines.forEach(function(x) {
       this.parentObject.newActiveLine("", x);
     }.bind(this));
+  }],
+  cmd_OPTIONS: [false, undefined, undefined, function(args) {
+    this.newUIWindow("optionsWindow");
+  }],
+  cmd_EMBED: [false, undefined, undefined, function(args) {
+    this.newUIWindow("embeddedWindow");
   }],
   cmd_QUOTE: [false, 1, 1, function(args) {
     this.send(args[0]);
