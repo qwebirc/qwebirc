@@ -8,13 +8,14 @@ UI:
 Authing:
   Finish integration
   Fix up state inconsistency if backend is restarted (state is stored in user cookie and not refreshed except on login).
-
+  Q needs qticket support.
+  Need to parse qticket and send off to Q.
+  
 IRC:  
   /msg $ goes to status, as does /notice $
   Nick in use should go to active window.
   
 Options pane:
-  Finish!
   Various options:
     - notices going to active window
     - query behaviour
