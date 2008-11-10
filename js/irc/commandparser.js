@@ -194,6 +194,9 @@ qwebirc.irc.CommandParser = new Class({
       this.parentObject.newActiveLine("", x);
     }.bind(this));
   }],
+  cmd_LOGOUT: [false, undefined, undefined, function(args) {
+    this.parentObject.ui.logout();
+  }],
   cmd_OPTIONS: [false, undefined, undefined, function(args) {
     this.newUIWindow("optionsWindow");
   }],

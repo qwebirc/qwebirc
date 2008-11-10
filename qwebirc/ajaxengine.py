@@ -154,9 +154,6 @@ class AJAXEngine(resource.Resource):
 
     nick, ident, realname = request.args.get("nick"), "webchat", config.REALNAME
     
-    if not ticket is None:
-      realname = "%s (%s:%d:%s)" % (realname, ticket.username, ticket.id, ticket.authflags)
-      
     if not nick:
       raise AJAXException("Nickname not supplied")
       

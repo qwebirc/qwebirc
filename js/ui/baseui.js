@@ -15,6 +15,7 @@ qwebirc.ui.BaseUI = new Class({
     this.setOptions(options);
     
     this.windows = {};
+    this.clients = {};
     this.windows[qwebirc.ui.CUSTOM_CLIENT] = {};
     this.windowArray = [];
     this.windowClass = windowClass;
@@ -23,11 +24,14 @@ qwebirc.ui.BaseUI = new Class({
     this.parentElement.addClass("qwebirc-" + uiName);
     this.firstClient = false;
     this.commandhistory = new qwebirc.irc.CommandHistory();
+    this.clientId = 0;
   },
   newClient: function(client) {
+    client.id = this.clientId++;
     client.hilightController = new qwebirc.ui.HilightController(client);
     
-    this.windows[client] = {}
+    this.windows[client.id] = {}
+    this.clients[client.id] = client;
     var w = this.newWindow(client, qwebirc.ui.WINDOW_STATUS, "Status");
     this.selectWindow(w);
     if(!this.firstClient) {
@@ -39,12 +43,19 @@ qwebirc.ui.BaseUI = new Class({
     }
     return w;
   },
+  getClientId: function(client) {
+    if(client == qwebirc.ui.CUSTOM_CLIENT) {
+      return qwebirc.ui.CUSTOM_CLIENT;
+    } else {
+      return client.id;
+    }
+  },
   newWindow: function(client, type, name) {
     var identifier = name;
     if(type == qwebirc.ui.WINDOW_STATUS)
       identifier = "";
       
-    var w = this.windows[client][identifier] = new this.windowClass(this, client, type, name, identifier);
+    var w = this.windows[this.getClientId(client)][identifier] = new this.windowClass(this, client, type, name, identifier);
     this.windowArray.push(w);
     
     return w;
@@ -54,7 +65,7 @@ qwebirc.ui.BaseUI = new Class({
   },
   getActiveIRCWindow: function(client) {
     if(!this.active || this.active.type == qwebirc.ui.WINDOW_CUSTOM) {
-      return this.windows[client][""];
+      return this.windows[this.getClientId(client)][""];
     } else {
       return this.active;
     }
@@ -109,7 +120,7 @@ qwebirc.ui.BaseUI = new Class({
     }
     
     this.windowArray = this.windowArray.erase(window);
-    delete this.windows[window.client][window.identifier];
+    delete this.windows[this.getClientId(window.client)][window.identifier];
   },
     /*
       this shouldn't be called by overriding classes!
@@ -182,7 +193,7 @@ qwebirc.ui.StandardUI = new Class({
       
     var w = this.newWindow(qwebirc.ui.CUSTOM_CLIENT, type, name);
     w.addEvent("close", function(w) {
-      delete this.windows[name];
+      delete this.windows[qwebirc.ui.CUSTOM_CLIENT][name];
     }.bind(this));
     
     if(select)
@@ -251,6 +262,16 @@ qwebirc.ui.QuakeNetUI = new Class({
       }.bind(window)];
     }
     return this.parent(name);
+  },
+  logout: function() {
+    if(!qwebirc.auth.loggedin())
+      return;
+    if(confirm("Log out?")) {
+      for(var client in this.clients) {
+        this.clients[client].quit("Logged out");
+      };
+      document.location = "/auth?logout=1";
+    }
   }
 });
 
