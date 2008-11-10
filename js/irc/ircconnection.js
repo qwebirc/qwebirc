@@ -168,5 +168,13 @@ qwebirc.irc.IRCConnection = new Class({
   },
   disconnect: function() {
     this.disconnected = true;
+    if(this.lastactiverequest) {
+      this.lastactiverequest.cancel();
+      this.lastactiverequest = null;
+    }
+    if($defined(this.timeoutid)) {
+      $clear(this.timeoutid);
+      this.timeoutid = null;
+    }
   }
 });
