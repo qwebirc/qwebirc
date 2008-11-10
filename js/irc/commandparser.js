@@ -58,7 +58,7 @@ qwebirc.irc.BaseCommandParser = new Class({
       var minargs = cmdopts[2];  
       var fn = cmdopts[3];
       
-      var w = this.parentObject.getActiveWindow();
+      var w = this.getActiveWindow();
       if(activewin && w.type == qwebirc.ui.WINDOW_STATUS) {
         w.errorMessage("Can't use this command in this window");
         return;
@@ -82,6 +82,9 @@ qwebirc.irc.BaseCommandParser = new Class({
       command = ret[0];
       args = ret[1];
     }
+  },
+  getActiveWindow: function() {
+    return this.parentObject.getActiveWindow();
   }
 });
 
@@ -105,7 +108,7 @@ qwebirc.irc.CommandParser = new Class({
     if(args == undefined)
       args = "";
 
-    var target = this.parentObject.getActiveWindow().name;
+    var target = this.getActiveWindow().name;
     if(!this.send("PRIVMSG " + target + " :\x01ACTION " + args + "\x01"))
       return;
 
@@ -155,7 +158,7 @@ qwebirc.irc.CommandParser = new Class({
     if(args == undefined)
       args = "";
       
-    return ["PRIVMSG", this.parentObject.getActiveWindow().name + " " + args]
+    return ["PRIVMSG", this.getActiveWindow().name + " " + args]
   }],
   cmd_ABOUT: [false, undefined, undefined, function(args) {
     var lines = [
@@ -177,7 +180,7 @@ qwebirc.irc.CommandParser = new Class({
       "",
     ];
     
-    var aw = this.parentObject.getActiveWindow();
+    var aw = this.getActiveWindow();
     lines.forEach(function(x) {
       this.parentObject.newActiveLine("", x);
     }.bind(this));
@@ -186,7 +189,7 @@ qwebirc.irc.CommandParser = new Class({
     this.send(args[0]);
   }],
   cmd_KICK: [true, 2, 1, function(args) {
-    var channel = this.parentObject.getActiveWindow().name;
+    var channel = this.getActiveWindow().name;
     
     var message = "";
     var target = args[0];
@@ -197,7 +200,7 @@ qwebirc.irc.CommandParser = new Class({
     this.send("KICK " + channel + " " + target + " :" + message);
   }],
   automode: function(direction, mode, args) {
-    var channel = this.parentObject.getActiveWindow().name;
+    var channel = this.getActiveWindow().name;
 
     var modes = direction;
     for(var i=0;i<args.length;i++)
@@ -218,7 +221,7 @@ qwebirc.irc.CommandParser = new Class({
     this.automode("-", "v", args);
   }],
   cmd_TOPIC: [true, 1, 1, function(args) {
-    this.send("TOPIC " + this.parentObject.getActiveWindow().name + " :" + args[0]);
+    this.send("TOPIC " + this.getActiveWindow().name + " :" + args[0]);
   }],
   cmd_AWAY: [false, 1, 0, function(args) {
     this.send("AWAY :" + (args?args[0]:""));
@@ -227,7 +230,7 @@ qwebirc.irc.CommandParser = new Class({
     this.send("QUIT :" + (args?args[0]:""));
   }],
   cmd_CYCLE: [true, 1, 0, function(args) {
-    var c = this.parentObject.getActiveWindow().name;
+    var c = this.getActiveWindow().name;
     
     this.send("PART " + c + " :" + (args?args[0]:"rejoining. . ."));
     this.send("JOIN " + c);
@@ -236,12 +239,12 @@ qwebirc.irc.CommandParser = new Class({
     this.send("MODE " + this.parentObject.getNickname() + (args?(" " + args[0]):""));
   }],
   cmd_CLEAR: [false, undefined, undefined, function(args) {
-    var w = this.parentObject.getActiveWindow().lines;
+    var w = this.getActiveWindow().lines;
     while(w.childNodes.length > 0)
       w.removeChild(w.firstChild);
   }],
   cmd_PART: [false, 2, 0, function(args) {
-    var w = this.parentObject.getActiveWindow();
+    var w = this.getActiveWindow();
     var message = "";
     var channel;
     
