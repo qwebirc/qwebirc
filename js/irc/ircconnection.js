@@ -51,6 +51,12 @@ qwebirc.irc.IRCConnection = new Class({
     
     /* try to minimise the amount of headers */
     r.headers = new Hash;
+    if(Browser.Engine.trident) {
+      r.addEvent("request", function() {
+        this.setRequestHeader("Cookie", "");
+        this.setRequestHeader("Cookie", "");
+      }.bind(r.xhr));
+    }
     
     if(Browser.Engine.trident)
       r.setHeader("If-Modified-Since", "Sat, 1 Jan 2000 00:00:00 GMT");
