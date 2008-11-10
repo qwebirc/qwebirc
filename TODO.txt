@@ -21,3 +21,5 @@ Options pane:
     - @+ in nick shown in chantext
   Sound
   Last position line
+  Store options server side when logged in.
+  

@@ -129,7 +129,7 @@ qwebirc.ui.StandardUI = new Class({
     this.parent(parentElement, windowClass, uiName, options);
 
     this.tabCompleter = new qwebirc.ui.TabCompleterFactory(this);
-    this.uiOptions = new qwebirc.ui.Options();
+    this.uiOptions = new qwebirc.ui.DefaultOptionsClass();
     this.customWindows = {};
     
     window.addEvent("keydown", function(x) {
@@ -258,6 +258,7 @@ qwebirc.ui.NewLoginUI = new Class({
   Extends: qwebirc.ui.QuakeNetUI,
   loginBox: function(callbackfn, initialNickname, initialChannels, autoConnect, autoNick) {
     this.postInitialize();
+
     var w = this.newCustomWindow("Connect", true, qwebirc.ui.WINDOW_CONNECT);
     var callback = function(args) {
       w.close();
