@@ -4,12 +4,12 @@ UI:
   [ ] style flashing
   block backspace
   scrolling is broken
+  [enter] in text box should trigger event instead of having a form there?
   
 Authing:
   Finish integration
   Fix up state inconsistency if backend is restarted (state is stored in user cookie and not refreshed except on login).
-  Q needs qticket support.
-  Need to parse qticket and send off to Q.
+  splidge: apply qticket patch.
   
 IRC:  
   /msg $ goes to status, as does /notice $

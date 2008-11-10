@@ -59,8 +59,7 @@ qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initi
     callback({"nickname": initialNickname, "autojoin": initialChannels});
   });
   
-  var user = Cookie.read("user")
-  if(!$defined(user)) {
+  if(!qwebirc.auth.loggedin()) {
     var auth = new Element("input", {"type": "submit", "value": "Log in"});
     td.appendChild(auth);
     auth.addEvent("click", function(e) {

@@ -1,1 +1,1 @@
-var qwebirc = {"ui": {"themes": {}}, "irc": {}, "util": {}, "config": {}};
+var qwebirc = {ui: {themes: {}}, irc: {}, util: {}, config: {}, auth: {}};
