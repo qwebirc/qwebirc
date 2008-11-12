@@ -140,7 +140,7 @@ qwebirc.ui.StandardUI = new Class({
     this.parent(parentElement, windowClass, uiName, options);
 
     this.tabCompleter = new qwebirc.ui.TabCompleterFactory(this);
-    this.uiOptions = new qwebirc.ui.DefaultOptionsClass();
+    this.uiOptions = new qwebirc.ui.DefaultOptionsClass(this);
     this.customWindows = {};
     
     window.addEvent("keydown", function(x) {
@@ -248,8 +248,31 @@ qwebirc.ui.StandardUI = new Class({
   }
 });
 
-qwebirc.ui.QuakeNetUI = new Class({
+qwebirc.ui.SoundUI = new Class({
   Extends: qwebirc.ui.StandardUI,
+  initialize: function(parentElement, windowClass, uiName, options) {
+    this.parent(parentElement, windowClass, uiName, options);
+    
+    this.soundReady = false;
+    this.soundLoaded = false;
+    
+    this.setSoundManager(this.uiOptions.BEEP_ON_MENTION);
+  },
+  setSoundManager: function(value) {
+    this.soundEnabled = value;
+    if(!this.soundEnabled || this.soundLoaded)
+      return;
+    this.soundLoaded = true;
+    /* TODO */
+  },
+  playSound: function() {
+    if(!this.soundReady || !this.soundEnabled)
+      return;
+  }
+});
+
+qwebirc.ui.QuakeNetUI = new Class({
+  Extends: qwebirc.ui.SoundUI,
   urlDispatcher: function(name, window) {
     if(name == "qwhois") {
       return ["span", function(auth) {

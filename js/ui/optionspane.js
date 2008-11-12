@@ -3,31 +3,59 @@ qwebirc.config.TEXT_BOX = 2;
 qwebirc.config.RADIO_BUTTONS = 3;
 
 qwebirc.config.DEFAULT_OPTIONS = [
-  [1, "BEEP_ON_MENTION", "Beep when nick mentioned", true],
+  [1, "BEEP_ON_MENTION", "Beep when nick mentioned (requires Flash)", true, {
+    render: function(input) {
+      if(!$defined(Browser.Plugins.Flash) || Browser.Plugins.Flash.version < 8) {
+        input.disabled = true;
+        input.checked = false;
+      }
+    },
+    get: function(value, ui) {
+      if(ui.setSoundManager)
+        ui.setSoundManager(value);
+    }
+  }],
   [2, "OPEN_QUERIES", "Open new queries automatically", false]
 ];
 
 qwebirc.config.DefaultOptions = null;
 
 qwebirc.config.Input = new Class({
-  initialize: function(parent, option, position) {
+  initialize: function(parent, option, position, parentObject) {
     this.option = option;
     this.value = option.value;
     this.position = position;
-    this.parentObject = parent;
+    this.parentElement = parent;
+    this.parentObject = parentObject;
     
     this.render();
   },
   FE: function(element, parent) {
     var n = new Element(element);
     if(!$defined(parent))
-      parent = this.parentObject;
+      parent = this.parentElement;
       
     parent.appendChild(n);
     return n;
   },
   focus: function() {
     this.mainElement.focus();
+  },
+  render: function() {
+    this.event("render", this.mainElement);
+  },
+  get: function(value) {
+    this.event("get", [value, this.parentObject.optionObject.ui]);
+    return value;
+  },
+  event: function(name, x) {
+    if(!$defined(this.option.extras))
+      return;
+    var t = this.option.extras[name];
+    if(!$defined(t))
+      return;
+      
+    t.pass(x, this)();
   }
 });
 
@@ -39,9 +67,11 @@ qwebirc.config.TextInput = new Class({
     
     i.type = "text";
     i.value = this.value;
+
+    this.parent();
   },
   get: function() {
-    return this.mainElement.value;
+    return this.parent(this.mainElement.value);
   }
 });
 
@@ -53,9 +83,11 @@ qwebirc.config.CheckInput = new Class({
     
     i.type = "checkbox";
     i.checked = this.value;
+    
+    this.parent();
   },
   get: function() {
-    return this.mainElement.checked;
+    return this.parent(this.mainElement.checked);
   }
 });
 
@@ -81,24 +113,26 @@ qwebirc.config.RadioInput = new Class({
       
       d.appendChild(document.createTextNode(value[i][0]));
     };
+    this.parent();
   },
   get: function() {
     for(var i=0;i<this.elements.length;i++) {
       var x = this.elements[i];
       if(x.checked) {
         this.option.position = i;
-        return this.option.options[i][1];
+        return this.parent(this.option.options[i][1]);
       }
     }
   }
 });
 
 qwebirc.config.Option = new Class({
-  initialize: function(optionId, prefix, label, default_) {
+  initialize: function(optionId, prefix, label, default_, extras) {
     this.prefix = prefix;
     this.label = label;
     this.default_ = default_;
     this.optionId = optionId;
+    this.extras = extras;
   },
   setSavedValue: function(x) {
     this.value = x;
@@ -108,7 +142,7 @@ qwebirc.config.Option = new Class({
 qwebirc.config.RadioOption = new Class({
   Extends: qwebirc.config.Option,
   Element: qwebirc.config.RadioInput,
-  initialize: function(optionId, prefix, label, default_, options) {
+  initialize: function(optionId, prefix, label, default_, extras, options) {
     this.options = options.map(function(x) {
       if(typeof(x) == "string")
         return [x, x];
@@ -116,7 +150,7 @@ qwebirc.config.RadioOption = new Class({
     });
     this.defaultposition = default_;
 
-    this.parent(optionId, prefix, label, this.options[default_][1]);
+    this.parent(optionId, prefix, label, this.options[default_][1], extras);
   },
   setSavedValue: function(x) {
     for(var i=0;i<this.options.length;i++) {
@@ -143,12 +177,13 @@ qwebirc.config.CheckOption = new Class({
 });
 
 qwebirc.ui.Options = new Class({
-  initialize: function() {
+  initialize: function(ui) {
     if(!$defined(qwebirc.config.DefaultOptions))
       this.__configureDefaults();
     
     this.optionList = qwebirc.config.DefaultOptions.slice();
     this.optionHash = {}
+    this.ui = ui;
     
     this._setup();
     this.optionList.forEach(function(x) {
@@ -163,11 +198,12 @@ qwebirc.ui.Options = new Class({
       var prefix = x[1];
       var label = x[2];
       var default_ = x[3];
-      var extra = x[4];
+      var moreextras = x[4];
+      var extras = x[5];
       
       var stype = typeof(default_);
       if(stype == "number") {
-        return new qwebirc.config.RadioOption(optionId, prefix, label, default_, extra);
+        return new qwebirc.config.RadioOption(optionId, prefix, label, default_, moreextras, extra);
       } else {
         var type;
         if(stype == "boolean") {
@@ -175,7 +211,7 @@ qwebirc.ui.Options = new Class({
         } else {
           type = qwebirc.config.TextOption;
         }
-        return new type(optionId, prefix, label, default_);
+        return new type(optionId, prefix, label, default_, moreextras);
       }
     });
   },
@@ -224,8 +260,8 @@ qwebirc.ui.OptionsPane = new Class({
       cella.set("text", x.label + ":");
 
       var cellb = FE("td", row);
+      this.boxList.push([x, new x.Element(cellb, x, i, this)]);
 
-      this.boxList.push([x, new x.Element(cellb, x, i)]);
     }
     
     var r = FE("tr", tb);

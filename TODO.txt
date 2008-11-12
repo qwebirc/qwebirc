@@ -5,9 +5,10 @@ UI:
   block backspace
   scrolling is broken
   [enter] in text box should trigger event instead of having a form there?
+  about DIALOG?
   
 Authing:
-  Finish integration
+  Finish integration (notably login button on non-autoconnect page).
   Fix up state inconsistency if backend is restarted (state is stored in user cookie and not refreshed except on login).
   splidge: apply qticket patch.
   
@@ -16,6 +17,7 @@ IRC:
   Nick in use should go to active window.
   
 Options pane:
+  motd and possibly linked somewhere else.
   Various options:
     - notices going to active window
     - query behaviour
