@@ -237,3 +237,26 @@ qwebirc.util.importJS = function(name, watchFor, onload) {
   }
   document.getElementsByTagName("head")[0].appendChild(script);
 }
+
+qwebirc.util.createInput = function(type, parent, name, selected) {
+  var r;
+  if(Browser.Engine.trident) {
+    if(name) {
+      name = " name=\"" + escape(name) + "\"";
+    } else {
+      name = "";
+    }
+    r = $(document.createElement("<input type=\"" + type + "\"" + name + " " + (selected?" checked":"") + "/>"));
+  } else {    
+    r = new Element("input");
+    r.type = type;
+    if(name)
+      r.name = name;
+      
+    if(selected)
+      r.checked = true;
+  }
+    
+  parent.appendChild(r);
+  return r;
+}

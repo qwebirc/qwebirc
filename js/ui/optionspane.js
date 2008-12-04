@@ -30,6 +30,12 @@ qwebirc.config.Input = new Class({
     
     this.render();
   },
+  createInput: function(type, parent, name, selected) {
+    if(!$defined(parent))
+      parent = this.parentElement;
+
+    return qwebirc.util.createInput(type, parent, name, selected);
+  },
   FE: function(element, parent) {
     var n = new Element(element);
     if(!$defined(parent))
@@ -62,10 +68,9 @@ qwebirc.config.Input = new Class({
 qwebirc.config.TextInput = new Class({
   Extends: qwebirc.config.Input,
   render: function() {
-    var i = this.FE("input");
+    var i = this.createInput("text");
     this.mainElement = i;
     
-    i.type = "text";
     i.value = this.value;
 
     this.parent();
@@ -78,10 +83,9 @@ qwebirc.config.TextInput = new Class({
 qwebirc.config.CheckInput = new Class({
   Extends: qwebirc.config.Input,
   render: function() {
-    var i = this.FE("input");
+    var i = this.createInput("checkbox");
     this.mainElement = i;
     
-    i.type = "checkbox";
     i.checked = this.value;
     
     this.parent();
@@ -100,14 +104,9 @@ qwebirc.config.RadioInput = new Class({
     
     for(var i=0;i<value.length;i++) {
       var d = this.FE("div", this.parentObject);
-      var e = this.FE("input", d);
+      var e = this.createInput("radio", d, "options_radio" + this.position, i == this.option.position);
       this.elements.push(e);
       
-      e.type = "radio";
-      e.name = "options_radio" + this.position;
-      if(i == this.option.position)
-        e.checked = "1";
-
       if(i == 0)
         this.mainElement = e;
       
@@ -267,8 +266,7 @@ qwebirc.ui.OptionsPane = new Class({
     var r = FE("tr", tb);
     var cella = FE("td", r);
     var cellb = FE("td", r);
-    var save = FE("input", r);
-    save.type = "button";
+    var save = qwebirc.util.createInput("submit", cellb);
     save.value = "Save";
     
     save.addEvent("click", function() {
@@ -276,8 +274,7 @@ qwebirc.ui.OptionsPane = new Class({
       this.fireEvent("close");
     }.bind(this));
     
-    var cancel = FE("input", r);
-    cancel.type = "button";
+    var cancel = qwebirc.util.createInput("submit", cellb);
     cancel.value = "Cancel";
     cancel.addEvent("click", function() {
       this.fireEvent("close");
@@ -319,4 +316,3 @@ qwebirc.ui.CookieOptions = new Class({
 qwebirc.ui.DefaultOptionsClass = new Class({
   Extends: qwebirc.ui.CookieOptions
 });
-

@@ -28,7 +28,7 @@ qwebirc.sound.SoundPlayer = new Class({
       return;
     }
     
-    qwebirc.util.importJS("/js/soundmanager2.js", "SoundManager", function() {
+    qwebirc.util.importJS("/js/soundmanager2.js", "soundManager", function() {
       soundManager.url = "/sound/";
       
       /* Fixes Firefox z-index Flash bug */

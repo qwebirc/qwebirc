@@ -51,12 +51,23 @@ qwebirc.irc.IRCConnection = new Class({
     
     /* try to minimise the amount of headers */
     r.headers = new Hash;
-    if(Browser.Engine.trident) {
-      r.addEvent("request", function() {
-        this.setRequestHeader("Cookie", "");
-        this.setRequestHeader("Cookie", "");
-      }.bind(r.xhr));
-    }
+    r.addEvent("request", function() {
+      var setHeader = function(key, value) {
+        try {
+          this.setRequestHeader(key, value);
+        } catch(e) {
+        }
+      }.bind(this);
+    
+      if(Browser.Engine.trident) {
+        setHeader("Cookie", "");
+        setHeader("Cookie", "");
+      }
+      
+      setHeader("User-Agent", null);
+      setHeader("Accept", null);
+      setHeader("Accept-Language", null);
+    }.bind(r.xhr));
     
     if(Browser.Engine.trident)
       r.setHeader("If-Modified-Since", "Sat, 1 Jan 2000 00:00:00 GMT");

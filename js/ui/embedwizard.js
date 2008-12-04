@@ -88,19 +88,7 @@ qwebirc.ui.EmbedWizard = new Class({
     var p = new Element("div");
     parent.appendChild(p);
 
-    var r;
-    if(Browser.Engine.trident) {
-      r = document.createElement("<input type=\"radio\" name=\" + escape(name) + \"" + (selected?" checked":"") + "/>");
-    } else {    
-      r = new Element("input");
-      r.type = "radio";
-      r.name = name;
-    }    
-
-    if(selected)
-      r.checked = true;
-      
-    p.appendChild(r);
+    var r = qwebirc.util.createInput("radio", p, name, selected);
     p.appendChild(document.createTextNode(text));
       
     return r;

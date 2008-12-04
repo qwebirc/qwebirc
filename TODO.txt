@@ -1,14 +1,15 @@
 UI:
   tab dragging
-  undo closed tab
   [ ] style flashing
   block backspace
   scrolling is broken
   [enter] in text box should trigger event instead of having a form there?
   about DIALOG?
+  Save last nick in cookies.
   
 Authing:
   Finish integration (notably login button on non-autoconnect page).
+  Login button should save state on form.
   Fix up state inconsistency if backend is restarted (state is stored in user cookie and not refreshed except on login).
   
 IRC:  
@@ -27,5 +28,5 @@ Options pane:
   Store options server side when logged in.
   
 Other:
-  IE6 is broken again :(
+  IE7 seems to be broke
   
