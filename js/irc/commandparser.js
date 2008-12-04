@@ -184,6 +184,8 @@ qwebirc.irc.CommandParser = new Class({
       "- MooTools v1.2 -- http://mootools.net/",
       "  Copyright (C) 2006-2008 Valerio Proietti, MIT license.",
       "- qwebirc icon -- http://meeb.org/",
+      "- SoundManager 2 -- http://www.schillmania.com/projects/soundmanager2/",
+      "  Copyright (C) 2007, Scott Schiller (schillmania.com), BSD license.",
       "",
       "Thank you for flying QuakeNet!",
       "",

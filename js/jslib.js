@@ -216,3 +216,24 @@ qwebirc.util.randHexString = function(numBytes) {
   
   return l.join("");
 }
+
+qwebirc.util.importJS = function(name, watchFor, onload) {
+  var script = document.createElement("script");
+  script.type = "text/javascript";
+  script.src = name;
+  
+  if(Browser.Engine.trident) {
+    /* HORRID */
+    var checkFn = function() {
+      if(eval("typeof " + watchFor) != "undefined") {
+        onload();
+      } else {
+        checkFn.delay(10);
+      }
+    }
+    checkFn();
+  } else {
+    script.onload = onload;
+  }
+  document.getElementsByTagName("head")[0].appendChild(script);
+}

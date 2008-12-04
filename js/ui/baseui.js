@@ -253,21 +253,34 @@ qwebirc.ui.SoundUI = new Class({
   initialize: function(parentElement, windowClass, uiName, options) {
     this.parent(parentElement, windowClass, uiName, options);
     
+    this.soundInited = false;
     this.soundReady = false;
-    this.soundLoaded = false;
     
-    this.setSoundManager(this.uiOptions.BEEP_ON_MENTION);
+    this.setBeepOnMention(this.uiOptions.BEEP_ON_MENTION);    
   },
-  setSoundManager: function(value) {
-    this.soundEnabled = value;
-    if(!this.soundEnabled || this.soundLoaded)
+  soundInit: function() {
+    if(this.soundInited)
       return;
-    this.soundLoaded = true;
-    /* TODO */
+    if(!$defined(Browser.Plugins.Flash) || Browser.Plugins.Flash.version < 8)
+      return;
+    this.soundInited = true;
+    
+    this.soundPlayer = new qwebirc.sound.SoundPlayer();
+    this.soundPlayer.addEvent("ready", function() {
+      this.soundReady = true;
+    }.bind(this));
+    this.soundPlayer.go();
   },
-  playSound: function() {
-    if(!this.soundReady || !this.soundEnabled)
+  setBeepOnMention: function(value) {
+    if(value)
+      this.soundInit();
+    this.beepOnMention = value;
+  },
+  beep: function() {
+    if(!this.soundReady || !this.beepOnMention)
       return;
+      
+    this.soundPlayer.beep();
   }
 });
 

@@ -10,7 +10,6 @@ UI:
 Authing:
   Finish integration (notably login button on non-autoconnect page).
   Fix up state inconsistency if backend is restarted (state is stored in user cookie and not refreshed except on login).
-  splidge: apply qticket patch.
   
 IRC:  
   /msg $ goes to status, as does /notice $
@@ -18,6 +17,7 @@ IRC:
   
 Options pane:
   motd and possibly linked somewhere else.
+  same with embedded wizard
   Various options:
     - notices going to active window
     - query behaviour
@@ -25,4 +25,7 @@ Options pane:
   Sound
   Last position line
   Store options server side when logged in.
+  
+Other:
+  IE6 is broken again :(
   

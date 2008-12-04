@@ -11,8 +11,8 @@ qwebirc.config.DEFAULT_OPTIONS = [
       }
     },
     get: function(value, ui) {
-      if(ui.setSoundManager)
-        ui.setSoundManager(value);
+      if(ui.setBeepOnMention)
+        ui.setBeepOnMention(value);
     }
   }],
   [2, "OPEN_QUERIES", "Open new queries automatically", false]
