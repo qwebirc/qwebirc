@@ -221,8 +221,8 @@ qwebirc.ui.QUI.JSUI = new Class({
 qwebirc.ui.QUI.Window = new Class({
   Extends: qwebirc.ui.Window,
   
-  initialize: function(parentObject, client, type, name) {
-    this.parent(parentObject, client, type, name);
+  initialize: function(parentObject, client, type, name, identifier) {
+    this.parent(parentObject, client, type, name, identifier);
 
     this.tab = new Element("a", {"href": "#"});
     this.tab.addClass("tab");

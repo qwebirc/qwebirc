@@ -55,8 +55,8 @@ qwebirc.ui.SWMUI = new Class({
 qwebirc.ui.SWMUI.Window = new Class({
   Extends: qwebirc.ui.Window,
   
-  initialize: function(parentObject, client, type, name) {
-    this.parent(parentObject, client, type, name);
+  initialize: function(parentObject, client, type, name, identifier) {
+    this.parent(parentObject, client, type, name, identifier);
     this.contentPanel = new qwebirc.ui.SWMUI.Panel(parentObject.mainPanel, true);
     this.contentPanel.addClass("content");
 

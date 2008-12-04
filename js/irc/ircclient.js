@@ -106,6 +106,30 @@ qwebirc.irc.IRCClient = new Class({
       
     return w;
   },
+  newQueryWindow: function(name) {
+    if(this.ui.uiOptions.DEDICATED_MSG_WINDOW)
+      return this.ui.newWindow(this, qwebirc.ui.WINDOW_MESSAGES, "Messages");
+    return this.newWindow(name, qwebirc.ui.WINDOW_QUERY, false);
+  },
+  newQueryLine: function(window, type, data, active) {
+    if(this.getWindow(window))
+      return this.newLine(window, type, data);
+      
+    var w = this.ui.getWindow(this, qwebirc.ui.WINDOW_MESSAGES);
+    
+    if(this.ui.uiOptions.DEDICATED_MSG_WINDOW && w) {
+      return w.addLine(type, data);
+    } else {
+      if(active) {
+        return this.newActiveLine(window, type, data);
+      } else {
+        return this.newLine(window, type, data);
+      }
+    }
+  },
+  newQueryOrActiveLine: function(window, type, data) {
+    this.newQueryLine(window, type, data, true);
+  },
   getActiveWindow: function() {
     return this.ui.getActiveIRCWindow(this);
   },
@@ -286,8 +310,8 @@ qwebirc.irc.IRCClient = new Class({
       args = "";
     
     if(type == "ACTION") {      
-      this.newWindow(nick, qwebirc.ui.WINDOW_QUERY);
-      this.newLine(nick, "PRIVACTION", {"m": args, "x": type, "h": host, "n": nick});
+      this.newQueryWindow(nick);
+      this.newQueryLine(nick, "PRIVACTION", {"m": args, "x": type, "h": host, "n": nick});
       return;
     }
     
@@ -312,9 +336,9 @@ qwebirc.irc.IRCClient = new Class({
     var nick = user.hostToNick();
     var host = user.hostToHost();
     
-    this.newWindow(nick, qwebirc.ui.WINDOW_QUERY);
+    this.newQueryWindow(nick);
     this.pushLastNick(nick);
-    this.newLine(nick, "PRIVMSG", {"m": message, "h": host, "n": nick});
+    this.newQueryLine(nick, "PRIVMSG", {"m": message, "h": host, "n": nick});
   },
   serverNotice: function(message) {
     this.newServerLine("SERVERNOTICE", {"m": message});
@@ -389,7 +413,7 @@ qwebirc.irc.IRCClient = new Class({
     this.disconnect();
   },
   awayMessage: function(nick, message) {
-    this.newLine(nick, "AWAY", {"n": nick, "m": message});
+    this.newQueryLine(nick, "AWAY", {"n": nick, "m": message});
   },
   whois: function(nick, type, data) {
     var ndata = {"n": nick};
@@ -442,6 +466,9 @@ qwebirc.irc.IRCClient = new Class({
   },
   genericError: function(target, message) {
     this.newTargetOrActiveLine(target, "GENERICERROR", {m: message, t: target});
+  },
+  genericQueryError: function(target, message) {
+    this.newQueryOrActiveLine(target, "GENERICERROR", {m: message, t: target});
   },
   awayStatus: function(state, message) {
     this.newActiveLine("GENERICMESSAGE", {m: message});

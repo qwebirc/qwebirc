@@ -76,8 +76,12 @@ qwebirc.ui.Window = new Class({
       hilight = qwebirc.ui.HILIGHT_ACTIVITY;
       
       if(type.match(/(NOTICE|ACTION|MSG)$/)) {
-        if(this.type == qwebirc.ui.WINDOW_QUERY) {
-          hilight = qwebirc.ui.HILIGHT_US;
+        if(this.type == qwebirc.ui.WINDOW_QUERY || this.type == qwebirc.ui.WINDOW_MESSAGES) {
+          if(type.match(/^OUR/)) {
+            hilight = qwebirc.ui.HILIGHT_ACTIVITY;
+          } else {
+            hilight = qwebirc.ui.HILIGHT_US;
+          }
         }
         if(!type.match(/^OUR/) && this.client.hilightController.match(line["m"])) {
           lhilight = true;

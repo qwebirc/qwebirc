@@ -57,8 +57,8 @@ qwebirc.ui.MochaUI = new Class({
 qwebirc.ui.MochaUI.Window = new Class({
   Extends: qwebirc.ui.Window,
   
-  initialize: function(parentObject, client, type, name) {
-    this.parent(parentObject, client, type, name);
+  initialize: function(parentObject, client, type, name, identifier) {
+    this.parent(parentObject, client, type, name, identifier);
 
     this.lines = new Element("div", {styles: {overflow: "auto", "width": "90"}});
 

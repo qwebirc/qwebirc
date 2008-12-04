@@ -3,6 +3,7 @@ qwebirc.ui.WINDOW_QUERY = 2;
 qwebirc.ui.WINDOW_CHANNEL = 3;
 qwebirc.ui.WINDOW_CUSTOM = 4;
 qwebirc.ui.WINDOW_CONNECT = 5;
+qwebirc.ui.WINDOW_MESSAGES = 6;
 qwebirc.ui.CUSTOM_CLIENT = "custom";
 
 qwebirc.ui.BaseUI = new Class({
@@ -50,22 +51,37 @@ qwebirc.ui.BaseUI = new Class({
       return client.id;
     }
   },
-  newWindow: function(client, type, name) {
-    var identifier = name;
+  getWindowIdentifier: function(type, name) {
+    if(type == qwebirc.ui.WINDOW_MESSAGES)
+      return "-M";
     if(type == qwebirc.ui.WINDOW_STATUS)
-      identifier = "";
+      return "";
+    return "_" + name;
+  },
+  newWindow: function(client, type, name) {
+    var w = this.getWindow(client, type, name);
+    if($defined(w))
+      return w;
       
-    var w = this.windows[this.getClientId(client)][identifier] = new this.windowClass(this, client, type, name, identifier);
+    var wId = this.getWindowIdentifier(type, name);
+    var w = this.windows[this.getClientId(client)][wId] = new this.windowClass(this, client, type, name, wId);
     this.windowArray.push(w);
     
     return w;
+  },
+  getWindow: function(client, type, name) {
+    var c = this.windows[this.getClientId(client)];
+    if(!$defined(c))
+      return null;
+      
+    return c[this.getWindowIdentifier(type, name)];
   },
   getActiveWindow: function() {
     return this.active;
   },
   getActiveIRCWindow: function(client) {
     if(!this.active || this.active.type == qwebirc.ui.WINDOW_CUSTOM) {
-      return this.windows[this.getClientId(client)][""];
+      return this.windows[this.getClientId(client)][this.getWindowIdentifier(qwebirc.ui.WINDOW_STATUS)];
     } else {
       return this.active;
     }
@@ -193,7 +209,7 @@ qwebirc.ui.StandardUI = new Class({
       
     var w = this.newWindow(qwebirc.ui.CUSTOM_CLIENT, type, name);
     w.addEvent("close", function(w) {
-      delete this.windows[qwebirc.ui.CUSTOM_CLIENT][name];
+      delete this.windows[qwebirc.ui.CUSTOM_CLIENT][w.identifier];
     }.bind(this));
     
     if(select)

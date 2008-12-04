@@ -15,7 +15,8 @@ qwebirc.config.DEFAULT_OPTIONS = [
         ui.setBeepOnMention(value);
     }
   }],
-  [2, "OPEN_QUERIES", "Open new queries automatically", false]
+  [2, "DEDICATED_MSG_WINDOW", "Use dedicated messages window", false],
+  [3, "TEXT_STATUS", "Show status (@/+) before nicknames", true]
 ];
 
 qwebirc.config.DefaultOptions = null;

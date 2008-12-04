@@ -3,14 +3,17 @@ qwebirc.irc.BaseCommandParser = new Class({
     this.send = parentObject.send;
     this.parentObject = parentObject;
   },
-  newTargetLine: function(target, type, message, extra) {
+  buildExtra: function(extra, target, message) {
     if(!extra)
       extra = {}
 
     extra["n"] = this.parentObject.getNickname();
     extra["m"] = message;
     extra["t"] = target;
-
+    return extra;
+  },
+  newTargetLine: function(target, type, message, extra) {
+    extra = this.buildExtra(extra, target, message);
     var window = this.parentObject.getWindow(target);
     var channel;
     if(!window) {
@@ -25,6 +28,19 @@ qwebirc.irc.BaseCommandParser = new Class({
     }
 
     this.parentObject.newLine(target, "OUR" + type, extra);
+  },
+  newQueryLine: function(target, type, message, extra) {
+    extra = this.buildExtra(extra, target, message);
+    
+    if(this.parentObject.ui.uiOptions.DEDICATED_MSG_WINDOW) {
+      var window = this.parentObject.getWindow(target);
+      if(!window) {
+        var w = this.parentObject.ui.newWindow(this.parentObject, qwebirc.ui.WINDOW_MESSAGES, "Messages");
+        w.addLine("OURTARGETED" + type, extra);
+        return;
+      }
+    }
+    return this.newTargetLine(target, type, message, extra);
   },
   dispatch: function(line) {
     if(line.length == 0)
@@ -59,7 +75,7 @@ qwebirc.irc.BaseCommandParser = new Class({
       var fn = cmdopts[3];
       
       var w = this.getActiveWindow();
-      if(activewin && w.type == qwebirc.ui.WINDOW_STATUS) {
+      if(activewin && (w.type != qwebirc.ui.WINDOW_CHANNEL && w.type != qwebirc.ui.WINDOW_QUERY)) {
         w.errorMessage("Can't use this command in this window");
         return;
       }
@@ -121,7 +137,7 @@ qwebirc.irc.CommandParser = new Class({
     if(!this.send("PRIVMSG " + target + " :\x01ACTION " + args + "\x01"))
       return;
 
-    this.newTargetLine(target, "ACTION", args);
+    this.newQueryLine(target, "ACTION", args);
   }],
   cmd_CTCP: [false, 3, 2, function(args) {
     var target = args[0];
@@ -148,7 +164,7 @@ qwebirc.irc.CommandParser = new Class({
     if(!this.parentObject.isChannel(target))
       this.parentObject.pushLastNick(target);
     if(this.send("PRIVMSG " + target + " :" + message))
-      this.newTargetLine(target, "MSG", message, {});  
+      this.newQueryLine(target, "MSG", message, {});  
   }],
   cmd_NOTICE: [false, 2, 2, function(args) {
     var target = args[0];
@@ -268,7 +284,7 @@ qwebirc.irc.CommandParser = new Class({
     var message = "";
     var channel;
     
-    if(w.type == qwebirc.ui.WINDOW_STATUS) {
+    if(w.type != qwebirc.ui.WINDOW_CHANNEL) {
       if(!args || args.length == 0) {
         w.errorMessage("Insufficient arguments for command.");
         return;

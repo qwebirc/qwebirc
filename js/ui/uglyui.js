@@ -40,8 +40,8 @@ qwebirc.ui.UglyUI = new Class({
 qwebirc.ui.UglyUI.Window = new Class({
   Extends: qwebirc.ui.Window,
   
-  initialize: function(parentObject, client, type, name) {
-    this.parent(parentObject, client, type, name);
+  initialize: function(parentObject, client, type, name, identifier) {
+    this.parent(parentObject, client, type, name, identifier);
         
     this.outerContainer = new Element("div");
     this.outerContainer.addClass("outercontainer");
