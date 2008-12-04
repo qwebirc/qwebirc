@@ -325,9 +325,21 @@ qwebirc.irc.IRCClient = new Class({
     
     this.newTargetOrActiveLine(nick, "CTCPREPLY", {"m": args, "x": type, "h": host, "n": nick, "-": this.nickname});
   },
+  getNickStatus: function(channel, nick) {
+    var n = this.tracker.getNickOnChannel(nick, channel);
+    if(!$defined(n))
+      return "";
+      
+    if(n.prefixes.length == 0)
+      return "";
+      
+    return n.prefixes.charAt(0);
+  },
   channelPrivmsg: function(user, channel, message) {
-    this.tracker.updateLastSpoke(user.hostToNick(), channel, new Date().getTime()); 
-    this.newChanLine(channel, "CHANMSG", user, {"m": message});
+    var nick = user.hostToNick();
+    
+    this.tracker.updateLastSpoke(nick, channel, new Date().getTime()); 
+    this.newChanLine(channel, "CHANMSG", user, {"m": message, "@": this.getNickStatus(channel, nick)});
   },
   channelNotice: function(user, channel, message) {
     this.newChanLine(channel, "CHANNOTICE", user, {"m": message});

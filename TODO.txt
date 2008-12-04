@@ -21,8 +21,6 @@ Options pane:
   same with embedded wizard
   Various options:
     - notices going to active window
-    - query behaviour
-    - @+ in nick shown in chantext
   Sound
   Last position line
   Store options server side when logged in.
