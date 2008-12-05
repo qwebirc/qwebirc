@@ -77,7 +77,7 @@ qwebirc.ui.Window = new Class({
       
       if(type.match(/(NOTICE|ACTION|MSG)$/)) {
         if(this.type == qwebirc.ui.WINDOW_QUERY || this.type == qwebirc.ui.WINDOW_MESSAGES) {
-          if(type.match(/^OUR/)) {
+          if(type.match(/^OUR/) || type.match(/NOTICE$/)) {
             hilight = qwebirc.ui.HILIGHT_ACTIVITY;
           } else {
             hilight = qwebirc.ui.HILIGHT_US;

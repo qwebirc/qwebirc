@@ -15,7 +15,8 @@ qwebirc.config.DEFAULT_OPTIONS = [
         ui.setBeepOnMention(value);
     }
   }],
-  [2, "DEDICATED_MSG_WINDOW", "Use dedicated messages window", false],
+  [2, "DEDICATED_MSG_WINDOW", "Send privmsgs to dedicated messages window", false],
+  [4, "DEDICATED_NOTICE_WINDOW", "Send notices to dedicated message window", false],
   [3, "NICK_OV_STATUS", "Show status (@/+) before nicknames", true]
 ];
 

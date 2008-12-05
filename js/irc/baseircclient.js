@@ -210,8 +210,8 @@ qwebirc.irc.BaseIRCClient = new Class({
     var target = params[0];
     var message = params.indexFromEnd(-1);
     
-    if(user == "") {
-      this.serverNotice(message);
+    if((user == "") || (user.indexOf("!") == -1)) {
+      this.serverNotice(user, message);
     } else if(target == this.nickname) {
       var ctcp = this.processCTCP(message);
       if(ctcp) {

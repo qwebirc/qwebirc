@@ -109,18 +109,32 @@ qwebirc.irc.IRCClient = new Class({
   getQueryWindow: function(name) {
     return this.ui.getWindow(this, qwebirc.ui.WINDOW_QUERY, name);
   },
-  newQueryWindow: function(name) {
-    if(this.ui.uiOptions.DEDICATED_MSG_WINDOW && !this.ui.getWindow(this, qwebirc.ui.WINDOW_MESSAGES) && !this.getQueryWindow(name))
+  newQueryWindow: function(name, privmsg) {
+    var e;
+    if(privmsg) {
+      e = this.ui.uiOptions.DEDICATED_MSG_WINDOW;
+    } else {
+      e = this.ui.uiOptions.DEDICATED_NOTICE_WINDOW;
+    }
+    if(e && !this.ui.getWindow(this, qwebirc.ui.WINDOW_MESSAGES) && !this.getQueryWindow(name))
       return this.ui.newWindow(this, qwebirc.ui.WINDOW_MESSAGES, "Messages");
-    return this.newWindow(name, qwebirc.ui.WINDOW_QUERY, false);
+      
+    if(privmsg)
+      return this.newWindow(name, qwebirc.ui.WINDOW_QUERY, false);
   },
-  newQueryLine: function(window, type, data, active) {
+  newQueryLine: function(window, type, data, privmsg, active) {
     if(this.getQueryWindow(window))
       return this.newLine(window, type, data);
       
     var w = this.ui.getWindow(this, qwebirc.ui.WINDOW_MESSAGES);
     
-    if(this.ui.uiOptions.DEDICATED_MSG_WINDOW && w) {
+    var e;
+    if(privmsg) {
+      e = this.ui.uiOptions.DEDICATED_MSG_WINDOW;
+    } else {
+      e = this.ui.uiOptions.DEDICATED_NOTICE_WINDOW;
+    }
+    if(e && w) {
       return w.addLine(type, data);
     } else {
       if(active) {
@@ -130,8 +144,8 @@ qwebirc.irc.IRCClient = new Class({
       }
     }
   },
-  newQueryOrActiveLine: function(window, type, data) {
-    this.newQueryLine(window, type, data, true);
+  newQueryOrActiveLine: function(window, type, data, privmsg) {
+    this.newQueryLine(window, type, data, privmsg, true);
   },
   getActiveWindow: function() {
     return this.ui.getActiveIRCWindow(this);
@@ -314,8 +328,8 @@ qwebirc.irc.IRCClient = new Class({
       args = "";
     
     if(type == "ACTION") {      
-      this.newQueryWindow(nick);
-      this.newQueryLine(nick, "PRIVACTION", {"m": args, "x": type, "h": host, "n": nick});
+      this.newQueryWindow(nick, true);
+      this.newQueryLine(nick, "PRIVACTION", {"m": args, "x": type, "h": host, "n": nick}, true);
       return;
     }
     
@@ -352,18 +366,27 @@ qwebirc.irc.IRCClient = new Class({
     var nick = user.hostToNick();
     var host = user.hostToHost();
     
-    this.newQueryWindow(nick);
+    this.newQueryWindow(nick, true);
     this.pushLastNick(nick);
-    this.newQueryLine(nick, "PRIVMSG", {"m": message, "h": host, "n": nick});
+    this.newQueryLine(nick, "PRIVMSG", {"m": message, "h": host, "n": nick}, true);
   },
-  serverNotice: function(message) {
-    this.newServerLine("SERVERNOTICE", {"m": message});
+  serverNotice: function(user, message) {
+    if(user == "") {
+      this.newServerLine("SERVERNOTICE", {"m": message});
+    } else {
+      this.newServerLine("PRIVNOTICE", {"m": message, "n": user});
+    }
   },
   userNotice: function(user, message) {
     var nick = user.hostToNick();
     var host = user.hostToHost();
 
-    this.newTargetOrActiveLine(nick, "PRIVNOTICE", {"m": message, "h": host, "n": nick});
+    if(this.ui.uiOptions.DEDICATED_NOTICE_WINDOW) {
+      this.newQueryWindow(nick, false);
+      this.newQueryOrActiveLine(nick, "PRIVNOTICE", {"m": message, "h": host, "n": nick}, false);
+    } else {
+      this.newTargetOrActiveLine(nick, "PRIVNOTICE", {"m": message, "h": host, "n": nick});
+    }
   },
   userInvite: function(user, channel) {
     var nick = user.hostToNick();
@@ -429,7 +452,7 @@ qwebirc.irc.IRCClient = new Class({
     this.disconnect();
   },
   awayMessage: function(nick, message) {
-    this.newQueryLine(nick, "AWAY", {"n": nick, "m": message});
+    this.newQueryLine(nick, "AWAY", {"n": nick, "m": message}, true);
   },
   whois: function(nick, type, data) {
     var ndata = {"n": nick};
@@ -484,7 +507,7 @@ qwebirc.irc.IRCClient = new Class({
     this.newTargetOrActiveLine(target, "GENERICERROR", {m: message, t: target});
   },
   genericQueryError: function(target, message) {
-    this.newQueryOrActiveLine(target, "GENERICERROR", {m: message, t: target});
+    this.newQueryOrActiveLine(target, "GENERICERROR", {m: message, t: target}, true);
   },
   awayStatus: function(state, message) {
     this.newActiveLine("GENERICMESSAGE", {m: message});
