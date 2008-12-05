@@ -5,6 +5,10 @@ UI:
   TIDY: [enter] in text box should trigger event instead of having a form there?
   FEAT: about DIALOG?
   FEAT: Save last nick in cookies.
+  FEAT: multiline pastes
+  FEAT: link motd and embedded wizard somewhere more obvious.
+  FEAT: Last position line
+  FEAT: branding
   
 Authing:
   TIDY: Finish integration (notably login button on non-autoconnect page).
@@ -15,13 +19,7 @@ IRC:
   TIDY: /msg $ goes to status, as does /notice $, should go to active.
   
 Options pane:
-  TIDY: motd and possibly linked somewhere else.
-  FEAT: same with embedded wizard
-  FEAT: Sound
-  FEAT: Last position line
   FEAT: Store options server side when logged in.
   
 Other:
   BUG: IE7 seems to be broke
-
-  

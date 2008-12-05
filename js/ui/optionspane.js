@@ -3,7 +3,7 @@ qwebirc.config.TEXT_BOX = 2;
 qwebirc.config.RADIO_BUTTONS = 3;
 
 qwebirc.config.DEFAULT_OPTIONS = [
-  [1, "BEEP_ON_MENTION", "Beep when nick mentioned (requires Flash)", true, {
+  [1, "BEEP_ON_MENTION", "Beep when nick mentioned or on query activity (requires Flash)", true, {
     render: function(input) {
       if(!$defined(Browser.Plugins.Flash) || Browser.Plugins.Flash.version < 8) {
         input.disabled = true;

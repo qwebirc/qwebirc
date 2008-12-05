@@ -81,11 +81,13 @@ qwebirc.ui.Window = new Class({
             hilight = qwebirc.ui.HILIGHT_ACTIVITY;
           } else {
             hilight = qwebirc.ui.HILIGHT_US;
+            this.parentObject.beep();
           }
         }
         if(!type.match(/^OUR/) && this.client.hilightController.match(line["m"])) {
           lhilight = true;
           hilight = qwebirc.ui.HILIGHT_US;
+          this.parentObject.beep();
         } else if(hilight != qwebirc.ui.HILIGHT_US) {
           hilight = qwebirc.ui.HILIGHT_SPEECH;
         }
@@ -102,10 +104,10 @@ qwebirc.ui.Window = new Class({
     this.scrollAdd(element);
   },
   errorMessage: function(message) {
-    this.addLine("", message, "red");
+    this.addLine("", message, "#FF6347");
   },
   infoMessage: function(message) {
-    this.addLine("", message, "	#87CEFA");
+    this.addLine("", message, "#87CEFA");
   },
   setHilighted: function(state) {
     if(state == qwebirc.ui.HILIGHT_NONE || state >= this.hilighted)
