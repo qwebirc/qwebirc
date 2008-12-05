@@ -13,6 +13,12 @@ if [ "$1" = "-n" ]; then
   shift
 fi
 
+if [ "$1" = "-r" ]; then
+  PREARGS="$PREARGS $1 $2"
+  shift
+  shift
+fi
+
 if [ "$1" != "" ]; then
   if [ "$ARGS" != "" ]; then
     echo "Not using default arguments: $ARGS"
