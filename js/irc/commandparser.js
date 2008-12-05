@@ -179,6 +179,11 @@ qwebirc.irc.CommandParser = new Class({
     }
   }],
   cmd_QUERY: [false, 2, 1, function(args) {
+    if(this.parentObject.isChannel(args[0])) {
+      this.getActiveWindow().errorMessage("Can't target a channel with this command.");
+      return;
+    }
+
     this.parentObject.newWindow(args[0], qwebirc.ui.WINDOW_QUERY, true);
 
     if((args.length > 1) && (args[1] != ""))

@@ -89,15 +89,15 @@ qwebirc.irc.IRCClient = new Class({
       w.updateNickList(sortednames);
   },
   getWindow: function(name) {
-    return this.windows[name];
+    return this.windows[name.toIRCLower()];
   },
   newWindow: function(name, type, select) {
     var w = this.getWindow(name);
     if(!w) {
-      w = this.windows[name] = this.ui.newWindow(this, type, name);
+      w = this.windows[name.toIRCLower()] = this.ui.newWindow(this, type, name);
       
       w.addEvent("close", function(w) {
-        delete this.windows[name];
+        delete this.windows[name.toIRCLower()];
       }.bind(this));
     }
     
@@ -106,13 +106,16 @@ qwebirc.irc.IRCClient = new Class({
       
     return w;
   },
+  getQueryWindow: function(name) {
+    return this.ui.getWindow(this, qwebirc.ui.WINDOW_QUERY, name);
+  },
   newQueryWindow: function(name) {
-    if(this.ui.uiOptions.DEDICATED_MSG_WINDOW)
+    if(this.ui.uiOptions.DEDICATED_MSG_WINDOW && !this.ui.getWindow(this, qwebirc.ui.WINDOW_MESSAGES) && !this.getQueryWindow(name))
       return this.ui.newWindow(this, qwebirc.ui.WINDOW_MESSAGES, "Messages");
     return this.newWindow(name, qwebirc.ui.WINDOW_QUERY, false);
   },
   newQueryLine: function(window, type, data, active) {
-    if(this.getWindow(window))
+    if(this.getQueryWindow(window))
       return this.newLine(window, type, data);
       
     var w = this.ui.getWindow(this, qwebirc.ui.WINDOW_MESSAGES);

@@ -56,7 +56,7 @@ qwebirc.ui.BaseUI = new Class({
       return "-M";
     if(type == qwebirc.ui.WINDOW_STATUS)
       return "";
-    return "_" + name;
+    return "_" + name.toIRCLower();
   },
   newWindow: function(client, type, name) {
     var w = this.getWindow(client, type, name);

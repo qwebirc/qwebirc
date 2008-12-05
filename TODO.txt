@@ -23,5 +23,5 @@ Options pane:
   
 Other:
   BUG: IE7 seems to be broke
-  BUG: Queries: upper/lowercase issues.
+
   
