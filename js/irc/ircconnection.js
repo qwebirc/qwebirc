@@ -59,11 +59,6 @@ qwebirc.irc.IRCConnection = new Class({
         }
       }.bind(this);
     
-      if(Browser.Engine.trident) {
-        setHeader("Cookie", "");
-        setHeader("Cookie", "");
-      }
-      
       setHeader("User-Agent", null);
       setHeader("Accept", null);
       setHeader("Accept-Language", null);

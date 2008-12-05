@@ -1,12 +1,12 @@
 UI:
   FEAT: tab dragging
   FEAT: [ ] style flashing
-  FEAT: block backspace
+  FEAT: block backspace and /
   TIDY: [enter] in text box should trigger event instead of having a form there?
   FEAT: about DIALOG?
   FEAT: Save last nick/chans in cookies.
   FEAT: multiline pastes
-  FEAT: link motd and embedded wizard somewhere more obvious.
+  FEAT: link options, about and embedded wizard somewhere more obvious.
   FEAT: Last position line
   FEAT: branding
   
@@ -20,7 +20,3 @@ IRC:
   
 Options pane:
   FEAT: Store options server side when logged in.
-  FEAT: Add option to redirect notices to message window.
-  
-Other:
-  BUG: IE7 seems to be broke
