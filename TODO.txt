@@ -23,3 +23,5 @@ Options pane:
   
 Other:
   BUG: IE7 seems to be broke
+  BUG: check to see if newlines are passed through (or \r).
+  

@@ -213,7 +213,9 @@ qwebirc.irc.CommandParser = new Class({
       "- SoundManager 2 -- http://www.schillmania.com/projects/soundmanager2/",
       "  Copyright (C) 2007, Scott Schiller (schillmania.com), BSD license.",
       "",
-      "Thank you for flying QuakeNet!",
+      "Special thanks to various comments/suggestions/bug reports from Bazerka, meeb, Starman, Microbe, morphium, the muppets in #rogue (hi dunks!) and everyone I forgot :(.",
+      "",
+      "Also, thank *you* for flying QuakeNet!",
       "",
     ];
     
