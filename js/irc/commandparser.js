@@ -281,6 +281,27 @@ qwebirc.irc.CommandParser = new Class({
     this.send("PART " + c + " :" + (args?args[0]:"rejoining. . ."));
     this.send("JOIN " + c);
   }],
+  cmd_JOIN: [false, 2, 1, function(args) {
+    var channels = args.shift();
+    
+    var schans = channels.split(",");
+    var fchans = [];
+    
+    var warn = false;
+    
+    schans.forEach(function(x) {
+      if(!this.parentObject.isChannel(x)) {
+        x = "#" + x;
+        warn = true;
+      }
+      fchans.push(x);
+    }.bind(this));
+
+    if(warn)
+      this.getActiveWindow().infoMessage("Channel names begin with # (corrected automatically).");
+      
+    this.send("JOIN " + fchans.join(",") + " " + args.join(" "));
+  }],
   cmd_UMODE: [false, 1, 0, function(args) {
     this.send("MODE " + this.parentObject.getNickname() + (args?(" " + args[0]):""));
   }],

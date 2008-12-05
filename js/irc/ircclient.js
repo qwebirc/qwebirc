@@ -177,7 +177,7 @@ qwebirc.irc.IRCClient = new Class({
     this.newServerLine("SIGNON");
     
     if(this.options.autojoin)
-      this.send("JOIN " + this.options.autojoin);
+      this.commandparser.dispatch("/JOIN " + this.options.autojoin);
   },
   userJoined: function(user, channel) {
     var nick = user.hostToNick();
