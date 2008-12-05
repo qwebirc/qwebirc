@@ -75,15 +75,18 @@ qwebirc.irc.BaseIRCClient = new Class({
     this.signedOn(this.nickname);
   },
   irc_ERR_NICKNAMEINUSE: function(prefix, params) {
+    this.genericError(params[1], params.indexFromEnd(-1).replace("in use.", "in use"));
+    
     if(this.__signedOn)
-      return;
+      return true;
     
     var newnick = params[1] + "_";
     if(newnick == this.lastnick)
-      newnick = "webchat" + Math.floor(Math.random() * 1024 * 1024);
+      newnick = "qwebirc" + Math.floor(Math.random() * 1024 * 1024);
 
     this.send("NICK " + newnick);
     this.lastnick = newnick;
+    return true;
   },
   irc_NICK: function(prefix, params) {
     var user = prefix;

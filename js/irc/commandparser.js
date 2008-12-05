@@ -137,7 +137,7 @@ qwebirc.irc.CommandParser = new Class({
     if(!this.send("PRIVMSG " + target + " :\x01ACTION " + args + "\x01"))
       return;
 
-    this.newQueryLine(target, "ACTION", args);
+    this.newQueryLine(target, "ACTION", args, {"@": this.parentObject.getNickStatus(target, this.parentObject.nickname)});
   }],
   cmd_CTCP: [false, 3, 2, function(args) {
     var target = args[0];
@@ -170,8 +170,13 @@ qwebirc.irc.CommandParser = new Class({
     var target = args[0];
     var message = args[1];
 
-    if(this.send("NOTICE " + target + " :" + message))
-      this.newTargetLine(target, "NOTICE", message);
+    if(this.send("NOTICE " + target + " :" + message)) {
+      if(this.parentObject.isChannel(target)) {
+        this.newTargetLine(target, "NOTICE", message, {"@": this.parentObject.getNickStatus(target, this.parentObject.nickname)});
+      } else {
+        this.newTargetLine(target, "NOTICE", message);
+      }
+    }
   }],
   cmd_QUERY: [false, 2, 1, function(args) {
     this.parentObject.newWindow(args[0], qwebirc.ui.WINDOW_QUERY, true);

@@ -297,11 +297,11 @@ qwebirc.irc.IRCClient = new Class({
 
     if(type == "ACTION") {
       this.tracker.updateLastSpoke(user.hostToNick(), channel, new Date().getTime()); 
-      this.newChanLine(channel, "CHANACTION", user, {"m": args, "c": channel});
+      this.newChanLine(channel, "CHANACTION", user, {"m": args, "c": channel, "@": this.getNickStatus(channel, nick)});
       return;
     }
     
-    this.newChanLine(channel, "CHANCTCP", user, {"x": type, "m": args, "c": channel});
+    this.newChanLine(channel, "CHANCTCP", user, {"x": type, "m": args, "c": channel, "@": this.getNickStatus(channel, nick)});
   },
   userCTCP: function(user, type, args) {
     var nick = user.hostToNick();
@@ -342,7 +342,7 @@ qwebirc.irc.IRCClient = new Class({
     this.newChanLine(channel, "CHANMSG", user, {"m": message, "@": this.getNickStatus(channel, nick)});
   },
   channelNotice: function(user, channel, message) {
-    this.newChanLine(channel, "CHANNOTICE", user, {"m": message});
+    this.newChanLine(channel, "CHANNOTICE", user, {"m": message, "@": this.getNickStatus(channel, nick)});
   },
   userPrivmsg: function(user, message) {
     var nick = user.hostToNick();

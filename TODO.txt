@@ -1,30 +1,27 @@
 UI:
-  tab dragging
-  [ ] style flashing
-  block backspace
-  scrolling is broken
-  [enter] in text box should trigger event instead of having a form there?
-  about DIALOG?
-  Save last nick in cookies.
+  FEAT: tab dragging
+  FEAT: [ ] style flashing
+  FEAT: block backspace
+  TIDY: [enter] in text box should trigger event instead of having a form there?
+  FEAT: about DIALOG?
+  FEAT: Save last nick in cookies.
   
 Authing:
-  Finish integration (notably login button on non-autoconnect page).
-  Login button should save state on form.
-  Fix up state inconsistency if backend is restarted (state is stored in user cookie and not refreshed except on login).
+  TIDY: Finish integration (notably login button on non-autoconnect page).
+  TIDY: Login button should save state on form.
+  TIDY: Fix up state inconsistency if backend is restarted (state is stored in user cookie and not refreshed except on login).
   
 IRC:  
-  /msg $ goes to status, as does /notice $
-  Nick in use should go to active window.
+  TIDY: /msg $ goes to status, as does /notice $, should go to active.
   
 Options pane:
-  motd and possibly linked somewhere else.
-  same with embedded wizard
-  Various options:
-    - notices going to active window
-  Sound
-  Last position line
-  Store options server side when logged in.
+  TIDY: motd and possibly linked somewhere else.
+  FEAT: same with embedded wizard
+  FEAT: Sound
+  FEAT: Last position line
+  FEAT: Store options server side when logged in.
   
 Other:
-  IE7 seems to be broke
+  BUG: IE7 seems to be broke
+  BUG: Queries: upper/lowercase issues.
   
