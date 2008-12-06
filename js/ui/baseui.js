@@ -159,49 +159,61 @@ qwebirc.ui.StandardUI = new Class({
     this.uiOptions = new qwebirc.ui.DefaultOptionsClass(this);
     this.customWindows = {};
     
-    window.addEvent("keydown", function(x) {
-      if(!x.alt || x.control)
+    if(Browser.Engine.trident) {
+      ev = "keydown";
+    } else {
+      ev = "keypress";
+    }
+    document.addEvent(ev, this.__handleHotkey.bind(this));
+  },
+  __handleHotkey: function(x) {
+    if(!x.alt || x.control) {
+      if(x.key == "backspace" || x.key == "/")
+        if(!this.getInputFocused(x))
+          new Event(x).stop();
+      return;
+    }
+    var success = false;
+    if(x.key == "a" || x.key == "A") {
+      var highestNum = 0;
+      var highestIndex = -1;
+      success = true;
+      
+      new Event(x).stop();
+      for(var i=0;i<this.windowArray.length;i++) {
+        var h = this.windowArray[i].hilighted;
+        if(h > highestNum) {
+          highestIndex = i;
+          highestNum = h;
+        }
+      }
+      if(highestIndex > -1)
+        this.selectWindow(this.windowArray[highestIndex]);
+    } else if(x.key >= '0' && x.key <= '9') {
+      success = true;
+      
+      number = x.key - '0';
+      if(number == 0)
+        number = 10
+        
+      number = number - 1;
+      
+      if(number >= this.windowArray.length)
         return;
         
-      var success = false;
-      if(x.key == "a" || x.key == "A") {
-        var highestNum = 0;
-        var highestIndex = -1;
-        success = true;
-        
-        new Event(x).stop();
-        for(var i=0;i<this.windowArray.length;i++) {
-          var h = this.windowArray[i].hilighted;
-          if(h > highestNum) {
-            highestIndex = i;
-            highestNum = h;
-          }
-        }
-        if(highestIndex > -1)
-          this.selectWindow(this.windowArray[highestIndex]);
-      } else if(x.key >= '0' && x.key <= '9') {
-        success = true;
-        
-        number = x.key - '0';
-        if(number == 0)
-          number = 10
-          
-        number = number - 1;
-        
-        if(number >= this.windowArray.length)
-          return;
-          
-        this.selectWindow(this.windowArray[number]);
-      } else if(x.key == "left") {
-        this.prevWindow();
-        success = true;
-      } else if(x.key == "right") {
-        this.nextWindow();
-        success = true;
-      }
-      if(success)
-        new Event(x).stop();      
-    }.bind(this));
+      this.selectWindow(this.windowArray[number]);
+    } else if(x.key == "left") {
+      this.prevWindow();
+      success = true;
+    } else if(x.key == "right") {
+      this.nextWindow();
+      success = true;
+    }
+    if(success)
+      new Event(x).stop();
+  },
+  getInputFocused: function(x) {
+    return  $$("input").indexOf(x.target) > -1;
   },
   newCustomWindow: function(name, select, type) {
     if(!type)
