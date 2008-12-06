@@ -100,3 +100,11 @@
 .qwebirc .colourline .Xu {
   text-decoration: underline;
 }
+
+.qwebirc .warncolour {
+  background-color: #ff9090;
+}
+
+.qwebirc .infocolour {
+  background-color: #9090ff;
+}

@@ -75,7 +75,7 @@ qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initi
   td.appendChild(yes);
   yes.focus();
   yes.addEvent("click", function(e) {
-    parentElement.removeChild(box);
+    parentElement.removeChild(outerbox);
     callback({"nickname": initialNickname, "autojoin": initialChannels});
   });
   
@@ -170,7 +170,7 @@ qwebirc.ui.LoginBox = function(parentElement, callback, initialNickname, initial
       return;
     }
 
-    parentElement.removeChild(box);
+    parentElement.removeChild(outerbox);
     
     callback({"nickname": nickname, "autojoin": chans});
   }.bind(this));

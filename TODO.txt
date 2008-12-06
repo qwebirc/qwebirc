@@ -1,17 +1,14 @@
 UI:
   FEAT: tab dragging
   FEAT: [ ] style flashing
-  TIDY: [enter] in text box should trigger event instead of having a form there?
   FEAT: Save last nick/chans in cookies.
   FEAT: multiline pastes
   FEAT: link options, about and embedded wizard somewhere more obvious.
   FEAT: Last position line
-  TIDY: warning/info messages should have their colour decided by CSS
   FEAT: privacy policy
   
 Authing:
-  TIDY: Finish integration (notably login button on non-autoconnect page).
-  TIDY: Login button should save state on form.
+  FEAT: Login button should save state on form.
   TIDY: Fix up state inconsistency if backend is restarted (state is stored in user cookie and not refreshed except on login).
   FEAT: bind qticket to session to prevent ticket reuse within time limit.
   FEAT: on startup: if autojoin channels exist and Q invites then the autojoin channels should be focused rather than the Q invited ones.

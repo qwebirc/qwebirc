@@ -104,10 +104,10 @@ qwebirc.ui.Window = new Class({
     this.scrollAdd(element);
   },
   errorMessage: function(message) {
-    this.addLine("", message, "#FF6347");
+    this.addLine("", message, "warncolour");
   },
   infoMessage: function(message) {
-    this.addLine("", message, "#87CEFA");
+    this.addLine("", message, "infocolour");
   },
   setHilighted: function(state) {
     if(state == qwebirc.ui.HILIGHT_NONE || state >= this.hilighted)
