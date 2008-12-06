@@ -1,5 +1,4 @@
 .qwebirc-loginbox {
-  font-family: Verdana, sans-serif;
   height: 100%;
   width: 100%;
   vertical-align: middle;
@@ -7,14 +6,20 @@
 
 .qwebirc-loginbox .tr1 {
   width: 100%;
-  vertical-align: bottom;
   text-align: center;
 }
 
 .qwebirc-loginbox .tr2 {
   width: 100%;
-  vertical-align: top;
   text-align: center;
+}
+
+.qwebirc-loginbox .tr2 td {
+  vertical-align: top;
+}
+
+.qwebirc-loginbox .tr1 td {
+  vertical-align: bottom;
 }
 
 .qwebirc-loginbox .tr2 table {
@@ -24,7 +29,6 @@
 }
 
 .qwebirc-confirmbox {
-  font-family: Verdana, sans-serif;
   height: 100%;
   width: 100%;
   vertical-align: middle;
@@ -44,7 +48,6 @@
 
 .qwebirc-aboutpane {
   background-color: lightgrey;
-  font-family: Verdana !important;
   font-size: 1em !important;
   padding-bottom: 5px;
 }
@@ -52,11 +55,11 @@
 .qwebirc-aboutpane .mainbody {
   font-size: 0.8em;
   text-align: center;
-  padding-top: 5px;
+  padding: 5px;
 }
 
 .qwebirc-aboutpane table {
-  display: inline;
+  display: inline-block;
 }
 
 .qwebirc-aboutpane div.header {

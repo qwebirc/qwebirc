@@ -275,6 +275,8 @@ qwebirc.ui.QUI.Window = new Class({
     this.lines = new Element("div");
     this.parentObject.qjsui.applyClasses("middle", this.lines);
     this.lines.addClass("lines");
+    if(type != qwebirc.ui.WINDOW_CUSTOM && type != qwebirc.ui.WINDOW_CONNECT)
+      this.lines.addClass("ircwindow");
     
     this.lines.addEvent("scroll", function() {
       this.scrolleddown = this.scrolledDown();
