@@ -9,13 +9,13 @@ UI:
   FEAT: branding
   TIDY: warning/info messages should have their colour decided by CSS
   FEAT: privacy policy
-  FEAT: +x
   TIDY: connect dialog offset looks non-centred
   
 Authing:
   TIDY: Finish integration (notably login button on non-autoconnect page).
   TIDY: Login button should save state on form.
   TIDY: Fix up state inconsistency if backend is restarted (state is stored in user cookie and not refreshed except on login).
+  FEAT: bind qticket to session to prevent ticket reuse within time limit.
   
 IRC:  
   TIDY: /msg $ goes to status, as does /notice $, should go to active.

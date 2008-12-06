@@ -281,6 +281,10 @@ qwebirc.irc.CommandParser = new Class({
   cmd_UMODE: [false, 1, 0, function(args) {
     this.send("MODE " + this.parentObject.getNickname() + (args?(" " + args[0]):""));
   }],
+  cmd_AUTOJOIN: [false, undefined, undefined, function(args) {
+    var realargs = this.parentObject.options.autojoin.splitMax(" ", 2);
+    return ["JOIN", realargs[0], realargs[1]];
+  }],
   cmd_CLEAR: [false, undefined, undefined, function(args) {
     var w = this.getActiveWindow().lines;
     while(w.childNodes.length > 0)

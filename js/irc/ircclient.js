@@ -193,8 +193,25 @@ qwebirc.irc.IRCClient = new Class({
     this.nickname = nickname;
     this.newServerLine("SIGNON");
     
-    if(this.options.autojoin)
-      this.commandparser.dispatch("/JOIN " + this.options.autojoin);
+    /* we guarantee that +x is sent out before the joins */
+    if(this.ui.uiOptions.USE_HIDDENHOST)
+      this.exec("/UMODE +x");
+      
+    if(qwebirc.auth.loggedin && this.options.autojoin) {
+      if(this.ui.uiOptions.USE_HIDDENHOST) {
+        var d = function() {
+          if($defined(this.activeTimers.autojoin))
+            this.ui.getActiveWindow().infoMessage("Waiting for login before joining channels...");
+        }.delay(5, this);
+        this.activeTimers.autojoin = function() {
+          var w = this.ui.getActiveWindow();
+          w.errorMessage("No login response in 10 seconds.");
+          w.errorMessage("You may want to try authing to Q and then type: /autojoin (if you don't auth your host may be visible).");
+        }.delay(10000, this);
+      } else {
+        this.exec("/AUTOJOIN");
+      }
+    }
   },
   userJoined: function(user, channel) {
     var nick = user.hostToNick();
@@ -368,10 +385,21 @@ qwebirc.irc.IRCClient = new Class({
   userPrivmsg: function(user, message) {
     var nick = user.hostToNick();
     var host = user.hostToHost();
-    
     this.newQueryWindow(nick, true);
     this.pushLastNick(nick);
     this.newQueryLine(nick, "PRIVMSG", {"m": message, "h": host, "n": nick}, true);
+
+    this.checkLogin(user, message);
+  },
+  checkLogin: function(user, message) {
+    if(this.isNetworkService(user) && $defined(this.activeTimers.autojoin)) {
+      if(message.match(/^You are now logged in as [^ ]+\.$/)) {
+        $clear(this.activeTimers.autojoin);
+        delete this.activeTimers["autojoin"];
+        this.ui.getActiveWindow().infoMessage("Joining channels...");
+        this.exec("/AUTOJOIN");
+      }
+    }
   },
   serverNotice: function(user, message) {
     if(user == "") {
@@ -390,6 +418,8 @@ qwebirc.irc.IRCClient = new Class({
     } else {
       this.newTargetOrActiveLine(nick, "PRIVNOTICE", {"m": message, "h": host, "n": nick});
     }
+    
+    this.checkLogin(user, message);
   },
   isNetworkService: function(user) {
     /* TODO: refactor */
