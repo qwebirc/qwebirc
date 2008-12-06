@@ -1,3 +1,4 @@
+/**************** LOGIN BOX *******************/
 .qwebirc-loginbox {
   height: 100%;
   width: 100%;
@@ -28,6 +29,7 @@
   text-align: left;
 }
 
+/**************** CONFIRM LOGIN BOX *******************/
 .qwebirc-confirmbox {
   height: 100%;
   width: 100%;
@@ -46,6 +48,7 @@
   text-align: center;
 }
 
+/**************** ABOUT PANE *******************/
 .qwebirc-aboutpane {
   background-color: lightgrey;
   font-size: 1em !important;
@@ -86,6 +89,7 @@
   margin-top: 0px;
 }
 
+/**************** EMBEDDED WIZARD *******************/
  div.qwebirc-embeddedwizard {
   padding-left: 5px;
   padding-top: 2px;
