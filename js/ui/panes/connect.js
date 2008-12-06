@@ -6,6 +6,12 @@ qwebirc.ui.GenericLoginBox = function(parentElement, callback, initialNickname, 
   }
 }
 
+qwebirc.ui.AuthLogin = function(e) {
+  var cookie = Cookie.write("redirect", document.location);
+  document.location = "./auth/";
+  new Event(e).stop();
+}
+
 qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initialChannels, autoNick, networkName) {
   var outerbox = new Element("table");
   outerbox.addClass("qwebirc-centrebox");
@@ -76,10 +82,7 @@ qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initi
   if(!qwebirc.auth.loggedin()) {
     var auth = new Element("input", {"type": "submit", "value": "Log in"});
     td.appendChild(auth);
-    auth.addEvent("click", function(e) {
-      var cookie = Cookie.write("redirect", document.location);
-      document.location = "./auth/";
-    });
+    auth.addEvent("click", qwebirc.ui.AuthLogin);
   }
 }
 
@@ -137,7 +140,7 @@ qwebirc.ui.LoginBox = function(parentElement, callback, initialNickname, initial
     var d2 = new Element("td");
     r.appendChild(d2);
     d2.appendChild(e2);
-    return d1;
+    return d2;
   }
 
   var nick = new Element("input");
@@ -147,7 +150,12 @@ qwebirc.ui.LoginBox = function(parentElement, callback, initialNickname, initial
 
   var connbutton = new Element("input", {"type": "submit"});
   connbutton.set("value", "Connect");
-  createRow(undefined, connbutton)
+  var r = createRow(undefined, connbutton)
+  if(!qwebirc.auth.loggedin()) {
+    var auth = new Element("input", {"type": "submit", "value": "Log in"});
+    r.appendChild(auth);
+    auth.addEvent("click", qwebirc.ui.AuthLogin);
+  }
 
   form.addEvent("submit", function(e) {
     new Event(e).stop();
