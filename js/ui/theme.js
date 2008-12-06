@@ -24,7 +24,7 @@ qwebirc.ui.themes.Default = {
   "QUIT": ["$N [$h] has quit [$m]", true],
   "NICK": ["$n has changed nick to $[$w$]", true],
   "TOPIC": ["$N changed the topic of $c to: $m", true],
-  "UMODE": ["MODE $n $m", true],
+  "UMODE": ["Usermode change: $m", true],
   "INVITE": ["$N invites you to join $c", true],
   "HILIGHT": ["$C4"],
   "HILIGHTEND": ["$O"],
