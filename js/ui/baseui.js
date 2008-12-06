@@ -234,7 +234,7 @@ qwebirc.ui.StandardUI = new Class({
     }.bind(this));
         
     if(cssClass)
-      d.lines.addClass(cssClass);
+      d.lines.addClass("qwebirc-" + cssClass);
       
     var ew = new class_(d.lines, options);
     ew.addEvent("close", function() {
@@ -246,6 +246,9 @@ qwebirc.ui.StandardUI = new Class({
   },
   optionsWindow: function() {
     this.addCustomWindow("Options", qwebirc.ui.OptionsPane, "optionspane", this.uiOptions);
+  },
+  aboutWindow: function() {
+    this.addCustomWindow("About", qwebirc.ui.AboutPane, "aboutpane", this.uiOptions);
   },
   urlDispatcher: function(name) {
     if(name == "embedded")

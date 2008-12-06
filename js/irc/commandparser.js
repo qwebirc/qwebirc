@@ -195,35 +195,6 @@ qwebirc.irc.CommandParser = new Class({
       
     return ["PRIVMSG", this.getActiveWindow().name + " " + args]
   }],
-  cmd_ABOUT: [false, undefined, undefined, function(args) {
-    var lines = [
-      "",
-      "qwebirc v" + qwebirc.VERSION,
-      "Copyright (C) 2008 Chris Porter. All rights reserved.",
-      "http://webchat.quakenet.org/",
-      "",
-      "For licensing questions please contact slug@quakenet.org.",
-      "",
-      "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.",
-      "",
-      "This software contains portions by the following third parties:",
-      "- MooTools v1.2 -- http://mootools.net/",
-      "  Copyright (C) 2006-2008 Valerio Proietti, MIT license.",
-      "- qwebirc icon -- http://meeb.org/",
-      "- SoundManager 2 -- http://www.schillmania.com/projects/soundmanager2/",
-      "  Copyright (C) 2007, Scott Schiller (schillmania.com), BSD license.",
-      "",
-      "Special thanks to various comments/suggestions/bug reports from Bazerka, meeb, Starman, Microbe, morphium, the muppets in #rogue (hi dunks!) and everyone I forgot :(.",
-      "",
-      "Also, thank *you* for flying QuakeNet!",
-      "",
-    ];
-    
-    var aw = this.getActiveWindow();
-    lines.forEach(function(x) {
-      this.parentObject.newActiveLine("", x);
-    }.bind(this));
-  }],
   cmd_LOGOUT: [false, undefined, undefined, function(args) {
     this.parentObject.ui.logout();
   }],
@@ -232,6 +203,9 @@ qwebirc.irc.CommandParser = new Class({
   }],
   cmd_EMBED: [false, undefined, undefined, function(args) {
     this.newUIWindow("embeddedWindow");
+  }],
+  cmd_ABOUT: [false, undefined, undefined, function(args) {
+    this.newUIWindow("aboutWindow");
   }],
   cmd_QUOTE: [false, 1, 1, function(args) {
     this.send(args[0]);

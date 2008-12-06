@@ -1,7 +1,7 @@
 import os, sys
 
 IRC_BASE = ["ircconnection", "irclib", "numerics", "baseircclient", "irctracker", "commandparser", "ircclient", "commandhistory"]
-UI_BASE = ["baseui", "baseuiwindow", "colour", "url", "theme", "genericlogin", "embedwizard", "hilightcontroller", "menuitems", "tabcompleter", "optionspane"]
+UI_BASE = ["baseui", "baseuiwindow", "colour", "url", "theme", "genericlogin", "embedwizard", "hilightcontroller", "menuitems", "tabcompleter", "optionspane", "aboutpane"]
 
 DEBUG_BASE = ["qwebirc", "version", "jslib", ["irc/%s" % x for x in IRC_BASE], ["ui/%s" % x for x in UI_BASE], "qwebircinterface", "auth", "sound"]
 BUILD_BASE = ["qwebirc"]
@@ -72,7 +72,7 @@ def jslist(name, debug):
 
 def csslist(name):
   ui = UIs[name]
-  return list("css/%s.css" % x for x in flatten(["colours", ui.get("extracss", []), "%s" % name]))
+  return list("css/%s.css" % x for x in flatten([ui.get("extracss", []), "colours", "dialogs", "%s" % name]))
 
 def producehtml(name, debug):
   ui = UIs[name]

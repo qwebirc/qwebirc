@@ -9,6 +9,9 @@ UI:
   FEAT: link options, about and embedded wizard somewhere more obvious.
   FEAT: Last position line
   FEAT: branding
+  TIDY: warning/info messages should have their colour decided by CSS
+  BUG: about looks weird in chrome
+  BUG: connect pos is wrong in opera
   
 Authing:
   TIDY: Finish integration (notably login button on non-autoconnect page).
@@ -17,6 +20,7 @@ Authing:
   
 IRC:  
   TIDY: /msg $ goes to status, as does /notice $, should go to active.
+  FEAT: auto accept Q invites
   
 Options pane:
   FEAT: Store options server side when logged in.

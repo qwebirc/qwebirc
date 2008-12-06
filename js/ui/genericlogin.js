@@ -8,7 +8,7 @@ qwebirc.ui.GenericLoginBox = function(parentElement, callback, initialNickname, 
 
 qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initialChannels, autoNick) {
   var box = new Element("table");
-  box.addClass("confirmbox");
+  box.addClass("qwebirc-confirmbox");
   parentElement.appendChild(box);
 
   var tbody = new Element("tbody");
@@ -72,7 +72,7 @@ qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initi
 qwebirc.ui.LoginBox = function(parentElement, callback, initialNickname, initialChannels) {
   var box = new Element("table");
   parentElement.appendChild(box);
-  box.addClass("loginbox");
+  box.addClass("qwebirc-loginbox");
   
   var tbody = new Element("tbody");
   box.appendChild(tbody);
