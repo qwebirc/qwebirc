@@ -5,8 +5,8 @@ mkdir compiled
 del /q compiled\*.js
 
 cd js
-copy qwebirc.js + version.js + jslib.js + irc\ircconnection.js + irc\irclib.js + irc\numerics.js + irc\baseircclient.js + irc\irctracker.js + irc\commandparser.js + irc\ircclient.js + ui\baseui.js + ui\baseuiwindow.js + ui\colour.js + ui\url.js + ui\theme.js + ui\genericlogin.js + ui\embedwizard.js + qwebircinterface.js + irc\commandhistory.js + ui\hilightcontroller.js + ui\menuitems.js + ui\tabcompleter.js + ui\optionspane.js + ui\aboutpane.js + auth.js + sound.js ..\compiled\qwebirc-concat.js /b
-copy ui\swmui.js + ui\swmlayout.js ..\compiled\swmui-concat.js /b
+copy qwebirc.js + version.js + jslib.js + irc\ircconnection.js + irc\irclib.js + irc\numerics.js + irc\baseircclient.js + irc\irctracker.js + irc\commandparser.js + irc\ircclient.js + ui\baseui.js + ui\baseuiwindow.js + ui\colour.js + ui\url.js + ui\theme.js + ui\panes\connect.js + ui\panes\embed.js + qwebircinterface.js + irc\commandhistory.js + ui\hilightcontroller.js + ui\menuitems.js + ui\tabcompleter.js + ui\panes\options.js + ui\panes\about.js + auth.js + sound.js ..\compiled\qwebirc-concat.js /b
+copy ui\frontends\swmui.js + ui\frontends\swmlayout.js ..\compiled\swmui-concat.js /b
 cd ..\compiled
 
 java -jar ..\bin\yuicompressor-2.3.5.jar ..\static\js\mochaui\mocha.js > mocha-compressed.js
@@ -15,16 +15,16 @@ if not %errorlevel% == 0 goto error
 java -jar ..\bin\yuicompressor-2.3.5.jar qwebirc-concat.js > qwebirc-compiled.js
 if not %errorlevel% == 0 goto error
 
-java -jar ..\bin\yuicompressor-2.3.5.jar ..\js\ui\uglyui.js > uglyui-compiled.js
+java -jar ..\bin\yuicompressor-2.3.5.jar ..\js\ui\frontends\uglyui.js > uglyui-compiled.js
 if not %errorlevel% == 0 goto error
 
 java -jar ..\bin\yuicompressor-2.3.5.jar swmui-concat.js > swmui-compiled.js
 if not %errorlevel% == 0 goto error
 
-java -jar ..\bin\yuicompressor-2.3.5.jar ..\js\ui\mochaui.js > mochaui-compiled.js
+java -jar ..\bin\yuicompressor-2.3.5.jar ..\js\ui\frontends\mochaui.js > mochaui-compiled.js
 if not %errorlevel% == 0 goto error
 
-java -jar ..\bin\yuicompressor-2.3.5.jar ..\js\ui\qui.js > qui-compiled.js
+java -jar ..\bin\yuicompressor-2.3.5.jar ..\js\ui\frontends\qui.js > qui-compiled.js
 if not %errorlevel% == 0 goto error
 
 goto ok

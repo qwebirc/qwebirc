@@ -5,8 +5,8 @@ mkdir -p compiled
 rm -f compiled/*.js
 
 cd js
-cat qwebirc.js version.js jslib.js irc/ircconnection.js irc/irclib.js irc/numerics.js irc/baseircclient.js irc/irctracker.js irc/commandparser.js irc/ircclient.js ui/baseui.js ui/baseuiwindow.js ui/colour.js ui/url.js ui/theme.js ui/genericlogin.js ui/embedwizard.js irc/commandhistory.js ui/hilightcontroller.js ui/menuitems.js ui/tabcompleter.js ui/optionspane.js ui/aboutpane.js qwebircinterface.js auth.js sound.js > ../compiled/qwebirc-concat.js
-cat ui/swmui.js ui/swmlayout.js > ../compiled/swmui-concat.js
+cat qwebirc.js version.js jslib.js irc/ircconnection.js irc/irclib.js irc/numerics.js irc/baseircclient.js irc/irctracker.js irc/commandparser.js irc/ircclient.js ui/baseui.js ui/baseuiwindow.js ui/colour.js ui/url.js ui/theme.js ui/panes/connect.js ui/panes/embed.js irc/commandhistory.js ui/hilightcontroller.js ui/menuitems.js ui/tabcompleter.js ui/panes/options.js ui/panes/about.js qwebircinterface.js auth.js sound.js > ../compiled/qwebirc-concat.js
+cat ui/frontends/swmui.js ui/frontends/swmlayout.js > ../compiled/swmui-concat.js
 
 error() {
   cd ..
@@ -42,10 +42,10 @@ cd ..
 xjarit ../static/js/mochaui/mocha ../static/js/mochaui/mocha-compressed
 
 jarit qwebirc-concat qwebirc
-jarit ../js/ui/uglyui uglyui
+jarit ../js/ui/frontends/uglyui uglyui
 jarit swmui-concat swmui
-jarit ../js/ui/mochaui mochaui
-jarit ../js/ui/qui qui
+jarit ../js/ui/frontends/mochaui mochaui
+jarit ../js/ui/frontends/qui qui
 
 rm compiled/{swmui,qwebirc}-concat.js
 

@@ -44,7 +44,10 @@ qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initi
   }
   
   text.appendChild(document.createTextNode(" click 'Connect'."));
- 
+  text.appendChild(new Element("br"));
+  if(!qwebirc.auth.loggedin())
+    text.appendChild(document.createTextNode("If you'd like to connect using your Q auth click 'Log in'."));
+
   var tr = new Element("tr");
   tbody.appendChild(tr);
   tr.addClass("tr2");

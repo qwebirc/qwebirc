@@ -1,7 +1,7 @@
 import os, sys
 
 IRC_BASE = ["ircconnection", "irclib", "numerics", "baseircclient", "irctracker", "commandparser", "ircclient", "commandhistory"]
-UI_BASE = ["baseui", "baseuiwindow", "colour", "url", "theme", "genericlogin", "embedwizard", "hilightcontroller", "menuitems", "tabcompleter", "optionspane", "aboutpane"]
+UI_BASE = ["baseui", "baseuiwindow", "colour", "url", "theme", "hilightcontroller", "menuitems", "tabcompleter", "panes/connect", "panes/embed", "panes/options", "panes/about"]
 
 DEBUG_BASE = ["qwebirc", "version", "jslib", ["irc/%s" % x for x in IRC_BASE], ["ui/%s" % x for x in UI_BASE], "qwebircinterface", "auth", "sound"]
 BUILD_BASE = ["qwebirc"]
@@ -64,7 +64,7 @@ DEBUG = ["debug/%s" % x for x in flatten(DEBUG_BASE)]
 def jslist(name, debug):
   ui = UIs[name]
   if debug:
-    x = [JS_BASE, ui.get("extra", []), DEBUG, ["debug/ui/%s" % y for y in ui["uifiles"]]]
+    x = [JS_BASE, ui.get("extra", []), DEBUG, ["debug/ui/frontends/%s" % y for y in ui["uifiles"]]]
   else:
     x = [JS_BASE, ui.get("buildextra", ui.get("extra", [])), BUILD_BASE, name]
     
