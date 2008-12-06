@@ -2,7 +2,6 @@ UI:
   FEAT: tab dragging
   FEAT: [ ] style flashing
   TIDY: [enter] in text box should trigger event instead of having a form there?
-  FEAT: about DIALOG?
   FEAT: Save last nick/chans in cookies.
   FEAT: multiline pastes
   FEAT: link options, about and embedded wizard somewhere more obvious.
