@@ -7,9 +7,19 @@ qwebirc.ui.GenericLoginBox = function(parentElement, callback, initialNickname, 
 }
 
 qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initialChannels, autoNick, networkName) {
+  var outerbox = new Element("table");
+  outerbox.addClass("qwebirc-centrebox");
+  parentElement.appendChild(outerbox);
+  var tbody = new Element("tbody");
+  outerbox.appendChild(tbody);
+  var tr = new Element("tr");
+  tbody.appendChild(tr);
+  var td = new Element("td");
+  tr.appendChild(td);
+  
   var box = new Element("table");
   box.addClass("qwebirc-confirmbox");
-  parentElement.appendChild(box);
+  td.appendChild(box);
 
   var tbody = new Element("tbody");
   box.appendChild(tbody);
@@ -74,9 +84,19 @@ qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initi
 }
 
 qwebirc.ui.LoginBox = function(parentElement, callback, initialNickname, initialChannels, networkName) {
+  var outerbox = new Element("table");
+  outerbox.addClass("qwebirc-centrebox");
+  parentElement.appendChild(outerbox);
+  var tbody = new Element("tbody");
+  outerbox.appendChild(tbody);
+  var tr = new Element("tr");
+  tbody.appendChild(tr);
+  var td = new Element("td");
+  tr.appendChild(td);
+  
   var box = new Element("table");
-  parentElement.appendChild(box);
   box.addClass("qwebirc-loginbox");
+  td.appendChild(box);
   
   var tbody = new Element("tbody");
   box.appendChild(tbody);

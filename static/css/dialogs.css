@@ -1,26 +1,24 @@
 /**************** LOGIN BOX *******************/
-.qwebirc-loginbox {
+
+.qwebirc-centrebox {
   height: 100%;
   width: 100%;
-  vertical-align: middle;
 }
 
-.qwebirc-loginbox .tr1 {
+.qwebirc-centrebox table {
   width: 100%;
-  text-align: center;
 }
 
-.qwebirc-loginbox .tr2 {
+.qwebirc-centrebox table table {
+  width: auto;
+}
+.qwebirc-loginbox .tr1 td {
   width: 100%;
   text-align: center;
 }
 
 .qwebirc-loginbox .tr2 td {
   vertical-align: top;
-}
-
-.qwebirc-loginbox .tr1 td {
-  vertical-align: bottom;
 }
 
 .qwebirc-loginbox .tr2 table {
@@ -31,7 +29,6 @@
 
 /**************** CONFIRM LOGIN BOX *******************/
 .qwebirc-confirmbox {
-  height: 100%;
   width: 100%;
   vertical-align: middle;
 }

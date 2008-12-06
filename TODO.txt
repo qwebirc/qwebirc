@@ -8,7 +8,6 @@ UI:
   FEAT: Last position line
   TIDY: warning/info messages should have their colour decided by CSS
   FEAT: privacy policy
-  TIDY: connect dialog offset looks non-centred
   
 Authing:
   TIDY: Finish integration (notably login button on non-autoconnect page).
