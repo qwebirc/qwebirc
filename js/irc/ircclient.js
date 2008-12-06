@@ -197,8 +197,8 @@ qwebirc.irc.IRCClient = new Class({
     if(this.ui.uiOptions.USE_HIDDENHOST)
       this.exec("/UMODE +x");
       
-    if(qwebirc.auth.loggedin && this.options.autojoin) {
-      if(this.ui.uiOptions.USE_HIDDENHOST) {
+    if(this.options.autojoin) {
+      if(qwebirc.auth.loggedin() && this.ui.uiOptions.USE_HIDDENHOST) {
         var d = function() {
           if($defined(this.activeTimers.autojoin))
             this.ui.getActiveWindow().infoMessage("Waiting for login before joining channels...");
@@ -208,9 +208,10 @@ qwebirc.irc.IRCClient = new Class({
           w.errorMessage("No login response in 10 seconds.");
           w.errorMessage("You may want to try authing to Q and then type: /autojoin (if you don't auth your host may be visible).");
         }.delay(10000, this);
-      } else {
-        this.exec("/AUTOJOIN");
+        return;
       }
+
+      this.exec("/AUTOJOIN");
     }
   },
   userJoined: function(user, channel) {

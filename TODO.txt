@@ -10,16 +10,17 @@ UI:
   TIDY: warning/info messages should have their colour decided by CSS
   FEAT: privacy policy
   TIDY: connect dialog offset looks non-centred
+  FEAT: MODE x +i -> Your user modes are now +i
   
 Authing:
   TIDY: Finish integration (notably login button on non-autoconnect page).
   TIDY: Login button should save state on form.
   TIDY: Fix up state inconsistency if backend is restarted (state is stored in user cookie and not refreshed except on login).
   FEAT: bind qticket to session to prevent ticket reuse within time limit.
+  FEAT: on startup: if autojoin channels exist and Q invites then the autojoin channels should be focused rather than the Q invited ones.
   
 IRC:  
   TIDY: /msg $ goes to status, as does /notice $, should go to active.
-  FEAT: auto accept Q invites
   
 Options pane:
   FEAT: Store options server side when logged in.
