@@ -115,6 +115,7 @@ qwebirc.irc.CommandParser = new Class({
       "MSG": "PRIVMSG",
       "Q": "QUERY",
       "BACK": "AWAY",
+      "PRIVACY": "PRIVACYPOLICY",
       "HOP": "CYCLE"
     };
   },
@@ -203,6 +204,9 @@ qwebirc.irc.CommandParser = new Class({
   }],
   cmd_EMBED: [false, undefined, undefined, function(args) {
     this.newUIWindow("embeddedWindow");
+  }],
+  cmd_PRIVACYPOLICY: [false, undefined, undefined, function(args) {
+    this.newUIWindow("privacyWindow");
   }],
   cmd_ABOUT: [false, undefined, undefined, function(args) {
     this.newUIWindow("aboutWindow");

@@ -35,7 +35,7 @@ qwebirc.ui.QUI = new Class({
         this.nextWindow();
       } else if(event.wheel < 0) {
         /* down */
-        this.prevWindow();        
+        this.prevWindow();
       }
       event.stop();
     }.bind(this));
@@ -446,11 +446,11 @@ qwebirc.ui.QUI.Window = new Class({
     
     this.parentObject.tabs.removeChild(this.tab);
   },
-  addLine: function(type, line, colour) {
+  addLine: function(type, line, colourClass) {
     var e = new Element("div");
 
-    if(colour) {
-      e.setStyles({"background": colour});
+    if(colourClass) {
+      e.addClass(colourClass);
     } else if(this.lastcolour) {
       e.addClass("linestyle1");
     } else {
@@ -458,7 +458,7 @@ qwebirc.ui.QUI.Window = new Class({
     }
     this.lastcolour = !this.lastcolour;
 
-    this.parent(type, line, colour, e);
+    this.parent(type, line, colourClass, e);
   },
   setHilighted: function(state) {
     laststate = this.hilighted;

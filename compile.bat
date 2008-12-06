@@ -5,7 +5,7 @@ mkdir compiled
 del /q compiled\*.js
 
 cd js
-copy qwebirc.js + version.js + jslib.js + irc\ircconnection.js + irc\irclib.js + irc\numerics.js + irc\baseircclient.js + irc\irctracker.js + irc\commandparser.js + irc\ircclient.js + ui\baseui.js + ui\baseuiwindow.js + ui\colour.js + ui\url.js + ui\theme.js + ui\panes\connect.js + ui\panes\embed.js + qwebircinterface.js + irc\commandhistory.js + ui\hilightcontroller.js + ui\menuitems.js + ui\tabcompleter.js + ui\panes\options.js + ui\panes\about.js + auth.js + sound.js ..\compiled\qwebirc-concat.js /b
+copy qwebirc.js + version.js + jslib.js + irc\ircconnection.js + irc\irclib.js + irc\numerics.js + irc\baseircclient.js + irc\irctracker.js + irc\commandparser.js + irc\ircclient.js + ui\baseui.js + ui\baseuiwindow.js + ui\colour.js + ui\url.js + ui\theme.js + ui\panes\connect.js + ui\panes\embed.js + qwebircinterface.js + irc\commandhistory.js + ui\hilightcontroller.js + ui\menuitems.js + ui\tabcompleter.js + ui\panes\options.js + ui\panes\about.js + auth.js + sound.js + ui\panes\privacypolicy.js ..\compiled\qwebirc-concat.js /b
 copy ui\frontends\swmui.js + ui\frontends\swmlayout.js ..\compiled\swmui-concat.js /b
 cd ..\compiled
 
