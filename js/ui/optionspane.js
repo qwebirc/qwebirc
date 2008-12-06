@@ -17,7 +17,8 @@ qwebirc.config.DEFAULT_OPTIONS = [
   }],
   [2, "DEDICATED_MSG_WINDOW", "Send privmsgs to dedicated messages window", false],
   [4, "DEDICATED_NOTICE_WINDOW", "Send notices to dedicated message window", false],
-  [3, "NICK_OV_STATUS", "Show status (@/+) before nicknames", true]
+  [3, "NICK_OV_STATUS", "Show status (@/+) before nicknames", true],
+  [5, "ACCEPT_SERVICE_INVITES", "Automatically join channels when invited by Q", true],
 ];
 
 qwebirc.config.DefaultOptions = null;

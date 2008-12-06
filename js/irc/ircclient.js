@@ -19,6 +19,9 @@ qwebirc.irc.IRCClient = new Class({
 
     this.statusWindow = this.ui.newClient(this);
     this.lastNicks = [];
+    
+    this.inviteChanList = [];
+    this.activeTimers = {};
   },
   newLine: function(window, type, data) {
     if(!data)
@@ -388,11 +391,29 @@ qwebirc.irc.IRCClient = new Class({
       this.newTargetOrActiveLine(nick, "PRIVNOTICE", {"m": message, "h": host, "n": nick});
     }
   },
+  isNetworkService: function(user) {
+    /* TODO: refactor */
+    return user == "Q!TheQBot@CServe.quakenet.org";
+  },
+  __joinInvited: function() {
+    this.exec("/JOIN " + this.inviteChanList.join(","));
+    this.inviteChanList = [];
+    delete this.activeTimers["serviceInvite"];
+  },
   userInvite: function(user, channel) {
     var nick = user.hostToNick();
     var host = user.hostToHost();
 
     this.newServerLine("INVITE", {"c": channel, "h": host, "n": nick});
+    if(this.ui.uiOptions.ACCEPT_SERVICE_INVITES && this.isNetworkService(user)) {
+      if(this.activeTimers.serviceInvite)
+        $clear(this.activeTimers.serviceInvite);
+        
+      /* we do this so we can batch the joins, i.e. instead of sending 5 JOIN comands we send 1 with 5 channels. */
+      this.activeTimers.serviceInvite = this.__joinInvited.delay(100, this);
+      
+      this.inviteChanList.push(channel);
+    }
   },
   userMode: function(modes) {
     this.newServerLine("UMODE", {"m": modes, "n": this.nickname});
@@ -450,6 +471,14 @@ qwebirc.irc.IRCClient = new Class({
   quit: function(message) {
     this.send("QUIT :" + message);
     this.disconnect();
+  },
+  disconnect: function() {
+    for(var k in this.activeTimers) {
+      this.activeTimers[k].cancel();
+    };
+    this.activeTimers = {};
+    
+    this.parent();
   },
   awayMessage: function(nick, message) {
     this.newQueryLine(nick, "AWAY", {"n": nick, "m": message}, true);
