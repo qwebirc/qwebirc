@@ -14,7 +14,7 @@ qwebirc.irc.IRCClient = new Class({
     this.modeprefixes = "ov";
     this.windows = {};
     
-    this.commandparser = new qwebirc.irc.CommandParser(this);
+    this.commandparser = new qwebirc.irc.Commands(this);
     this.exec = this.commandparser.dispatch.bind(this.commandparser);
 
     this.statusWindow = this.ui.newClient(this);
