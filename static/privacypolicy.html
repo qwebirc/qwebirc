@@ -3,16 +3,44 @@
     <tr>
       <td><img src="/images/qwebircsmall.png" alt="qwebirc" title="qwebirc"/></td>
       <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-      <td><div class="title">qwebirc</div><div>Privacy Policy</div></td>
+      <td><div class="title">qwebirc</div><div>Privacy policy</div></td>
     </tr>
   </table>
 </div>
 <div class="mainbody">
+  <h1>Logging</h1>
+  <h2>What we don't log</h2>
   <ul>
-    <li>moo</li>
-    <li>moo</li>
-    <li>moo</li>
-    <li>moo</li>
+    <div>We do not log what you say or what other people say to you.</div>
+    <div>We do not log who you speak to or who speaks to you.</div>
+    <div>We do not log any IRC commands you send or recieve.</div>
+    <div><b>But please note that the people you talk to on IRC may have configured their IRC clients to log what you say!</b></div>
+  </ul>
+  <h2>What we log</h2>
+  <h3>Webserver logs</h3>
+  <p>Whenever your web browser downloads a page our various webservers store industry standard logs in the following format or one very similar to it:</p>
+  <p class="monospace">2008-12-06 21:34:32+0000 1.2.3.4 "GET / HTTP/1.1" 200 449 "http://webchat.quakenet.org/" "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US) AppleWebKit/525.19 (KHTML, like Gecko) Chrome/0.4.154.29 Safari/525.19"</p>
+  <p>These components are:
+  <ul>
+    <div>The date and time that the page was requested.</div>
+    <div>The IP address of the requesting machine (your machine).</div>
+    <div>The page requested, the method and the HTTP version.</div>
+    <div>The success or failure code returned by the webserver, and the size of the page returned.</div>
+    <div>The page that referred you to the requested page.</div>
+    <div>Your <i>User Agent</i> (normally your web browser, the browser version and the operating system it is running on).</div>
+  </ul>
+  </p>
+  <h3>The Authgate (<a href="https://auth.quakenet.org">https://auth.quakenet.org</a>)</h3>
+  <p>When you use the <i>Log in</i> functionality the Authgate passes your Q account details to the Webchat system, which contains the data you gave us when you created your Q account, your user id, the time you logged in and some cryptographic data.</p>
+  <p>This information is logged on the Authgate, as part of the design of the system it also appears in the Webchat server logs.</p>
+  <h3>IRC server logs</h3>
+  <p>When you connect to IRC the remote IRC server logs the nickname you signed on with, the time and the IP address you were using at that time.</p>
+  <h1>Cookies</h1>
+  <p>This site uses various cookies, specifically:</p>
+  <ul>
+    <div>A session cookie used to connect your browsing session and your QuakeNet login, this cookie expires when you close your web browser.</div>
+    <div>A preferences cookie used to store various options you set in the options dialog, this cookie does not expire unless you instruct your browser to delete it.</div>
+    <div>A redirection state cookie is used to store what page you were viewing before you attempted to log in to the auth gateway. This cookie expires when you close your web browser and also when the login process is completed successfully.</div>
   </ul>
   <input type="submit" value="Close" class="close" />
 </div>

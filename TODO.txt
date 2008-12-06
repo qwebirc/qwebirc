@@ -1,11 +1,10 @@
 UI:
   FEAT: tab dragging
-  FEAT: [ ] style flashing
-  FEAT: Save last nick/chans in cookies.
-  FEAT: multiline pastes
   FEAT: link options, about and embedded wizard somewhere more obvious.
   FEAT: Last position line
-  FEAT: privacy policy
+  FEAT: [ ] style titlebar flashing
+  FEAT: Save last nick/chans in cookies.
+  FEAT: multiline pastes
   
 Authing:
   FEAT: Login button should save state on form.

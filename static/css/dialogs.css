@@ -47,7 +47,6 @@
 
 /**************** ABOUT PANE *******************/
 .qwebirc-aboutpane {
-  background-color: lightgrey;
   font-size: 1em !important;
 }
 
@@ -107,4 +106,43 @@
 
 .qwebirc-embeddedwizard .wizardcontrols input {
   width: 70px;
+}
+
+/**************** PRIVACY POLICY PANE *******************/
+.qwebirc-privacypolicypane {
+  font-size: 1em !important;
+}
+
+.qwebirc-privacypolicypane .mainbody {
+  font-size: 0.8em;
+  text-align: center;
+  padding: 5px;
+}
+
+.qwebirc-privacypolicypane table {
+  display: inline-block;
+}
+
+.qwebirc-privacypolicypane div.header {
+  padding-top: 5px;
+}
+
+.qwebirc-privacypolicypane .header {
+  background: white;
+  text-align: center;
+  border-bottom: 1px solid gray;
+  padding-bottom: 5px;
+}
+
+.qwebirc-privacypolicypane .header .title {
+  font-size: 4em;
+}
+
+.qwebirc-privacypolicypane .header .subtitle {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.qwebirc-privacypolicypane .monospace {
+  font-family: Consolas, "Lucida Console", monospace;
 }
