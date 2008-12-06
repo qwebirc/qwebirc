@@ -22,6 +22,8 @@ qwebirc.irc.IRCClient = new Class({
     
     this.inviteChanList = [];
     this.activeTimers = {};
+    
+    this.loginRegex = new RegExp(this.ui.options.loginRegex);
   },
   newLine: function(window, type, data) {
     if(!data)
@@ -394,7 +396,7 @@ qwebirc.irc.IRCClient = new Class({
   },
   checkLogin: function(user, message) {
     if(this.isNetworkService(user) && $defined(this.activeTimers.autojoin)) {
-      if(message.match(/^You are now logged in as [^ ]+\.$/)) {
+      if(message.match(this.loginRegex)) {
         $clear(this.activeTimers.autojoin);
         delete this.activeTimers["autojoin"];
         this.ui.getActiveWindow().infoMessage("Joining channels...");
@@ -423,8 +425,7 @@ qwebirc.irc.IRCClient = new Class({
     this.checkLogin(user, message);
   },
   isNetworkService: function(user) {
-    /* TODO: refactor */
-    return user == "Q!TheQBot@CServe.quakenet.org";
+    return this.ui.options.indexOf(user) > -1;
   },
   __joinInvited: function() {
     this.exec("/JOIN " + this.inviteChanList.join(","));

@@ -1,12 +1,12 @@
-qwebirc.ui.GenericLoginBox = function(parentElement, callback, initialNickname, initialChannels, autoConnect, autoNick) {
+qwebirc.ui.GenericLoginBox = function(parentElement, callback, initialNickname, initialChannels, autoConnect, autoNick, networkName) {
   if(autoConnect) {
-    qwebirc.ui.ConfirmBox(parentElement, callback, initialNickname, initialChannels, autoNick);
+    qwebirc.ui.ConfirmBox(parentElement, callback, initialNickname, initialChannels, autoNick, networkName);
   } else {
-    qwebirc.ui.LoginBox(parentElement, callback, initialNickname, initialChannels);
+    qwebirc.ui.LoginBox(parentElement, callback, initialNickname, initialChannels, networkName);
   }
 }
 
-qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initialChannels, autoNick) {
+qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initialChannels, autoNick, networkName) {
   var box = new Element("table");
   box.addClass("qwebirc-confirmbox");
   parentElement.appendChild(box);
@@ -26,7 +26,7 @@ qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initi
   
   var c = initialChannels.split(" ")[0].split(",");
   
-  text.appendChild(document.createTextNode("To connect to IRC and join channel" + ((c.length>1)?"s":"") + " "));
+  text.appendChild(document.createTextNode("To connect to " + networkName + " IRC and join channel" + ((c.length>1)?"s":"") + " "));
 
   for(var i=0;i<c.length;i++) {
     if((c.length > 1) && (i == c.length - 1)) {
@@ -41,9 +41,10 @@ qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initi
   if(!autoNick) {
     text.appendChild(document.createTextNode(" as "));
     text.appendChild(nick);
-  }    
+  }
+  
   text.appendChild(document.createTextNode(" click 'Connect'."));
-
+ 
   var tr = new Element("tr");
   tbody.appendChild(tr);
   tr.addClass("tr2");
@@ -69,7 +70,7 @@ qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initi
   }
 }
 
-qwebirc.ui.LoginBox = function(parentElement, callback, initialNickname, initialChannels) {
+qwebirc.ui.LoginBox = function(parentElement, callback, initialNickname, initialChannels, networkName) {
   var box = new Element("table");
   parentElement.appendChild(box);
   box.addClass("qwebirc-loginbox");
@@ -83,7 +84,7 @@ qwebirc.ui.LoginBox = function(parentElement, callback, initialNickname, initial
   
   var td = new Element("td");
   tr.appendChild(td);
-  td.set("html", "<h1>Connect to IRC</h1>");  
+  td.set("html", "<h1>Connect to " + networkName + " IRC</h1>");  
     
   var tr = new Element("tr");
   tbody.appendChild(tr);

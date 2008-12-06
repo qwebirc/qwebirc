@@ -7,13 +7,9 @@ qwebirc.ui.WINDOW_MESSAGES = 6;
 qwebirc.ui.CUSTOM_CLIENT = "custom";
 
 qwebirc.ui.BaseUI = new Class({
-  Implements: [Events, Options],
-  options: {
-    appTitle: "QuakeNet Web IRC",
-    singleWindow: true
-  },
+  Implements: [Events],
   initialize: function(parentElement, windowClass, uiName, options) {
-    this.setOptions(options);
+    this.options = options;
     
     this.windows = {};
     this.clients = {};
@@ -146,7 +142,7 @@ qwebirc.ui.BaseUI = new Class({
       tricked into getting themselves glined
     */
   loginBox: function(callback, initialNickname, initialChannels, autoConnect, autoNick) {
-    qwebirc.ui.GenericLoginBox(this.parentElement, callback, initialNickname, initialChannels, autoConnect, autoNick);
+    qwebirc.ui.GenericLoginBox(this.parentElement, callback, initialNickname, initialChannels, autoConnect, autoNick, this.options.networkName);
   }
 });
 
@@ -353,6 +349,6 @@ qwebirc.ui.NewLoginUI = new Class({
       callbackfn(args);
     };
     
-    qwebirc.ui.GenericLoginBox(w.lines, callback, initialNickname, initialChannels, autoConnect, autoNick);
+    qwebirc.ui.GenericLoginBox(w.lines, callback, initialNickname, initialChannels, autoConnect, autoNick, this.options.networkName);
   }
 });

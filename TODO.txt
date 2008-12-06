@@ -6,11 +6,9 @@ UI:
   FEAT: multiline pastes
   FEAT: link options, about and embedded wizard somewhere more obvious.
   FEAT: Last position line
-  FEAT: branding
   TIDY: warning/info messages should have their colour decided by CSS
   FEAT: privacy policy
   TIDY: connect dialog offset looks non-centred
-  FEAT: MODE x +i -> Your user modes are now +i
   
 Authing:
   TIDY: Finish integration (notably login button on non-autoconnect page).

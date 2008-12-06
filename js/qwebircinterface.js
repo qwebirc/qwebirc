@@ -3,6 +3,10 @@ qwebirc.ui.Interface = new Class({
   options: {
     initialNickname: "qwebirc" + Math.ceil(Math.random() * 100000),
     initialChannels: "",
+    networkName: "QuakeNet",
+    networkServices: ["Q!TheQBot@QuakeNet.org"],
+    loginRegex: "^You are now logged in as [^ ]+\\.$",
+    appTitle: "QuakeNet Web IRC",
     searchURL: true,
     theme: undefined
   },
@@ -10,7 +14,7 @@ qwebirc.ui.Interface = new Class({
     this.setOptions(options);
 
     window.addEvent("domready", function() {
-      var ui_ = new ui($(element), new qwebirc.ui.Theme(this.options.theme));
+      var ui_ = new ui($(element), new qwebirc.ui.Theme(this.options.theme), this.options);
       
       var callback = function(options) {
         var IRC = new qwebirc.irc.IRCClient(options, ui_);
