@@ -148,6 +148,12 @@ qwebirc.ui.BaseUI = new Class({
 
 qwebirc.ui.StandardUI = new Class({
   Extends: qwebirc.ui.BaseUI,
+  UICommands: [
+    ["Options", "options"],
+    ["Add webchat to your site", "embedded"],
+    ["Privacy policy", "privacy"],
+    ["About qwebirc", "about"]
+  ],
   initialize: function(parentElement, windowClass, uiName, options) {
     this.parent(parentElement, windowClass, uiName, options);
 

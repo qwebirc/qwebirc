@@ -40,8 +40,78 @@ qwebirc.ui.QUI = new Class({
       event.stop();
     }.bind(this));
     
+    this.__createDropdown();
+    
     this.createInput();
     this.reflow();
+  },
+  __createDropdown: function() {
+    var dropdownMenu = new Element("div");
+    dropdownMenu.addClass("dropdownmenu");
+    var surface = new Element("div");
+    surface.addClass("surface");
+
+    dropdownMenu.hide = function(noRemove) {
+      dropdownMenu.setStyle("display", "none");
+      dropdownMenu.visible = false;
+      if(!noRemove)
+        this.parentElement.removeChild(surface);
+    }.bind(this);
+    surface.addEvent("click", function() {
+      dropdownMenu.hide();
+    });
+
+    dropdownMenu.hide(true);
+    this.parentElement.appendChild(dropdownMenu);
+    
+    this.UICommands.forEach(function(x) {
+      var text = x[0];
+      var fn = this[x[1] + "Window"].bind(this);
+      var e = new Element("a");
+      e.addEvent("click", function() {
+        dropdownMenu.hide();
+        fn();
+      });
+      e.set("text", text);
+      dropdownMenu.appendChild(e);
+    }.bind(this));
+    
+    var dropdown = new Element("img");
+    dropdown.addClass("dropdown-tab");
+    dropdown.setStyle("display", "inline-block");
+    dropdown.set("html", "<img src=images/favicon.png>");
+    this.tabs.appendChild(dropdown);
+
+    dropdownMenu.show = function(x){
+      new Event(x).stop();
+      
+      if(dropdownMenu.visible) {
+        dropdownMenu.hide();
+        return;
+      }
+      this.parentElement.appendChild(surface);
+
+      var left = x.client.x;
+      var top = x.client.y;
+      if(left < 0)
+        left = 0;
+      if(top < 0)
+        top = 0;
+        
+      dropdownMenu.setStyle("left", left);
+      dropdownMenu.setStyle("top", top);
+      dropdownMenu.setStyle("display", "inline-block");
+      dropdownMenu.visible = true;
+    }.bind(this);
+    dropdown.addEvent("click", dropdownMenu.show);
+    
+    var dropdownhint = new Element("div");
+    dropdownhint.addClass("dropdownhint");
+    dropdownhint.set("text", "click the icon for the main menu");
+    var hider = function() {
+      this.parentElement.removeChild(dropdownhint);
+    }.delay(3000, this);
+    this.parentElement.appendChild(dropdownhint);
   },
   createInput: function() {
     var form = new Element("form");

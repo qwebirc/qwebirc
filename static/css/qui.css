@@ -211,3 +211,52 @@ div#noscript {
 .qwebirc-qui .hyperlink-whois:hover, .hyperlink-qwhois:hover, .hyperlink-channel:hover {
   text-decoration: underline;
 }
+
+.qwebirc-qui .tabbar .dropdown-tab {
+  color: red;
+  cursor: pointer;
+  cursor: hand;
+}
+
+.qwebirc-qui div.dropdownmenu {
+  z-index: 100;
+  border: 1px solid #c8d2dc;
+  position: relative;
+  width: auto;
+  top: 10px;
+  left: 10px;
+  padding: 3px;
+  background: #f2f0ff;
+}
+
+.qwebirc-qui div.dropdownmenu a {
+  display: block;
+  font-size: 0.7em;
+  color: black;
+  cursor: pointer;
+  cursor: hand;  
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+.qwebirc-qui div.dropdownmenu a:hover {
+  background: white;
+}
+
+.qwebirc-qui div.surface {
+  height: 100%;
+  width: 100%;
+  left: 0px;
+  top: 0px;
+  position: relative;
+  z-index: 50;
+}
+
+.qwebirc-qui div.dropdownhint {
+  position: absolute;
+  left: 5px;
+  z-index: 10;
+  
+  top: 30px;
+  font-size: 0.7em;
+}
