@@ -146,3 +146,9 @@
 .qwebirc-privacypolicypane .monospace {
   font-family: Consolas, "Lucida Console", monospace;
 }
+
+.qwebirc .loading {
+  padding-left: 4px;
+  padding-top: 3px;
+  font-size: 0.8em;
+}
