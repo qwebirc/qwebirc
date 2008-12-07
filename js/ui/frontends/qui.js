@@ -90,13 +90,12 @@ qwebirc.ui.QUI = new Class({
         return;
       }
       this.parentElement.appendChild(surface);
-
+/*
       var left = x.client.x;
       var top = x.client.y;
-      if(left < 0)
-        left = 0;
-      if(top < 0)
-        top = 0;
+      */
+      /* -1 == border */
+      top = this.tabs.getSize().y - 1;
         
       dropdownMenu.setStyle("left", left);
       dropdownMenu.setStyle("top", top);

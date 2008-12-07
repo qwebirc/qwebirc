@@ -225,7 +225,6 @@ div#noscript {
   width: auto;
   top: 10px;
   left: 10px;
-  padding: 3px;
   background: #f2f0ff;
 }
 
@@ -236,7 +235,9 @@ div#noscript {
   cursor: pointer;
   cursor: hand;  
   padding-top: 1px;
+  padding-left: 3px;
   padding-bottom: 1px;
+  padding-right: 3px;
 }
 
 .qwebirc-qui div.dropdownmenu a:hover {
