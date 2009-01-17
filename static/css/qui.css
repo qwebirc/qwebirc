@@ -49,13 +49,6 @@ html {
   font-family: Consolas, "Lucida Console", Verdana, monospace, sans-serif, "sans serif";
 }
 
-.qwebirc-qui .tabbar {
-  border-bottom: 1px solid #c3cee0;
-  background: #e2ecf9;
-  font-size: 0.8em;
-  color: #000000;
-}
-
 .qwebirc-qui .tab-invisible {
   display: none;
 }
@@ -90,10 +83,13 @@ html {
   font-size: 0.7em;
 }
 
-.qwebirc-qui .tabbar {
+.qwebirc-qui .outertabbar {
   border-bottom: 1px solid #c3cee0;
-  padding: 4px;
   background: #e2ecf9;
+}
+
+.qwebirc-qui .tabbar {
+  padding: 4px;
   font-size: 0.8em;
   color: #000000;
 }
@@ -212,10 +208,11 @@ div#noscript {
   text-decoration: underline;
 }
 
-.qwebirc-qui .tabbar .dropdown-tab {
-  color: red;
+.qwebirc-qui .outertabbar .dropdown-tab {
   cursor: pointer;
   cursor: hand;
+  float: left;
+  padding: 4px;
 }
 
 .qwebirc-qui div.dropdownmenu {

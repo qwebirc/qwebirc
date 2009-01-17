@@ -12,14 +12,19 @@ qwebirc.ui.QUI = new Class({
       if($defined(w))
         w.onResize();
     }.bind(this));
-    this.qjsui.top.addClass("tabbar");
+    this.qjsui.top.addClass("outertabbar");
     
     this.qjsui.bottom.addClass("input");
     this.qjsui.right.addClass("nicklist");
     this.qjsui.topic.addClass("topic");
     this.qjsui.middle.addClass("lines");
     
-    this.tabs = this.qjsui.top;
+    this.outerTabs = this.qjsui.top;
+    this.__createDropdown();
+    
+    this.tabs = new Element("div");
+    this.tabs.addClass("tabbar");
+    this.outerTabs.appendChild(this.tabs);
     this.origtopic = this.topic = this.qjsui.topic;
     this.origlines = this.lines = this.qjsui.middle;
     this.orignicklist = this.nicklist = this.qjsui.right;
@@ -40,8 +45,6 @@ qwebirc.ui.QUI = new Class({
       event.stop();
     }.bind(this));
     
-    this.__createDropdown();
-    
     this.createInput();
     this.reflow();
   },
@@ -50,7 +53,6 @@ qwebirc.ui.QUI = new Class({
     dropdownMenu.addClass("dropdownmenu");
     var surface = new Element("div");
     surface.addClass("surface");
-
     dropdownMenu.hide = function(noRemove) {
       dropdownMenu.setStyle("display", "none");
       dropdownMenu.visible = false;
@@ -76,12 +78,10 @@ qwebirc.ui.QUI = new Class({
       dropdownMenu.appendChild(e);
     }.bind(this));
     
-    var dropdown = new Element("img");
+    var dropdown = new Element("div");
     dropdown.addClass("dropdown-tab");
-    dropdown.setStyle("display", "inline-block");
-    dropdown.set("html", "<img src=images/favicon.png>");
-    this.tabs.appendChild(dropdown);
-
+    dropdown.appendChild(new Element("img", {src: "images/favicon.png", title: "menu", alt: "menu"}));
+    this.outerTabs.appendChild(dropdown);
     dropdownMenu.show = function(x){
       new Event(x).stop();
       
@@ -95,9 +95,9 @@ qwebirc.ui.QUI = new Class({
       var top = x.client.y;
       */
       /* -1 == border */
-      top = this.tabs.getSize().y - 1;
+      var top = this.tabs.getSize().y - 1;
         
-      dropdownMenu.setStyle("left", left);
+      dropdownMenu.setStyle("left", 0);
       dropdownMenu.setStyle("top", top);
       dropdownMenu.setStyle("display", "inline-block");
       dropdownMenu.visible = true;
@@ -283,6 +283,7 @@ qwebirc.ui.QUI.JSUI = new Class({
     this.topic.setStyle("display", display);
   },
   showInput: function(state) {
+    this.bottom.isVisible = state;
     this.bottom.setStyle("display", state?"block":"none");
   }
 });
@@ -324,7 +325,7 @@ qwebirc.ui.QUI.Window = new Class({
 
         this.close();
         
-        parentObject.inputbox.focus();
+        //parentObject.inputbox.focus();
       }.bind(this);
       
       tabclose.addEvent("click", close);
