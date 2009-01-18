@@ -1,1 +1,1 @@
-qwebirc.VERSION = "0.60"
+qwebirc.VERSION = "0.75"

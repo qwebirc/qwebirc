@@ -3,3 +3,6 @@ qwebirc.auth.loggedin = function() {
   
   return user;
 }
+qwebirc.auth.enabled = function() {
+  return false;
+}

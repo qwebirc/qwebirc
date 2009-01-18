@@ -81,6 +81,14 @@ qwebirc.ui.QUI = new Class({
     var dropdown = new Element("div");
     dropdown.addClass("dropdown-tab");
     dropdown.appendChild(new Element("img", {src: "images/favicon.png", title: "menu", alt: "menu"}));
+    dropdown.setStyle("opacity", 1);
+
+    var dropdownEffect = new Fx.Tween(dropdown, {duration: "long", property: "opacity", link: "chain"});
+    dropdownEffect.start(0.25);
+    dropdownEffect.start(1);
+    dropdownEffect.start(0.33);
+    dropdownEffect.start(1);
+    
     this.outerTabs.appendChild(dropdown);
     dropdownMenu.show = function(x){
       new Event(x).stop();
@@ -95,7 +103,7 @@ qwebirc.ui.QUI = new Class({
       var top = x.client.y;
       */
       /* -1 == border */
-      var top = this.tabs.getSize().y - 1;
+      var top = this.tabs.getSize().y;
         
       dropdownMenu.setStyle("left", 0);
       dropdownMenu.setStyle("top", top);
@@ -106,10 +114,24 @@ qwebirc.ui.QUI = new Class({
     
     var dropdownhint = new Element("div");
     dropdownhint.addClass("dropdownhint");
-    dropdownhint.set("text", "click the icon for the main menu");
+    dropdownhint.set("text", "Click the icon for the main menu.");
+        
+    new Fx.Morph(dropdownhint, {duration: "normal", transition: Fx.Transitions.Sine.easeOut}).start({left: [900, 5]});
+    
     var hider = function() {
-      this.parentElement.removeChild(dropdownhint);
-    }.delay(3000, this);
+      new Fx.Morph(dropdownhint, {duration: "long"}).start({left: [5, -900]});
+    }.delay(4000, this);
+    var hider2 = function() {
+      if(dropdownhint.hidden)
+        return;
+        this.parentElement.removeChild(dropdownhint);
+      dropdownhint.hidden = 1;
+    }.bind(this);
+    hider2.delay(4000);
+    
+    document.addEvent("mousedown", hider2);
+    document.addEvent("keypress", hider2);
+    
     this.parentElement.appendChild(dropdownhint);
   },
   createInput: function() {

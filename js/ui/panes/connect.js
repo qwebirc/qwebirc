@@ -61,7 +61,7 @@ qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initi
   
   text.appendChild(document.createTextNode(" click 'Connect'."));
   text.appendChild(new Element("br"));
-  if(!qwebirc.auth.loggedin())
+  if(qwebirc.auth.enabled() && !qwebirc.auth.loggedin())
     text.appendChild(document.createTextNode("If you'd like to connect using your Q auth click 'Log in'."));
 
   var tr = new Element("tr");
@@ -79,7 +79,7 @@ qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initi
     callback({"nickname": initialNickname, "autojoin": initialChannels});
   });
   
-  if(!qwebirc.auth.loggedin()) {
+  if(qwebirc.auth.enabled() && !qwebirc.auth.loggedin()) {
     var auth = new Element("input", {"type": "submit", "value": "Log in"});
     td.appendChild(auth);
     auth.addEvent("click", qwebirc.ui.AuthLogin);
@@ -151,7 +151,7 @@ qwebirc.ui.LoginBox = function(parentElement, callback, initialNickname, initial
   var connbutton = new Element("input", {"type": "submit"});
   connbutton.set("value", "Connect");
   var r = createRow(undefined, connbutton)
-  if(!qwebirc.auth.loggedin()) {
+  if(qwebirc.auth.enabled() && !qwebirc.auth.loggedin()) {
     var auth = new Element("input", {"type": "submit", "value": "Log in"});
     r.appendChild(auth);
     auth.addEvent("click", qwebirc.ui.AuthLogin);

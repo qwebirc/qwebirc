@@ -1,6 +1,6 @@
 qwebirc.irc.RegisteredCTCPs = {
   "VERSION": function(x) {
-    return "qwebirc v" + qwebirc.VERSION + ", copyright (C) Chris Porter 2008 -- " + qwebirc.util.browserVersion();
+    return "qwebirc v" + qwebirc.VERSION + ", copyright (C) Chris Porter 2008-2009 -- " + qwebirc.util.browserVersion();
   },
   "USERINFO": function(x) { return "qwebirc"; },
   "TIME": function(x) { return qwebirc.irc.IRCTime(new Date()); },

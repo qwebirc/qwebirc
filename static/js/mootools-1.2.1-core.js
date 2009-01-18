@@ -265,15 +265,7 @@ this.setOptions(A);},write:function(B){B=encodeURIComponent(B);if(this.options.d
 }if(this.options.duration){var A=new Date();A.setTime(A.getTime()+this.options.duration*24*60*60*1000);B+="; expires="+A.toGMTString();}if(this.options.secure){B+="; secure";
 }this.options.document.cookie=this.key+"="+B;return this;},read:function(){var A=this.options.document.cookie.match("(?:^|;)\\s*"+this.key.escapeRegExp()+"=([^;]*)");
 return(A)?decodeURIComponent(A[1]):null;},dispose:function(){new Cookie(this.key,$merge(this.options,{duration:-1})).write("");return this;}});Cookie.write=function(B,C,A){return new Cookie(B,A).write(C);
-};Cookie.read=function(A){return new Cookie(A).read();};Cookie.dispose=function(B,A){return new Cookie(B,A).dispose();};var Swiff=new Class({Implements:[Options],options:{id:null,height:1,width:1,container:null,properties:{},params:{quality:"high",allowScriptAccess:"always",wMode:"transparent",swLiveConnect:true},callBacks:{},vars:{}},toElement:function(){return this.object;
-},initialize:function(L,M){this.instance="Swiff_"+$time();this.setOptions(M);M=this.options;var B=this.id=M.id||this.instance;var A=$(M.container);Swiff.CallBacks[this.instance]={};
-var E=M.params,G=M.vars,F=M.callBacks;var H=$extend({height:M.height,width:M.width},M.properties);var K=this;for(var D in F){Swiff.CallBacks[this.instance][D]=(function(N){return function(){return N.apply(K.object,arguments);
-};})(F[D]);G[D]="Swiff.CallBacks."+this.instance+"."+D;}E.flashVars=Hash.toQueryString(G);if(Browser.Engine.trident){H.classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000";
-E.movie=L;}else{H.type="application/x-shockwave-flash";H.data=L;}var J='<object id="'+B+'"';for(var I in H){J+=" "+I+'="'+H[I]+'"';}J+=">";for(var C in E){if(E[C]){J+='<param name="'+C+'" value="'+E[C]+'" />';
-}}J+="</object>";this.object=((A)?A.empty():new Element("div")).set("html",J).firstChild;},replaces:function(A){A=$(A,true);A.parentNode.replaceChild(this.toElement(),A);
-return this;},inject:function(A){$(A,true).appendChild(this.toElement());return this;},remote:function(){return Swiff.remote.apply(Swiff,[this.toElement()].extend(arguments));
-}});Swiff.CallBacks={};Swiff.remote=function(obj,fn){var rs=obj.CallFunction('<invoke name="'+fn+'" returntype="javascript">'+__flash__argumentsToXML(arguments,2)+"</invoke>");
-return eval(rs);};var Fx=new Class({Implements:[Chain,Events,Options],options:{fps:50,unit:false,duration:500,link:"ignore"},initialize:function(A){this.subject=this.subject||this;
+};Cookie.read=function(A){return new Cookie(A).read();};Cookie.dispose=function(B,A){return new Cookie(B,A).dispose();};var Fx=new Class({Implements:[Chain,Events,Options],options:{fps:50,unit:false,duration:500,link:"ignore"},initialize:function(A){this.subject=this.subject||this;
 this.setOptions(A);this.options.duration=Fx.Durations[this.options.duration]||this.options.duration.toInt();var B=this.options.wait;if(B===false){this.options.link="cancel";
 }},getTransition:function(){return function(A){return -(Math.cos(Math.PI*A)-1)/2;};},step:function(){var A=$time();if(A<this.time+this.options.duration){var B=this.transition((A-this.time)/this.options.duration);
 this.set(this.compute(this.from,this.to,B));}else{this.set(this.compute(this.from,this.to,1));this.complete();}},set:function(A){return A;},compute:function(C,B,A){return Fx.compute(C,B,A);

@@ -86,6 +86,7 @@ html {
 .qwebirc-qui .outertabbar {
   border-bottom: 1px solid #c3cee0;
   background: #e2ecf9;
+  white-space: nowrap;
 }
 
 .qwebirc-qui .tabbar {

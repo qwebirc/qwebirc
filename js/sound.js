@@ -52,7 +52,7 @@ qwebirc.sound.SoundPlayer = new Class({
   },
   beep: function() {
     if(!this.beepLoaded) {
-      this.createSound("beep", "/sound/beep.mp3");
+      this.createSound("beep", "/sound/beep3.mp3");
       this.beepLoaded = true;
     }
     this.playSound("beep");

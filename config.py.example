@@ -9,3 +9,7 @@ MAXLINELEN = 600
 AUTHGATEDOMAIN = "webchat_test"
 QTICKETKEY = "boo"
 QBOT = "Q@CServe.quakenet.org"
+FEEDBACK_FROM = "moo@moo.com"
+FEEDBACK_TO = "moo@moo.com"
+FEEDBACK_SMTP_HOST = "127.0.0.1"
+FEEDBACK_SMTP_PORT = 25

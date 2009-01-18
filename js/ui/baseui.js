@@ -34,7 +34,7 @@ qwebirc.ui.BaseUI = new Class({
     if(!this.firstClient) {
       this.firstClient = true;
       w.addLine("", "qwebirc v" + qwebirc.VERSION);
-      w.addLine("", "Copyright (C) 2008 Chris Porter. All rights reserved.");
+      w.addLine("", "Copyright (C) 2008-2009 Chris Porter. All rights reserved.");
       w.addLine("", "http://webchat.quakenet.org/");
       w.addLine("", "This is BETA quality software, please report bugs to slug@quakenet.org");
     }
@@ -152,6 +152,7 @@ qwebirc.ui.StandardUI = new Class({
     ["Options", "options"],
     ["Add webchat to your site", "embedded"],
     ["Privacy policy", "privacy"],
+    ["Feedback", "feedback"],
     ["About qwebirc", "about"]
   ],
   initialize: function(parentElement, windowClass, uiName, options) {
@@ -266,6 +267,9 @@ qwebirc.ui.StandardUI = new Class({
   },
   privacyWindow: function() {
     this.addCustomWindow("Privacy policy", qwebirc.ui.PrivacyPolicyPane, "privacypolicypane", this.uiOptions);
+  },
+  feedbackWindow: function() {
+    this.addCustomWindow("Feedback", qwebirc.ui.FeedbackPane, "feedbackpane", this.uiOptions);
   },
   urlDispatcher: function(name) {
     if(name == "embedded")

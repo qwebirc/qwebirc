@@ -5,7 +5,7 @@ mkdir -p compiled
 rm -f compiled/*.js
 
 cd js
-cat qwebirc.js version.js jslib.js irc/ircconnection.js irc/irclib.js irc/numerics.js irc/baseircclient.js irc/irctracker.js irc/commandparser.js irc/commands.js irc/ircclient.js ui/baseui.js ui/baseuiwindow.js ui/colour.js ui/url.js ui/theme.js ui/panes/connect.js ui/panes/embed.js irc/commandhistory.js ui/hilightcontroller.js ui/menuitems.js ui/tabcompleter.js ui/panes/options.js ui/panes/about.js qwebircinterface.js auth.js sound.js ui/panes/privacypolicy.js > ../compiled/qwebirc-concat.js
+cat qwebirc.js version.js jslib.js irc/ircconnection.js irc/irclib.js irc/numerics.js irc/baseircclient.js irc/irctracker.js irc/commandparser.js irc/commands.js irc/ircclient.js ui/baseui.js ui/baseuiwindow.js ui/colour.js ui/url.js ui/theme.js ui/panes/connect.js ui/panes/embed.js irc/commandhistory.js ui/hilightcontroller.js ui/menuitems.js ui/tabcompleter.js ui/panes/options.js ui/panes/about.js qwebircinterface.js auth.js sound.js ui/panes/privacypolicy.js ui/panes/feedback.js > ../compiled/qwebirc-concat.js
 cat ui/frontends/swmui.js ui/frontends/swmlayout.js > ../compiled/swmui-concat.js
 
 error() {
