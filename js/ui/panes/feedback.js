@@ -41,8 +41,9 @@ qwebirc.ui.FeedbackPane = new Class({
     
     /* basic checksum to stop really lame kiddies spamming */
     var checksum = 0;
+    var esctext = encodeURIComponent(text);
     for(var i=0;i<text.length;i++)
-      checksum = ((checksum + 1) % 256) ^ text.charCodeAt(i);
+      checksum = ((checksum + 1) % 256) ^ (text.charCodeAt(i) % 256);
 
     var r = new Request({url: "/feedback", onSuccess: function() {
       messageText.set("text", "Submitted successfully, thanks for the feedback!");
@@ -51,6 +52,6 @@ qwebirc.ui.FeedbackPane = new Class({
       messageBody.setStyle("display", "none");
       mainBody.setStyle("display", "");
       mainText.set("text", "Looks like something went wrong submitting :(");
-    }}).send("feedback=" + escape(text) + "&c=" + checksum);
+    }}).send("feedback=" + text + "&c=" + checksum);
   }
 });
