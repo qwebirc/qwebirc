@@ -260,3 +260,55 @@ qwebirc.util.createInput = function(type, parent, name, selected) {
   parent.appendChild(r);
   return r;
 }
+
+/* From: www.webtoolkit.info */
+qwebirc.util.b64Table = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+qwebirc.util.b64Encode = function(data) {
+  var output = [];
+  var table = qwebirc.util.b64Table;
+  for(i=0;i<data.length;) {
+    var chr1 = data.charCodeAt(i++);
+    var chr2 = data.charCodeAt(i++);
+    var chr3 = data.charCodeAt(i++);
+
+    var enc1 = chr1 >> 2;
+    var enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+    var enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+    var enc4 = chr3 & 63;
+
+    if(isNaN(chr2)) {
+      enc3 = enc4 = 64;
+    } else if(isNaN(chr3)) {
+      enc4 = 64;
+    }
+
+    output.push(table.charAt(enc1) + table.charAt(enc2) + table.charAt(enc3) + table.charAt(enc4));
+  }
+  return output.join("");
+}
+
+/* From: www.webtoolkit.info */
+qwebirc.util.b64Decode = function(data) {
+  data = data.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+
+  var output = [];
+  var table = qwebirc.util.b64Table;
+  for(var i=0;i<data.length;) {
+    var enc1 = table.indexOf(data.charAt(i++));
+    var enc2 = table.indexOf(data.charAt(i++));
+    var enc3 = table.indexOf(data.charAt(i++));
+    var enc4 = table.indexOf(data.charAt(i++));
+
+    var chr1 = (enc1 << 2) | (enc2 >> 4);
+    var chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+    var chr3 = ((enc3 & 3) << 6) | enc4;
+
+    output.push(String.fromCharCode(chr1));
+    if (enc3 != 64)
+      output.push(String.fromCharCode(chr2));
+    if (enc4 != 64)
+      output.push(String.fromCharCode(chr3));
+  }
+
+  return output.join("");
+}

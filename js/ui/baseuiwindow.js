@@ -194,5 +194,5 @@ qwebirc.ui.Window = new Class({
   historyExec: function(line) {
     this.commandhistory.addLine(line);
     this.client.exec(line);
-  }
+  }  
 });
