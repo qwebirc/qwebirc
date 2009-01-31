@@ -3,6 +3,7 @@ from twisted.mail.smtp import SMTPSenderFactory, ESMTPSenderFactory
 from twisted.internet import defer, reactor
 from StringIO import StringIO
 from email.mime.text import MIMEText
+import qwebirc.util as util
 import config
 
 class FeedbackException(Exception):
@@ -13,7 +14,12 @@ class FeedbackEngine(resource.Resource):
   
   def __init__(self, prefix):
     self.prefix = prefix
-
+    self.__hit = util.HitCounter()
+    
+  @property
+  def adminEngine(self):
+    return dict(Sent=[(self.__hit,)])
+    
   def render_POST(self, request):
     text = request.args.get("feedback")
     if text is None:
@@ -43,4 +49,5 @@ class FeedbackEngine(resource.Resource):
     factorytype = SMTPSenderFactory
     factory = factorytype(fromEmail=config.FEEDBACK_FROM, toEmail=config.FEEDBACK_TO, file=email, deferred=defer.Deferred())
     reactor.connectTCP(config.FEEDBACK_SMTP_HOST, config.FEEDBACK_SMTP_PORT, factory)
+    self.__hit()
     return "1"

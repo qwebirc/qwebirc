@@ -5,22 +5,21 @@ UI_BASE = ["baseui", "baseuiwindow", "colour", "url", "theme", "hilightcontrolle
 
 DEBUG_BASE = ["qwebirc", "version", "jslib", "crypto", "md5", ["irc/%s" % x for x in IRC_BASE], ["ui/%s" % x for x in UI_BASE], "qwebircinterface", "auth", "sound"]
 BUILD_BASE = ["qwebirc"]
-JS_BASE = ["mootools-1.2.1-core"]
+JS_BASE = ["mootools-1.2.1-core", "mootools-1.2-more"]
 
 UIs = {
   "qui": {
     "class": "QUI",
     "uifiles": ["qui"],
     "extra": ["mootools-1.2-more"],
-    "buildextra": ["mootools-1.2-more"],
     "doctype": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"" + "\n" \
       "  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"
   },
   "mochaui": {
     "class": "MochaUI",
     "uifiles": ["mochaui"],
-    "extra": ["mootools-1.2-more", "mochaui/mocha"],
-    "buildextra": ["mootools-1.2-more", "mochaui/mocha-compressed"],
+    "extra": ["mochaui/mocha"],
+    "buildextra": ["mochaui/mocha-compressed"],
     "doctype": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">",
     "div": """
     <div id="desktop">

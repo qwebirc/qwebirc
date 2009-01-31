@@ -2,7 +2,10 @@ from twisted.web import resource, server, static
 from twisted.names import client
 from twisted.internet import reactor
 from authgateengine import login_optional, getSessionData
-import simplejson, md5, sys, os, ircclient, time, config, weakref, traceback
+import simplejson, md5, sys, os, time, config, weakref, traceback
+import qwebirc.ircclient as ircclient
+from adminengine import AdminEngineAction
+from qwebirc.util import HitCounter
 
 Sessions = {}
 
@@ -134,7 +137,9 @@ class AJAXEngine(resource.Resource):
   
   def __init__(self, prefix):
     self.prefix = prefix
-
+    self.__connect_hit = HitCounter()
+    self.__total_hit = HitCounter()
+    
   @jsondump
   def render_POST(self, request):
     path = request.path[len(self.prefix):]
@@ -174,6 +179,7 @@ class AJAXEngine(resource.Resource):
     else:
       perform = ["PRIVMSG %s :TICKETAUTH %s" % (config.QBOT, qticket)]
 
+    self.__connect_hit()
     client = ircclient.createIRC(session, nick=nick, ident=ident, ip=ip, realname=realname, perform=perform)
     session.client = client
     
@@ -199,7 +205,8 @@ class AJAXEngine(resource.Resource):
     command = request.args.get("c")
     if command is None:
       raise AJAXException("No command specified")
-
+    self.__total_hit()
+    
     command = command[0]
     
     session = self.getSession(request)
@@ -225,5 +232,19 @@ class AJAXEngine(resource.Resource):
   
     return True
   
+  def closeById(self, k):
+    s = Sessions.get(k)
+    if s is None:
+      return
+    s.client.client.error("Closed by admin interface")
+    
+  @property
+  def adminEngine(self):
+    return {
+      "Sessions": [(str(v.client.client), AdminEngineAction("close", self.closeById, k)) for k, v in Sessions.iteritems() if not v.closed],
+      "Connections": [(self.__connect_hit,)],
+      "Total hits": [(self.__total_hit,)],
+    }
+    
   COMMANDS = dict(p=push, n=newConnection, s=subscribe)
   

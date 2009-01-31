@@ -15,7 +15,9 @@ def hmacfn(*args):
 
 class QWebIRCClient(basic.LineReceiver):
   delimiter = "\n"
-
+  def __init__(self, *args, **kwargs):
+    self.__nickname = "(unregistered)"
+    
   def dataReceived(self, data):
     basic.LineReceiver.dataReceived(self, data.replace("\r", ""))
 
@@ -32,10 +34,18 @@ class QWebIRCClient(basic.LineReceiver):
     except irc.IRCBadMessage:
       self.badMessage(line, *sys.exc_info())
       
-    if command == "001" and self.__perform:
-      for x in self.__perform:
-        self.write(x)
+    if command == "001":
+      self.__nickname = params[0]
       
+      if self.__perform is not None:
+        for x in self.__perform:
+          self.write(x)
+        self.__perform = None
+    elif command == "NICK":
+      nick = prefix.split("!", 1)[0]
+      if nick == self.__nickname:
+        self.__nickname = params[0]
+        
   def badMessage(self, args):
     self("badmessage", args)
   
@@ -54,6 +64,7 @@ class QWebIRCClient(basic.LineReceiver):
     self.lastError = None
     f = self.factory.ircinit
     nick, ident, ip, realname = f["nick"], f["ident"], f["ip"], f["realname"]
+    self.__nickname = nick
     self.__perform = f.get("perform")
     
     hmac = hmacfn(ident, ip)
@@ -63,6 +74,9 @@ class QWebIRCClient(basic.LineReceiver):
     self.factory.client = self
     self("connect")
 
+  def __str__(self):
+    return "<QWebIRCClient: %s!%s@%s>" % (self.__nickname, self.factory.ircinit["ident"], self.factory.ircinit["ip"])
+    
   def connectionLost(self, reason):
     if self.lastError:
       self.disconnect("Connection to IRC server lost: %s" % self.lastError)
