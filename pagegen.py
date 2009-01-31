@@ -11,7 +11,6 @@ UIs = {
   "qui": {
     "class": "QUI",
     "uifiles": ["qui"],
-    "extra": ["mootools-1.2-more"],
     "doctype": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"" + "\n" \
       "  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"
   },
@@ -40,7 +39,7 @@ UIs = {
   },
   "swmui": {
     "class": "SWMUI",
-    "uifiles": ["swmui", "swmuilayout"],
+    "uifiles": ["swmui", "swmlayout"],
     "doctype": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">"
   },
   "uglyui": {
@@ -57,8 +56,9 @@ def flatten(y):
         yield x
     else:
       yield x
-  
-DEBUG = ["debug/%s" % x for x in flatten(DEBUG_BASE)]
+
+DEBUG_BASE = list(flatten(DEBUG_BASE))
+DEBUG = ["debug/%s" % x for x in DEBUG_BASE]
 
 def jslist(name, debug):
   ui = UIs[name]
