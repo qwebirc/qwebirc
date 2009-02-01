@@ -321,8 +321,9 @@ qwebirc.irc.IRCClient = new Class({
       this.updateNickList(c);
     }
 
+    /* this is quite horrible */
     if(!found)
-      this.newChanLine(undefined, "NICK", user, {"w": newnick});
+      this.newServerLine("NICK", {"w": newnick, n: user.hostToNick(), h: user.hostToHost(), "-": this.nickname});
   },
   channelTopic: function(user, channel, topic) {
     this.newChanLine(channel, "TOPIC", user, {"m": topic});
