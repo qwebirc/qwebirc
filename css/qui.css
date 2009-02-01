@@ -239,7 +239,7 @@ div#noscript {
 }
 
 .qwebirc-qui div.dropdownmenu a:hover {
-  background: white;
+  background: #FFFFFE; /* IE is rubbish and doesn't like #FFFFFF or white */
 }
 
 .qwebirc-qui div.surface {
