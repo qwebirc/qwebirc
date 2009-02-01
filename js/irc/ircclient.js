@@ -436,7 +436,7 @@ qwebirc.irc.IRCClient = new Class({
     this.checkLogin(user, message);
   },
   isNetworkService: function(user) {
-    return this.ui.options.networkServices[user];
+    return this.ui.options.networkServices.indexOf(user) > -1;
   },
   __joinInvited: function() {
     this.exec("/JOIN " + this.inviteChanList.join(","));

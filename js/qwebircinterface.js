@@ -4,7 +4,7 @@ qwebirc.ui.Interface = new Class({
     initialNickname: "qwebirc" + Math.ceil(Math.random() * 100000),
     initialChannels: "",
     networkName: "QuakeNet",
-    networkServices: ["Q!TheQBot@QuakeNet.org"],
+    networkServices: ["Q!TheQBot@CServe.quakenet.org"],
     loginRegex: "^You are now logged in as [^ ]+\\.$",
     appTitle: "QuakeNet Web IRC",
     searchURL: true,
