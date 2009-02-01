@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-import pages, os, cleanpyc
-from cleanpyc import tryunlink
+import bin.pages as pages, os, bin.cleanpyc as cleanpyc
+from bin.cleanpyc import tryunlink
   
 for x in pages.UIs:
   tryunlink("static", "%s.html" % x)

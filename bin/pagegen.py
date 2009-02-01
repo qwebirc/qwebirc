@@ -46,7 +46,7 @@ def producehtml(name, debug):
 </html>
 """ % (ui["doctype"], csshtml, customjs, jshtml, ui["class"], div)
 
-def main(outputdir=os.path.abspath(os.path.split(sys.argv[0])[0])):
+def main(outputdir="."):
   p = os.path.join(outputdir, "static")
   for x in pages.UIs:
     f = open(os.path.join(p, "%sdebug.html" % x), "wb")

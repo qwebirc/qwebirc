@@ -34,8 +34,10 @@ def copypycdir(src, dest):
 def copydir(src, dest):
   copywalk(src, dest, lambda file: os.path.splitext(file)[1] != ".pyc")
   
-def copy(src, dest):
-  shutil.copy2(src, os.path.join(dest, src))
+def copy(src, dest, nojoin=0):
+  if not nojoin:
+    dest = os.path.join(dest, src)
+  shutil.copy2(src, dest)
 
 def compile_python(dest):
   compileall.compile_dir(dest, quiet=1, force=1)
@@ -88,7 +90,7 @@ def main():
     compile_python(DEST)
     remove_python(DEST)
   else:
-    copy("cleanpyc.py", DEST)
+    copy(os.path.join("bin", "cleanpyc.py"), os.path.join(DEST, "cleanpyc.py"), nojoin=1)
     
   copy("run.py", DEST)
   copy("config.py.example", DEST)
