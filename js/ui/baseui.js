@@ -216,7 +216,9 @@ qwebirc.ui.StandardUI = new Class({
       new Event(x).stop();
   },
   getInputFocused: function(x) {
-    return $$("input").indexOf(x.target) > -1;
+    if($$("input").indexOf(x.target) == -1 && $$("textarea").indexOf(x.target) == -1)
+      return false;
+    return true;
   },
   newCustomWindow: function(name, select, type) {
     if(!type)
