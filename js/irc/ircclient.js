@@ -116,16 +116,26 @@ qwebirc.irc.IRCClient = new Class({
   },
   newQueryWindow: function(name, privmsg) {
     var e;
-    if(privmsg) {
-      e = this.ui.uiOptions.DEDICATED_MSG_WINDOW;
-    } else {
-      e = this.ui.uiOptions.DEDICATED_NOTICE_WINDOW;
-    }
-    if(e && !this.ui.getWindow(this, qwebirc.ui.WINDOW_MESSAGES) && !this.getQueryWindow(name))
-      return this.ui.newWindow(this, qwebirc.ui.WINDOW_MESSAGES, "Messages");
-      
+
+    if(this.getQueryWindow(name))
+      return;
+    
     if(privmsg)
+      return this.newPrivmsgQueryWindow(name);
+    return this.newNoticeQueryWindow(name);
+  },
+  newPrivmsgQueryWindow: function(name) {
+    if(this.ui.uiOptions.DEDICATED_MSG_WINDOW) {
+      if(!this.ui.getWindow(this, qwebirc.ui.WINDOW_MESSAGES))
+        return this.ui.newWindow(this, qwebirc.ui.WINDOW_MESSAGES, "Messages");
+    } else {
       return this.newWindow(name, qwebirc.ui.WINDOW_QUERY, false);
+    }
+  },
+  newNoticeQueryWindow: function(name) {
+    if(this.ui.uiOptions.DEDICATED_NOTICE_WINDOW)
+      if(!this.ui.getWindow(this, qwebirc.ui.WINDOW_MESSAGES))
+        return this.ui.newWindow(this, qwebirc.ui.WINDOW_MESSAGES, "Messages");
   },
   newQueryLine: function(window, type, data, privmsg, active) {
     if(this.getQueryWindow(window))
@@ -143,7 +153,7 @@ qwebirc.irc.IRCClient = new Class({
       return w.addLine(type, data);
     } else {
       if(active) {
-        return this.newActiveLine(window, type, data);
+        return this.newActiveLine(type, data);
       } else {
         return this.newLine(window, type, data);
       }
