@@ -1,7 +1,11 @@
 qwebirc.ui.FeedbackPane = new Class({
   Implements: [Events],
   initialize: function(parent) {
+    this.textboxVisible = false;
     parent.set("html", "<div class=\"loading\">Loading. . .</div>");
+    
+    this.addEvent("select", this.onSelect);
+    
     var r = new Request.HTML({url: "panes/feedback.html", update: parent, onSuccess: function() {
       parent.getElement("input[class=close]").addEvent("click", function() {
         this.fireEvent("close");
@@ -11,13 +15,19 @@ qwebirc.ui.FeedbackPane = new Class({
       }.bind(this));
       
       var textbox = parent.getElement("textarea");
+      this.textbox = textbox;
       parent.getElement("input[class=submitfeedback]").addEvent("click", function() {
         this.sendFeedback(parent, textbox, textbox.value);
       }.bind(this));
       
-      textbox.focus();
+      this.textboxVisible = true;
+      this.onSelect();
     }.bind(this)});
     r.get();
+  },
+  onSelect: function() {
+    if(this.textboxVisible)
+      this.textbox.focus();
   },
   sendFeedback: function(parent, textbox, text) {
     text = text.replace(/^\s*/, "").replace(/\s*$/, "");
@@ -29,6 +39,7 @@ qwebirc.ui.FeedbackPane = new Class({
       return;
     }
     
+    this.textboxVisible = false;
     var mainBody = parent.getElement("div[class=enterarea]");
     mainBody.setStyle("display", "none");
     
@@ -49,9 +60,10 @@ qwebirc.ui.FeedbackPane = new Class({
       messageText.set("text", "Submitted successfully, thanks for the feedback!");
       messageClose.setStyle("display", "");
     }, onFailure: function() {
+      this.textboxVisible = true;
       messageBody.setStyle("display", "none");
       mainBody.setStyle("display", "");
       mainText.set("text", "Looks like something went wrong submitting :(");
-    }}).send("feedback=" + text + "&c=" + checksum);
+    }.bind(this)}).send("feedback=" + text + "&c=" + checksum);
   }
 });

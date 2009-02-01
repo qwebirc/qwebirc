@@ -257,6 +257,8 @@ qwebirc.ui.StandardUI = new Class({
     ew.addEvent("close", function() {
       d.close();
     }.bind(this));
+    
+    d.setSubWindow(ew);
   },
   embeddedWindow: function() {
     this.addCustomWindow("Embedding wizard", qwebirc.ui.EmbedWizard, "embeddedwizard");

@@ -19,6 +19,7 @@ qwebirc.ui.Window = new Class({
     this.scrollpos = null;
     this.lastNickHash = {};
     this.lastSelected = null;
+    this.subWindow = null;
     this.closed = false;
   },
   updateNickList: function(nicks) {
@@ -37,16 +38,26 @@ qwebirc.ui.Window = new Class({
     this.parentObject.__closed(this);
     this.fireEvent("close", this);
   },
+  subEvent: function(event) {
+    if($defined(this.subWindow))
+      this.subWindow.fireEvent(event);
+  },
+  setSubWindow: function(window) {
+    this.subWindow = window;
+  },
   select: function() {
     this.active = true;
     this.parentObject.__setActiveWindow(this);
     if(this.hilighted)
       this.setHilighted(qwebirc.ui.HILIGHT_NONE);
-      
+
+    this.subEvent("select");      
     this.resetScrollPos();
     this.lastSelected = new Date();
   },
   deselect: function() {
+    this.subEvent("deselect");
+    
     this.setScrollPos();
     if($defined(this.scrolltimer)) {
       $clear(this.scrolltimer);
