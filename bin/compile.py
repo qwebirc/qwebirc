@@ -6,14 +6,14 @@ COPYRIGHT = open("js/copyright.js", "rb").read()
 def jarit(src):
   return subprocess.Popen(["java", "-jar", "bin/yuicompressor-2.3.5.jar", src], stdout=subprocess.PIPE).communicate()[0]
 
-def jmerge_files(prefix, output, files, *args):
+def jmerge_files(prefix, suffix, output, files, *args):
   global COPYRIGHT
-  output = output + ".js"
+  output = output + "." + suffix
   o = os.path.join(prefix, "compiled", output)
   merge_files(o, files, *args)
   compiled = jarit(o)
   os.unlink(o)
-  f = open(os.path.join(prefix, "static", "js", output), "wb")
+  f = open(os.path.join(prefix, "static", suffix, output), "wb")
   f.write(COPYRIGHT)
   f.write(compiled)
   f.close()
@@ -27,20 +27,38 @@ def merge_files(output, files, root_path=lambda x: x):
     f2.close()
   f.close()
 
-def main(outputdir="."):
-  pagegen.main(outputdir)
+def main(outputdir=".", produce_debug=False):
+  pagegen.main(outputdir, produce_debug=produce_debug)
 
   coutputdir = os.path.join(outputdir, "compiled")
   try:
     os.mkdir(coutputdir)
   except:
     pass
+    
+  try:
+    os.mkdir(os.path.join(outputdir, "static", "css"))
+  except:
+    pass
   
-  jmerge_files(outputdir, "qwebirc", pages.DEBUG_BASE, lambda x: os.path.join("js", x + ".js"))
+  #jmerge_files(outputdir, "js", "qwebirc", pages.DEBUG_BASE, lambda x: os.path.join("js", x + ".js"))
 
   for uiname, value in pages.UIs.items():
-    jmerge_files(outputdir, uiname, value["uifiles"], lambda x: os.path.join("js", "ui", "frontends", x + ".js"))
-
+    csssrc = pagegen.csslist(uiname, True)
+    jmerge_files(outputdir, "css", uiname, csssrc)
+    #jmerge_files(outputdir, "js", uiname, value["uifiles"], lambda x: os.path.join("js", "ui", "frontends", x + ".js"))
+    
+    alljs = []
+    for y in pages.JS_BASE:
+      alljs.append(os.path.join("static", "js", y + ".js"))
+    for y in value.get("buildextra", []):
+      alljs.append(os.path.join("static", "js", "%s.js" % y))
+    for y in pages.DEBUG_BASE:
+      alljs.append(os.path.join("js", y + ".js"))
+    for y in value["uifiles"]:
+      alljs.append(os.path.join("js", "ui", "frontends", y + ".js"))
+    jmerge_files(outputdir, "js", uiname, alljs)
+    
   os.rmdir(coutputdir)
   
 if __name__ == "__main__":

@@ -5,6 +5,7 @@ UI_BASE = ["baseui", "baseuiwindow", "colour", "url", "theme", "hilightcontrolle
 DEBUG_BASE = ["qwebirc", "version", "jslib", "crypto", "md5", ["irc/%s" % x for x in IRC_BASE], ["ui/%s" % x for x in UI_BASE], "qwebircinterface", "auth", "sound"]
 BUILD_BASE = ["qwebirc"]
 JS_BASE = ["mootools-1.2.1-core", "mootools-1.2-more"]
+JS_EXTRA = ["soundmanager2"]
 
 UIs = {
   "qui": {
@@ -17,7 +18,8 @@ UIs = {
     "class": "MochaUI",
     "uifiles": ["mochaui"],
     "extra": ["mochaui/mocha"],
-    "buildextra": ["mochaui/mocha-compressed", "mochaui/excanvas-compressed"],
+    "buildextra": ["mochaui/mocha-compressed"],
+    "extrajs": ["mochaui/excanvas-compressed"],
     "doctype": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">",
     "div": """
     <div id="desktop">

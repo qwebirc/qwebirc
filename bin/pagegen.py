@@ -5,19 +5,21 @@ def jslist(name, debug):
   if debug:
     x = [pages.JS_BASE, ui.get("extra", []), pages.DEBUG, ["debug/ui/frontends/%s" % y for y in ui["uifiles"]]]
   else:
-    x = [pages.JS_BASE, ui.get("buildextra", ui.get("extra", [])), pages.BUILD_BASE, name]
+    #x = [pages.JS_BASE, ui.get("buildextra", ui.get("extra", [])), pages.BUILD_BASE, name]
+    x = [name]
     
   return list("js/%s.js" % y for y in pages.flatten(x))
 
-def csslist(name):
+def csslist(name, debug, gen=False):
+  if not debug:
+    return ["css/%s.css" % name]
   ui = pages.UIs[name]
-  return list("css/%s.css" % x for x in pages.flatten([ui.get("extracss", []), "colours", "dialogs", "%s" % name]))
+  return list("css/%s%s.css" % ("debug/" if gen else "", x) for x in pages.flatten([ui.get("extracss", []), "colours", "dialogs", "%s" % name]))
 
 def producehtml(name, debug):
   ui = pages.UIs[name]
   js = jslist(name, debug)
-  css = csslist(name)
-  
+  css = csslist(name, debug)
   csshtml = "\n".join("  <link rel=\"stylesheet\" href=\"%s\" type=\"text/css\"/>" % x for x in css)
   jshtml = "\n".join("  <script type=\"text/javascript\" src=\"%s\"></script>" % x for x in js)
 
@@ -46,14 +48,15 @@ def producehtml(name, debug):
 </html>
 """ % (ui["doctype"], csshtml, customjs, jshtml, ui["class"], div)
 
-def main(outputdir="."):
+def main(outputdir=".", produce_debug=True):
   p = os.path.join(outputdir, "static")
   for x in pages.UIs:
-    f = open(os.path.join(p, "%sdebug.html" % x), "wb")
-    try:
-      f.write(producehtml(x, debug=True))
-    finally:
-      f.close()
+    if produce_debug:
+      f = open(os.path.join(p, "%sdebug.html" % x), "wb")
+      try:
+        f.write(producehtml(x, debug=True))
+      finally:
+        f.close()
       
     f = open(os.path.join(p, "%s.html" % x), "wb")
     try:

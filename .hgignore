@@ -1,7 +1,7 @@
 syntax: glob
 static/js/{ugly,swm,mocha,q}ui.js
 static/js/qwebirc.js
-static/js/debug
+static/{js,css}/debug
 config.py
 dropin.cache
 *.tap
