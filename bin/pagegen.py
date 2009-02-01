@@ -19,7 +19,7 @@ def csslist(name, debug, gen=False):
 def producehtml(name, debug):
   ui = pages.UIs[name]
   js = jslist(name, debug)
-  css = csslist(name, debug)
+  css = csslist(name, debug, gen=True)
   csshtml = "\n".join("  <link rel=\"stylesheet\" href=\"%s\" type=\"text/css\"/>" % x for x in css)
   jshtml = "\n".join("  <script type=\"text/javascript\" src=\"%s\"></script>" % x for x in js)
 

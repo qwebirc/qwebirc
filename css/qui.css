@@ -255,7 +255,7 @@ div#noscript {
   position: absolute;
   left: 5px;
   z-index: 10;
-  
+  white-space: nowrap;
   top: 30px;
   font-size: 0.7em;
 }

@@ -27,7 +27,7 @@ def merge_files(output, files, root_path=lambda x: x):
     f2.close()
   f.close()
 
-def main(outputdir=".", produce_debug=False):
+def main(outputdir=".", produce_debug=True):
   pagegen.main(outputdir, produce_debug=produce_debug)
 
   coutputdir = os.path.join(outputdir, "compiled")
