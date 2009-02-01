@@ -1,4 +1,4 @@
-from qwebirc.authgate import twisted as authgate
+from authgate import twisted as authgate
 from twisted.web import resource, server, static
 import config, urlparse, urllib, hashlib, re
 import qwebirc.util.rijndael, qwebirc.util.ciphers
