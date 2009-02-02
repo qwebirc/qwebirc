@@ -51,14 +51,15 @@ qwebirc.ui.QUI = new Class({
     this.reflow();
   },
   __createDropdownMenu: function() {
-    var dropdownMenu = new Element("div");
+    var dropdownMenu = new Element("span");
     dropdownMenu.addClass("dropdownmenu");
     
     dropdownMenu.hide = function() {
       dropdownMenu.setStyle("display", "none");
       dropdownMenu.visible = false;
+      document.removeEvent("mousedown", hideEvent);
     }.bind(this);
-    document.addEvent("mousedown", function() { dropdownMenu.hide() });
+    var hideEvent = function() { dropdownMenu.hide(); };
     
     dropdownMenu.hide();
     this.parentElement.appendChild(dropdownMenu);
@@ -90,30 +91,31 @@ qwebirc.ui.QUI = new Class({
     this.outerTabs.appendChild(dropdown);
     dropdownMenu.show = function(x){
       new Event(x).stop();
+      this.hideHint();
       
       if(dropdownMenu.visible) {
         dropdownMenu.hide();
         return;
       }
-/*
-      var left = x.client.x;
-      var top = x.client.y;
-      */
-      /* -1 == border */
-      var top = this.lines.getCoordinates().top;
-        
+      var top = this.outerTabs.getSize().y;
+      
       dropdownMenu.setStyle("left", 0);
       dropdownMenu.setStyle("top", top-1); /* -1 == top border */
       dropdownMenu.setStyle("display", "inline-block");
       dropdownMenu.visible = true;
+      
+      document.addEvent("mousedown", hideEvent);
     }.bind(this);
+    dropdown.addEvent("mousedown", function(e) { new Event(e).stop(); });
     dropdown.addEvent("click", dropdownMenu.show);
   },
   __createDropdownHint: function() {    
     var dropdownhint = new Element("div");
     dropdownhint.addClass("dropdownhint");
     dropdownhint.set("text", "Click the icon for the main menu.");
-        
+    dropdownhint.setStyle("top", this.outerTabs.getSize().y + 5);
+
+    this.parentElement.appendChild(dropdownhint);
     new Fx.Morph(dropdownhint, {duration: "normal", transition: Fx.Transitions.Sine.easeOut}).start({left: [900, 5]});
     
     var hider = function() {
@@ -123,15 +125,15 @@ qwebirc.ui.QUI = new Class({
     var hider2 = function() {
       if(dropdownhint.hidden)
         return;
-        this.parentElement.removeChild(dropdownhint);
+      this.parentElement.removeChild(dropdownhint);
       dropdownhint.hidden = 1;
     }.bind(this);
     hider2.delay(4000);
+    this.hideHint = hider2;
     
     document.addEvent("mousedown", hider2);
     document.addEvent("keypress", hider2);
     
-    this.parentElement.appendChild(dropdownhint);
   },
   createInput: function() {
     var form = new Element("form");

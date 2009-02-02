@@ -216,17 +216,16 @@ div#noscript {
   padding: 4px;
 }
 
-.qwebirc-qui div.dropdownmenu {
+.qwebirc-qui .dropdownmenu {
   z-index: 100;
   border: 1px solid #c8d2dc;
   position: relative;
-  width: auto;
   top: 10px;
   left: 10px;
   background: #f2f0ff;
 }
 
-.qwebirc-qui div.dropdownmenu a {
+.qwebirc-qui .dropdownmenu a {
   display: block;
   font-size: 0.7em;
   color: black;
@@ -238,15 +237,14 @@ div#noscript {
   padding-right: 3px;
 }
 
-.qwebirc-qui div.dropdownmenu a:hover {
+.qwebirc-qui .dropdownmenu a:hover {
   background: #FFFFFE; /* IE is rubbish and doesn't like #FFFFFF or white */
 }
 
-.qwebirc-qui div.dropdownhint {
-  position: absolute;
-  left: 5px;
+.qwebirc-qui .dropdownhint {
+  position: relative;
+  left: -500px;
   z-index: 10;
   white-space: nowrap;
-  top: 30px;
   font-size: 0.7em;
 }
