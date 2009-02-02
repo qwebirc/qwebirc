@@ -1,3 +1,4 @@
+/* NEEDS converting to plain HTML! */
 qwebirc.ui.EmbedWizardStep = new Class({
   Implements: [Options, Events],
   options: {
@@ -150,7 +151,7 @@ qwebirc.ui.EmbedWizard = new Class({
     this.nicknameBox.addClass("text");
     this.nickname = this.newStep({
       "title": "Set nickname",
-      "first": "Enter the nickname you would like the client to use by default:",
+      "first": "Enter the nickname you would like the client to use by default (use a . for a random number):",
       "premove": function() {
         if(this.nicknameBox.value == "") {
           alert("You must supply a nickname.");

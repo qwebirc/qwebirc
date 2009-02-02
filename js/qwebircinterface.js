@@ -54,8 +54,8 @@ qwebirc.ui.Interface = new Class({
         }
         
         if($defined(nick))
-          inick = nick;
-        
+          inick = this.randSub(nick);
+          
         if(args["randomnick"] && args["randomnick"] == 1)
           inick = this.options.initialNickname;
           
@@ -88,5 +88,17 @@ qwebirc.ui.Interface = new Class({
       
       var details = ui_.loginBox(callback, inick, ichans, autoConnect, usingAutoNick);
     }.bind(this));
+  },
+  randSub: function(nick) {
+    var getDigit = function() { return Math.floor(Math.random() * 10); }
+    
+    return nick.split("").map(function(v) {
+      if(v == ".") {
+        return getDigit();
+      } else {
+        return v;
+      }
+    }).join("");
+    
   }
 });
