@@ -228,7 +228,7 @@ qwebirc.util.importJS = function(name, watchFor, onload) {
       if(eval("typeof " + watchFor) != "undefined") {
         onload();
       } else {
-        checkFn.delay(10);
+        checkFn.delay(100);
       }
     }
     checkFn();

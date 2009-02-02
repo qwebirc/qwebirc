@@ -28,15 +28,12 @@ qwebirc.sound.SoundPlayer = new Class({
       return;
     }
     
-    qwebirc.util.importJS("/js/soundmanager2.js", "soundManager", function() {
+    var debugMode = false;
+    qwebirc.util.importJS("/js/" + (debugMode?"soundmanager2":"soundmanager2-nodebug-jsmin") + ".js", "soundManager", function() {
       soundManager.url = "/sound/";
       
-      /* Fixes Firefox z-index Flash bug */
-      if(Browser.Engine.gecko)
-        soundManager.useHighPerformance = false;
-        
-      soundManager.debugMode = false;
-      soundManager.useConsole = false;
+      soundManager.debugMode = debugMode;
+      soundManager.useConsole = debugMode;
       soundManager.onload = function() {
         this.loadedSWF = true;
         this.fireEvent("ready");
