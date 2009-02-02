@@ -1,20 +1,30 @@
-import os, sys, pages
+import os, sys, pages, subprocess, re
 
 def jslist(name, debug):
   ui = pages.UIs[name]
   if debug:
     x = [pages.JS_BASE, ui.get("extra", []), pages.DEBUG, ["debug/ui/frontends/%s" % y for y in ui["uifiles"]]]
+    hgid = ""
   else:
     #x = [pages.JS_BASE, ui.get("buildextra", ui.get("extra", [])), pages.BUILD_BASE, name]
     x = [name]
-    
-  return list("js/%s.js" % y for y in pages.flatten(x))
+    hgid = "-" + gethgid()  
+  
+  return list("js/%s%s.js" % (y, hgid) for y in pages.flatten(x))
 
 def csslist(name, debug, gen=False):
   if not debug:
-    return ["css/%s.css" % name]
+    return ["css/%s-%s.css" % (name, gethgid())]
   ui = pages.UIs[name]
   return list("css/%s%s.css" % ("debug/" if gen else "", x) for x in pages.flatten([ui.get("extracss", []), "colours", "dialogs", "%s" % name]))
+
+HGID = None
+def gethgid():
+  global HGID
+  if HGID is None:
+    hgid = subprocess.Popen(["hg", "id"], stdout=subprocess.PIPE).communicate()[0]
+    HGID = re.match("^([0-9a-f]+).*", hgid).group(1)
+  return HGID
 
 def producehtml(name, debug):
   ui = pages.UIs[name]

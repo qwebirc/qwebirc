@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 
-import bin.pages as pages, os, bin.cleanpyc as cleanpyc
+import bin.pages as pages, os, bin.cleanpyc as cleanpyc, glob
 from bin.cleanpyc import tryunlink
   
 for x in pages.UIs:
+  for y in glob.glob(os.path.join("static", "js", "%s-*.js" % x)):
+    tryunlink(y)
+  for y in glob.glob(os.path.join("static", "css", "%s-*.js" % x)):
+    tryunlink(y)
   tryunlink("static", "%s.html" % x)
   tryunlink("static", "%sdebug.html" % x)  
-  tryunlink("static", "js", "%s.js" % x)
 
 if __name__ == "__main__":
   tryunlink("static", "js", "qwebirc.js")

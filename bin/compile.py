@@ -28,6 +28,8 @@ def merge_files(output, files, root_path=lambda x: x):
   f.close()
 
 def main(outputdir=".", produce_debug=True):
+  ID = pagegen.gethgid()
+  
   pagegen.main(outputdir, produce_debug=produce_debug)
 
   coutputdir = os.path.join(outputdir, "compiled")
@@ -45,7 +47,7 @@ def main(outputdir=".", produce_debug=True):
 
   for uiname, value in pages.UIs.items():
     csssrc = pagegen.csslist(uiname, True)
-    jmerge_files(outputdir, "css", uiname, csssrc)
+    jmerge_files(outputdir, "css", uiname + "-" + ID, csssrc)
     #jmerge_files(outputdir, "js", uiname, value["uifiles"], lambda x: os.path.join("js", "ui", "frontends", x + ".js"))
     
     alljs = []
@@ -57,7 +59,7 @@ def main(outputdir=".", produce_debug=True):
       alljs.append(os.path.join("js", y + ".js"))
     for y in value["uifiles"]:
       alljs.append(os.path.join("js", "ui", "frontends", y + ".js"))
-    jmerge_files(outputdir, "js", uiname, alljs)
+    jmerge_files(outputdir, "js", uiname + "-" + ID, alljs)
     
   os.rmdir(coutputdir)
   
