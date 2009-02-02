@@ -100,10 +100,10 @@ qwebirc.ui.QUI = new Class({
       var top = x.client.y;
       */
       /* -1 == border */
-      var top = this.tabs.getSize().y;
+      var top = this.lines.getCoordinates().top;
         
       dropdownMenu.setStyle("left", 0);
-      dropdownMenu.setStyle("top", top);
+      dropdownMenu.setStyle("top", top-1); /* -1 == top border */
       dropdownMenu.setStyle("display", "inline-block");
       dropdownMenu.visible = true;
     }.bind(this);
