@@ -242,15 +242,6 @@ div#noscript {
   background: #FFFFFE; /* IE is rubbish and doesn't like #FFFFFF or white */
 }
 
-.qwebirc-qui div.surface {
-  height: 100%;
-  width: 100%;
-  left: 0px;
-  top: 0px;
-  position: relative;
-  z-index: 50;
-}
-
 .qwebirc-qui div.dropdownhint {
   position: absolute;
   left: 5px;

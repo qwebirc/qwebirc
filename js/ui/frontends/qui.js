@@ -20,7 +20,9 @@ qwebirc.ui.QUI = new Class({
     this.qjsui.middle.addClass("lines");
     
     this.outerTabs = this.qjsui.top;
-    this.__createDropdown();
+
+    this.__createDropdownMenu();
+    this.__createDropdownHint();
     
     this.tabs = new Element("div");
     this.tabs.addClass("tabbar");
@@ -48,28 +50,24 @@ qwebirc.ui.QUI = new Class({
     this.createInput();
     this.reflow();
   },
-  __createDropdown: function() {
+  __createDropdownMenu: function() {
     var dropdownMenu = new Element("div");
     dropdownMenu.addClass("dropdownmenu");
-    var surface = new Element("div");
-    surface.addClass("surface");
-    dropdownMenu.hide = function(noRemove) {
+    
+    dropdownMenu.hide = function() {
       dropdownMenu.setStyle("display", "none");
       dropdownMenu.visible = false;
-      if(!noRemove)
-        this.parentElement.removeChild(surface);
     }.bind(this);
-    surface.addEvent("click", function() {
-      dropdownMenu.hide();
-    });
-
-    dropdownMenu.hide(true);
+    document.addEvent("mousedown", function() { dropdownMenu.hide() });
+    
+    dropdownMenu.hide();
     this.parentElement.appendChild(dropdownMenu);
     
     this.UICommands.forEach(function(x) {
       var text = x[0];
       var fn = this[x[1] + "Window"].bind(this);
       var e = new Element("a");
+      e.addEvent("mousedown", function(e) { new Event(e).stop(); });
       e.addEvent("click", function() {
         dropdownMenu.hide();
         fn();
@@ -97,7 +95,6 @@ qwebirc.ui.QUI = new Class({
         dropdownMenu.hide();
         return;
       }
-      this.parentElement.appendChild(surface);
 /*
       var left = x.client.x;
       var top = x.client.y;
@@ -111,7 +108,8 @@ qwebirc.ui.QUI = new Class({
       dropdownMenu.visible = true;
     }.bind(this);
     dropdown.addEvent("click", dropdownMenu.show);
-    
+  },
+  __createDropdownHint: function() {    
     var dropdownhint = new Element("div");
     dropdownhint.addClass("dropdownhint");
     dropdownhint.set("text", "Click the icon for the main menu.");
@@ -121,6 +119,7 @@ qwebirc.ui.QUI = new Class({
     var hider = function() {
       new Fx.Morph(dropdownhint, {duration: "long"}).start({left: [5, -900]});
     }.delay(4000, this);
+    
     var hider2 = function() {
       if(dropdownhint.hidden)
         return;
