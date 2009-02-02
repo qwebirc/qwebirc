@@ -148,13 +148,7 @@ qwebirc.ui.BaseUI = new Class({
 
 qwebirc.ui.StandardUI = new Class({
   Extends: qwebirc.ui.BaseUI,
-  UICommands: [
-    ["Options", "options"],
-    ["Add webchat to your site", "embedded"],
-    ["Privacy policy", "privacy"],
-    ["Feedback", "feedback"],
-    ["About qwebirc", "about"]
-  ],
+  UICommands: qwebirc.ui.UI_COMMANDS,
   initialize: function(parentElement, windowClass, uiName, options) {
     this.parent(parentElement, windowClass, uiName, options);
 
@@ -274,6 +268,9 @@ qwebirc.ui.StandardUI = new Class({
   },
   feedbackWindow: function() {
     this.addCustomWindow("Feedback", qwebirc.ui.FeedbackPane, "feedbackpane", this.uiOptions);
+  },
+  faqWindow: function() {
+    this.addCustomWindow("FAQ", qwebirc.ui.FAQPane, "faqpane", this.uiOptions);
   },
   urlDispatcher: function(name) {
     if(name == "embedded")

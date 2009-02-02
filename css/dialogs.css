@@ -72,7 +72,7 @@
 }
 
 .qwebirc-aboutpane .header .title {
-  font-size: 4em;
+  font-size: 3em;
 }
 
 .qwebirc-aboutpane .header .subtitle {
@@ -135,7 +135,7 @@
 }
 
 .qwebirc-privacypolicypane .header .title {
-  font-size: 4em;
+  font-size: 3em;
 }
 
 .qwebirc-privacypolicypane .header .subtitle {
@@ -174,7 +174,7 @@
 }
 
 .qwebirc-feedbackpane .header .title {
-  font-size: 4em;
+  font-size: 3em;
 }
 
 .qwebirc-feedbackpane .header .subtitle {
@@ -186,8 +186,51 @@
   font-family: Consolas, "Lucida Console", monospace;
 }
 
+/************* FAQ *****************/
+
+.qwebirc-faqpane {
+  font-size: 1em !important;
+}
+
+.qwebirc-faqpane .mainbody {
+  font-size: 0.8em;
+  text-align: center;
+  padding: 5px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.qwebirc-faqpane table {
+  display: inline-block;
+}
+
+.qwebirc-faqpane div.header {
+  padding-top: 5px;
+}
+
+.qwebirc-faqpane .header {
+  background: white;
+  text-align: center;
+  border-bottom: 1px solid gray;
+  padding-bottom: 5px;
+}
+
+.qwebirc-faqpane .header .title {
+  font-size: 3em;
+}
+
+.qwebirc-faqpane .header .subtitle {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.qwebirc-faqpane .monospace {
+  font-family: Consolas, "Lucida Console", monospace;
+}
+
 .qwebirc .loading {
   padding-left: 4px;
   padding-top: 3px;
   font-size: 0.8em;
 }
+

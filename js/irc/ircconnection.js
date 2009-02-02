@@ -40,6 +40,8 @@ qwebirc.irc.IRCConnection = new Class({
             return {"send": function() { }, "cancel": function() { }};
           }
         }
+      } else {
+        this.floodCounter = 0;
       }
       this.lastActiveRequest = t;
     }
