@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import pages, os, subprocess, pagegen
+import pages, os, subprocess, pagegen, shutil
 
 COPYRIGHT = open("js/copyright.js", "rb").read()
 
@@ -48,6 +48,7 @@ def main(outputdir=".", produce_debug=True):
   for uiname, value in pages.UIs.items():
     csssrc = pagegen.csslist(uiname, True)
     jmerge_files(outputdir, "css", uiname + "-" + ID, csssrc)
+    shutil.copy2(os.path.join(outputdir, "static", "css", uiname + "-" + ID + ".css"), os.path.join(outputdir, "static", "css", uiname + ".css"))
     #jmerge_files(outputdir, "js", uiname, value["uifiles"], lambda x: os.path.join("js", "ui", "frontends", x + ".js"))
     
     alljs = []
