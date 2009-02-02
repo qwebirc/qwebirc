@@ -2,11 +2,13 @@ qwebirc.ui.FeedbackPane = new Class({
   Implements: [Events],
   initialize: function(parent) {
     this.textboxVisible = false;
-    parent.set("html", "<div class=\"loading\">Loading. . .</div>");
+    var delayfn = function() { parent.set("html", "<div class=\"loading\">Loading. . .</div>"); };
+    var cb = delayfn.delay(500);
     
     this.addEvent("select", this.onSelect);
     
     var r = new Request.HTML({url: "panes/feedback.html", update: parent, onSuccess: function() {
+      $clear(cb);
       parent.getElement("input[class=close]").addEvent("click", function() {
         this.fireEvent("close");
       }.bind(this));
