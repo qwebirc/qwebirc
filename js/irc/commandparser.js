@@ -77,7 +77,7 @@ qwebirc.irc.BaseCommandParser = new Class({
       var fn = cmdopts[3];
       
       var w = this.getActiveWindow();
-      if(activewin && (w.type != qwebirc.ui.WINDOW_CHANNEL && window.type != qwebirc.ui.WINDOW_QUERY)) {
+      if(activewin && ((w.type != qwebirc.ui.WINDOW_CHANNEL) && (w.type != qwebirc.ui.WINDOW_QUERY))) {
         w.errorMessage("Can't use this command in this window");
         return;
       }
