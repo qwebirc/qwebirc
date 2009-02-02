@@ -347,7 +347,10 @@ qwebirc.ui.QuakeNetUI = new Class({
       for(var client in this.clients) {
         this.clients[client].quit("Logged out");
       };
-      document.location = "/auth?logout=1";
+      
+      /* HACK */
+      var foo = function() { document.location = "/auth?logout=1"; };
+      foo.delay(500);
     }
   }
 });

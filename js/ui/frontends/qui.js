@@ -284,20 +284,20 @@ qwebirc.ui.QUI.JSUI = new Class({
     var mheight = (docsize.y - topsize.y - bottomsize.y - topicsize.y);
     var mwidth = (docsize.x - rightsize.x);
 
-    topic.setStyle("top", topsize.y + "px");
+    topic.setStyle("top", topsize.y);
     
-    middle.setStyle("top", (topsize.y + topicsize.y) + "px");
+    middle.setStyle("top", (topsize.y + topicsize.y));
     if(mheight > 0) {
-      middle.setStyle("height", mheight + "px");
-      right.setStyle("height", mheight + "px");
+      middle.setStyle("height", mheight);
+      right.setStyle("height", mheight);
     }
     
     if(mwidth > 0)
-      middle.setStyle("width", mwidth + "px");
-    right.setStyle("top", (topsize.y + topicsize.y) + "px");
-    right.setStyle("left", mwidth + "px");
+      middle.setStyle("width", mwidth);
+    right.setStyle("top", (topsize.y + topicsize.y));
+    right.setStyle("left", mwidth);
     
-    bottom.setStyle("top", (docsize.y - bottomsize.y) + "px");
+    bottom.setStyle("top", (docsize.y - bottomsize.y));
     this.fireEvent("reflow");
   },
   showChannel: function(state) {
@@ -483,10 +483,6 @@ qwebirc.ui.QUI.Window = new Class({
       this.moveMenuClass();
       e.menu = this.createMenu(x.realNick, e);
       new Event(x).stop();
-    }.bind(this));
-    e.addEvent("dblclick", function(x) {
-      new Event(x).stop();
-      this.client.exec("/QUERY " + e.realNick);
     }.bind(this));
     
     e.addEvent("focus", function() { this.blur() }.bind(e));
