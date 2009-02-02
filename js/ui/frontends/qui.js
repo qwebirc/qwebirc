@@ -21,11 +21,11 @@ qwebirc.ui.QUI = new Class({
     
     this.outerTabs = this.qjsui.top;
 
-    this.__createDropdownMenu();
-    this.__createDropdownHint();
-    
     this.tabs = new Element("div");
     this.tabs.addClass("tabbar");
+    
+    this.__createDropdownMenu();
+    
     this.outerTabs.appendChild(this.tabs);
     this.origtopic = this.topic = this.qjsui.topic;
     this.origlines = this.lines = this.qjsui.middle;
@@ -49,6 +49,9 @@ qwebirc.ui.QUI = new Class({
     
     this.createInput();
     this.reflow();
+
+    /* HACK, in Chrome this should work immediately but doesn't */
+    this.__createDropdownHint.delay(100, this);
   },
   __createDropdownMenu: function() {
     var dropdownMenu = new Element("span");
@@ -89,7 +92,7 @@ qwebirc.ui.QUI = new Class({
     dropdownEffect.start(1);
     
     this.outerTabs.appendChild(dropdown);
-    dropdownMenu.show = function(x){
+    dropdownMenu.show = function(x) {
       new Event(x).stop();
       this.hideHint();
       
@@ -109,7 +112,7 @@ qwebirc.ui.QUI = new Class({
     dropdown.addEvent("mousedown", function(e) { new Event(e).stop(); });
     dropdown.addEvent("click", dropdownMenu.show);
   },
-  __createDropdownHint: function() {    
+  __createDropdownHint: function() {
     var dropdownhint = new Element("div");
     dropdownhint.addClass("dropdownhint");
     dropdownhint.set("text", "Click the icon for the main menu.");
