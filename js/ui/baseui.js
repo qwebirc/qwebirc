@@ -156,6 +156,7 @@ qwebirc.ui.StandardUI = new Class({
     this.uiOptions = new qwebirc.ui.DefaultOptionsClass(this);
     this.customWindows = {};
     
+    var ev;
     if(Browser.Engine.trident) {
       ev = "keydown";
     } else {

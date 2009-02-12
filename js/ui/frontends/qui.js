@@ -553,7 +553,7 @@ qwebirc.ui.QUI.Window = new Class({
     this.parent(type, line, colourClass, e);
   },
   setHilighted: function(state) {
-    laststate = this.hilighted;
+    var laststate = this.hilighted;
     
     this.parent(state);
 

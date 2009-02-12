@@ -51,7 +51,7 @@ qwebirc.ui.Colourise = function(line, entity, execfn, cmdfn, window) {
     element = document.createElement("span");
   }  
   function emitStartToken() {
-    classes = []
+    var classes = []
     if(fg != undefined)
       classes.push("Xc" + fg);
     if(bg != undefined)

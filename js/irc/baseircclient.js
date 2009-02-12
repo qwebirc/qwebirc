@@ -262,6 +262,7 @@ qwebirc.irc.BaseIRCClient = new Class({
           return;
         }
 
+        var d;
         if(this.pmodes[mode]) { 
           d = [cmode, mode, xargs[carg++]]
         } else {
