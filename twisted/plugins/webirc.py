@@ -44,6 +44,8 @@ class QWebIRCServiceMaker(object):
     else:
       site = RootSite(config['staticpath'])
     
+    site.timeOut = 60
+    
     site.displayTracebacks = not config["notracebacks"]
     if config['https']:
       from twisted.internet.ssl import DefaultOpenSSLContextFactory
