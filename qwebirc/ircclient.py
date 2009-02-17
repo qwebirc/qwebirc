@@ -1,4 +1,4 @@
-import twisted, sys
+import twisted, sys, codecs
 from twisted.words.protocols import irc
 from twisted.internet import reactor, protocol
 from twisted.web import resource, server
@@ -13,6 +13,17 @@ def hmacfn(*args):
   h.update("%d %s" % (int(time.time() / HMACTEMPORAL), " ".join(args)))
   return h.hexdigest()
 
+def utf8_iso8859_1(data, table=dict((x, x.decode("iso-8859-1")) for x in map(chr, range(0, 256)))):
+  return (table.get(data.object[data.start]), data.start+1)
+
+codecs.register_error("mixed-iso-8859-1", utf8_iso8859_1)
+
+def irc_decode(x):
+  try:
+    return x.decode("utf-8", "mixed-iso-8859-1")
+  except UnicodeDecodeError:
+    return x.decode("iso-8859-1", "ignore")
+
 class QWebIRCClient(basic.LineReceiver):
   delimiter = "\n"
   def __init__(self, *args, **kwargs):
@@ -22,11 +33,7 @@ class QWebIRCClient(basic.LineReceiver):
     basic.LineReceiver.dataReceived(self, data.replace("\r", ""))
 
   def lineReceived(self, line):
-    line = irc.lowDequote(line)
-    try:
-      line = line.decode("utf-8")
-    except UnicodeDecodeError:
-      line = line.decode("iso-8859-1", "ignore")
+    line = irc_decode(irc.lowDequote(line))
     
     try:
       prefix, command, params = irc.parsemsg(line)

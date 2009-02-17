@@ -175,13 +175,13 @@ class AJAXEngine(resource.Resource):
     
     _, ip, port = request.transport.getPeer()
 
-    nick, ident, realname = request.args.get("nick"), "webchat", config.REALNAME
-    
+    nick = request.args.get("nick")
     if not nick:
       raise AJAXException("Nickname not supplied")
-      
-    nick = nick[0]
+    nick = ircclient.irc_decode(nick[0])
 
+    ident, realname = "webchat", config.REALNAME
+    
     for i in xrange(10):
       id = get_session_id()
       if not Sessions.get(id):
@@ -226,14 +226,9 @@ class AJAXEngine(resource.Resource):
       raise AJAXException("No command specified")
     self.__total_hit()
     
-    command = command[0]
+    decoded = ircclient.irc_decode(command[0])
     
     session = self.getSession(request)
-
-    try:
-      decoded = command.decode("utf-8")
-    except UnicodeDecodeError:
-      decoded = command.decode("iso-8859-1", "ignore")
 
     if len(decoded) > config.MAXLINELEN:
       session.disconnect()
