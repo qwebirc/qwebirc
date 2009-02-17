@@ -216,7 +216,7 @@ class AJAXEngine(resource.Resource):
     return session
     
   def subscribe(self, request):
-    request.channel._savedTimeOut = None # HACK
+    request.channel.cancelTimeout()
     self.getSession(request).subscribe(SingleUseChannel(request), request.notifyFinish())
     return NOT_DONE_YET
 

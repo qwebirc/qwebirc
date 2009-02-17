@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# this entire thing is a hack
+# this entire thing is a hack and badly needs reimplementing
 DEFAULT_PORT = 9090
 
 from twisted.scripts.twistd import run
