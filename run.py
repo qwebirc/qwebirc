@@ -2,6 +2,7 @@
 # this entire thing is a hack
 DEFAULT_PORT = 9090
 
+import qwebirc
 from twisted.scripts.twistd import run
 from optparse import OptionParser
 import sys, os
@@ -39,7 +40,9 @@ if not options.daemonise:
   args1.append("-n")
 if options.debug:
   args1.append("-b")
-args1+=["--reactor", options.reactor]
+
+if options.reactor != DEFAULT_REACTOR:
+  args1+=["--reactor", options.reactor]
 if options.logfile:
   args+=["--logfile", options.logfile]
 
