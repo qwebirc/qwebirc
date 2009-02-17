@@ -8,6 +8,7 @@ from twisted.application import internet, strports
 from twisted.web import static, server
 
 from qwebirc import RootSite
+import config as CONFIG
 
 class Options(usage.Options):
   optParameters = [["port", "p", "9090","Port to start the server on."],
@@ -44,7 +45,7 @@ class QWebIRCServiceMaker(object):
     else:
       site = RootSite(config['staticpath'])
     
-    site.timeOut = 60
+    site.timeOut = CONFIG.HTTP_REQUEST_TIMEOUT
     
     site.displayTracebacks = not config["notracebacks"]
     if config['https']:

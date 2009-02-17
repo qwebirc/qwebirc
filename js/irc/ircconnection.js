@@ -4,10 +4,12 @@ qwebirc.irc.IRCConnection = new Class({
   Implements: [Events, Options],
   options: {
     initialNickname: "ircconnX",
-    timeout: 30000,
-    floodInterval: 250,
-    floodMax: 5,
-    errorAlert: true
+    timeout: 45000,
+    floodInterval: 200,
+    floodMax: 10,
+    floodReset: 5000,
+    errorAlert: true,
+    maxRetries: 5
   },
   initialize: function(options) {
     this.setOptions(options);
@@ -17,38 +19,48 @@ qwebirc.irc.IRCConnection = new Class({
     this.counter = 0;
     this.disconnected = false;
     
-    this.lastActiveRequest = 0;
-    this.floodCounter = 0;
+    this.__floodLastRequest = 0;
+    this.__floodCounter = 0;
+    this.__floodLastFlood = 0;
     
-    this.activerequest = null;
-    this.timeoutid = null;
+    this.__retryAttempts = 0;
+    
+    this.__timeoutId = null;
+    this.__lastActiveRequest = null;
+    this.__activeRequest = null;
+    
+    this.haha = 0
   },
   __error: function(text) {
     this.fireEvent("error", text);
     if(this.options.errorAlert)
       alert(text);
   },
-  newRequest: function(url, onComplete, floodProtection) {
+  newRequest: function(url, floodProtection) {
+    if(this.disconnected)
+      return null;
+      
     if(floodProtection) {
       var t = new Date().getTime();
       
-      if(t - this.lastActiveRequest < this.options.floodInterval) {
-        if(this.floodCounter++ >= this.options.floodMax) {
+      if(t - this.__floodLastRequest < this.options.floodInterval) {
+        if(this.__floodLastFlood != 0 && (t - this.__floodLastFlood > this.options.floodReset)) {
+          this.floodCounter = 0;
+        }
+        this.__floodLastFlood = t;
+        if(this.__floodCounter++ >= this.options.floodMax) {
           if(!this.disconnected) {
             this.disconnect();
             this.__error("BUG: uncontrolled flood detected -- disconnected.");
-            return {"send": function() { }, "cancel": function() { }};
           }
+          return null;
         }
-      } else {
-        this.floodCounter = 0;
       }
-      this.lastActiveRequest = t;
+      this.__floodLastRequest = t;
     }
     
     var r = new Request.JSON({
-      url: "/e/" + url + "?r=" + this.cacheAvoidance + "&t=" + this.counter++,
-      onComplete: onComplete
+      url: "/e/" + url + "?r=" + this.cacheAvoidance + "&t=" + this.counter++
     });
     
     /* try to minimise the amount of headers */
@@ -74,7 +86,9 @@ qwebirc.irc.IRCConnection = new Class({
   send: function(data) {
     if(this.disconnected)
       return false;
-    var r = this.newRequest("p", function(o) {
+    var r = this.newRequest("p");
+    
+    r.addEvent("complete", function(o) {
       if(!o || (o[0] == false)) {
         if(!this.disconnected) {
           this.disconnected = true;
@@ -83,87 +97,116 @@ qwebirc.irc.IRCConnection = new Class({
         return false;
       }
     }.bind(this));
+    
     r.send("s=" + this.sessionid + "&c=" + encodeURIComponent(data));
     return true;
   },
-  __timeout: function() {
-    if(this.lastactiverequest) {
-      this.lastactiverequest.cancel();
-      this.lastactiverequest = null;
+  __processData: function(o) {
+    if(o[0] == false) {
+      if(!this.disconnected) {
+        this.disconnected = true;
+        this.__error("An error occured: " + o[1]);
+      }
+      return false;
     }
-    if(this.activerequest) {
-      this.lastactiverequest = this.activerequest;
-      /*this.activerequest.cancel();
-      this.activerequest = null;*/
+    
+    this.__retryAttempts = 0;
+    o.each(function(x) {
+      this.fireEvent("recv", [x]);
+    }, this);
+    
+    return true;
+  },
+  __scheduleTimeout: function() {
+    if(this.options.timeout)
+      this.__timeoutId = this.__timeoutEvent.delay(this.options.timeout, this);
+  },
+  __cancelTimeout: function() {
+    if($defined(this.__timeoutId)) {
+      $clear(this.__timeoutId);
+      this.__timeoutId = null;
     }
-    if($defined(this.timeoutid)) {
-      $clear(this.timeoutid);
-      this.timeoutid = null;
+  },
+  __timeoutEvent: function() {
+    this.__timeoutId = null;
+    
+    if(!$defined(this.__activeRequest))
+      return;
+      
+    if(this.__checkRetries()) {
+      if(this.__lastActiveRequest)
+        this.__lastActiveRequest.cancel();
+        
+      this.__activeRequest.__replaced = true;
+      this.__lastActiveRequest = this.__activeRequest;
+      this.recv();
+    } else {
+      this.__cancelRequests();
     }
-    this.recv();
+  },
+  __checkRetries: function() {
+    /* hmm, something went wrong! */
+    if(this.__retryAttempts++ >= this.options.maxRetries) {
+      this.disconnect();
+      
+      this.__error("Error: connection closed after several requests failed.");
+      return false;
+    }
+    
+    return true;
   },
   recv: function() {
-    var r = this.newRequest("s", function(o) {
-      if(this.lastactiverequest != r) 
-        this.activerequest = null;
+    var r = this.newRequest("s", true);
+    if(!$defined(r))
+      return;
+
+    this.__activeRequest = r;
+    r.__replaced = false;
+    
+    var onComplete = function(o) {
+      /* if we're a replaced requests... */
+      if(r.__replaced) {
+        this.__lastActiveRequest = null;
         
-      if($defined(this.timeoutid)) {
-        $clear(this.timeoutid);
-        this.timeoutid = null;
+        if(o)          
+          this.__processData(o);
+        return;
       }
-
-      if(o) {
-        if(this.lastactiverequest == r)
-          this.lastactiverequest = null;
-        this.lasttry = false;
-        if(o[0] == false) {
-          if(!this.disconnected) {
-            this.disconnected = true;
-
-            this.__error("An error occured: " + o[1]);
-          }
+    
+      /* ok, we're the main request */
+      this.__activeRequest = null;
+      this.__cancelTimeout();
+      
+      if(!o) {
+        if(this.disconnected)
           return;
-        }
-        o.each(function(x) {
-          this.fireEvent("recv", [x]);
-        }, this);
-      } else {
-        if(this.lastactiverequest == r) {
-          this.lastactiverequest = null;
-          return;
-        }
-        if(!this.disconnected) {
-          if(this.lasttry) {
-            this.disconnected = true;
-
-            this.__error("Error: the server closed the connection.");
-            return;
-          } else {
-            this.lasttry = true;
-          }
-        }
+          
+        if(this.__checkRetries())
+          this.recv();
+        return;
       }
       
-      this.recv();
-    }.bind(this), true);
+      if(this.__processData(o))
+        this.recv();
+    };
 
-    if(this.options.timeout)
-      this.timeoutid = this.__timeout.delay(this.options.timeout, this);
-    
-    this.activerequest = r;
+    r.addEvent("complete", onComplete.bind(this));
+
+    this.__scheduleTimeout();
     r.send("s=" + this.sessionid);
   },
   connect: function() {
     this.cacheAvoidance = qwebirc.util.randHexString(16);
     
-    var r = this.newRequest("n", function(o) {
+    var r = this.newRequest("n");
+    r.addEvent("complete", function(o) {
       if(!o) {
         this.disconnected = true;
         this.__error("Couldn't connect to remote server.");
         return;
       }
       if(o[0] == false) {
-        this.disconnected = true;
+        this.disconnect();
         this.__error("An error occured: " + o[1]);
         return;
       }
@@ -171,18 +214,21 @@ qwebirc.irc.IRCConnection = new Class({
       
       this.recv();    
     }.bind(this));
-    
     r.send("nick=" + encodeURIComponent(this.initialNickname));
+  },
+  __cancelRequests: function() {
+    if($defined(this.__lastActiveRequest)) {
+      this.__lastActiveRequest.cancel();
+      this.__lastActiveRequest = null;
+    }
+    if($defined(this.__activeRequest)) {
+      this.__activeRequest.cancel();
+      this.__activeRequest = null;
+    }
   },
   disconnect: function() {
     this.disconnected = true;
-    if(this.lastactiverequest) {
-      this.lastactiverequest.cancel();
-      this.lastactiverequest = null;
-    }
-    if($defined(this.timeoutid)) {
-      $clear(this.timeoutid);
-      this.timeoutid = null;
-    }
+    this.__cancelTimeout();
+    this.__cancelRequests();
   }
 });

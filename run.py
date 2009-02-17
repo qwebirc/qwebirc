@@ -2,7 +2,6 @@
 # this entire thing is a hack
 DEFAULT_PORT = 9090
 
-import qwebirc
 from twisted.scripts.twistd import run
 from optparse import OptionParser
 import sys, os

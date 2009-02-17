@@ -1,6 +1,6 @@
 from twisted.web import resource, server, static
 from twisted.names import client
-from twisted.internet import reactor
+from twisted.internet import reactor, error
 from authgateengine import login_optional, getSessionData
 import simplejson, md5, sys, os, time, config, weakref, traceback
 import qwebirc.ircclient as ircclient
@@ -52,12 +52,30 @@ class IRCSession:
     self.closed = False
     self.cleanupschedule = None
 
-  def subscribe(self, channel):
+  def subscribe(self, channel, notifier):
+    timeout_entry = reactor.callLater(config.HTTP_AJAX_REQUEST_TIMEOUT, self.timeout, channel)
+    def cancel_timeout(result):
+      if channel in self.subscriptions:
+        self.subscriptions.remove(channel)
+      try:
+        timeout_entry.cancel()
+      except error.AlreadyCalled:
+        pass
+    notifier.addCallbacks(cancel_timeout, cancel_timeout)
+    
     if len(self.subscriptions) >= config.MAXSUBSCRIPTIONS:
       self.subscriptions.pop(0).close()
 
     self.subscriptions.append(channel)
     self.flush()
+      
+  def timeout(self, channel):
+    if self.schedule:
+      return
+      
+    channel.write(simplejson.dumps([]))
+    if channel in self.subscriptions:
+      self.subscriptions.remove(channel)
       
   def flush(self, scheduled=False):
     if scheduled:
@@ -198,7 +216,8 @@ class AJAXEngine(resource.Resource):
     return session
     
   def subscribe(self, request):
-    self.getSession(request).subscribe(SingleUseChannel(request))
+    request.channel._savedTimeOut = None # HACK
+    self.getSession(request).subscribe(SingleUseChannel(request), request.notifyFinish())
     return NOT_DONE_YET
 
   def push(self, request):
