@@ -4,7 +4,7 @@ DEFAULT_PORT = 9090
 
 from twisted.scripts.twistd import run
 from optparse import OptionParser
-import sys, os
+import sys, os, config
 
 def run_twistd(args1=None, args2=None):
   args = [sys.argv[0]]
@@ -31,7 +31,13 @@ parser.add_option("-r", "--reactor", help="Which reactor to use (see --help-reac
 parser.add_option("-p", "--port", help="Port to start the server on.", type="int", dest="port", default=DEFAULT_PORT)
 parser.add_option("-l", "--logfile", help="Path to twisted log file.", dest="logfile")
 parser.add_option("-c", "--clf", help="Path to web CLF (Combined Log Format) log file.", dest="clogfile")
-(options, args) = parser.parse_args()
+
+sargs = sys.argv[1:]
+if "ARGS" in dir(config):
+  import shlex
+  sargs = shlex.split(config.ARGS) + sargs
+
+(options, args) = parser.parse_args(args=sargs)
 
 args1, args2 = [], []
 
