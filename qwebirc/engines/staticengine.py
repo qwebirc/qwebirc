@@ -1,4 +1,4 @@
-from twisted.web import resource, server, static
+from twisted.web import resource, server, static, error
 from qwebirc.util.gziprequest import GZipRequest
 import qwebirc.util as util
 import pprint
@@ -42,3 +42,6 @@ class StaticEngine(static.File):
         (self.hit,),
       ]
     }
+
+  def directoryListing(self):
+    return error.ForbiddenResource()

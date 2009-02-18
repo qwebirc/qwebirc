@@ -1,4 +1,4 @@
-from twisted.web import resource, server, static
+from twisted.web import resource, server, static, error as http_error
 from twisted.names import client
 from twisted.internet import reactor, error
 from authgateengine import login_optional, getSessionData
@@ -21,6 +21,9 @@ class AJAXException(Exception):
 class IDGenerationException(Exception):
   pass
 
+class PassthruException(Exception):
+  pass
+  
 NOT_DONE_YET = None
 
 def jsondump(fn):
@@ -32,6 +35,8 @@ def jsondump(fn):
       x = (True, x)
     except AJAXException, e:
       x = (False, e[0])
+    except PassthruException, e:
+      return str(e)
       
     return simplejson.dumps(x)
   return decorator
@@ -115,7 +120,7 @@ class IRCSession:
     bufferlen = sum(map(len, self.buffer))
     if bufferlen + len(data) > config.MAXBUFLEN:
       self.buffer = []
-      self.client.error("Buffer overflow")
+      self.client.error("Buffer overflow.")
       return
 
     self.buffer.append(data)
@@ -165,10 +170,11 @@ class AJAXEngine(resource.Resource):
       handler = self.COMMANDS.get(path[1:])
       if handler is not None:
         return handler(self, request)
-    raise AJAXException, "404"
+        
+    raise PassthruException, http_error.NoResource().render(request)
 
-#  def render_GET(self, request):
-#    return self.render_POST(request)
+  #def render_GET(self, request):
+    #return self.render_POST(request)
   
   def newConnection(self, request):
     ticket = login_optional(request)
@@ -177,7 +183,7 @@ class AJAXEngine(resource.Resource):
 
     nick = request.args.get("nick")
     if not nick:
-      raise AJAXException, "Nickname not supplied"
+      raise AJAXException, "Nickname not supplied."
     nick = ircclient.irc_decode(nick[0])
 
     ident, realname = "webchat", config.REALNAME
@@ -225,7 +231,7 @@ class AJAXEngine(resource.Resource):
   def push(self, request):
     command = request.args.get("c")
     if command is None:
-      raise AJAXException, "No command specified"
+      raise AJAXException, "No command specified."
     self.__total_hit()
     
     decoded = ircclient.irc_decode(command[0])
@@ -234,13 +240,13 @@ class AJAXEngine(resource.Resource):
 
     if len(decoded) > config.MAXLINELEN:
       session.disconnect()
-      raise AJAXException, "Line too long"
+      raise AJAXException, "Line too long."
 
     try:
       session.push(decoded)
     except AttributeError: # occurs when we haven't noticed an error
       session.disconnect()
-      raise AJAXException, "Connection closed by server."
+      raise AJAXException, "Connection closed by server; try reconnecting by reloading the page."
     except Exception, e: # catch all
       session.disconnect()        
       traceback.print_exc(file=sys.stderr)
