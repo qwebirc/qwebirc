@@ -165,7 +165,7 @@ class AJAXEngine(resource.Resource):
       handler = self.COMMANDS.get(path[1:])
       if handler is not None:
         return handler(self, request)
-    raise AJAXException("404")
+    raise AJAXException, "404"
 
 #  def render_GET(self, request):
 #    return self.render_POST(request)
@@ -177,7 +177,7 @@ class AJAXEngine(resource.Resource):
 
     nick = request.args.get("nick")
     if not nick:
-      raise AJAXException("Nickname not supplied")
+      raise AJAXException, "Nickname not supplied"
     nick = ircclient.irc_decode(nick[0])
 
     ident, realname = "webchat", config.REALNAME
@@ -206,13 +206,15 @@ class AJAXEngine(resource.Resource):
     return id
   
   def getSession(self, request):
+    bad_session_message = "Invalid session, this most likely means the server has restarted; close this dialog and then try refreshing the page."
+    
     sessionid = request.args.get("s")
     if sessionid is None:
-      raise AJAXException("Bad session ID")
+      raise AJAXException, bad_session_message
       
     session = Sessions.get(sessionid[0])
     if not session:
-      raise AJAXException("Bad session ID")
+      raise AJAXException, bad_session_message
     return session
     
   def subscribe(self, request):
@@ -223,7 +225,7 @@ class AJAXEngine(resource.Resource):
   def push(self, request):
     command = request.args.get("c")
     if command is None:
-      raise AJAXException("No command specified")
+      raise AJAXException, "No command specified"
     self.__total_hit()
     
     decoded = ircclient.irc_decode(command[0])
@@ -232,17 +234,17 @@ class AJAXEngine(resource.Resource):
 
     if len(decoded) > config.MAXLINELEN:
       session.disconnect()
-      raise AJAXException("Line too long")
+      raise AJAXException, "Line too long"
 
     try:
       session.push(decoded)
     except AttributeError: # occurs when we haven't noticed an error
       session.disconnect()
-      raise AJAXException("Connection closed by server.")
+      raise AJAXException, "Connection closed by server."
     except Exception, e: # catch all
       session.disconnect()        
       traceback.print_exc(file=sys.stderr)
-      raise AJAXException("Unknown error.")
+      raise AJAXException, "Unknown error."
   
     return True
   
