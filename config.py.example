@@ -1,16 +1,12 @@
 import dummyauthgate as AUTHGATEPROVIDER
 
 IRCSERVER, IRCPORT = "moo.com", 6667
-HMACKEY = "mrmoo"
-HMACTEMPORAL = 30
 UPDATE_FREQ = 0.5
 MAXBUFLEN = 10000
 MAXSUBSCRIPTIONS = 3
 REALNAME = "http://moo.com/"
 MAXLINELEN = 600
-AUTHGATEDOMAIN = "webchat_test"
-QTICKETKEY = "boo"
-QBOT = "Q@CServe.quakenet.org"
+
 FEEDBACK_FROM = "moo@moo.com"
 FEEDBACK_TO = "moo@moo.com"
 FEEDBACK_SMTP_HOST = "127.0.0.1"
@@ -20,3 +16,10 @@ HTTP_REQUEST_TIMEOUT = 5
 HTTP_AJAX_REQUEST_TIMEOUT = 30
 # optional default arguments:
 # ARGS = "-n -p 3989"
+
+# the following are only really useful for quakenet but still need to be set
+HMACKEY = "mrmoo"
+HMACTEMPORAL = 30
+AUTHGATEDOMAIN = "webchat_test"
+QTICKETKEY = "boo"
+QBOT = "Q@CServe.quakenet.org"
