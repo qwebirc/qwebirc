@@ -1,5 +1,8 @@
 import os, sys, pages, subprocess, re
 
+class HGException(Exception):
+  pass
+  
 def jslist(name, debug):
   ui = pages.UIs[name]
   if debug:
@@ -18,14 +21,29 @@ def csslist(name, debug, gen=False):
   ui = pages.UIs[name]
   return list("css/%s%s.css" % ("debug/" if gen else "", x) for x in pages.flatten([ui.get("extracss", []), "colours", "dialogs", "%s" % name]))
 
+def _gethgid():
+  try:
+    p = subprocess.Popen(["hg", "id"], stdout=subprocess.PIPE)
+  except Exception, e:
+    if hasattr(e, "errno") and e.errno == 2:
+      raise HGException, "unable to execute"
+      
+  data = p.communicate()[0]
+  if p.wait() != 0:
+    raise HGException, "unable to get id"
+  return re.match("^([0-9a-f]+).*", data).group(1)
+
 HGID = None
 def gethgid():
   global HGID
   if HGID is None:
-    hgid = subprocess.Popen(["hg", "id"], stdout=subprocess.PIPE).communicate()[0]
-    HGID = re.match("^([0-9a-f]+).*", hgid).group(1)
+    try:
+      HGID =  _gethgid()
+    except HGException, e:
+      print >>sys.stderr, "warning: hg: %s (using a random id)." % e
+      HGID = os.urandom(10).encode("hex")
   return HGID
-
+    
 def producehtml(name, debug):
   ui = pages.UIs[name]
   js = jslist(name, debug)

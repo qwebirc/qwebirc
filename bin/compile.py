@@ -1,17 +1,40 @@
 #!/usr/bin/env python
-import pages, os, subprocess, pagegen, shutil
+import pages, os, subprocess, pagegen, shutil, sys
 
 COPYRIGHT = open("js/copyright.js", "rb").read()
 
+class MinifyException(Exception):
+  pass
+  
 def jarit(src):
-  return subprocess.Popen(["java", "-jar", "bin/yuicompressor-2.3.5.jar", src], stdout=subprocess.PIPE).communicate()[0]
+  try:
+    p = subprocess.Popen(["java", "-jar", "bin/yuicompressor-2.3.5.jar", src], stdout=subprocess.PIPE)
+  except Exception, e:
+    if hasattr(e, "errno") and e.errno == 2:
+      raise MinifyException, "unable to run java"
+    raise
+  data = p.communicate()[0]
+  if p.wait() != 0:
+    raise MinifyException, "an error occured"
+  return data
 
+JAVA_WARNING_SURPRESSED = False
 def jmerge_files(prefix, suffix, output, files, *args):
   global COPYRIGHT
   output = output + "." + suffix
   o = os.path.join(prefix, "compiled", output)
   merge_files(o, files, *args)
-  compiled = jarit(o)
+  
+  # cough hack
+  compiled = open(o, "rb").read()
+  try:
+    compiled = jarit(o)
+  except MinifyException, e:
+    global JAVA_WARNING_SURPRESSED
+    if not JAVA_WARNING_SURPRESSED:
+      JAVA_WARNING_SURPRESSED = True
+      print >>sys.stderr, "warning: minify: %s (not minifying -- javascript will be HUGE)." % e
+
   os.unlink(o)
   f = open(os.path.join(prefix, "static", suffix, output), "wb")
   f.write(COPYRIGHT)
