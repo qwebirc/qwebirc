@@ -1,9 +1,9 @@
-from authgate import twisted as authgate
 from twisted.web import resource, server, static
 import config, urlparse, urllib, hashlib, re
 import qwebirc.util.rijndael, qwebirc.util.ciphers
 import qwebirc.util
 
+authgate = config.AUTHGATEPROVIDER.twisted
 BLOCK_SIZE = 128/8
 
 class AuthgateEngine(resource.Resource):
