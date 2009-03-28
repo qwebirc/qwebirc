@@ -1,4 +1,4 @@
-import os, sys, pages, subprocess, re
+import os, sys, pages, subprocess, re, optionsgen
 
 class HGException(Exception):
   pass
@@ -63,7 +63,7 @@ def producehtml(name, debug):
 %s%s
 %s
   <script type="text/javascript">
-    var ui = new qwebirc.ui.Interface("ircui", qwebirc.ui.%s);
+    var ui = new qwebirc.ui.Interface("ircui", qwebirc.ui.%s, %s);
   </script>
 </head>
 <body>
@@ -74,7 +74,7 @@ def producehtml(name, debug):
   </div>
 </body>
 </html>
-""" % (ui["doctype"], csshtml, customjs, jshtml, ui["class"], div)
+""" % (ui["doctype"], csshtml, customjs, jshtml, ui["class"], optionsgen.get_options(), div)
 
 def main(outputdir=".", produce_debug=True):
   p = os.path.join(outputdir, "static")

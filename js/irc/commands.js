@@ -171,8 +171,11 @@ qwebirc.irc.Commands = new Class({
       fchans.push(x);
     }.bind(this));
 
-    if(warn)
-      this.getActiveWindow().infoMessage("Channel names begin with # (corrected automatically).");
+    if(warn) {
+      var delayinfo = function() {
+        this.getActiveWindow().infoMessage("Channel names begin with # (corrected automatically).");
+      }.bind(this).delay(250);
+    }
       
     this.send("JOIN " + fchans.join(",") + " " + args.join(" "));
   }],
@@ -183,8 +186,7 @@ qwebirc.irc.Commands = new Class({
     this.parentObject.ui.beep();
   }],
   cmd_AUTOJOIN: [false, undefined, undefined, function(args) {
-    var realargs = this.parentObject.options.autojoin.splitMax(" ", 2);
-    return ["JOIN", realargs[0], realargs[1]];
+    return ["JOIN", this.parentObject.options.autojoin];
   }],
   cmd_CLEAR: [false, undefined, undefined, function(args) {
     var w = this.getActiveWindow().lines;

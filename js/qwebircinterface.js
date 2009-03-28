@@ -3,10 +3,10 @@ qwebirc.ui.Interface = new Class({
   options: {
     initialNickname: "qwebirc" + Math.ceil(Math.random() * 100000),
     initialChannels: "",
-    networkName: "QuakeNet",
-    networkServices: ["Q!TheQBot@CServe.quakenet.org"],
-    loginRegex: "^You are now logged in as [^ ]+\\.$",
-    appTitle: "QuakeNet Web IRC",
+    networkName: "ExampleNetwork",
+    networkServices: [],
+    loginRegex: null,
+    appTitle: "ExampleNetwork Web IRC",
     searchURL: true,
     theme: undefined
   },
@@ -31,26 +31,34 @@ qwebirc.ui.Interface = new Class({
       if(this.options.searchURL) {
         var args = qwebirc.util.parseURI(String(document.location));
         
-        var chans = args["channels"];
-        var nick = args["nick"];
-
-        var canAutoConnect = false;
+        var url = args["url"];
+        var chans, nick = args["nick"];
         
-        if(chans) {
-          var cdata = chans.split(" ");
+        if($defined(url)) {
+          ichans = this.parseIRCURL(url);
+          if($defined(chans) && chans != "")
+            canAutoConnect = true;
+        } else {
+          chans = args["channels"];
+
+          var canAutoConnect = false;
+        
+          if(chans) {
+            var cdata = chans.split(" ");
           
-          chans = cdata[0].split(",");
-          var chans2 = [];
+            chans = cdata[0].split(",");
+            var chans2 = [];
           
-          for(i=0;i<chans.length;i++) {
-            chans2[i] = chans[i];
+            for(i=0;i<chans.length;i++) {
+              chans2[i] = chans[i];
             
-            if(chans[i].charAt(0) != '#')
-              chans2[i] = "#" + chans2[i]
+              if(chans[i].charAt(0) != '#')
+                chans2[i] = "#" + chans2[i]
+            }
+            cdata[0] = chans2.join(",");
+            ichans = cdata.join(" ");
+            canAutoConnect = true;
           }
-          cdata[0] = chans2.join(",");
-          ichans = cdata.join(" ");
-          canAutoConnect = true;
         }
         
         if($defined(nick))
@@ -100,5 +108,73 @@ qwebirc.ui.Interface = new Class({
       }
     }).join("");
     
+  },
+  parseIRCURL: function(url) {
+    if(url.indexOf(":") == 0)
+      return;
+    var schemeComponents = url.splitMax(":", 2);
+    if(schemeComponents[0].toLowerCase() != "irc" && schemeComponents[0].toLowerCase() != "ircs") {
+      alert("Bad IRC URL scheme.");
+      return;
+    }
+
+    if(url.indexOf("/") == 0) {
+      /* irc: */
+      return;
+    }
+    
+    var pathComponents = url.splitMax("/", 4);
+    if(pathComponents.length < 4 || pathComponents[3] == "") {
+      /* irc://abc */
+      return;
+    }
+    
+    var args, queryArgs;
+    if(pathComponents[3].indexOf("?") > -1) {
+      queryArgs = qwebirc.util.parseURI(pathComponents[3]);
+      args = pathComponents[3].splitMax("?", 2)[0];
+    } else {
+      args = pathComponents[3];
+    }
+    var parts = args.split(",");
+
+    var channel = parts[0];
+    if(channel.charAt(0) != "#")
+      channel = "#" + channel;
+
+    var not_supported = [], needkey = false, key;
+    for(var i=1;i<parts.length;i++) {
+      var value = parts[i];
+      if(value == "needkey") {
+        needkey = true;
+      } else {
+        not_supported.push(value);
+      }
+    }
+
+    if($defined(queryArgs)) {
+      for(var key_ in queryArgs) {
+        var value = queryArgs[key_];
+        
+        if(key_ == "key") {
+          key = value;
+          needkey = true;
+        } else {
+          not_supported.push(key_);
+        }
+      }
+    }
+    
+    if(needkey) {
+      if(!$defined(key))
+        key = prompt("Please enter the password for channel " + channel + ":");
+      if($defined(key))
+        channel = channel + " " + key;
+    }
+    
+    if(not_supported.length > 0)
+      alert("The following IRC URL components were not accepted: " + not_supported.join(", ") + ".");
+    
+    return channel;
   }
 });

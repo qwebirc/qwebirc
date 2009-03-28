@@ -201,7 +201,9 @@ class AJAXEngine(resource.Resource):
     if qticket is None:
       perform = None
     else:
-      perform = ["PRIVMSG %s :TICKETAUTH %s" % (config.QBOT, qticket)]
+      service_mask = config.AUTH_SERVICE
+      msg_mask = service_mask.split("!")[0] + "@" + service_mask.split("@", 1)[1]
+      perform = ["PRIVMSG %s :TICKETAUTH %s" % (msg_mask, qticket)]
 
     self.__connect_hit()
     client = ircclient.createIRC(session, nick=nick, ident=ident, ip=ip, realname=realname, perform=perform)

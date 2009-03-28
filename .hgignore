@@ -3,6 +3,7 @@ static/js/{ugly,swm,mocha,q}ui{,-*}.js
 static/js/qwebirc.js
 static/{js,css}/debug
 static/css
+static/panes/privacypolicy.html
 config.py
 dropin.cache
 *.tap

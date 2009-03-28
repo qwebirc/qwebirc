@@ -17,9 +17,13 @@ HTTP_AJAX_REQUEST_TIMEOUT = 30
 # optional default arguments:
 # ARGS = "-n -p 3989"
 
+NETWORK_NAME = "FooNet"
+APP_TITLE = "FooNet Web IRC"
+
 # the following are only really useful for quakenet but still need to be set
 HMACKEY = "mrmoo"
 HMACTEMPORAL = 30
 AUTHGATEDOMAIN = "webchat_test"
 QTICKETKEY = "boo"
-QBOT = "Q@CServe.quakenet.org"
+AUTH_SERVICE = "Q!TheQBot@CServe.quakenet.org"
+AUTH_OK_REGEX = "^You are now logged in as [^ ]+\\.$"

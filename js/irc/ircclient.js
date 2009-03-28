@@ -218,7 +218,7 @@ qwebirc.irc.IRCClient = new Class({
         this.activeTimers.autojoin = function() {
           var w = this.ui.getActiveWindow();
           w.errorMessage("No login response in 10 seconds.");
-          w.errorMessage("You may want to try authing to Q and then type: /autojoin (if you don't auth your host may be visible).");
+          w.errorMessage("You may want to try authing manually and then type: /autojoin (if you don't auth your host may be visible).");
         }.delay(10000, this);
         return;
       }
@@ -407,7 +407,7 @@ qwebirc.irc.IRCClient = new Class({
   },
   checkLogin: function(user, message) {
     if(this.isNetworkService(user) && $defined(this.activeTimers.autojoin)) {
-      if(message.match(this.loginRegex)) {
+      if($defined(this.loginRegex) && message.match(this.loginRegex)) {
         $clear(this.activeTimers.autojoin);
         delete this.activeTimers["autojoin"];
         this.ui.getActiveWindow().infoMessage("Joining channels...");
