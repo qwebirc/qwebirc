@@ -19,7 +19,7 @@ qwebirc.irc.BaseIRCClient = new Class({
     this.nickname = this.options.nickname;
     
     this.__signedOn = false;
-    this.pmodes = ["b", "k,", "o", "l", "v"];
+    this.pmodes = {b: true, k: true, o: true, l: true, v: true};
     this.channels = {}
     this.nextctcp = 0;    
 
@@ -287,6 +287,9 @@ qwebirc.irc.BaseIRCClient = new Class({
     }
   },  
   irc_RPL_MYINFO: function(prefix, params) {
+    if(params.length < 6)
+      return;
+
     var pmodes = params[5].split("");
     this.pmodes = {}
     
