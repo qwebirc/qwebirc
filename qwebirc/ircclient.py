@@ -6,7 +6,9 @@ from twisted.protocols import basic
 
 import hmac, time, config
 from config import HMACTEMPORAL
-HMACKEY = hmac.HMAC(key=config.HMACKEY)
+
+if config.WEBIRC_MODE == "hmac":
+  HMACKEY = hmac.HMAC(key=config.HMACKEY)
 
 def hmacfn(*args):
   h = HMACKEY.copy()
@@ -70,12 +72,24 @@ class QWebIRCClient(basic.LineReceiver):
     
     self.lastError = None
     f = self.factory.ircinit
-    nick, ident, ip, realname = f["nick"], f["ident"], f["ip"], f["realname"]
+    nick, ident, ip, realname, hostname = f["nick"], f["ident"], f["ip"], f["realname"], f["hostname"]
     self.__nickname = nick
     self.__perform = f.get("perform")
-    
-    hmac = hmacfn(ident, ip)
-    self.write("USER %s bleh bleh %s %s :%s" % (ident, ip, hmac, realname))
+
+    if config.WEBIRC_MODE == "hmac":
+      hmac = hmacfn(ident, ip)
+      self.write("USER %s bleh bleh %s %s :%s" % (ident, ip, hmac, realname))
+    elif config.WEBIRC_MODE == "cgiirc":
+      self.write("WEBIRC %s cgiirc %s %s" % (config.WEBIRC_PASSWORD, ip, hostname))
+      self.write("USER %s bleh %s :%s" % (ident, ip, realname))
+    else:
+      if ip == hostname:
+        dispip = ip
+      else:
+        dispip = "%s/%s" % (hostname, ip)
+
+      self.write("USER %s bleh bleh :%s -- %s" % (ident, dispip, realname))
+
     self.write("NICK %s" % nick)
     
     self.factory.client = self
@@ -125,5 +139,5 @@ def createIRC(*args, **kwargs):
   return f
 
 if __name__ == "__main__":
-  e = createIRC(lambda x: 2, nick="slug__moo", ident="mooslug", ip="1.2.3.6", realname="mooooo")
+  e = createIRC(lambda x: 2, nick="slug__moo", ident="mooslug", ip="1.2.3.6", realname="mooooo", hostname="1.2.3.4")
   reactor.run()

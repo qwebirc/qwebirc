@@ -2,7 +2,7 @@ from twisted.web import resource, server, static, error as http_error
 from twisted.names import client
 from twisted.internet import reactor, error
 from authgateengine import login_optional, getSessionData
-import simplejson, md5, sys, os, time, config, weakref, traceback
+import simplejson, md5, sys, os, time, config, weakref, traceback, socket
 import qwebirc.ircclient as ircclient
 from adminengine import AdminEngineAction
 from qwebirc.util import HitCounter
@@ -186,8 +186,6 @@ class AJAXEngine(resource.Resource):
       raise AJAXException, "Nickname not supplied."
     nick = ircclient.irc_decode(nick[0])
 
-    ident, realname = "webchat", config.REALNAME
-    
     for i in xrange(10):
       id = get_session_id()
       if not Sessions.get(id):
@@ -205,8 +203,12 @@ class AJAXEngine(resource.Resource):
       msg_mask = service_mask.split("!")[0] + "@" + service_mask.split("@", 1)[1]
       perform = ["PRIVMSG %s :TICKETAUTH %s" % (msg_mask, qticket)]
 
+    ident, realname = config.IDENT, config.REALNAME
+    if ident is None:
+      ident = socket.inet_aton(ip).encode("hex")
+
     self.__connect_hit()
-    client = ircclient.createIRC(session, nick=nick, ident=ident, ip=ip, realname=realname, perform=perform)
+    client = ircclient.createIRC(session, nick=nick, ident=ident, ip=ip, realname=realname, perform=perform, hostname=ip)
     session.client = client
     
     Sessions[id] = session

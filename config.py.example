@@ -6,6 +6,7 @@ MAXBUFLEN = 10000
 MAXSUBSCRIPTIONS = 3
 REALNAME = "http://moo.com/"
 MAXLINELEN = 600
+IDENT = "webchat"   # set this value to None if you'd like a hex representation of the IP
 
 FEEDBACK_FROM = "moo@moo.com"
 FEEDBACK_TO = "moo@moo.com"
@@ -20,9 +21,17 @@ HTTP_AJAX_REQUEST_TIMEOUT = 30
 NETWORK_NAME = "FooNet"
 APP_TITLE = "FooNet Web IRC"
 
-# the following are only really useful for quakenet but still need to be set
+# Possible types include "cgiirc", "hmac" and None
+WEBIRC_MODE = "cgiirc"
+
+# CGIIRC values
+CGIIRC_PASSWORD = "fish"
+
+# HMAC values
 HMACKEY = "mrmoo"
 HMACTEMPORAL = 30
+
+# the following are only really useful for quakenet but still need to be set sadly
 AUTHGATEDOMAIN = "webchat_test"
 QTICKETKEY = "boo"
 AUTH_SERVICE = "Q!TheQBot@CServe.quakenet.org"
