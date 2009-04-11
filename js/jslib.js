@@ -50,7 +50,7 @@ qwebirc.util.parseURI = function(uri) {
   
   var args = querystring.split("&");
   
-  for(i=0;i<args.length;i++) {
+  for(var i=0;i<args.length;i++) {
     var r = args[i].splitMax("=", 2);
     if(r.length < 2)
       continue;

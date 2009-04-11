@@ -49,7 +49,7 @@ qwebirc.ui.Interface = new Class({
             chans = cdata[0].split(",");
             var chans2 = [];
           
-            for(i=0;i<chans.length;i++) {
+            for(var i=0;i<chans.length;i++) {
               chans2[i] = chans[i];
             
               if(chans[i].charAt(0) != '#')
