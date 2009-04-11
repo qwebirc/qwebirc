@@ -79,8 +79,8 @@ class QWebIRCClient(basic.LineReceiver):
     if config.WEBIRC_MODE == "hmac":
       hmac = hmacfn(ident, ip)
       self.write("USER %s bleh bleh %s %s :%s" % (ident, ip, hmac, realname))
-    elif config.WEBIRC_MODE == "cgiirc":
-      self.write("WEBIRC %s cgiirc %s %s" % (config.WEBIRC_PASSWORD, ip, hostname))
+    elif config.WEBIRC_MODE == "webirc":
+      self.write("WEBIRC %s qwebirc %s %s" % (config.WEBIRC_PASSWORD, ip, hostname))
       self.write("USER %s bleh %s :%s" % (ident, ip, realname))
     else:
       if ip == hostname:
@@ -88,7 +88,7 @@ class QWebIRCClient(basic.LineReceiver):
       else:
         dispip = "%s/%s" % (hostname, ip)
 
-      self.write("USER %s bleh bleh :%s -- %s" % (ident, dispip, realname))
+      self.write("USER %s bleh bleh :%s - %s" % (ident, dispip, realname))
 
     self.write("NICK %s" % nick)
     

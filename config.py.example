@@ -21,13 +21,15 @@ HTTP_AJAX_REQUEST_TIMEOUT = 30
 NETWORK_NAME = "FooNet"
 APP_TITLE = "FooNet Web IRC"
 
-# Possible types include "cgiirc", "hmac" and None
-WEBIRC_MODE = "cgiirc"
+DNS_TIMEOUT = 5
 
-# CGIIRC values
-CGIIRC_PASSWORD = "fish"
+# Possible types include "webirc" (CGIIRC style webirc config block),
+# "hmac" (quakenet specific) and None (passes ip and host in realname)
+WEBIRC_MODE = "webirc"
 
-# HMAC values
+# webirc mode values
+WEBIRC_PASSWORD = "fish"
+# hmac mode values
 HMACKEY = "mrmoo"
 HMACTEMPORAL = 30
 

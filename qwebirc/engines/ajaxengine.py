@@ -6,7 +6,7 @@ import simplejson, md5, sys, os, time, config, weakref, traceback, socket
 import qwebirc.ircclient as ircclient
 from adminengine import AdminEngineAction
 from qwebirc.util import HitCounter
-
+import qwebirc.dns as qdns
 Sessions = {}
 
 def get_session_id():
@@ -137,6 +137,10 @@ class IRCSession:
 
     reactor.callLater(5, cleanupSession, self.id)
 
+# DANGER! Breach of encapsulation!
+def connect_notice(line):
+  return "c", "NOTICE", "", ("AUTH", "*** (qwebirc) %s" % line)
+
 class Channel:
   def __init__(self, request):
     self.request = request
@@ -173,9 +177,6 @@ class AJAXEngine(resource.Resource):
         
     raise PassthruException, http_error.NoResource().render(request)
 
-  #def render_GET(self, request):
-    #return self.render_POST(request)
-  
   def newConnection(self, request):
     ticket = login_optional(request)
     
@@ -208,9 +209,24 @@ class AJAXEngine(resource.Resource):
       ident = socket.inet_aton(ip).encode("hex")
 
     self.__connect_hit()
-    client = ircclient.createIRC(session, nick=nick, ident=ident, ip=ip, realname=realname, perform=perform, hostname=ip)
-    session.client = client
-    
+
+    def proceed(hostname):
+      client = ircclient.createIRC(session, nick=nick, ident=ident, ip=ip, realname=realname, perform=perform, hostname=hostname)
+      session.client = client
+
+    if config.WEBIRC_MODE != "hmac":
+      notice = lambda x: session.event(connect_notice(x))
+      notice("Looking up your hostname...")
+      def callback(hostname):
+        notice("Found your hostname.")
+        proceed(hostname)
+      def errback(failure):
+        notice("Couldn't look up your hostname!")
+        proceed(ip)
+      qdns.lookupAndVerifyPTR(ip, timeout=[config.DNS_TIMEOUT]).addCallbacks(callback, errback)
+    else:
+      proceed(None) # hmac doesn't care
+
     Sessions[id] = session
     
     return id
