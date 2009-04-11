@@ -65,19 +65,19 @@ qwebirc.ui.TabCompleterFactory = new Class({
 });
 
 qwebirc.ui.TabIterator = new Class({
-  initialize: function(prefix, list) {
+  initialize: function(client, prefix, list) {
     this.prefix = prefix;
     if(!$defined(list) || list.length == 0) {
       this.list = null;
     } else {
       var l = [];
       
-      var prefixl = prefix.toIRCCompletion();
+      var prefixl = qwebirc.irc.toIRCCompletion(client, prefix);
       
       /* convert the nick list to IRC lower case, stripping all non letters
        * before comparisions */
       for(var i=0;i<list.length;i++) {
-        var l2 = list[i].toIRCCompletion();
+        var l2 = qwebirc.irc.toIRCCompletion(client, list[i]);
         
         if(l2.startsWith(prefixl))
           l.push(list[i]);
@@ -104,11 +104,11 @@ qwebirc.ui.TabIterator = new Class({
 });
 
 qwebirc.ui.BaseTabCompleter = new Class({
-  initialize: function(prefix, existingNick, suffix, list) {
+  initialize: function(client, prefix, existingNick, suffix, list) {
     this.existingNick = existingNick;
     this.prefix = prefix;
     this.suffix = suffix;
-    this.iterator = new qwebirc.ui.TabIterator(existingNick, list);
+    this.iterator = new qwebirc.ui.TabIterator(client, existingNick, list);
   },
   get: function() {
     var n = this.iterator.next();
@@ -123,7 +123,7 @@ qwebirc.ui.BaseTabCompleter = new Class({
 qwebirc.ui.QueryTabCompleter = new Class({
   Extends: qwebirc.ui.BaseTabCompleter,
   initialize: function(prefix, existingNick, suffix, window) {
-    this.parent(prefix, existingNick, suffix, window.client.lastNicks);
+    this.parent(window.client, prefix, existingNick, suffix, window.client.lastNicks);
   }
 });
 
@@ -133,7 +133,7 @@ qwebirc.ui.ChannelNameTabCompleter = new Class({
 
     /* WTB map */
     var l = [];
-    var wa = window.parentObject.windows[window.client];
+    var wa = window.parentObject.windows[window.parentObject.getClientId(window.client)];
     
     for(var c in window.client.channels) {
       var w = wa[c];
@@ -152,7 +152,7 @@ qwebirc.ui.ChannelNameTabCompleter = new Class({
     var l2 = [];    
     for(var i=0;i<l.length;i++)
       l2.push(l[i][1]);
-    this.parent(prefix, existingText, suffix, l2);
+    this.parent(window.client, prefix, existingText, suffix, l2);
   }
 });
 
@@ -161,6 +161,6 @@ qwebirc.ui.ChannelUsersTabCompleter = new Class({
   initialize: function(prefix, existingText, suffix, window) {
     var nc = window.client.tracker.getSortedByLastSpoke(window.name);
 
-    this.parent(prefix, existingText, suffix, nc);
+    this.parent(window.client, prefix, existingText, suffix, nc);
   }
 });

@@ -28,7 +28,8 @@ qwebirc.irc.BaseIRCClient = new Class({
     this.send = this.connection.send.bind(this.connection);
     this.connect = this.connection.connect.bind(this.connection);
     this.disconnect = this.connection.disconnect.bind(this.connection);
-    
+
+    this.toIRCLower = qwebirc.irc.RFC1459toIRCLower;
     this.setupGenericErrors();
   },
   dispatch: function(data) {

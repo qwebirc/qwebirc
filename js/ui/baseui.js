@@ -47,19 +47,23 @@ qwebirc.ui.BaseUI = new Class({
       return client.id;
     }
   },
-  getWindowIdentifier: function(type, name) {
+  getWindowIdentifier: function(client, type, name) {
     if(type == qwebirc.ui.WINDOW_MESSAGES)
       return "-M";
     if(type == qwebirc.ui.WINDOW_STATUS)
       return "";
-    return "_" + name.toIRCLower();
+
+    if(client == qwebirc.ui.CUSTOM_CLIENT) /* HACK */
+      return "_" + name;
+
+    return "_" + client.toIRCLower(name);
   },
   newWindow: function(client, type, name) {
     var w = this.getWindow(client, type, name);
     if($defined(w))
       return w;
       
-    var wId = this.getWindowIdentifier(type, name);
+    var wId = this.getWindowIdentifier(client, type, name);
     var w = this.windows[this.getClientId(client)][wId] = new this.windowClass(this, client, type, name, wId);
     this.windowArray.push(w);
     
@@ -70,14 +74,14 @@ qwebirc.ui.BaseUI = new Class({
     if(!$defined(c))
       return null;
       
-    return c[this.getWindowIdentifier(type, name)];
+    return c[this.getWindowIdentifier(client, type, name)];
   },
   getActiveWindow: function() {
     return this.active;
   },
   getActiveIRCWindow: function(client) {
     if(!this.active || this.active.type == qwebirc.ui.WINDOW_CUSTOM) {
-      return this.windows[this.getClientId(client)][this.getWindowIdentifier(qwebirc.ui.WINDOW_STATUS)];
+      return this.windows[this.getClientId(client)][this.getWindowIdentifier(client, qwebirc.ui.WINDOW_STATUS)];
     } else {
       return this.active;
     }

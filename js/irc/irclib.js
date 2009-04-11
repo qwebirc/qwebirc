@@ -33,9 +33,7 @@ qwebirc.irc.IRCLowerTable = [
 /* xf8-xff */ '\xf8', '\xf9', '\xfa', '\xfb', '\xfc', '\xfd', '\xfe', '\xff'
 ];
 
-String.prototype.toIRCLower = function() {
-  var x = this;
-  
+qwebirc.irc.RFC1459toIRCLower = function(x) {
   var p = [];
   for(var i=0;i<x.length;i++) {
     var l = x.charCodeAt(i);
@@ -44,6 +42,10 @@ String.prototype.toIRCLower = function() {
   }
     
   return p.join("");
+}
+
+qwebirc.irc.ASCIItoIRCLower = function(x) {
+  return x.toLower(); /* does unicode too.... */
 }
 
 String.prototype.hostToNick = function() {
@@ -64,6 +66,6 @@ qwebirc.irc.IRCDate = function(d) {
   return qwebirc.util.DaysOfWeek[d.getDay()] + " " + qwebirc.util.MonthsOfYear[d.getMonth()] + " " + pad(d.getDate()) + " "  + pad(d.getHours()) + ":" + pad(d.getMinutes()) + ":" + pad(d.getSeconds()) + " " + d.getFullYear();
 }
 
-String.prototype.toIRCCompletion = function() {
-  return this.toIRCLower().replace(/[^\w]+/g, "");
+qwebirc.irc.toIRCCompletion = function(client, data) {
+  return client.toIRCLower(data).replace(/[^\w]+/g, "");
 }
