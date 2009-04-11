@@ -504,6 +504,8 @@ qwebirc.irc.IRCClient = new Class({
       this.modeprefixes = value.substr(1, l);
       this.prefixes = value.substr(l + 2, l);
     }
+
+    this.parent(key, value);
   },
   connected: function() {
     this.newServerLine("CONNECT");

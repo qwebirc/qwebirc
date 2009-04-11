@@ -45,7 +45,7 @@ qwebirc.irc.RFC1459toIRCLower = function(x) {
 }
 
 qwebirc.irc.ASCIItoIRCLower = function(x) {
-  return x.toLower(); /* does unicode too.... */
+  return x.toLowerCase(); /* TODO: does unicode too.... */
 }
 
 String.prototype.hostToNick = function() {

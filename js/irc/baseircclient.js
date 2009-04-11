@@ -69,6 +69,17 @@ qwebirc.irc.BaseIRCClient = new Class({
     var c = target.charAt(0);
     return c == '#';
   },
+  supported: function(key, value) {
+    if(key == "CASEMAPPING") {
+      if(value == "ascii") {
+        this.toIRCLower = qwebirc.irc.ASCIItoIRCLower;
+      } else if(value == "rfc1459") {
+        /* IGNORE */
+      } else {
+        /* TODO: warn */
+      }
+    }
+  },
   irc_RPL_WELCOME: function(prefix, params) {
     this.nickname = params[0];
     
