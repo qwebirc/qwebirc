@@ -26,11 +26,14 @@ APP_TITLE = "FooNet Web IRC"
 DNS_TIMEOUT = 5
 
 # Possible types include "webirc" (CGIIRC style webirc config block),
+# "cgiirc" (old CGIIRC style serverpassword),
 # "hmac" (quakenet specific) and None (passes ip and host in realname)
 WEBIRC_MODE = "webirc"
 
 # webirc mode values
 WEBIRC_PASSWORD = "fish"
+# cgiirc mode values
+CGIIRC_STRING = "CGIIRC"
 # hmac mode values
 HMACKEY = "mrmoo"
 HMACTEMPORAL = 30

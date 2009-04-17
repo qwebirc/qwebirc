@@ -82,6 +82,9 @@ class QWebIRCClient(basic.LineReceiver):
     elif config.WEBIRC_MODE == "webirc":
       self.write("WEBIRC %s qwebirc %s %s" % (config.WEBIRC_PASSWORD, hostname, ip))
       self.write("USER %s bleh %s :%s" % (ident, ip, realname))
+    elif config.WEBIRC_MODE == "cgiirc":
+      self.write("PASS %s_%s_%s" % (config.CGIIRC_STRING, ip, hostname))
+      self.write("USER %s bleh %s :%s" % (ident, ip, realname))
     else:
       if ip == hostname:
         dispip = ip
