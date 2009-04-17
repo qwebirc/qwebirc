@@ -8,6 +8,8 @@ REALNAME = "http://moo.com/"
 MAXLINELEN = 600
 IDENT = "webchat"   # set this value to None if you'd like a hex representation of the IP
 
+BASE_URL = "http://foo.foo.org/"
+
 FEEDBACK_FROM = "moo@moo.com"
 FEEDBACK_TO = "moo@moo.com"
 FEEDBACK_SMTP_HOST = "127.0.0.1"

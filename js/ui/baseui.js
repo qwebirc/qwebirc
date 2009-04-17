@@ -34,9 +34,9 @@ qwebirc.ui.BaseUI = new Class({
     if(!this.firstClient) {
       this.firstClient = true;
       w.addLine("", "qwebirc v" + qwebirc.VERSION);
-      w.addLine("", "Copyright (C) 2008-2009 Chris Porter. All rights reserved.");
-      w.addLine("", "http://webchat.quakenet.org/");
-      w.addLine("", "This is BETA quality software, please report bugs to slug@quakenet.org");
+      w.addLine("", "Copyright (C) 2008-2009 Chris Porter and the qwebirc project.");
+      w.addLine("", "http://www.qwebirc.org");
+      w.addLine("", "Licensed under the GNU General Public License, Version 2.");
     }
     return w;
   },
@@ -260,7 +260,7 @@ qwebirc.ui.StandardUI = new Class({
     d.setSubWindow(ew);
   },
   embeddedWindow: function() {
-    this.addCustomWindow("Embedding wizard", qwebirc.ui.EmbedWizard, "embeddedwizard");
+    this.addCustomWindow("Embedding wizard", qwebirc.ui.EmbedWizard, "embeddedwizard", {baseURL: this.options.baseURL});
   },
   optionsWindow: function() {
     this.addCustomWindow("Options", qwebirc.ui.OptionsPane, "optionspane", this.uiOptions);

@@ -8,7 +8,8 @@ qwebirc.ui.Interface = new Class({
     loginRegex: null,
     appTitle: "ExampleNetwork Web IRC",
     searchURL: true,
-    theme: undefined
+    theme: undefined,
+    baseURL: null
   },
   initialize: function(element, ui, options) {
     this.setOptions(options);
