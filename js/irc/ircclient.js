@@ -73,10 +73,10 @@ qwebirc.irc.IRCClient = new Class({
       
       if(nc.prefixes.length > 0) {
         var c = nc.prefixes.charAt(0);
-        nx = String.fromCharCode(this.prefixes.indexOf(c)) + n.toIRCLower();
+        nx = String.fromCharCode(this.prefixes.indexOf(c)) + this.toIRCLower(n);
         nh[nx] = c + n;
       } else {
-        nx = tff + n.toIRCLower();
+        nx = tff + this.toIRCLower(n);
         nh[nx] = n;
       }
       names.push(nx);
@@ -94,15 +94,15 @@ qwebirc.irc.IRCClient = new Class({
       w.updateNickList(sortednames);
   },
   getWindow: function(name) {
-    return this.windows[name.toIRCLower()];
+    return this.windows[this.toIRCLower(name)];
   },
   newWindow: function(name, type, select) {
     var w = this.getWindow(name);
     if(!w) {
-      w = this.windows[name.toIRCLower()] = this.ui.newWindow(this, type, name);
+      w = this.windows[this.toIRCLower(name)] = this.ui.newWindow(this, type, name);
       
       w.addEvent("close", function(w) {
-        delete this.windows[name.toIRCLower()];
+        delete this.windows[this.toIRCLower(name)];
       }.bind(this));
     }
     
@@ -504,6 +504,8 @@ qwebirc.irc.IRCClient = new Class({
       this.modeprefixes = value.substr(1, l);
       this.prefixes = value.substr(l + 2, l);
     }
+
+    this.parent(key, value);
   },
   connected: function() {
     this.newServerLine("CONNECT");

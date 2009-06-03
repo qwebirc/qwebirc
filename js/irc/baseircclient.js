@@ -19,7 +19,7 @@ qwebirc.irc.BaseIRCClient = new Class({
     this.nickname = this.options.nickname;
     
     this.__signedOn = false;
-    this.pmodes = ["b", "k,", "o", "l", "v"];
+    this.pmodes = {b: true, k: true, o: true, l: true, v: true};
     this.channels = {}
     this.nextctcp = 0;    
 
@@ -28,7 +28,8 @@ qwebirc.irc.BaseIRCClient = new Class({
     this.send = this.connection.send.bind(this.connection);
     this.connect = this.connection.connect.bind(this.connection);
     this.disconnect = this.connection.disconnect.bind(this.connection);
-    
+
+    this.toIRCLower = qwebirc.irc.RFC1459toIRCLower;
     this.setupGenericErrors();
   },
   dispatch: function(data) {
@@ -67,6 +68,17 @@ qwebirc.irc.BaseIRCClient = new Class({
   isChannel: function(target) {
     var c = target.charAt(0);
     return c == '#';
+  },
+  supported: function(key, value) {
+    if(key == "CASEMAPPING") {
+      if(value == "ascii") {
+        this.toIRCLower = qwebirc.irc.ASCIItoIRCLower;
+      } else if(value == "rfc1459") {
+        /* IGNORE */
+      } else {
+        /* TODO: warn */
+      }
+    }
   },
   irc_RPL_WELCOME: function(prefix, params) {
     this.nickname = params[0];
@@ -287,6 +299,9 @@ qwebirc.irc.BaseIRCClient = new Class({
     }
   },  
   irc_RPL_MYINFO: function(prefix, params) {
+    if(params.length < 6)
+      return;
+
     var pmodes = params[5].split("");
     this.pmodes = {}
     

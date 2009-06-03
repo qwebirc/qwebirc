@@ -63,7 +63,7 @@ qwebirc.ui.Colourise = function(line, entity, execfn, cmdfn, window) {
     element.className = classes.join(" ");
   }
   
-  for(i=0;i<xline.length;i++) {
+  for(var i=0;i<xline.length;i++) {
     var lc = xline[i];
     if(lc == "\x02") {
       emitEndToken();
