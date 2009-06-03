@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # this entire thing is a hack and badly needs reimplementing
+import bin.compile
+bin.compile.vcheck()
+
 DEFAULT_PORT = 9090
 
 from twisted.scripts.twistd import run

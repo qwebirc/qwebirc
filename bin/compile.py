@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+import dependencies
+dependencies.vcheck()
+
 import pages, os, subprocess, pagegen, shutil, sys
 
 COPYRIGHT = open("js/copyright.js", "rb").read()
@@ -91,6 +94,33 @@ def main(outputdir=".", produce_debug=True):
     jmerge_files(outputdir, "js", uiname + "-" + ID, alljs)
     
   os.rmdir(coutputdir)
+  
+  f = open(".compiled", "w")
+  f.close()
+  
+def has_compiled():
+  try:
+    f = open(".compiled", "r")
+    f.close()
+    return True
+  except:
+    pass
+    
+  try:
+    f = open(os.path.join("bin", ".compiled"), "r")
+    f.close()
+    return True
+  except:
+    pass
+  
+  return False
+  
+def vcheck():
+  if has_compiled():
+    return
+    
+  print >>sys.stderr, "error: not yet compiled, run compile.py first."
+  sys.exit(1)
   
 if __name__ == "__main__":
   main()
