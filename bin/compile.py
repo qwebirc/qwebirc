@@ -26,7 +26,6 @@ def jmerge_files(prefix, suffix, output, files, *args):
   merge_files(o, files, *args)
   
   # cough hack
-  compiled = open(o, "rb").read()
   try:
     compiled = jarit(o)
   except MinifyException, e:
@@ -34,8 +33,14 @@ def jmerge_files(prefix, suffix, output, files, *args):
     if not JAVA_WARNING_SURPRESSED:
       JAVA_WARNING_SURPRESSED = True
       print >>sys.stderr, "warning: minify: %s (not minifying -- javascript will be HUGE)." % e
+    try:
+      f = open(o, "rb")
+      compiled = f.read()
+    finally:
+      f.close()
 
   os.unlink(o)
+    
   f = open(os.path.join(prefix, "static", suffix, output), "wb")
   f.write(COPYRIGHT)
   f.write(compiled)
