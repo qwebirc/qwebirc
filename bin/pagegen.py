@@ -1,4 +1,4 @@
-import os, sys, pages, subprocess, re, optionsgen
+import os, sys, pages, subprocess, re, optionsgen, config
 
 class HGException(Exception):
   pass
@@ -57,7 +57,7 @@ def producehtml(name, debug):
   return """%s
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>QuakeNet Web IRC</title>
+  <title>%s (qwebirc)</title>
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
   <link rel="icon" type="image/png" href="images/favicon.png"/>
 %s%s
@@ -74,7 +74,7 @@ def producehtml(name, debug):
   </div>
 </body>
 </html>
-""" % (ui["doctype"], csshtml, customjs, jshtml, ui["class"], optionsgen.get_options(), div)
+""" % (ui["doctype"], config.APP_TITLE, csshtml, customjs, jshtml, ui["class"], optionsgen.get_options(), div)
 
 def main(outputdir=".", produce_debug=True):
   p = os.path.join(outputdir, "static")
