@@ -284,6 +284,13 @@ qwebirc.ui.StandardUI = new Class({
     if(name == "options")
       return ["a", this.optionsWindow.bind(this)];
 
+    /* doesn't really belong here */
+    if(name == "whois") {
+      return ["span", function(nick) {
+        this.client.exec("/WHOIS " + nick);
+      }.bind(window)];
+    }
+
     return null;
   },
   tabComplete: function(element) {
@@ -330,17 +337,27 @@ qwebirc.ui.SoundUI = new Class({
   }
 });
 
-qwebirc.ui.QuakeNetUI = new Class({
+qwebirc.ui.NewLoginUI = new Class({
   Extends: qwebirc.ui.SoundUI,
+  loginBox: function(callbackfn, initialNickname, initialChannels, autoConnect, autoNick) {
+    this.postInitialize();
+
+    var w = this.newCustomWindow("Connect", true, qwebirc.ui.WINDOW_CONNECT);
+    var callback = function(args) {
+      w.close();
+      callbackfn(args);
+    };
+    
+    qwebirc.ui.GenericLoginBox(w.lines, callback, initialNickname, initialChannels, autoConnect, autoNick, this.options.networkName);
+  }
+});
+
+qwebirc.ui.QuakeNetUI = new Class({
+  Extends: qwebirc.ui.NewLoginUI,
   urlDispatcher: function(name, window) {
     if(name == "qwhois") {
       return ["span", function(auth) {
         this.client.exec("/MSG Q whois #" + auth);
-      }.bind(window)];
-    }
-    if(name == "whois") {
-      return ["span", function(nick) {
-        this.client.exec("/WHOIS " + nick);
       }.bind(window)];
     }
     return this.parent(name);
@@ -357,20 +374,5 @@ qwebirc.ui.QuakeNetUI = new Class({
       var foo = function() { document.location = "/auth?logout=1"; };
       foo.delay(500);
     }
-  }
-});
-
-qwebirc.ui.NewLoginUI = new Class({
-  Extends: qwebirc.ui.QuakeNetUI,
-  loginBox: function(callbackfn, initialNickname, initialChannels, autoConnect, autoNick) {
-    this.postInitialize();
-
-    var w = this.newCustomWindow("Connect", true, qwebirc.ui.WINDOW_CONNECT);
-    var callback = function(args) {
-      w.close();
-      callbackfn(args);
-    };
-    
-    qwebirc.ui.GenericLoginBox(w.lines, callback, initialNickname, initialChannels, autoConnect, autoNick, this.options.networkName);
   }
 });
