@@ -424,14 +424,18 @@ qwebirc.ui.QUI.Window = new Class({
     e.addClass("menu");
     
     qwebirc.ui.MENU_ITEMS.forEach(function(x) {
-      var e2 = new Element("a");
-      e.appendChild(e2);
-      
-      e2.href = "#";
-      e2.set("text", "- " + x[0]);
-      
-      e2.addEvent("focus", function() { this.blur() }.bind(e2));
-      e2.addEvent("click", function(ev) { new Event(ev.stop()); this.menuClick(x[1]); }.bind(this));
+      var text = x[0], fn = x[1], visible_fn = x[2];
+
+      if(visible_fn == qwebirc.ui.menuitems.fns.always || visible_fn.apply(this)) {
+        var e2 = new Element("a");
+        e.appendChild(e2);
+
+        e2.href = "#";
+        e2.set("text", "- " + text);
+
+        e2.addEvent("focus", function() { this.blur() }.bind(e2));
+        e2.addEvent("click", function(ev) { new Event(ev.stop()); this.menuClick(fn); }.bind(this));
+      }
     }.bind(this));
     return e;
   },
