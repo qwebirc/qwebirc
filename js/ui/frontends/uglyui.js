@@ -1,5 +1,5 @@
 qwebirc.ui.UglyUI = new Class({
-  Extends: qwebirc.ui.NewLoginUI,
+  Extends: qwebirc.ui.RootUI,
   initialize: function(parentElement, theme, options) {
     this.parent(parentElement, qwebirc.ui.UglyUI.Window, "uglyui", options);
     this.theme = theme;
