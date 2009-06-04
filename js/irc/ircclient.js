@@ -497,6 +497,13 @@ qwebirc.irc.IRCClient = new Class({
     
     this.newServerLine("DISCONNECT", {"m": message});
   },
+  nickOnChanHasPrefix: function(nick, channel, prefix) {
+    var entry = this.tracker.getNickOnChannel(nick, channel);
+    if(!$defined(entry))
+      return false; /* shouldn't happen */
+   
+    return entry.prefixes.indexOf(prefix) != -1;
+  },
   supported: function(key, value) {
     if(key == "PREFIX") {
       var l = (value.length - 2) / 2;

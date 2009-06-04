@@ -423,19 +423,19 @@ qwebirc.ui.QUI.Window = new Class({
     parent.appendChild(e);
     e.addClass("menu");
     
+    var nickArray = [nick];
     qwebirc.ui.MENU_ITEMS.forEach(function(x) {
-      var text = x[0], fn = x[1], visible_fn = x[2];
+      if(!x.predicate || x.predicate !== true && !x.predicate.apply(this, nickArray))
+        return;
+      
+      var e2 = new Element("a");
+      e.appendChild(e2);
 
-      if(visible_fn == qwebirc.ui.menuitems.fns.always || visible_fn.apply(this)) {
-        var e2 = new Element("a");
-        e.appendChild(e2);
+      e2.href = "#";
+      e2.set("text", "- " + x.text);
 
-        e2.href = "#";
-        e2.set("text", "- " + text);
-
-        e2.addEvent("focus", function() { this.blur() }.bind(e2));
-        e2.addEvent("click", function(ev) { new Event(ev.stop()); this.menuClick(fn); }.bind(this));
-      }
+      e2.addEvent("focus", function() { this.blur() }.bind(e2));
+      e2.addEvent("click", function(ev) { new Event(ev.stop()); this.menuClick(x.fn); }.bind(this));
     }.bind(this));
     return e;
   },
@@ -485,7 +485,7 @@ qwebirc.ui.QUI.Window = new Class({
       this.prevNick = e;
       e.addClass("selected");
       this.moveMenuClass();
-      e.menu = this.createMenu(x.realNick, e);
+      e.menu = this.createMenu(e.realNick, e);
       new Event(x).stop();
     }.bind(this));
     
