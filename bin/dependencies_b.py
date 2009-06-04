@@ -48,7 +48,7 @@ def check_java():
     if p.wait() != 0:
       java_warn("something went wrong looking for java.")
       return 1
-  except WindowsError:
+  except: # ugh
     java_warn("couldn't find java.")
     return 1
     
@@ -64,7 +64,7 @@ def check_hg():
     if p.wait() != 0:
       hg_warn("something went wrong looking for mercurial.")
       return 1
-  except WindowsError:
+  except: # ugh
     hg_warn("couldn't find mercurial.")
     return 1
     
