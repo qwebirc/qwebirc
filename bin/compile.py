@@ -42,7 +42,11 @@ def jmerge_files(prefix, suffix, output, files, *args):
     finally:
       f.close()
 
-  os.unlink(o)
+  try:
+    os.unlink(o)
+  except:
+    time.sleep(1) # windows sucks
+    os.unlink(o)
     
   f = open(os.path.join(prefix, "static", suffix, output), "wb")
   f.write(COPYRIGHT)
