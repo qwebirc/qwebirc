@@ -35,5 +35,6 @@ qwebirc.ui.theme.Default = {
   "CTCPREPLY": ["CTCP $x reply from $n: $m"],
   "OURCHANCTCP": ["[ctcp($t)] $x $m"],
   "OURPRIVCTCP": ["[ctcp($t)] $x $m"],
-  "OURTARGETEDCTCP": ["[ctcp($t)] $x $m"]
+  "OURTARGETEDCTCP": ["[ctcp($t)] $x $m"],
+  "WALLOPS": ["WALLOP $n: $t", true]
 }
