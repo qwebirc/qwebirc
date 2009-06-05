@@ -31,16 +31,18 @@ IDENT = "webchat"
 #         This option controls how the IP/hostname of the connecting #         browser will be sent to IRC.
 #
 #         Possible values include:
-#           - webirc
-#             Use WEBIRC type blocks, with a server configuration of
-#             the following style:
-#             cgiirc {
-#               type webirc;
-#               hostname <qwebirc's ip address>;
-#               password <password>;
-#             };
-#             Remember to set the WEBIRC_PASSWORD value to be the
-#             same as <password>.
+#         - webirc
+#           Use WEBIRC type blocks, with a server configuration of
+#           the following style:
+#
+#           cgiirc {
+#             type webirc;
+#             hostname <qwebirc's ip address>;
+#             password <password>;
+#           };
+#
+#           Remember to set the WEBIRC_PASSWORD value to be the
+#           same as <password>.
 #         - cgiirc
 #           old style CGIIRC command, set CGIIRC_STRING to be the
 #           command used to set the ip/hostname, and set
