@@ -1,5 +1,5 @@
 qwebirc.ui.QUI = new Class({
-  Extends: qwebirc.ui.NewLoginUI,
+  Extends: qwebirc.ui.RootUI,
   initialize: function(parentElement, theme, options) {
     this.parent(parentElement, qwebirc.ui.QUI.Window, "qui", options);
     this.theme = theme;

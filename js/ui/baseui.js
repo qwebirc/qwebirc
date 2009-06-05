@@ -277,7 +277,7 @@ qwebirc.ui.StandardUI = new Class({
   faqWindow: function() {
     this.addCustomWindow("FAQ", qwebirc.ui.FAQPane, "faqpane", this.uiOptions);
   },
-  urlDispatcher: function(name) {
+  urlDispatcher: function(name, window) {
     if(name == "embedded")
       return ["a", this.embeddedWindow.bind(this)];
       
@@ -360,7 +360,7 @@ qwebirc.ui.QuakeNetUI = new Class({
         this.client.exec("/MSG Q whois #" + auth);
       }.bind(window)];
     }
-    return this.parent(name);
+    return this.parent(name, window);
   },
   logout: function() {
     if(!qwebirc.auth.loggedin())
@@ -376,3 +376,5 @@ qwebirc.ui.QuakeNetUI = new Class({
     }
   }
 });
+
+qwebirc.ui.RootUI = qwebirc.ui.QuakeNetUI;
