@@ -66,8 +66,8 @@ qwebirc.ui.Flasher = new Class({
       
       this.flashing = false;
     
-      window.addEvent("focus", function() { this.windowFocused = true; this.cancelFlash(); console.log("focus") }.bind(this));
-      window.addEvent("blur", function() { this.windowFocused = false; console.log("blue") }.bind(this));
+      window.addEvent("focus", function() { this.windowFocused = true; this.cancelFlash(); }.bind(this));
+      window.addEvent("blur", function() { this.windowFocused = false; }.bind(this));
       
       this.canFlash = true;
     } else {
