@@ -91,12 +91,14 @@ qwebirc.ui.Window = new Class({
           } else {
             hilight = qwebirc.ui.HILIGHT_US;
             this.parentObject.beep();
+            this.parentObject.flash();
           }
         }
         if(!type.match(/^OUR/) && this.client.hilightController.match(line["m"])) {
           lhilight = true;
           hilight = qwebirc.ui.HILIGHT_US;
           this.parentObject.beep();
+          this.parentObject.flash();
         } else if(hilight != qwebirc.ui.HILIGHT_US) {
           hilight = qwebirc.ui.HILIGHT_SPEECH;
         }

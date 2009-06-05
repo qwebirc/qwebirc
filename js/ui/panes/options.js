@@ -15,9 +15,10 @@ qwebirc.config.DEFAULT_OPTIONS = [
         ui.setBeepOnMention(value);
     }
   }],
+  [7, "FLASH_ON_MENTION", "Flash titlebar when nick mentioned or on query activity", true],
   [2, "DEDICATED_MSG_WINDOW", "Send privmsgs to dedicated messages window", false],
   [4, "DEDICATED_NOTICE_WINDOW", "Send notices to dedicated message window", false],
-  [3, "NICK_OV_STATUS", "Show status (@/+) before nicknames", true],
+  [3, "NICK_OV_STATUS", "Show status (@/+) before nicknames in nicklist", true],
   [5, "ACCEPT_SERVICE_INVITES", "Automatically join channels when invited by Q", true],
   [6, "USE_HIDDENHOST", "Hide your hostmask when authed to Q (+x)", true]
 ];
