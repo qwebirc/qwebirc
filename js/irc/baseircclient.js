@@ -431,5 +431,12 @@ qwebirc.irc.BaseIRCClient = new Class({
   irc_RPL_UNAWAY: function(prefix, params) {
     this.awayStatus(false, params.indexFromEnd(-1));
     return true;
+  },
+  irc_WALLOPS: function(prefix, params) {
+    var user = prefix;
+    var text = params.indexFromEnd(-1);
+    
+    this.wallops(user, text);
+    return true;
   }
 });

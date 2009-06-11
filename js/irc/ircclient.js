@@ -602,5 +602,11 @@ qwebirc.irc.IRCClient = new Class({
         this.lastNicks.pop();
     }
     this.lastNicks.unshift(nick);
+  },
+  wallops: function(user, text) {
+    var nick = user.hostToNick();
+    var host = user.hostToHost();
+
+    this.newServerLine("WALLOPS", {t: text, n: nick, h: host});
   }
 });

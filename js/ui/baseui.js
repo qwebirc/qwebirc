@@ -93,7 +93,10 @@ qwebirc.ui.BaseUI = new Class({
     if(this.active)
       this.active.deselect();
     window.select();  /* calls setActiveWindow */
-    document.title = window.name + " - " + this.options.appTitle;
+    this.updateTitle(window.name + " - " + this.options.appTitle);
+  },
+  updateTitle: function(text) {
+    document.title = text;
   },
   nextWindow: function(direction) {
     if(this.windowArray.length == 0 || !this.active)
@@ -301,44 +304,31 @@ qwebirc.ui.StandardUI = new Class({
   }
 });
 
-qwebirc.ui.SoundUI = new Class({
+qwebirc.ui.NotificationUI = new Class({
   Extends: qwebirc.ui.StandardUI,
   initialize: function(parentElement, windowClass, uiName, options) {
     this.parent(parentElement, windowClass, uiName, options);
     
-    this.soundInited = false;
-    this.soundReady = false;
+    this.__beeper = new qwebirc.ui.Beeper(this.uiOptions);
+    this.__flasher = new qwebirc.ui.Flasher(this.uiOptions);
     
-    this.setBeepOnMention(this.uiOptions.BEEP_ON_MENTION);    
-  },
-  soundInit: function() {
-    if(this.soundInited)
-      return;
-    if(!$defined(Browser.Plugins.Flash) || Browser.Plugins.Flash.version < 8)
-      return;
-    this.soundInited = true;
+    this.beep = this.__beeper.beep.bind(this.__beeper);
     
-    this.soundPlayer = new qwebirc.sound.SoundPlayer();
-    this.soundPlayer.addEvent("ready", function() {
-      this.soundReady = true;
-    }.bind(this));
-    this.soundPlayer.go();
+    this.flash = this.__flasher.flash.bind(this.__flasher);
+    this.cancelFlash = this.__flasher.cancelFlash.bind(this.__flasher);
   },
   setBeepOnMention: function(value) {
     if(value)
-      this.soundInit();
-    this.beepOnMention = value;
+      this.__beeper.soundInit();
   },
-  beep: function() {
-    if(!this.soundReady || !this.beepOnMention)
-      return;
-      
-    this.soundPlayer.beep();
-  }
+  updateTitle: function(text) {
+    if(this.__flasher.updateTitle(text))
+      this.parent(text);
+  },
 });
 
 qwebirc.ui.NewLoginUI = new Class({
-  Extends: qwebirc.ui.SoundUI,
+  Extends: qwebirc.ui.NotificationUI,
   loginBox: function(callbackfn, initialNickname, initialChannels, autoConnect, autoNick) {
     this.postInitialize();
 

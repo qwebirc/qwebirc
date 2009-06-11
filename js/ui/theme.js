@@ -61,7 +61,8 @@ qwebirc.ui.themes.Default = {
   "WHOISEND": ["End of WHOIS", true],
   "AWAY": ["$N is away: $m", true],
   "GENERICERROR": ["$m: $t", true],
-  "GENERICMESSAGE": ["$m", true]
+  "GENERICMESSAGE": ["$m", true],
+  "WALLOPS": ["WALLOP $n: $t", true]
 };
 
 qwebirc.ui.Theme = new Class({
