@@ -423,15 +423,19 @@ qwebirc.ui.QUI.Window = new Class({
     parent.appendChild(e);
     e.addClass("menu");
     
+    var nickArray = [nick];
     qwebirc.ui.MENU_ITEMS.forEach(function(x) {
+      if(!x.predicate || x.predicate !== true && !x.predicate.apply(this, nickArray))
+        return;
+      
       var e2 = new Element("a");
       e.appendChild(e2);
-      
+
       e2.href = "#";
-      e2.set("text", "- " + x[0]);
-      
+      e2.set("text", "- " + x.text);
+
       e2.addEvent("focus", function() { this.blur() }.bind(e2));
-      e2.addEvent("click", function(ev) { new Event(ev.stop()); this.menuClick(x[1]); }.bind(this));
+      e2.addEvent("click", function(ev) { new Event(ev.stop()); this.menuClick(x.fn); }.bind(this));
     }.bind(this));
     return e;
   },
@@ -481,7 +485,7 @@ qwebirc.ui.QUI.Window = new Class({
       this.prevNick = e;
       e.addClass("selected");
       this.moveMenuClass();
-      e.menu = this.createMenu(x.realNick, e);
+      e.menu = this.createMenu(e.realNick, e);
       new Event(x).stop();
     }.bind(this));
     

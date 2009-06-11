@@ -312,3 +312,21 @@ qwebirc.util.b64Decode = function(data) {
 
   return output.join("");
 }
+
+qwebirc.util.composeAnd = function() {
+ var xargs = arguments;
+
+  return function() {
+    for(var i=0;i<xargs.length;i++)
+      if(!xargs[i].apply(this, arguments))
+        return false;
+        
+    return true;
+  }
+}
+
+qwebirc.util.invertFn = function(fn) {
+  return function() {
+    return !fn.apply(this, arguments);
+  }
+}
