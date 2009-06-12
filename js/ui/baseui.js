@@ -324,7 +324,7 @@ qwebirc.ui.NotificationUI = new Class({
   updateTitle: function(text) {
     if(this.__flasher.updateTitle(text))
       this.parent(text);
-  },
+  }
 });
 
 qwebirc.ui.NewLoginUI = new Class({
