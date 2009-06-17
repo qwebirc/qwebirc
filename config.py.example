@@ -148,7 +148,7 @@ MAXLINELEN = 600
 
 # OPTION: DNS_TIMEOUT
 #         DNS requests that do not respond within DNS_TIMEOUT seconds
-#         will cancelled.
+#         will be cancelled.
 DNS_TIMEOUT = 5
 
 # OPTION: HTTP_AJAX_REQUEST_TIMEOUT
