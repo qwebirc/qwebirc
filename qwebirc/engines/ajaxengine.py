@@ -52,6 +52,7 @@ class IRCSession:
     self.id = id
     self.subscriptions = []
     self.buffer = []
+    self.buflen = 0
     self.throttle = 0
     self.schedule = None
     self.closed = False
@@ -106,7 +107,8 @@ class IRCSession:
 
     encdata = simplejson.dumps(self.buffer)
     self.buffer = []
-    
+    self.buflen = 0
+
     newsubs = []
     for x in self.subscriptions:
       if x.write(encdata):
@@ -117,13 +119,14 @@ class IRCSession:
       cleanupSession(self.id)
 
   def event(self, data):
-    bufferlen = sum(map(len, self.buffer))
-    if bufferlen + len(data) > config.MAXBUFLEN:
+    newbuflen = self.buflen + len(data)
+    if newbuflen > config.MAXBUFLEN:
       self.buffer = []
       self.client.error("Buffer overflow.")
       return
 
     self.buffer.append(data)
+    self.buflen = newbuflen
     self.flush()
     
   def push(self, data):
