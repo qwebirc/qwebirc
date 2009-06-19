@@ -40,24 +40,9 @@ qwebirc.irc.IRCConnection = new Class({
     if(this.disconnected)
       return null;
       
-    if(floodProtection) {
-      var t = new Date().getTime();
-      
-      if(t - this.__floodLastRequest < this.options.floodInterval) {
-        if(this.__floodLastFlood != 0 && (t - this.__floodLastFlood > this.options.floodReset)) {
-          this.__floodCounter = 0;
-        }
-
-        this.__floodLastFlood = t;
-        if(this.__floodCounter++ >= this.options.floodMax) {
-          if(!this.disconnected) {
-            this.disconnect();
-            this.__error("BUG: uncontrolled flood detected -- disconnected.");
-          }
-          return null;
-        }
-      }
-      this.__floodLastRequest = t;
+    if(floodProtection && !this.disconnected && this.__isFlooding()) {
+      this.disconnect();
+      this.__error("BUG: uncontrolled flood detected -- disconnected.");
     }
     
     var r = new Request.JSON({
@@ -83,6 +68,21 @@ qwebirc.irc.IRCConnection = new Class({
       r.setHeader("If-Modified-Since", "Sat, 1 Jan 2000 00:00:00 GMT");
 
     return r;
+  },
+  __isFlooding: function() {
+    var t = new Date().getTime();
+      
+    if(t - this.__floodLastRequest < this.options.floodInterval) {
+      if(this.__floodLastFlood != 0 && (t - this.__floodLastFlood > this.options.floodReset))
+        this.__floodCounter = 0;
+
+      this.__floodLastFlood = t;
+      if(this.__floodCounter++ >= this.options.floodMax)
+        return true;
+    }
+
+    this.__floodLastRequest = t;
+    return false;
   },
   send: function(data) {
     if(this.disconnected)
