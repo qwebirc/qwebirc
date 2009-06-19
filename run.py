@@ -34,6 +34,8 @@ parser.add_option("-r", "--reactor", help="Which reactor to use (see --help-reac
 parser.add_option("-p", "--port", help="Port to start the server on.", type="int", dest="port", default=DEFAULT_PORT)
 parser.add_option("-l", "--logfile", help="Path to twisted log file.", dest="logfile")
 parser.add_option("-c", "--clf", help="Path to web CLF (Combined Log Format) log file.", dest="clogfile")
+parser.add_option("-C", "--certificate", help="Path to SSL certificate.", dest="sslcertificate")
+parser.add_option("-k", "--key", help="Path to SSL key.", dest="sslkey")
 
 sargs = sys.argv[1:]
 if "ARGS" in dir(config):
@@ -54,10 +56,14 @@ if options.reactor != DEFAULT_REACTOR:
 if options.logfile:
   args+=["--logfile", options.logfile]
 
-args2+=["--port", options.port]
 if not options.tracebacks:
   args2.append("-n")
 if options.clogfile:
   args2+=["--logfile", options.clogfile]
+
+if options.sslcertificate and options.sslkey:
+  args2+=["--certificate", options.sslcertificate, "--privkey", options.sslkey, "--https", options.port]
+else:
+  args2+=["--port", options.port]
 
 run_twistd(args1, args2)
