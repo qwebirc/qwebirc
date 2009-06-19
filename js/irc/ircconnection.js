@@ -45,8 +45,9 @@ qwebirc.irc.IRCConnection = new Class({
       
       if(t - this.__floodLastRequest < this.options.floodInterval) {
         if(this.__floodLastFlood != 0 && (t - this.__floodLastFlood > this.options.floodReset)) {
-          this.floodCounter = 0;
+          this.__floodCounter = 0;
         }
+
         this.__floodLastFlood = t;
         if(this.__floodCounter++ >= this.options.floodMax) {
           if(!this.disconnected) {
