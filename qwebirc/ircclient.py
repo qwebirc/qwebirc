@@ -1,4 +1,4 @@
-import twisted, sys, codecs
+import twisted, sys, codecs, traceback
 from twisted.words.protocols import irc
 from twisted.internet import reactor, protocol
 from twisted.web import resource, server
@@ -41,8 +41,10 @@ class QWebIRCClient(basic.LineReceiver):
       prefix, command, params = irc.parsemsg(line)
       self.handleCommand(command, prefix, params)
     except irc.IRCBadMessage:
-      self.badMessage(line, *sys.exc_info())
-      
+      # emit and ignore
+      traceback.print_exc()
+      return
+
     if command == "001":
       self.__nickname = params[0]
       
@@ -55,9 +57,6 @@ class QWebIRCClient(basic.LineReceiver):
       if nick == self.__nickname:
         self.__nickname = params[0]
         
-  def badMessage(self, args):
-    self("badmessage", args)
-  
   def handleCommand(self, command, prefix, params):
     self("c", command, prefix, params)
     
