@@ -28,7 +28,8 @@ REALNAME = "http://moo.com/"
 IDENT = "webchat"
 
 # OPTION: WEBIRC_MODE
-#         This option controls how the IP/hostname of the connecting #         browser will be sent to IRC.
+#         This option controls how the IP/hostname of the connecting
+#         browser will be sent to IRC.
 #
 #         Possible values include:
 #         - webirc
@@ -67,7 +68,8 @@ WEBIRC_MODE = None
 # ---------------------------------------------------------------------
 #
 # OPTION: BASE_URL
-#         URL that this qwebirc instance will be available at
+#         URL that this qwebirc instance will be available at, add the
+#         port number if your instance runs on a port other than 80.
 BASE_URL = "http://foo.foo.org/"
 
 # OPTION: NETWORK_NAME
@@ -131,7 +133,9 @@ UPDATE_FREQ = 0.5
 # OPTION: MAXBUFLEN
 #         Maximum client AJAX recieve buffer size (in bytes), if this
 #         buffer size is exceeded then the client will be disconnected.
-MAXBUFLEN = 10000
+#         This value should match the client sendq size in your ircd's
+#         configuration.
+MAXBUFLEN = 100000
 
 # OPTION: MAXSUBSCRIPTIONS
 #         Maximum amount of 'subscriptions' to a specific AJAX channel,
@@ -144,6 +148,7 @@ MAXSUBSCRIPTIONS = 1
 # OPTION: MAXLINELEN
 #         If the client sends a line greater than MAXLINELEN (in bytes)
 #         then they will be disconnected.
+#         Note that IRC normally silently drops messages >=512 bytes.
 MAXLINELEN = 600
 
 # OPTION: DNS_TIMEOUT
