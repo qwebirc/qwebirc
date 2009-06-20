@@ -201,7 +201,7 @@ qwebirc.irc.IRCClient = new Class({
     this.newServerLine("RAW", {"n": "numeric", "m": params.slice(1).join(" ")});
   },
   signedOn: function(nickname) {
-    this.tracker = new qwebirc.irc.IRCTracker();
+    this.tracker = new qwebirc.irc.IRCTracker(this);
     this.nickname = nickname;
     this.newServerLine("SIGNON");
     
