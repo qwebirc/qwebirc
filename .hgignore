@@ -16,3 +16,5 @@ Thumbs.db
 static/{ugly,swm,mocha,q}ui{,debug}.html
 {bin/,}.checked
 {bin/,}.compiled
+ssl
+screenlog*
