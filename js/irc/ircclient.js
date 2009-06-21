@@ -575,6 +575,9 @@ qwebirc.irc.IRCClient = new Class({
       mtype = "ACTUALLY";
       ndata.m = data.hostname;
       ndata.x = data.ip;
+    } else if(type == "generictext") {
+      mtype = "GENERICTEXT";
+      ndata.m = data.text;
     } else if(type == "end") {
       mtype = "END";
     } else {

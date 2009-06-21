@@ -58,6 +58,7 @@ qwebirc.ui.themes.Default = {
   "WHOISOPER": ["          : $BIRC Operator$B", true],
   "WHOISOPERNAME": [" operedas : $m", true],
   "WHOISACTUALLY": [" realhost : $m [ip: $x]", true],
+  "WHOISGENERICTEXT": ["          : $m", true],
   "WHOISEND": ["End of WHOIS", true],
   "AWAY": ["$N is away: $m", true],
   "GENERICERROR": ["$m: $t", true],
