@@ -53,10 +53,20 @@ html {
   display: none;
 }
 
-.qwebirc-qui .input input {
+.qwebirc-qui .input input.keyboard-input {
   border: 0px;
   margin: 2px 0px 0px 0px;
   width: 99%;
+}
+
+.qwebirc-qui .input input.mobile-input {
+  border: 0px;
+  margin: 2px 0px 0px 0px;
+}
+
+.qwebirc-qui .input input.mobile-button {
+  position: absolute;
+  top: 0px;
 }
 
 .qwebirc-qui form {

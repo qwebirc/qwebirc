@@ -330,3 +330,37 @@ qwebirc.util.invertFn = function(fn) {
     return !fn.apply(this, arguments);
   }
 }
+
+qwebirc.util.deviceHasKeyboard = function() {
+  var determine = function() {
+    if(Browser.Engine.ipod)
+      return true;
+
+    var MOBILE_UAs = ["Nintendo Wii", " PIE", "BlackBerry", "IEMobile", "Windows CE", "Nokia", "Opera Mini", "Mobile", "mobile", "Pocket", "pocket", "Android"];
+    /* safari not included because iphones/ipods send that, and we checked for iphone/ipod specifically above */
+    var DESKTOP_UAs = ["Chrome", "Firefox", "Camino", "Iceweasel", "K-Meleon", "Konqueror", "SeaMonkey", "Windows NT", "Windows 9"];
+
+    var ua = navigator.userAgent;
+
+    var contains = function(v) {
+      return ua.indexOf(v) > -1;
+    }
+
+    for(var i=0;i<MOBILE_UAs.length;i++)
+      if(contains(MOBILE_UAs[i]))
+        return false;
+      
+    for(var i=0;i<DESKTOP_UAs.length;i++)
+      if(contains(DESKTOP_UAs[i]))
+        return true;
+      
+    return false;
+  };
+  var v = determine();
+  
+  qwebirc.util.deviceHasKeyboard = function() {
+    return v;
+  }
+  
+  return v;
+}

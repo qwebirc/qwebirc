@@ -137,28 +137,56 @@ qwebirc.ui.QUI = new Class({
     
     document.addEvent("mousedown", hider2);
     document.addEvent("keypress", hider2);
-    
   },
   createInput: function() {
     var form = new Element("form");
     this.input.appendChild(form);
+    
     form.addClass("input");
     
     var inputbox = new Element("input");
     form.appendChild(inputbox);
     this.inputbox = inputbox;
     this.inputbox.maxLength = 512;
-    
-    form.addEvent("submit", function(e) {
-      new Event(e).stop();
-    
+
+    var sendInput = function() {
       if(inputbox.value == "")
         return;
         
       this.resetTabComplete();
       this.getActiveWindow().historyExec(inputbox.value);
       inputbox.value = "";
-    }.bind(this));
+    }.bind(this);
+
+    if(!qwebirc.util.deviceHasKeyboard()) {
+      inputbox.addClass("mobile-input");
+      var inputButton = new Element("input", {type: "button"});
+      inputButton.addClass("mobile-button");
+      inputButton.addEvent("click", function() {
+        sendInput();
+        inputbox.focus();
+      });
+      inputButton.value = ">";
+      this.input.appendChild(inputButton);
+      var reflowButton = function() {
+        var containerSize = this.input.getSize();
+        var buttonSize = inputButton.getSize();
+        
+        var buttonLeft = containerSize.x - buttonSize.x - 5; /* lovely 5 */
+
+        inputButton.setStyle("left", buttonLeft);
+        inputbox.setStyle("width", buttonLeft - 5);
+        inputButton.setStyle("height", containerSize.y);
+      }.bind(this);
+      this.qjsui.addEvent("reflow", reflowButton);
+    } else {
+      inputbox.addClass("keyboard-input");
+    }
+    
+    form.addEvent("submit", function(e) {
+      new Event(e).stop();
+      sendInput();
+    });
     
     inputbox.addEvent("focus", this.resetTabComplete.bind(this));
     inputbox.addEvent("mousedown", this.resetTabComplete.bind(this));
