@@ -91,6 +91,7 @@ html {
   color: gray;
   padding-left: 5px;
   font-size: 0.7em;
+  cursor: default;
 }
 
 .qwebirc-qui .outertabbar {
