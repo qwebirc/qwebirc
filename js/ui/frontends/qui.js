@@ -385,6 +385,7 @@ qwebirc.ui.QUI.Window = new Class({
       this.topic.addClass("topic");
       this.topic.addClass("tab-invisible");
       this.topic.set("html", "&nbsp;");
+      this.topic.addEvent("click", this.editTopic.bind(this));
       this.parentObject.qjsui.applyClasses("topic", this.topic);
       
       this.prevNick = null;
@@ -400,6 +401,20 @@ qwebirc.ui.QUI.Window = new Class({
     } else {
       this.reflow();
     }
+  },
+  editTopic: function() {
+    if(!this.client.nickOnChanHasPrefix(this.client.nickname, this.name, "@")) {
+/*      var cmodes = this.client.getChannelModes(channel);
+      if(cmodes.indexOf("t")) {*/
+        alert("Sorry, you need to be opped to change the topic!");
+        return;
+      /*}*/
+    }
+    var newTopic = prompt("Change topic of " + this.name + " to:", this.topic.topicText);
+    if(newTopic === null)
+      return;
+
+    this.client.exec("/TOPIC " + newTopic);
   },
   reflow: function() {
     this.parentObject.reflow();
@@ -505,8 +520,10 @@ qwebirc.ui.QUI.Window = new Class({
       t.removeChild(t.firstChild);
 
     if(topic) {
+      t.topicText = topic;
       this.parent(topic, t);
     } else {
+      t.topicText = topic;
       var e = new Element("div");
       e.set("text", "(no topic set)");
       e.addClass("emptytopic");
