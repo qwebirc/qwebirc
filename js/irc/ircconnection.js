@@ -28,8 +28,6 @@ qwebirc.irc.IRCConnection = new Class({
     this.__timeoutId = null;
     this.__lastActiveRequest = null;
     this.__activeRequest = null;
-    
-    this.haha = 0
   },
   __error: function(text) {
     this.fireEvent("error", text);
@@ -147,7 +145,7 @@ qwebirc.irc.IRCConnection = new Class({
   },
   __checkRetries: function() {
     /* hmm, something went wrong! */
-    if(this.__retryAttempts++ >= this.options.maxRetries) {
+    if(this.__retryAttempts++ >= this.options.maxRetries && !this.disconnected) {
       this.disconnect();
       
       this.__error("Error: connection closed after several requests failed.");
