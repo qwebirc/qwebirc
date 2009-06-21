@@ -1,9 +1,10 @@
-qwebirc.ui.WINDOW_STATUS = 1;
-qwebirc.ui.WINDOW_QUERY = 2;
-qwebirc.ui.WINDOW_CHANNEL = 3;
-qwebirc.ui.WINDOW_CUSTOM = 4;
-qwebirc.ui.WINDOW_CONNECT = 5;
-qwebirc.ui.WINDOW_MESSAGES = 6;
+qwebirc.ui.WINDOW_STATUS =   0x01;
+qwebirc.ui.WINDOW_QUERY =    0x02;
+qwebirc.ui.WINDOW_CHANNEL =  0x04;
+qwebirc.ui.WINDOW_CUSTOM =   0x08;
+qwebirc.ui.WINDOW_CONNECT =  0x10;
+qwebirc.ui.WINDOW_MESSAGES = 0x32;
+
 qwebirc.ui.CUSTOM_CLIENT = "custom";
 
 qwebirc.ui.BaseUI = new Class({
