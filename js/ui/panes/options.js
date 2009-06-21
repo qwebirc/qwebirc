@@ -20,7 +20,7 @@ qwebirc.config.DEFAULT_OPTIONS = [
       if(!$defined(ua))
         return [true];
         
-      if(Browser.Engine.ipod || ua.indexOf("KHTML") != -1)
+      if(Browser.Engine.ipod || ua.indexOf("Konqueror") != -1)
         return [false, false];
 
       return [true];
@@ -163,7 +163,8 @@ qwebirc.config.Option = new Class({
     }    
   },
   setSavedValue: function(x) {
-    this.value = x;
+    if(this.enabled)
+      this.value = x;
   }
 });
 
