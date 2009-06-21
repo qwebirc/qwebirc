@@ -190,6 +190,10 @@ class AJAXEngine(resource.Resource):
       raise AJAXException, "Nickname not supplied."
     nick = ircclient.irc_decode(nick[0])
 
+    password = request.args.get("pass")
+    if password is not None:
+      password = ircclient.irc_decode(password[0])
+      
     for i in xrange(10):
       id = get_session_id()
       if not Sessions.get(id):
@@ -214,7 +218,11 @@ class AJAXEngine(resource.Resource):
     self.__connect_hit()
 
     def proceed(hostname):
-      client = ircclient.createIRC(session, nick=nick, ident=ident, ip=ip, realname=realname, perform=perform, hostname=hostname)
+      kwargs = dict(nick=nick, ident=ident, ip=ip, realname=realname, perform=perform, hostname=hostname)
+      if password is not None:
+        kwargs["password"] = password
+        
+      client = ircclient.createIRC(session, **kwargs)
       session.client = client
 
     if config.WEBIRC_MODE != "hmac":
