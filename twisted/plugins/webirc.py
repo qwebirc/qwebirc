@@ -7,7 +7,7 @@ from twisted.application.service import IServiceMaker
 from twisted.application import internet, strports
 from twisted.web import static, server
 
-from qwebirc import RootSite
+from qwebirc.root import RootSite
 
 class Options(usage.Options):
   optParameters = [["port", "p", "9090","Port to start the server on."],
