@@ -75,15 +75,8 @@ qwebirc.ui.Window = new Class({
       this.scrolltimer = null;
     }
 
-    if(this.type & qwebirc.ui.WINDOW_LASTLINE) {
-      if(this.lastPositionLineInserted)
-        this.lines.removeChild(this.lastPositionLine);
-      
-      if(this.parentObject.uiOptions.LASTPOS_LINE)
-        this.lines.appendChild(this.lastPositionLine);
-     
-      this.lastPositionLineInserted = this.parentObject.uiOptions.LASTPOS_LINE;
-    }
+    if(this.type & qwebirc.ui.WINDOW_LASTLINE)
+      this.replaceLastPositionLine();
     
     this.active = false;
   },
@@ -230,14 +223,24 @@ qwebirc.ui.Window = new Class({
     this.client.exec(line);
   },
   focusChange: function(newValue) {
-    console.log("focus change: " + newValue);
     if(newValue == true || !(this.type & qwebirc.ui.WINDOW_LASTLINE))
       return;
-      
-    if(this.lastPositionLineInserted)
-      this.lines.removeChild(this.lastPositionLine);
-      
-    if(this.parentObject.uiOptions.LASTPOS_LINE)
-      this.lines.appendChild(this.lastPositionLine);
+    
+    this.replaceLastPositionLine();
+  },
+  replaceLastPositionLine: function() {
+    if(this.parentObject.uiOptions.LASTPOS_LINE) {
+      if(!this.lastPositionLineInserted) {
+        this.scrollAdd(this.lastPositionLine);
+      } else if(this.lines.lastChild != this.lastPositionLine) {
+        this.lines.removeChild(this.lastPositionLine);
+        this.scrollAdd(this.lastPositionLine);
+      }
+    } else {
+      if(this.lastPositionLineInserted)
+        this.lines.removeChild(this.lastPositionLine);
+    }
+    
+    this.lastPositionLineInserted = this.parentObject.uiOptions.LASTPOS_LINE;
   }
 });
