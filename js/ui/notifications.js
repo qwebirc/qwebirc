@@ -67,6 +67,8 @@ qwebirc.ui.Flasher = new Class({
       this.flashing = false;
     
       this.canFlash = true;
+      document.addEvent("mousedown", this.cancelFlash.bind(this));
+      document.addEvent("keydown", this.cancelFlash.bind(this));
     } else {
       this.canFlash = false;
     }    
@@ -128,7 +130,7 @@ qwebirc.ui.Flasher = new Class({
   },
   focusChange: function(value) {
     this.windowFocused = value;
-    
+
     if(value)
       this.cancelFlash();
   }

@@ -202,28 +202,29 @@ qwebirc.ui.LoginBox = function(parentElement, callback, initialNickname, initial
     }
 
     var data = {"nickname": nickname, "autojoin": chans};
-    if(qwebirc.auth.passAuth() && authCheckBox.checked) {
-        if(!usernameBox.value || !passwordBox.value) {
-          alert("You must supply your username and password in auth mode.");
-          if(!usernameBox.value) {
-            usernameBox.focus();
-          } else {
-            passwordBox.focus();
+    if(qwebirc.auth.enabled()) {
+      if(qwebirc.auth.passAuth() && authCheckBox.checked) {
+          if(!usernameBox.value || !passwordBox.value) {
+            alert("You must supply your username and password in auth mode.");
+            if(!usernameBox.value) {
+              usernameBox.focus();
+            } else {
+              passwordBox.focus();
+            }
+            return;
           }
+          
+          data["serverPassword"] = usernameBox.value + " " + passwordBox.value;
+      } else if(qwebirc.auth.bouncerAuth()) {
+        if(!passwordBox.value) {
+          alert("You must supply a password.");
+          passwordBox.focus();
           return;
         }
         
-        data["serverPassword"] = usernameBox.value + " " + passwordBox.value;
-    } else if(qwebirc.auth.bouncerAuth()) {
-      if(!passwordBox.value) {
-        alert("You must supply a password.");
-        passwordBox.focus();
-        return;
+        data["serverPassword"] = passwordBox.value;
       }
-      
-      data["serverPassword"] = passwordBox.value;
     }
-    
     parentElement.removeChild(outerbox);
     
     callback(data);
