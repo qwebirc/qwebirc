@@ -190,7 +190,7 @@ class AJAXEngine(resource.Resource):
       raise AJAXException, "Nickname not supplied."
     nick = ircclient.irc_decode(nick[0])
 
-    password = request.args.get("pass")
+    password = request.args.get("password")
     if password is not None:
       password = ircclient.irc_decode(password[0])
       

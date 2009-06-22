@@ -71,7 +71,7 @@ class QWebIRCClient(basic.LineReceiver):
     
     self.lastError = None
     f = self.factory.ircinit
-    nick, ident, ip, realname, hostname, pass_ = f["nick"], f["ident"], f["ip"], f["realname"], f["hostname"], f.get("pass")
+    nick, ident, ip, realname, hostname, pass_ = f["nick"], f["ident"], f["ip"], f["realname"], f["hostname"], f.get("password")
     self.__nickname = nick
     self.__perform = f.get("perform")
 
