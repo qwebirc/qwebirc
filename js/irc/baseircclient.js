@@ -453,5 +453,17 @@ qwebirc.irc.BaseIRCClient = new Class({
     
     this.wallops(user, text);
     return true;
+  },
+  irc_RPL_CREATIONTIME: function(prefix, params) {
+    var channel = params[1];
+    var time = params[2];
+
+    this.channelCreationTime(channel, time);    
+  },
+  irc_RPL_CHANNELMODEIS: function(prefix, params) {
+    var channel = params[1];
+    var modes = params.slice(2);
+
+    this.channelModeIs(channel, modes);
   }
 });

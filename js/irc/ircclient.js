@@ -611,5 +611,11 @@ qwebirc.irc.IRCClient = new Class({
     var host = user.hostToHost();
 
     this.newServerLine("WALLOPS", {t: text, n: nick, h: host});
-  }
+  },
+  channelModeIs: function(channel, modes) {
+    this.newTargetOrActiveLine(channel, "CHANNELMODEIS", {c: channel, m: modes.join(" ")});
+  },
+  channelCreationTime: function(channel, time) {
+    this.newTargetOrActiveLine(channel, "CHANNELCREATIONTIME", {c: channel, m: qwebirc.irc.IRCDate(new Date(time * 1000))});
+  }  
 });
