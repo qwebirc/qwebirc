@@ -8,6 +8,9 @@
 # both!)
 # If in doubt always re-compile and restart.
 
+# The following line is required, don't remove it!
+from qwebirc.config_options import *
+
 # IRC OPTIONS
 # ---------------------------------------------------------------------
 #
@@ -22,9 +25,13 @@ IRCSERVER, IRCPORT = "irc.myserver.com", 6667
 REALNAME = "http://moo.com/"
 
 # OPTION: IDENT
-#        ident to use on irc, set to the literal value None to use a
-#        hexadecimal version of the IP address, e.g.:
-#        IDENT = None
+#        ident to use on irc, possible values include:
+#        - a string, e.g. IDENT = "webchat"
+#        - the literal value IDENT_HEX, this will set the ident to the
+#          a hexadecimal version of the users IP address, e.g
+#          IDENT = HEX_IDENT
+#        - the literal value IDENT_NICKNAME, this will use the users
+#          supplied nickname as their ident.
 IDENT = "webchat"
 
 # OPTION: WEBIRC_MODE

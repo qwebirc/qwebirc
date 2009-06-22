@@ -2,7 +2,7 @@ from twisted.web import resource, server, static, error as http_error
 from twisted.names import client
 from twisted.internet import reactor, error
 from authgateengine import login_optional, getSessionData
-import simplejson, md5, sys, os, time, config, weakref, traceback, socket
+import simplejson, md5, sys, os, time, config, qwebirc.config_options as config_options, traceback, socket
 import qwebirc.ircclient as ircclient
 from adminengine import AdminEngineAction
 from qwebirc.util import HitCounter
@@ -212,8 +212,10 @@ class AJAXEngine(resource.Resource):
       perform = ["PRIVMSG %s :TICKETAUTH %s" % (msg_mask, qticket)]
 
     ident, realname = config.IDENT, config.REALNAME
-    if ident is None:
+    if ident is config_options.IDENT_HEX or ident is None: # latter is legacy
       ident = socket.inet_aton(ip).encode("hex")
+    elif ident is config_options.IDENT_NICKNAME:
+      ident = nick
 
     self.__connect_hit()
 
@@ -225,7 +227,9 @@ class AJAXEngine(resource.Resource):
       client = ircclient.createIRC(session, **kwargs)
       session.client = client
 
-    if config.WEBIRC_MODE != "hmac":
+    if not hasattr(config, "WEBIRC_MODE") or config.WEBIRC_MODE == "hmac":
+      proceed(None)
+    elif config.WEBIRC_MODE != "hmac":
       notice = lambda x: session.event(connect_notice(x))
       notice("Looking up your hostname...")
       def callback(hostname):
@@ -235,8 +239,6 @@ class AJAXEngine(resource.Resource):
         notice("Couldn't look up your hostname!")
         proceed(ip)
       qdns.lookupAndVerifyPTR(ip, timeout=[config.DNS_TIMEOUT]).addCallbacks(callback, errback)
-    else:
-      proceed(None) # hmac doesn't care
 
     Sessions[id] = session
     

@@ -259,3 +259,10 @@ div#noscript {
   white-space: nowrap;
   font-size: 0.7em;
 }
+
+.qwebirc-qui hr.lastpos {
+  border: none;
+  border-top: 1px solid #C8D2DC;
+  margin-left: 3em;
+  margin-right: 3em;
+}

@@ -4,10 +4,10 @@ from twisted.internet import reactor, protocol
 from twisted.web import resource, server
 from twisted.protocols import basic
 
-import hmac, time, config
+import hmac, time, config, qwebirc.config_options as config_options
 from config import HMACTEMPORAL
 
-if config.WEBIRC_MODE == "hmac":
+if hasattr(config, "WEBIRC_MODE") and config.WEBIRC_MODE == "hmac":
   HMACKEY = hmac.HMAC(key=config.HMACKEY)
 
 def hmacfn(*args):
@@ -75,7 +75,9 @@ class QWebIRCClient(basic.LineReceiver):
     self.__nickname = nick
     self.__perform = f.get("perform")
 
-    if config.WEBIRC_MODE == "hmac":
+    if not hasattr(config, "WEBIRC_MODE"):
+      self.write("USER %s bleh bleh %s :%s" % (ident, ip, realname))
+    elif config.WEBIRC_MODE == "hmac":
       hmac = hmacfn(ident, ip)
       self.write("USER %s bleh bleh %s %s :%s" % (ident, ip, hmac, realname))
     elif config.WEBIRC_MODE == "webirc":
@@ -84,7 +86,7 @@ class QWebIRCClient(basic.LineReceiver):
     elif config.WEBIRC_MODE == "cgiirc":
       self.write("PASS %s_%s_%s" % (config.CGIIRC_STRING, ip, hostname))
       self.write("USER %s bleh %s :%s" % (ident, ip, realname))
-    else:
+    elif config.WEBIRC_MODE == config_options.WEBIRC_REALNAME or config.WEBIRC_MODE is None: # last bit is legacy
       if ip == hostname:
         dispip = ip
       else:

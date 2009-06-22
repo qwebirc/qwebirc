@@ -63,7 +63,9 @@ qwebirc.ui.themes.Default = {
   "AWAY": ["$N is away: $m", true],
   "GENERICERROR": ["$m: $t", true],
   "GENERICMESSAGE": ["$m", true],
-  "WALLOPS": ["WALLOP $n: $t", true]
+  "WALLOPS": ["WALLOP $n: $t", true],
+  "CHANNELCREATIONTIME": ["Channel $c was created at: $m", true],
+  "CHANNELMODEIS": ["Channel modes on $c are: $m", true]
 };
 
 qwebirc.ui.Theme = new Class({
