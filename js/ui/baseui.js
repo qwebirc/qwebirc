@@ -3,7 +3,7 @@ qwebirc.ui.WINDOW_QUERY =    0x02;
 qwebirc.ui.WINDOW_CHANNEL =  0x04;
 qwebirc.ui.WINDOW_CUSTOM =   0x08;
 qwebirc.ui.WINDOW_CONNECT =  0x10;
-qwebirc.ui.WINDOW_MESSAGES = 0x32;
+qwebirc.ui.WINDOW_MESSAGES = 0x20;
 
 qwebirc.ui.CUSTOM_CLIENT = "custom";
 
