@@ -2,7 +2,7 @@
 import dependencies
 dependencies.vcheck()
 
-import pages, os, subprocess, pagegen, shutil, sys
+import pages, os, subprocess, pagegen, shutil, sys, time
 
 COPYRIGHT = open("js/copyright.js", "rb").read()
 

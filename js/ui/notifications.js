@@ -127,6 +127,8 @@ qwebirc.ui.Flasher = new Class({
     return this.canUpdateTitle;
   },
   focusChange: function(value) {
+    this.windowFocused = value;
+    
     if(value)
       this.cancelFlash();
   }
