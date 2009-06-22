@@ -23,7 +23,11 @@ qwebirc.irc.BaseIRCClient = new Class({
     this.channels = {}
     this.nextctcp = 0;    
 
-    this.connection = new qwebirc.irc.IRCConnection({initialNickname: this.nickname, onRecv: this.dispatch.bind(this)});
+    this.connection = new qwebirc.irc.IRCConnection({
+      initialNickname: this.nickname,
+      onRecv: this.dispatch.bind(this),
+      serverPassword: this.options.serverPassword
+    });
   
     this.send = this.connection.send.bind(this.connection);
     this.connect = this.connection.connect.bind(this.connection);

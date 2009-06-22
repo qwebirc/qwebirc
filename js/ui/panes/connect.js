@@ -61,7 +61,7 @@ qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initi
   
   text.appendChild(document.createTextNode(" click 'Connect'."));
   text.appendChild(new Element("br"));
-  if(qwebirc.auth.enabled() && !qwebirc.auth.loggedin())
+  if(qwebirc.auth.enabled() && qwebirc.auth.quakeNetAuth() && !qwebirc.auth.loggedin())
     text.appendChild(document.createTextNode("If you'd like to connect using your Q auth click 'Log in'."));
 
   var tr = new Element("tr");
@@ -79,7 +79,7 @@ qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initi
     callback({"nickname": initialNickname, "autojoin": initialChannels});
   });
   
-  if(qwebirc.auth.enabled() && !qwebirc.auth.loggedin()) {
+  if(qwebirc.auth.enabled() && qwebirc.auth.quakeNetAuth() && !qwebirc.auth.loggedin()) {
     var auth = new Element("input", {"type": "submit", "value": "Log in"});
     td.appendChild(auth);
     auth.addEvent("click", qwebirc.ui.AuthLogin);
@@ -128,7 +128,7 @@ qwebirc.ui.LoginBox = function(parentElement, callback, initialNickname, initial
   var tbody = new Element("tbody");
   boxtable.appendChild(tbody); /* stupid IE */
 
-  function createRow(label, e2) {
+  function createRow(label, e2, style) {
     var r = new Element("tr");
     tbody.appendChild(r);
 
@@ -139,19 +139,50 @@ qwebirc.ui.LoginBox = function(parentElement, callback, initialNickname, initial
 
     var d2 = new Element("td");
     r.appendChild(d2);
-    d2.appendChild(e2);
+    
+    if($defined(e2))
+      d2.appendChild(e2);
+    if($defined(style)) {
+      r.setStyles(style);
+      return [r, d2];
+    }
+    
     return d2;
   }
 
   var nick = new Element("input");
   createRow("Nickname:", nick);
+  
+  var chanStyle = null;
+  if(qwebirc.auth.enabled() && qwebirc.auth.bouncerAuth())
+    chanStyle = {display: "none"};
+  
   var chan = new Element("input");
-  createRow("Channels:", chan);
+  createRow("Channels:", chan, chanStyle);
 
+  if(qwebirc.auth.enabled()) {
+    if(qwebirc.auth.passAuth()) {
+      var authRow = createRow("Auth to services:");
+      var authCheckBox = qwebirc.util.createInput("checkbox", authRow, "connect_auth_to_services", false);
+    
+      var usernameBox = new Element("input");
+      var usernameRow = createRow("Username:", usernameBox, {display: "none"})[0];
+    
+      var passwordRow = createRow("Password:", null, {display: "none"});
+      var passwordBox = qwebirc.util.createInput("password", passwordRow[1], "connect_auth_password");
+
+      authCheckBox.addEvent("click", function(e) { qwebirc.ui.authShowHide(authCheckBox, authRow, usernameBox, usernameRow, passwordRow[0]) });
+    } else if(qwebirc.auth.bouncerAuth()) {
+      var passwordRow = createRow("Password:");
+      var passwordBox = qwebirc.util.createInput("password", passwordRow, "connect_auth_password");
+    }
+  }
+  
   var connbutton = new Element("input", {"type": "submit"});
   connbutton.set("value", "Connect");
-  var r = createRow(undefined, connbutton)
-  if(qwebirc.auth.enabled() && !qwebirc.auth.loggedin()) {
+  var r = createRow(undefined, connbutton);
+  
+  if(qwebirc.auth.enabled() && qwebirc.auth.quakeNetAuth() && !qwebirc.auth.loggedin()) {
     var auth = new Element("input", {"type": "submit", "value": "Log in"});
     r.appendChild(auth);
     auth.addEvent("click", qwebirc.ui.AuthLogin);
@@ -170,13 +201,48 @@ qwebirc.ui.LoginBox = function(parentElement, callback, initialNickname, initial
       return;
     }
 
+    var data = {"nickname": nickname, "autojoin": chans};
+    if(qwebirc.auth.passAuth() && authCheckBox.checked) {
+        if(!usernameBox.value || !passwordBox.value) {
+          alert("You must supply your username and password in auth mode.");
+          if(!usernameBox.value) {
+            usernameBox.focus();
+          } else {
+            passwordBox.focus();
+          }
+          return;
+        }
+        
+        data["serverPassword"] = usernameBox.value + " " + passwordBox.value;
+    } else if(qwebirc.auth.bouncerAuth()) {
+      if(!passwordBox.value) {
+        alert("You must supply a password.");
+        passwordBox.focus();
+        return;
+      }
+      
+      data["serverPassword"] = passwordBox.value;
+    }
+    
     parentElement.removeChild(outerbox);
     
-    callback({"nickname": nickname, "autojoin": chans});
+    callback(data);
   }.bind(this));
-
+    
   nick.set("value", initialNickname);
   chan.set("value", initialChannels);
 
   nick.focus();
+}
+
+qwebirc.ui.authShowHide = function(checkbox, authRow, usernameBox, usernameRow, passwordRow) {
+  var visible = checkbox.checked;
+  var display = visible?null:"none";
+  usernameRow.setStyle("display", display);
+  passwordRow.setStyle("display", display);
+  
+  if(visible) {
+//    authRow.parentNode.setStyle("display", "none");
+    usernameBox.focus();
+  }
 }

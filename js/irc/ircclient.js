@@ -24,6 +24,7 @@ qwebirc.irc.IRCClient = new Class({
     this.activeTimers = {};
     
     this.loginRegex = new RegExp(this.ui.options.loginRegex);
+    this.tracker = new qwebirc.irc.IRCTracker(this);
   },
   newLine: function(window, type, data) {
     if(!data)

@@ -9,7 +9,8 @@ qwebirc.irc.IRCConnection = new Class({
     floodMax: 10,
     floodReset: 5000,
     errorAlert: true,
-    maxRetries: 5
+    maxRetries: 5,
+    serverPassword: null
   },
   initialize: function(options) {
     this.setOptions(options);
@@ -213,7 +214,12 @@ qwebirc.irc.IRCConnection = new Class({
       
       this.recv();    
     }.bind(this));
-    r.send("nick=" + encodeURIComponent(this.initialNickname));
+    
+    var postdata = "nick=" + encodeURIComponent(this.initialNickname);
+    if($defined(this.options.serverPassword))
+      postdata+="&password=" + encodeURIComponent(this.options.serverPassword);
+      
+    r.send(postdata);
   },
   __cancelRequests: function() {
     if($defined(this.__lastActiveRequest)) {
