@@ -228,5 +228,16 @@ qwebirc.ui.Window = new Class({
   historyExec: function(line) {
     this.commandhistory.addLine(line);
     this.client.exec(line);
-  }  
+  },
+  focusChange: function(newValue) {
+    console.log("focus change: " + newValue);
+    if(newValue == true || !(this.type & qwebirc.ui.WINDOW_LASTLINE))
+      return;
+      
+    if(this.lastPositionLineInserted)
+      this.lines.removeChild(this.lastPositionLine);
+      
+    if(this.parentObject.uiOptions.LASTPOS_LINE)
+      this.lines.appendChild(this.lastPositionLine);
+  }
 });

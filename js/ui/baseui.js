@@ -23,6 +23,10 @@ qwebirc.ui.BaseUI = new Class({
     this.firstClient = false;
     this.commandhistory = new qwebirc.irc.CommandHistory();
     this.clientId = 0;
+    
+    this.windowFocused = true;
+    window.addEvent("blur", function() { if(this.windowFocused) { this.windowFocused = false; this.focusChange(false); } }.bind(this));
+    window.addEvent("focus", function() { if(!this.windowFocused) { this.windowFocused = true; this.focusChange(true); } }.bind(this));
   },
   newClient: function(client) {
     client.id = this.clientId++;
@@ -151,6 +155,11 @@ qwebirc.ui.BaseUI = new Class({
     */
   loginBox: function(callback, initialNickname, initialChannels, autoConnect, autoNick) {
     qwebirc.ui.GenericLoginBox(this.parentElement, callback, initialNickname, initialChannels, autoConnect, autoNick, this.options.networkName);
+  },
+  focusChange: function(newValue) {
+    var window_ = this.getActiveWindow();
+    if($defined(window_))
+      window_.focusChange(newValue);
   }
 });
 
@@ -325,6 +334,10 @@ qwebirc.ui.NotificationUI = new Class({
   updateTitle: function(text) {
     if(this.__flasher.updateTitle(text))
       this.parent(text);
+  },
+  focusChange: function(value) {
+    this.parent(value);
+    this.__flasher.focusChange(value);
   }
 });
 

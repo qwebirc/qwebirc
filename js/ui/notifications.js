@@ -66,9 +66,6 @@ qwebirc.ui.Flasher = new Class({
       
       this.flashing = false;
     
-      window.addEvent("focus", function() { this.windowFocused = true; this.cancelFlash(); }.bind(this));
-      window.addEvent("blur", function() { this.windowFocused = false; }.bind(this));
-      
       this.canFlash = true;
     } else {
       this.canFlash = false;
@@ -128,5 +125,9 @@ qwebirc.ui.Flasher = new Class({
   updateTitle: function(text) {
     this.titleText = text;
     return this.canUpdateTitle;
+  },
+  focusChange: function(value) {
+    if(value)
+      this.cancelFlash();
   }
 });
