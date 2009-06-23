@@ -31,7 +31,8 @@ qwebirc.config.DEFAULT_OPTIONS = [
   [3, "NICK_OV_STATUS", "Show status (@/+) before nicknames in nicklist", true],
   [5, "ACCEPT_SERVICE_INVITES", "Automatically join channels when invited by Q", true],
   [6, "USE_HIDDENHOST", "Hide your hostmask when authed to Q (+x)", true],
-  [8, "LASTPOS_LINE", "Show a last position indicator for each window", true]
+  [8, "LASTPOS_LINE", "Show a last position indicator for each window", true],
+  [9, "NICK_COLOURS", "Automatically colour nicknames", false]
 ];
 
 qwebirc.config.DefaultOptions = null;

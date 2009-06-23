@@ -16,8 +16,11 @@ qwebirc.irc.BaseIRCClient = new Class({
   initialize: function(options) {
     this.setOptions(options);
 
+    this.toIRCLower = qwebirc.irc.RFC1459toIRCLower;
+
     this.nickname = this.options.nickname;
-    
+    this.lowerNickname = this.toIRCLower(this.nickname);    
+
     this.__signedOn = false;
     this.pmodes = {b: true, k: true, o: true, l: true, v: true};
     this.channels = {}
@@ -33,7 +36,6 @@ qwebirc.irc.BaseIRCClient = new Class({
     this.connect = this.connection.connect.bind(this.connection);
     this.disconnect = this.connection.disconnect.bind(this.connection);
 
-    this.toIRCLower = qwebirc.irc.RFC1459toIRCLower;
     this.setupGenericErrors();
   },
   dispatch: function(data) {
@@ -83,10 +85,11 @@ qwebirc.irc.BaseIRCClient = new Class({
         /* TODO: warn */
       }
     }
+    this.lowerNickname = this.toIRCLower(this.nickname);
   },
   irc_RPL_WELCOME: function(prefix, params) {
     this.nickname = params[0];
-    
+    this.lowerNickname = this.toIRCLower(this.nickname);
     this.__signedOn = true;
     this.signedOn(this.nickname);
   },
@@ -109,9 +112,11 @@ qwebirc.irc.BaseIRCClient = new Class({
     var oldnick = user.hostToNick();
     var newnick = params[0];
     
-    if(this.nickname == oldnick)
+    if(this.nickname == oldnick) {
       this.nickname = newnick;
-      
+      this.lowerNickname = this.toIRCLower(this.nickname);
+    }
+    
     this.nickChanged(user, newnick);
     
     return true;

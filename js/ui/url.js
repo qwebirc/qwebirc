@@ -1,6 +1,7 @@
 qwebirc.ui.urlificate = function(element, text, execfn, cmdfn, window) {
   var punct_re = /[[\)|\]]?(\.*|[\,;])$/;
-
+  var addedText = [];
+  
   var txtprocess = function(text, regex, appendfn, matchfn) {
     for(;;) {
       var index = text.search(regex);
@@ -23,11 +24,13 @@ qwebirc.ui.urlificate = function(element, text, execfn, cmdfn, window) {
   };
   
   var appendText = function(text) {
+    addedText.push(text);
     qwebirc.util.NBSPCreate(text, element);
   };
   
   var appendChan = function(text) {
     var newtext = text.replace(punct_re, "");
+    addedText.push(newtext);
     var punct = text.substring(newtext.length);
 
     var a = new Element("span");
@@ -95,6 +98,7 @@ qwebirc.ui.urlificate = function(element, text, execfn, cmdfn, window) {
       if(target)
         a.target = target;
     }
+    addedText.push(disptext);
     a.appendChild(document.createTextNode(disptext));
     
     element.appendChild(a);
@@ -107,4 +111,6 @@ qwebirc.ui.urlificate = function(element, text, execfn, cmdfn, window) {
   txtprocess(text, /\b((https?|ftp|qwebirc):\/\/|www\.)[^ ]+/, function(text) {
     txtprocess(text, /\B#[^ ,]+/, appendText, appendChan);
   }, appendURL);
+  
+  return addedText.join("");
 }

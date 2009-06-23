@@ -430,6 +430,8 @@ qwebirc.ui.QUI.Window = new Class({
     } else {
       this.reflow();
     }
+    
+    this.nicksColoured = this.parentObject.uiOptions.NICK_COLOURS;
   },
   editTopic: function() {
     if(!this.client.nickOnChanHasPrefix(this.client.nickname, this.name, "@")) {
@@ -512,13 +514,22 @@ qwebirc.ui.QUI.Window = new Class({
     this.prevNick = null;
   },
   nickListAdd: function(nick, position) {
+    var realNick = this.client.stripPrefix(nick);
+    
     var e = new Element("a");
     qwebirc.ui.insertAt(position, this.nicklist, e);
     
     e.href = "#";
-    e.appendChild(document.createTextNode(nick));
+    var span = new Element("span");
+    if(this.parentObject.uiOptions.NICK_COLOURS) {
+      var colour = realNick.toHSBColour(this.client);
+      if($defined(colour))
+        span.setStyle("color", colour.rgbToHex());
+    }
+    span.set("text", nick);
+    e.appendChild(span);
     
-    e.realNick = this.client.stripPrefix(nick);
+    e.realNick = realNick;
     
     e.addEvent("click", function(x) {
       if(this.prevNick == e) {
@@ -577,6 +588,25 @@ qwebirc.ui.QUI.Window = new Class({
     
     if(inputVisible)
       this.parentObject.inputbox.focus();
+
+    if(this.type == qwebirc.ui.WINDOW_CHANNEL && this.nicksColoured != this.parentObject.uiOptions.NICK_COLOURS) {
+      this.nicksColoured = this.parentObject.uiOptions.NICK_COLOURS;
+      
+      var nodes = this.nicklist.childNodes;
+      if(this.parentObject.uiOptions.NICK_COLOURS) {
+        for(var i=0;i<nodes.length;i++) {
+          var e = nodes[i], span = e.firstChild;
+          var colour = e.realNick.toHSBColour(this.client);
+          if($defined(colour))
+            span.setStyle("color", colour.rgbToHex());
+        };
+      } else {
+        for(var i=0;i<nodes.length;i++) {
+          var span = nodes[i].firstChild;
+          span.setStyle("color", null);
+        };
+      }
+    }
   },
   deselect: function() {
     this.parent();

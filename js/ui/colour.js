@@ -3,7 +3,8 @@ qwebirc.ui.Colourise = function(line, entity, execfn, cmdfn, window) {
   var bg;
   var underline = false;
   var bold = false;
-
+  var autoNickColour = false;
+  
   var out = [];
   var xline = line.split("");
   var element = document.createElement("span");
@@ -43,14 +44,20 @@ qwebirc.ui.Colourise = function(line, entity, execfn, cmdfn, window) {
   }
 
   function emitEndToken() {
+    var data = "";
     if(out.length > 0) {
-      qwebirc.ui.urlificate(element, out.join(""), execfn, cmdfn, window);
+      var data = qwebirc.ui.urlificate(element, out.join(""), execfn, cmdfn, window);
       entity.appendChild(element);
       out = [];
     }
     element = document.createElement("span");
+    return data;
   }  
+  
   function emitStartToken() {
+    if(autoNickColour)
+      return element;
+      
     var classes = []
     if(fg != undefined)
       classes.push("Xc" + fg);
@@ -63,8 +70,37 @@ qwebirc.ui.Colourise = function(line, entity, execfn, cmdfn, window) {
     element.className = classes.join(" ");
   }
   
+  var nickColouring = window.parentObject.uiOptions.NICK_COLOURS; /* HACK */
+  var capturingNick = false;
   for(var i=0;i<xline.length;i++) {
     var lc = xline[i];
+
+    if(nickColouring) {
+      if(!capturingNick) {
+        if(lc == "\x00") {
+          capturingNick = true;
+          emitEndToken();
+          continue;
+        }
+      } else {
+        if(lc != "\x00") {
+          out.push(lc);
+        } else {
+          autoNickColour = true;
+          var e = emitStartToken();
+          var text = emitEndToken();
+          
+          var c = text.toHSBColour(window.client);
+          if($defined(c))
+            e.style.color = c.rgbToHex();
+          capturingNick = autoNickColour = false;
+        }
+        continue;
+      }
+    } else if(lc == "\x00") {
+      continue;
+    }
+    
     if(lc == "\x02") {
       emitEndToken();
 
@@ -100,4 +136,18 @@ qwebirc.ui.Colourise = function(line, entity, execfn, cmdfn, window) {
   }
   
   emitEndToken();
+}
+
+String.prototype.toHSBColour = function(client) {
+  var lower = client.toIRCLower(client.stripPrefix(this));
+  if(lower == client.lowerNickname)
+    return null;
+    
+  var hash = 0;
+  for(var i=0;i<lower.length;i++)
+    hash = 31 * hash + lower.charCodeAt(i);
+  
+  var hue = Math.abs(hash) % 360;
+
+  return new Color([hue, 70, 60], "hsb");
 }
