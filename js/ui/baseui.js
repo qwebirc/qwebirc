@@ -25,8 +25,28 @@ qwebirc.ui.BaseUI = new Class({
     this.clientId = 0;
     
     this.windowFocused = true;
-    window.addEvent("blur", function() { if(this.windowFocused) { this.windowFocused = false; this.focusChange(false); } }.bind(this));
-    window.addEvent("focus", function() { if(!this.windowFocused) { this.windowFocused = true; this.focusChange(true); } }.bind(this));
+
+    if(Browser.Engine.trident) {
+      var checkFocus = function() {
+        var hasFocus = document.hasFocus();
+        if(hasFocus != this.windowFocused) {
+          this.windowFocused = hasFocus;
+          this.focusChange(hasFocus);
+        }
+      }
+
+      checkFocus.periodical(100, this);
+    } else {
+      var blur = function() { if(this.windowFocused) { this.windowFocused = false; this.focusChange(false); } }.bind(this);
+      var focus = function() { if(!this.windowFocused) { this.windowFocused = true; this.focusChange(true); } }.bind(this);
+
+      /* firefox requires both */
+
+      document.addEvent("blur", blur);
+      window.addEvent("blur", blur);
+      document.addEvent("focus", focus);
+      window.addEvent("focus", focus);
+    }
   },
   newClient: function(client) {
     client.id = this.clientId++;

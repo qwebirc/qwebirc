@@ -2,6 +2,17 @@ qwebirc.config.CHECK_BOX = 1;
 qwebirc.config.TEXT_BOX = 2;
 qwebirc.config.RADIO_BUTTONS = 3;
 
+qwebirc.ui.supportsFocus = function() {
+  var ua = navigator.userAgent;
+  if(!$defined(ua))
+    return [true];
+      
+  if(Browser.Engine.ipod || ua.indexOf("Konqueror") != -1)
+    return [false, false];
+
+  return [true];
+}
+
 qwebirc.config.DEFAULT_OPTIONS = [
   [1, "BEEP_ON_MENTION", "Beep when nick mentioned or on query activity (requires Flash)", true, {
     enabled: function() {
@@ -15,23 +26,16 @@ qwebirc.config.DEFAULT_OPTIONS = [
     }
   }],
   [7, "FLASH_ON_MENTION", "Flash titlebar when nick mentioned or on query activity", true, {
-    enabled: function() {
-      var ua = navigator.userAgent;
-      if(!$defined(ua))
-        return [true];
-        
-      if(Browser.Engine.ipod || ua.indexOf("Konqueror") != -1)
-        return [false, false];
-
-      return [true];
-    }
+    enabled: qwebirc.ui.supportsFocus
   }],
   [2, "DEDICATED_MSG_WINDOW", "Send privmsgs to dedicated messages window", false],
   [4, "DEDICATED_NOTICE_WINDOW", "Send notices to dedicated message window", false],
   [3, "NICK_OV_STATUS", "Show status (@/+) before nicknames in nicklist", true],
   [5, "ACCEPT_SERVICE_INVITES", "Automatically join channels when invited by Q", true],
   [6, "USE_HIDDENHOST", "Hide your hostmask when authed to Q (+x)", true],
-  [8, "LASTPOS_LINE", "Show a last position indicator for each window", true],
+  [8, "LASTPOS_LINE", "Show a last position indicator for each window", true, {
+    enabled: qwebirc.ui.supportsFocus
+  }],
   [9, "NICK_COLOURS", "Automatically colour nicknames", false]
 ];
 
