@@ -1,5 +1,5 @@
 qwebirc.ui.QUI = new Class({
-  Extends: qwebirc.ui.NewLoginUI,
+  Extends: qwebirc.ui.RootUI,
   initialize: function(parentElement, theme, options) {
     this.parent(parentElement, qwebirc.ui.QUI.Window, "qui", options);
     this.theme = theme;
@@ -49,7 +49,8 @@ qwebirc.ui.QUI = new Class({
     
     this.createInput();
     this.reflow();
-
+    this.reflow.delay(100); /* Konqueror fix */
+    
     /* HACK, in Chrome this should work immediately but doesn't */
     this.__createDropdownHint.delay(100, this);
   },
@@ -136,27 +137,56 @@ qwebirc.ui.QUI = new Class({
     
     document.addEvent("mousedown", hider2);
     document.addEvent("keypress", hider2);
-    
   },
   createInput: function() {
     var form = new Element("form");
     this.input.appendChild(form);
+    
     form.addClass("input");
     
     var inputbox = new Element("input");
     form.appendChild(inputbox);
     this.inputbox = inputbox;
-    
-    form.addEvent("submit", function(e) {
-      new Event(e).stop();
-    
+    this.inputbox.maxLength = 512;
+
+    var sendInput = function() {
       if(inputbox.value == "")
         return;
         
       this.resetTabComplete();
       this.getActiveWindow().historyExec(inputbox.value);
       inputbox.value = "";
-    }.bind(this));
+    }.bind(this);
+
+    if(!qwebirc.util.deviceHasKeyboard()) {
+      inputbox.addClass("mobile-input");
+      var inputButton = new Element("input", {type: "button"});
+      inputButton.addClass("mobile-button");
+      inputButton.addEvent("click", function() {
+        sendInput();
+        inputbox.focus();
+      });
+      inputButton.value = ">";
+      this.input.appendChild(inputButton);
+      var reflowButton = function() {
+        var containerSize = this.input.getSize();
+        var buttonSize = inputButton.getSize();
+        
+        var buttonLeft = containerSize.x - buttonSize.x - 5; /* lovely 5 */
+
+        inputButton.setStyle("left", buttonLeft);
+        inputbox.setStyle("width", buttonLeft - 5);
+        inputButton.setStyle("height", containerSize.y);
+      }.bind(this);
+      this.qjsui.addEvent("reflow", reflowButton);
+    } else {
+      inputbox.addClass("keyboard-input");
+    }
+    
+    form.addEvent("submit", function(e) {
+      new Event(e).stop();
+      sendInput();
+    });
     
     inputbox.addEvent("focus", this.resetTabComplete.bind(this));
     inputbox.addEvent("mousedown", this.resetTabComplete.bind(this));
@@ -384,6 +414,7 @@ qwebirc.ui.QUI.Window = new Class({
       this.topic.addClass("topic");
       this.topic.addClass("tab-invisible");
       this.topic.set("html", "&nbsp;");
+      this.topic.addEvent("click", this.editTopic.bind(this));
       this.parentObject.qjsui.applyClasses("topic", this.topic);
       
       this.prevNick = null;
@@ -399,6 +430,22 @@ qwebirc.ui.QUI.Window = new Class({
     } else {
       this.reflow();
     }
+    
+    this.nicksColoured = this.parentObject.uiOptions.NICK_COLOURS;
+  },
+  editTopic: function() {
+    if(!this.client.nickOnChanHasPrefix(this.client.nickname, this.name, "@")) {
+/*      var cmodes = this.client.getChannelModes(channel);
+      if(cmodes.indexOf("t")) {*/
+        alert("Sorry, you need to be opped to change the topic!");
+        return;
+      /*}*/
+    }
+    var newTopic = prompt("Change topic of " + this.name + " to:", this.topic.topicText);
+    if(newTopic === null)
+      return;
+
+    this.client.exec("/TOPIC " + newTopic);
   },
   reflow: function() {
     this.parentObject.reflow();
@@ -423,15 +470,19 @@ qwebirc.ui.QUI.Window = new Class({
     parent.appendChild(e);
     e.addClass("menu");
     
+    var nickArray = [nick];
     qwebirc.ui.MENU_ITEMS.forEach(function(x) {
+      if(!x.predicate || x.predicate !== true && !x.predicate.apply(this, nickArray))
+        return;
+      
       var e2 = new Element("a");
       e.appendChild(e2);
-      
+
       e2.href = "#";
-      e2.set("text", "- " + x[0]);
-      
+      e2.set("text", "- " + x.text);
+
       e2.addEvent("focus", function() { this.blur() }.bind(e2));
-      e2.addEvent("click", function(ev) { new Event(ev.stop()); this.menuClick(x[1]); }.bind(this));
+      e2.addEvent("click", function(ev) { new Event(ev.stop()); this.menuClick(x.fn); }.bind(this));
     }.bind(this));
     return e;
   },
@@ -463,13 +514,22 @@ qwebirc.ui.QUI.Window = new Class({
     this.prevNick = null;
   },
   nickListAdd: function(nick, position) {
+    var realNick = this.client.stripPrefix(nick);
+    
     var e = new Element("a");
     qwebirc.ui.insertAt(position, this.nicklist, e);
     
     e.href = "#";
-    e.appendChild(document.createTextNode(nick));
+    var span = new Element("span");
+    if(this.parentObject.uiOptions.NICK_COLOURS) {
+      var colour = realNick.toHSBColour(this.client);
+      if($defined(colour))
+        span.setStyle("color", colour.rgbToHex());
+    }
+    span.set("text", nick);
+    e.appendChild(span);
     
-    e.realNick = this.client.stripPrefix(nick);
+    e.realNick = realNick;
     
     e.addEvent("click", function(x) {
       if(this.prevNick == e) {
@@ -481,7 +541,7 @@ qwebirc.ui.QUI.Window = new Class({
       this.prevNick = e;
       e.addClass("selected");
       this.moveMenuClass();
-      e.menu = this.createMenu(x.realNick, e);
+      e.menu = this.createMenu(e.realNick, e);
       new Event(x).stop();
     }.bind(this));
     
@@ -500,8 +560,10 @@ qwebirc.ui.QUI.Window = new Class({
       t.removeChild(t.firstChild);
 
     if(topic) {
+      t.topicText = topic;
       this.parent(topic, t);
     } else {
+      t.topicText = topic;
       var e = new Element("div");
       e.set("text", "(no topic set)");
       e.addClass("emptytopic");
@@ -526,6 +588,25 @@ qwebirc.ui.QUI.Window = new Class({
     
     if(inputVisible)
       this.parentObject.inputbox.focus();
+
+    if(this.type == qwebirc.ui.WINDOW_CHANNEL && this.nicksColoured != this.parentObject.uiOptions.NICK_COLOURS) {
+      this.nicksColoured = this.parentObject.uiOptions.NICK_COLOURS;
+      
+      var nodes = this.nicklist.childNodes;
+      if(this.parentObject.uiOptions.NICK_COLOURS) {
+        for(var i=0;i<nodes.length;i++) {
+          var e = nodes[i], span = e.firstChild;
+          var colour = e.realNick.toHSBColour(this.client);
+          if($defined(colour))
+            span.setStyle("color", colour.rgbToHex());
+        };
+      } else {
+        for(var i=0;i<nodes.length;i++) {
+          var span = nodes[i].firstChild;
+          span.setStyle("color", null);
+        };
+      }
+    }
   },
   deselect: function() {
     this.parent();

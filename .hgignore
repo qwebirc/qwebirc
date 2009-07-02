@@ -14,3 +14,7 @@ defargs.conf
 Thumbs.db
 [dD]esktop.ini
 static/{ugly,swm,mocha,q}ui{,debug}.html
+{bin/,}.checked
+{bin/,}.compiled
+ssl
+screenlog*

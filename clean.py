@@ -11,7 +11,11 @@ for x in pages.UIs:
   tryunlink("static", "css", x + ".css")
   tryunlink("static", "%s.html" % x)
   tryunlink("static", "%sdebug.html" % x)  
-
+  tryunlink(".checked")
+  tryunlink(".compiled")
+  tryunlink("bin", ".checked")
+  tryunlink("bin", ".compiled")
+  
 if __name__ == "__main__":
   tryunlink("static", "js", "qwebirc.js")
   cleanpyc.main()

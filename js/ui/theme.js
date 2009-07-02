@@ -3,6 +3,8 @@ qwebirc.ui.themes.ThemeControlCodeMap = {
   "B": "\x02",
   "U": "\x1F",
   "O": "\x0F",
+  "{": "\x00",
+  "}": "\x00",
   "[": "qwebirc://whois/",
   "]": "/",
   "$": "$"
@@ -16,21 +18,21 @@ qwebirc.ui.themes.Default = {
   "DISCONNECT": ["Disconnected from server: $m", true],
   "ERROR": ["ERROR: $m", true],
   "SERVERNOTICE": ["$m", true],
-  "JOIN": ["$N [$h] has joined $c", true],
-  "OURJOIN": ["$N [$h] has joined $c", true],
-  "PART": ["$N [$h] has left $c [$m]", true],
-  "KICK": ["$v was kicked from $c by $N [$m]", true],
-  "MODE": ["mode/$c [$m] by $N", true],
-  "QUIT": ["$N [$h] has quit [$m]", true],
-  "NICK": ["$n has changed nick to $[$w$]", true],
-  "TOPIC": ["$N changed the topic of $c to: $m", true],
+  "JOIN": ["${$N$} [$h] has joined $c", true],
+  "OURJOIN": ["${$N$} [$h] has joined $c", true],
+  "PART": ["${$N$} [$h] has left $c [$m]", true],
+  "KICK": ["${$v$} was kicked from $c by ${$N$} [$m]", true],
+  "MODE": ["mode/$c [$m] by ${$N$}", true],
+  "QUIT": ["${$N$} [$h] has quit [$m]", true],
+  "NICK": ["${$n$} has changed nick to ${$[$w$]$}", true],
+  "TOPIC": ["${$N$} changed the topic of $c to: $m", true],
   "UMODE": ["Usermode change: $m", true],
   "INVITE": ["$N invites you to join $c", true],
   "HILIGHT": ["$C4"],
   "HILIGHTEND": ["$O"],
-  "CHANMSG": ["<$@$($N$)> $m"],
+  "CHANMSG": ["<${$@$($N$)$}> $m"],
   "PRIVMSG": ["<$($N$)> $m"],
-  "CHANNOTICE": ["-$($N$):$c- $m"],
+  "CHANNOTICE": ["-${$($N$)$}:$c- $m"],
   "PRIVNOTICE": ["-$($N$)- $m"],
   "OURCHANMSG": ["<$@$N> $m"],
   "OURPRIVMSG": ["<$N> $m"],
@@ -40,7 +42,7 @@ qwebirc.ui.themes.Default = {
   "OURPRIVNOTICE": ["-$N- $m"],
   "OURCHANACTION": [" * $N $m"],
   "OURPRIVACTION": [" * $N $m"],
-  "CHANACTION": [" * $($N$) $m"],
+  "CHANACTION": [" * ${$($N$)$} $m"],
   "PRIVACTION": [" * $($N$) $m"],
   "CHANCTCP": ["$N [$h] requested CTCP $x from $c: $m"],
   "PRIVCTCP": ["$N [$h] requested CTCP $x from $-: $m"],
@@ -58,10 +60,14 @@ qwebirc.ui.themes.Default = {
   "WHOISOPER": ["          : $BIRC Operator$B", true],
   "WHOISOPERNAME": [" operedas : $m", true],
   "WHOISACTUALLY": [" realhost : $m [ip: $x]", true],
+  "WHOISGENERICTEXT": ["          : $m", true],
   "WHOISEND": ["End of WHOIS", true],
   "AWAY": ["$N is away: $m", true],
   "GENERICERROR": ["$m: $t", true],
-  "GENERICMESSAGE": ["$m", true]
+  "GENERICMESSAGE": ["$m", true],
+  "WALLOPS": ["WALLOP $n: $t", true],
+  "CHANNELCREATIONTIME": ["Channel $c was created at: $m", true],
+  "CHANNELMODEIS": ["Channel modes on $c are: $m", true]
 };
 
 qwebirc.ui.Theme = new Class({
@@ -87,11 +93,9 @@ qwebirc.ui.Theme = new Class({
     this.__ccmap = qwebirc.util.dictCopy(qwebirc.ui.themes.ThemeControlCodeMap);
     this.__ccmaph = qwebirc.util.dictCopy(this.__ccmap);
 
-    this.__ccmap["("] = "";
-    this.__ccmap[")"] = "";
-    
     this.__ccmaph["("] = this.message("HILIGHT", {}, this.__ccmap);
     this.__ccmaph[")"] = this.message("HILIGHTEND", {}, this.__ccmap);
+    this.__ccmaph["{"] = this.__ccmaph["}"] = "";
   },
   __dollarSubstitute: function(x, h, mapper) {
     var msg = [];

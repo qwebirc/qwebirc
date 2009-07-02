@@ -4,9 +4,15 @@ qwebirc.irc.NickChanEntry = function() {
 }
 
 qwebirc.irc.IRCTracker = new Class({
-  initialize: function() {
+  initialize: function(owner) {
     this.channels = {};
     this.nicknames = {};
+    this.owner = owner;
+  },
+  toIRCLower: function(value) {
+    /* proxied because the method can change after we connect */
+
+    return this.owner.toIRCLower(value);
   },
   isEmpty: function(hash) {
     for(var x in hash)
@@ -23,18 +29,18 @@ qwebirc.irc.IRCTracker = new Class({
     return n;
   },
   getChannel: function(channel) {
-    return this.channels[channel];
+    return this.channels[this.toIRCLower(channel)];
   },
   getOrCreateChannel: function(channel) {
     var c = this.getChannel(channel);
     if(!c)
-      c = this.channels[channel] = {};
+      c = this.channels[this.toIRCLower(channel)] = {};
     return c;
   },
   getOrCreateNickOnChannel: function(nick, channel) {
     var n = this.getOrCreateNick(nick);
     
-    var nc = n[channel];
+    var nc = n[this.toIRCLower(channel)];
     if(!nc)
       return this.addNickToChannel(nick, channel);
       
@@ -45,13 +51,13 @@ qwebirc.irc.IRCTracker = new Class({
     if(!n)
       return;
       
-    return n[channel];
+    return n[this.toIRCLower(channel)];
   },
   addNickToChannel: function(nick, channel) {
     var nc = new qwebirc.irc.NickChanEntry();
 
     var n = this.getOrCreateNick(nick);
-    n[channel] = nc;
+    n[this.toIRCLower(channel)] = nc;
     
     var c = this.getOrCreateChannel(channel);
     c[nick] = nc;
@@ -64,11 +70,12 @@ qwebirc.irc.IRCTracker = new Class({
       return;
       
     for(var channel in n) {
-      var c = this.channels[channel];
+      var lchannel = this.toIRCLower(channel);
+      var c = this.channels[lchannel];
       
       delete c[nick];
       if(this.isEmpty(c))
-        delete this.channels[channel];
+        delete this.channels[lchannel];
     }
     delete this.nicknames[nick];
   },
@@ -76,29 +83,33 @@ qwebirc.irc.IRCTracker = new Class({
     var c = this.getChannel(channel);
     if(!c)
       return;
-      
+
+    var lchannel = this.toIRCLower(channel);
+
     for(var nick in c) {
       var n = this.nicknames[nick];
       
-      delete n[channel];
+      delete n[lchannel];
       if(this.isEmpty(n))
         delete this.nicknames[nick];
     }
-    delete this.channels[channel];
+    delete this.channels[lchannel];
   },
   removeNickFromChannel: function(nick, channel) {
+    var lchannel = this.toIRCLower(channel);
+
     var n = this.getNick(nick);
-    var c = this.getChannel(channel);
+    var c = this.getChannel(lchannel);
     if(!n || !c)
       return;
       
-    delete n[channel];
+    delete n[lchannel];
     delete c[nick];
     
     if(this.isEmpty(n))
       delete this.nicknames[nick];
     if(this.isEmpty(c))
-      delete this.channels[channel];
+      delete this.channels[lchannel];
   },
   renameNick: function(oldnick, newnick) {
     var n = this.getNick(oldnick);
@@ -106,9 +117,10 @@ qwebirc.irc.IRCTracker = new Class({
       return;
       
     for(var channel in n) {
-      this.channels[channel][newnick] = this.channels[channel][oldnick];
-      delete this.channels[channel][oldnick];
-    }    
+      var lchannel = this.toIRCLower(channel);
+      this.channels[lchannel][newnick] = this.channels[lchannel][oldnick];
+      delete this.channels[lchannel][oldnick];
+    }
     
     this.nicknames[newnick] = this.nicknames[oldnick];
     delete this.nicknames[oldnick];
@@ -140,4 +152,4 @@ qwebirc.irc.IRCTracker = new Class({
     return n2;
   }
 });
- 
+

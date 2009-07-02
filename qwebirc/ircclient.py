@@ -1,13 +1,13 @@
-import twisted, sys, codecs
+import twisted, sys, codecs, traceback
 from twisted.words.protocols import irc
 from twisted.internet import reactor, protocol
 from twisted.web import resource, server
 from twisted.protocols import basic
 
-import hmac, time, config
+import hmac, time, config, qwebirc.config_options as config_options
 from config import HMACTEMPORAL
 
-if config.WEBIRC_MODE == "hmac":
+if hasattr(config, "WEBIRC_MODE") and config.WEBIRC_MODE == "hmac":
   HMACKEY = hmac.HMAC(key=config.HMACKEY)
 
 def hmacfn(*args):
@@ -41,8 +41,10 @@ class QWebIRCClient(basic.LineReceiver):
       prefix, command, params = irc.parsemsg(line)
       self.handleCommand(command, prefix, params)
     except irc.IRCBadMessage:
-      self.badMessage(line, *sys.exc_info())
-      
+      # emit and ignore
+      traceback.print_exc()
+      return
+
     if command == "001":
       self.__nickname = params[0]
       
@@ -55,9 +57,6 @@ class QWebIRCClient(basic.LineReceiver):
       if nick == self.__nickname:
         self.__nickname = params[0]
         
-  def badMessage(self, args):
-    self("badmessage", args)
-  
   def handleCommand(self, command, prefix, params):
     self("c", command, prefix, params)
     
@@ -72,11 +71,13 @@ class QWebIRCClient(basic.LineReceiver):
     
     self.lastError = None
     f = self.factory.ircinit
-    nick, ident, ip, realname, hostname = f["nick"], f["ident"], f["ip"], f["realname"], f["hostname"]
+    nick, ident, ip, realname, hostname, pass_ = f["nick"], f["ident"], f["ip"], f["realname"], f["hostname"], f.get("password")
     self.__nickname = nick
     self.__perform = f.get("perform")
 
-    if config.WEBIRC_MODE == "hmac":
+    if not hasattr(config, "WEBIRC_MODE"):
+      self.write("USER %s bleh bleh %s :%s" % (ident, ip, realname))
+    elif config.WEBIRC_MODE == "hmac":
       hmac = hmacfn(ident, ip)
       self.write("USER %s bleh bleh %s %s :%s" % (ident, ip, hmac, realname))
     elif config.WEBIRC_MODE == "webirc":
@@ -85,7 +86,7 @@ class QWebIRCClient(basic.LineReceiver):
     elif config.WEBIRC_MODE == "cgiirc":
       self.write("PASS %s_%s_%s" % (config.CGIIRC_STRING, ip, hostname))
       self.write("USER %s bleh %s :%s" % (ident, ip, realname))
-    else:
+    elif config.WEBIRC_MODE == config_options.WEBIRC_REALNAME or config.WEBIRC_MODE is None: # last bit is legacy
       if ip == hostname:
         dispip = ip
       else:
@@ -93,6 +94,8 @@ class QWebIRCClient(basic.LineReceiver):
 
       self.write("USER %s bleh bleh :%s - %s" % (ident, dispip, realname))
 
+    if pass_ is not None:
+      self.write("PASS :%s" % pass_)
     self.write("NICK %s" % nick)
     
     self.factory.client = self

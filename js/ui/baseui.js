@@ -1,9 +1,10 @@
-qwebirc.ui.WINDOW_STATUS = 1;
-qwebirc.ui.WINDOW_QUERY = 2;
-qwebirc.ui.WINDOW_CHANNEL = 3;
-qwebirc.ui.WINDOW_CUSTOM = 4;
-qwebirc.ui.WINDOW_CONNECT = 5;
-qwebirc.ui.WINDOW_MESSAGES = 6;
+qwebirc.ui.WINDOW_STATUS =   0x01;
+qwebirc.ui.WINDOW_QUERY =    0x02;
+qwebirc.ui.WINDOW_CHANNEL =  0x04;
+qwebirc.ui.WINDOW_CUSTOM =   0x08;
+qwebirc.ui.WINDOW_CONNECT =  0x10;
+qwebirc.ui.WINDOW_MESSAGES = 0x20;
+
 qwebirc.ui.CUSTOM_CLIENT = "custom";
 
 qwebirc.ui.BaseUI = new Class({
@@ -22,6 +23,30 @@ qwebirc.ui.BaseUI = new Class({
     this.firstClient = false;
     this.commandhistory = new qwebirc.irc.CommandHistory();
     this.clientId = 0;
+    
+    this.windowFocused = true;
+
+    if(Browser.Engine.trident) {
+      var checkFocus = function() {
+        var hasFocus = document.hasFocus();
+        if(hasFocus != this.windowFocused) {
+          this.windowFocused = hasFocus;
+          this.focusChange(hasFocus);
+        }
+      }
+
+      checkFocus.periodical(100, this);
+    } else {
+      var blur = function() { if(this.windowFocused) { this.windowFocused = false; this.focusChange(false); } }.bind(this);
+      var focus = function() { if(!this.windowFocused) { this.windowFocused = true; this.focusChange(true); } }.bind(this);
+
+      /* firefox requires both */
+
+      document.addEvent("blur", blur);
+      window.addEvent("blur", blur);
+      document.addEvent("focus", focus);
+      window.addEvent("focus", focus);
+    }
   },
   newClient: function(client) {
     client.id = this.clientId++;
@@ -93,7 +118,10 @@ qwebirc.ui.BaseUI = new Class({
     if(this.active)
       this.active.deselect();
     window.select();  /* calls setActiveWindow */
-    document.title = window.name + " - " + this.options.appTitle;
+    this.updateTitle(window.name + " - " + this.options.appTitle);
+  },
+  updateTitle: function(text) {
+    document.title = text;
   },
   nextWindow: function(direction) {
     if(this.windowArray.length == 0 || !this.active)
@@ -147,6 +175,11 @@ qwebirc.ui.BaseUI = new Class({
     */
   loginBox: function(callback, initialNickname, initialChannels, autoConnect, autoNick) {
     qwebirc.ui.GenericLoginBox(this.parentElement, callback, initialNickname, initialChannels, autoConnect, autoNick, this.options.networkName);
+  },
+  focusChange: function(newValue) {
+    var window_ = this.getActiveWindow();
+    if($defined(window_))
+      window_.focusChange(newValue);
   }
 });
 
@@ -277,12 +310,19 @@ qwebirc.ui.StandardUI = new Class({
   faqWindow: function() {
     this.addCustomWindow("FAQ", qwebirc.ui.FAQPane, "faqpane", this.uiOptions);
   },
-  urlDispatcher: function(name) {
+  urlDispatcher: function(name, window) {
     if(name == "embedded")
       return ["a", this.embeddedWindow.bind(this)];
       
     if(name == "options")
       return ["a", this.optionsWindow.bind(this)];
+
+    /* doesn't really belong here */
+    if(name == "whois") {
+      return ["span", function(nick) {
+        this.client.exec("/WHOIS " + nick);
+      }.bind(window)];
+    }
 
     return null;
   },
@@ -294,56 +334,57 @@ qwebirc.ui.StandardUI = new Class({
   }
 });
 
-qwebirc.ui.SoundUI = new Class({
+qwebirc.ui.NotificationUI = new Class({
   Extends: qwebirc.ui.StandardUI,
   initialize: function(parentElement, windowClass, uiName, options) {
     this.parent(parentElement, windowClass, uiName, options);
     
-    this.soundInited = false;
-    this.soundReady = false;
+    this.__beeper = new qwebirc.ui.Beeper(this.uiOptions);
+    this.__flasher = new qwebirc.ui.Flasher(this.uiOptions);
     
-    this.setBeepOnMention(this.uiOptions.BEEP_ON_MENTION);    
-  },
-  soundInit: function() {
-    if(this.soundInited)
-      return;
-    if(!$defined(Browser.Plugins.Flash) || Browser.Plugins.Flash.version < 8)
-      return;
-    this.soundInited = true;
+    this.beep = this.__beeper.beep.bind(this.__beeper);
     
-    this.soundPlayer = new qwebirc.sound.SoundPlayer();
-    this.soundPlayer.addEvent("ready", function() {
-      this.soundReady = true;
-    }.bind(this));
-    this.soundPlayer.go();
+    this.flash = this.__flasher.flash.bind(this.__flasher);
+    this.cancelFlash = this.__flasher.cancelFlash.bind(this.__flasher);
   },
   setBeepOnMention: function(value) {
     if(value)
-      this.soundInit();
-    this.beepOnMention = value;
+      this.__beeper.soundInit();
   },
-  beep: function() {
-    if(!this.soundReady || !this.beepOnMention)
-      return;
-      
-    this.soundPlayer.beep();
+  updateTitle: function(text) {
+    if(this.__flasher.updateTitle(text))
+      this.parent(text);
+  },
+  focusChange: function(value) {
+    this.parent(value);
+    this.__flasher.focusChange(value);
+  }
+});
+
+qwebirc.ui.NewLoginUI = new Class({
+  Extends: qwebirc.ui.NotificationUI,
+  loginBox: function(callbackfn, initialNickname, initialChannels, autoConnect, autoNick) {
+    this.postInitialize();
+
+    var w = this.newCustomWindow("Connect", true, qwebirc.ui.WINDOW_CONNECT);
+    var callback = function(args) {
+      w.close();
+      callbackfn(args);
+    };
+    
+    qwebirc.ui.GenericLoginBox(w.lines, callback, initialNickname, initialChannels, autoConnect, autoNick, this.options.networkName);
   }
 });
 
 qwebirc.ui.QuakeNetUI = new Class({
-  Extends: qwebirc.ui.SoundUI,
+  Extends: qwebirc.ui.NewLoginUI,
   urlDispatcher: function(name, window) {
     if(name == "qwhois") {
       return ["span", function(auth) {
         this.client.exec("/MSG Q whois #" + auth);
       }.bind(window)];
     }
-    if(name == "whois") {
-      return ["span", function(nick) {
-        this.client.exec("/WHOIS " + nick);
-      }.bind(window)];
-    }
-    return this.parent(name);
+    return this.parent(name, window);
   },
   logout: function() {
     if(!qwebirc.auth.loggedin())
@@ -360,17 +401,4 @@ qwebirc.ui.QuakeNetUI = new Class({
   }
 });
 
-qwebirc.ui.NewLoginUI = new Class({
-  Extends: qwebirc.ui.QuakeNetUI,
-  loginBox: function(callbackfn, initialNickname, initialChannels, autoConnect, autoNick) {
-    this.postInitialize();
-
-    var w = this.newCustomWindow("Connect", true, qwebirc.ui.WINDOW_CONNECT);
-    var callback = function(args) {
-      w.close();
-      callbackfn(args);
-    };
-    
-    qwebirc.ui.GenericLoginBox(w.lines, callback, initialNickname, initialChannels, autoConnect, autoNick, this.options.networkName);
-  }
-});
+qwebirc.ui.RootUI = qwebirc.ui.QuakeNetUI;

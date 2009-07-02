@@ -3,6 +3,7 @@ from twisted.internet import error, reactor
 import engines
 import mimetypes
 import config
+import sigdebug
 
 class RootResource(resource.Resource):
   def getChild(self, name, request):

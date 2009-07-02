@@ -3,6 +3,8 @@ qwebirc.ui.HILIGHT_ACTIVITY = 1;
 qwebirc.ui.HILIGHT_SPEECH = 2;
 qwebirc.ui.HILIGHT_US = 3;
 
+qwebirc.ui.WINDOW_LASTLINE = qwebirc.ui.WINDOW_QUERY | qwebirc.ui.WINDOW_MESSAGES | qwebirc.ui.WINDOW_CHANNEL | qwebirc.ui.WINDOW_STATUS;
+
 qwebirc.ui.Window = new Class({
   Implements: [Events],
   initialize: function(parentObject, client, type, name, identifier) {
@@ -21,8 +23,12 @@ qwebirc.ui.Window = new Class({
     this.lastSelected = null;
     this.subWindow = null;
     this.closed = false;
-  },
-  updateNickList: function(nicks) {
+    
+    if(this.type & qwebirc.ui.WINDOW_LASTLINE) {
+      this.lastPositionLine = new Element("hr");
+      this.lastPositionLine.addClass("lastpos");
+      this.lastPositionLineInserted = false;
+    }
   },
   updateTopic: function(topic, element)  {
     qwebirc.ui.Colourise("[" + topic + "]", element, this.client.exec, this.parentObject.urlDispatcher.bind(this.parentObject), this);
@@ -46,6 +52,11 @@ qwebirc.ui.Window = new Class({
     this.subWindow = window;
   },
   select: function() {
+    if(this.lastPositionLineInserted && !this.parentObject.uiOptions.LASTPOS_LINE) {
+      this.lines.removeChild(this.lastPositionLine);
+      this.lastPositionLineInserted = false;
+    }
+  
     this.active = true;
     this.parentObject.__setActiveWindow(this);
     if(this.hilighted)
@@ -64,6 +75,9 @@ qwebirc.ui.Window = new Class({
       this.scrolltimer = null;
     }
 
+    if(this.type & qwebirc.ui.WINDOW_LASTLINE)
+      this.replaceLastPositionLine();
+    
     this.active = false;
   },
   resetScrollPos: function() {
@@ -93,12 +107,14 @@ qwebirc.ui.Window = new Class({
           } else {
             hilight = qwebirc.ui.HILIGHT_US;
             this.parentObject.beep();
+            this.parentObject.flash();
           }
         }
         if(!type.match(/^OUR/) && this.client.hilightController.match(line["m"])) {
           lhilight = true;
           hilight = qwebirc.ui.HILIGHT_US;
           this.parentObject.beep();
+          this.parentObject.flash();
         } else if(hilight != qwebirc.ui.HILIGHT_US) {
           hilight = qwebirc.ui.HILIGHT_SPEECH;
         }
@@ -205,5 +221,26 @@ qwebirc.ui.Window = new Class({
   historyExec: function(line) {
     this.commandhistory.addLine(line);
     this.client.exec(line);
-  }  
+  },
+  focusChange: function(newValue) {
+    if(newValue == true || !(this.type & qwebirc.ui.WINDOW_LASTLINE))
+      return;
+    
+    this.replaceLastPositionLine();
+  },
+  replaceLastPositionLine: function() {
+    if(this.parentObject.uiOptions.LASTPOS_LINE) {
+      if(!this.lastPositionLineInserted) {
+        this.scrollAdd(this.lastPositionLine);
+      } else if(this.lines.lastChild != this.lastPositionLine) {
+        this.lines.removeChild(this.lastPositionLine);
+        this.scrollAdd(this.lastPositionLine);
+      }
+    } else {
+      if(this.lastPositionLineInserted)
+        this.lines.removeChild(this.lastPositionLine);
+    }
+    
+    this.lastPositionLineInserted = this.parentObject.uiOptions.LASTPOS_LINE;
+  }
 });

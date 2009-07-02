@@ -2,24 +2,41 @@ qwebirc.config.CHECK_BOX = 1;
 qwebirc.config.TEXT_BOX = 2;
 qwebirc.config.RADIO_BUTTONS = 3;
 
+qwebirc.ui.supportsFocus = function() {
+  var ua = navigator.userAgent;
+  if(!$defined(ua))
+    return [true];
+      
+  if(Browser.Engine.ipod || ua.indexOf("Konqueror") != -1)
+    return [false, false];
+
+  return [true];
+}
+
 qwebirc.config.DEFAULT_OPTIONS = [
   [1, "BEEP_ON_MENTION", "Beep when nick mentioned or on query activity (requires Flash)", true, {
-    render: function(input) {
-      if(!$defined(Browser.Plugins.Flash) || Browser.Plugins.Flash.version < 8) {
-        input.disabled = true;
-        input.checked = false;
-      }
+    enabled: function() {
+      if(!$defined(Browser.Plugins.Flash) || Browser.Plugins.Flash.version < 8)
+        return [false, false]; /* [disabled, default_value] */
+      return [true];
     },
     get: function(value, ui) {
       if(ui.setBeepOnMention)
         ui.setBeepOnMention(value);
     }
   }],
+  [7, "FLASH_ON_MENTION", "Flash titlebar when nick mentioned or on query activity", true, {
+    enabled: qwebirc.ui.supportsFocus
+  }],
   [2, "DEDICATED_MSG_WINDOW", "Send privmsgs to dedicated messages window", false],
   [4, "DEDICATED_NOTICE_WINDOW", "Send notices to dedicated message window", false],
-  [3, "NICK_OV_STATUS", "Show status (@/+) before nicknames", true],
+  [3, "NICK_OV_STATUS", "Show status (@/+) before nicknames in nicklist", true],
   [5, "ACCEPT_SERVICE_INVITES", "Automatically join channels when invited by Q", true],
-  [6, "USE_HIDDENHOST", "Hide your hostmask when authed to Q (+x)", true]
+  [6, "USE_HIDDENHOST", "Hide your hostmask when authed to Q (+x)", true],
+  [8, "LASTPOS_LINE", "Show a last position indicator for each window", true, {
+    enabled: qwebirc.ui.supportsFocus
+  }],
+  [9, "NICK_COLOURS", "Automatically colour nicknames", false]
 ];
 
 qwebirc.config.DefaultOptions = null;
@@ -28,6 +45,7 @@ qwebirc.config.Input = new Class({
   initialize: function(parent, option, position, parentObject) {
     this.option = option;
     this.value = option.value;
+    this.enabled = this.option.enabled;
     this.position = position;
     this.parentElement = parent;
     this.parentObject = parentObject;
@@ -76,7 +94,8 @@ qwebirc.config.TextInput = new Class({
     this.mainElement = i;
     
     i.value = this.value;
-
+    i.disabled = !this.enabled;
+    
     this.parent();
   },
   get: function() {
@@ -91,7 +110,8 @@ qwebirc.config.CheckInput = new Class({
     this.mainElement = i;
     
     i.checked = this.value;
-    
+    i.disabled = !this.enabled;
+
     this.parent();
   },
   get: function() {
@@ -105,12 +125,13 @@ qwebirc.config.RadioInput = new Class({
     var value = this.option.options;
     
     this.elements = [];
-    
+     
     for(var i=0;i<value.length;i++) {
       var d = this.FE("div", this.parentObject);
       var e = this.createInput("radio", d, "options_radio" + this.position, i == this.option.position);
       this.elements.push(e);
-      
+      e.disabled = !this.enabled;
+   
       if(i == 0)
         this.mainElement = e;
       
@@ -136,9 +157,20 @@ qwebirc.config.Option = new Class({
     this.default_ = default_;
     this.optionId = optionId;
     this.extras = extras;
+    
+    if($defined(extras) && $defined(extras.enabled)) {
+      var enabledResult = extras.enabled();
+      this.enabled = enabledResult[0];
+      
+      if(!enabledResult[0] && enabledResult.length > 1)
+        this.default_ = enabledResult[1];
+    } else {
+      this.enabled = true;
+    }    
   },
   setSavedValue: function(x) {
-    this.value = x;
+    if(this.enabled)
+      this.value = x;
   }
 });
 

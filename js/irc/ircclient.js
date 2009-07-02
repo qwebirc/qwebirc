@@ -24,6 +24,7 @@ qwebirc.irc.IRCClient = new Class({
     this.activeTimers = {};
     
     this.loginRegex = new RegExp(this.ui.options.loginRegex);
+    this.tracker = new qwebirc.irc.IRCTracker(this);
   },
   newLine: function(window, type, data) {
     if(!data)
@@ -201,7 +202,7 @@ qwebirc.irc.IRCClient = new Class({
     this.newServerLine("RAW", {"n": "numeric", "m": params.slice(1).join(" ")});
   },
   signedOn: function(nickname) {
-    this.tracker = new qwebirc.irc.IRCTracker();
+    this.tracker = new qwebirc.irc.IRCTracker(this);
     this.nickname = nickname;
     this.newServerLine("SIGNON");
     
@@ -497,6 +498,13 @@ qwebirc.irc.IRCClient = new Class({
     
     this.newServerLine("DISCONNECT", {"m": message});
   },
+  nickOnChanHasPrefix: function(nick, channel, prefix) {
+    var entry = this.tracker.getNickOnChannel(nick, channel);
+    if(!$defined(entry))
+      return false; /* shouldn't happen */
+   
+    return entry.prefixes.indexOf(prefix) != -1;
+  },
   supported: function(key, value) {
     if(key == "PREFIX") {
       var l = (value.length - 2) / 2;
@@ -568,6 +576,9 @@ qwebirc.irc.IRCClient = new Class({
       mtype = "ACTUALLY";
       ndata.m = data.hostname;
       ndata.x = data.ip;
+    } else if(type == "generictext") {
+      mtype = "GENERICTEXT";
+      ndata.m = data.text;
     } else if(type == "end") {
       mtype = "END";
     } else {
@@ -595,5 +606,17 @@ qwebirc.irc.IRCClient = new Class({
         this.lastNicks.pop();
     }
     this.lastNicks.unshift(nick);
-  }
+  },
+  wallops: function(user, text) {
+    var nick = user.hostToNick();
+    var host = user.hostToHost();
+
+    this.newServerLine("WALLOPS", {t: text, n: nick, h: host});
+  },
+  channelModeIs: function(channel, modes) {
+    this.newTargetOrActiveLine(channel, "CHANNELMODEIS", {c: channel, m: modes.join(" ")});
+  },
+  channelCreationTime: function(channel, time) {
+    this.newTargetOrActiveLine(channel, "CHANNELCREATIONTIME", {c: channel, m: qwebirc.irc.IRCDate(new Date(time * 1000))});
+  }  
 });

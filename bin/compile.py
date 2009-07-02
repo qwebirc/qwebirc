@@ -1,5 +1,8 @@
 #!/usr/bin/env python
-import pages, os, subprocess, pagegen, shutil, sys
+import dependencies
+dependencies.vcheck()
+
+import pages, os, subprocess, pagegen, shutil, sys, time
 
 COPYRIGHT = open("js/copyright.js", "rb").read()
 
@@ -26,7 +29,6 @@ def jmerge_files(prefix, suffix, output, files, *args):
   merge_files(o, files, *args)
   
   # cough hack
-  compiled = open(o, "rb").read()
   try:
     compiled = jarit(o)
   except MinifyException, e:
@@ -34,8 +36,18 @@ def jmerge_files(prefix, suffix, output, files, *args):
     if not JAVA_WARNING_SURPRESSED:
       JAVA_WARNING_SURPRESSED = True
       print >>sys.stderr, "warning: minify: %s (not minifying -- javascript will be HUGE)." % e
+    try:
+      f = open(o, "rb")
+      compiled = f.read()
+    finally:
+      f.close()
 
-  os.unlink(o)
+  try:
+    os.unlink(o)
+  except:
+    time.sleep(1) # windows sucks
+    os.unlink(o)
+    
   f = open(os.path.join(prefix, "static", suffix, output), "wb")
   f.write(COPYRIGHT)
   f.write(compiled)
@@ -86,6 +98,33 @@ def main(outputdir=".", produce_debug=True):
     jmerge_files(outputdir, "js", uiname + "-" + ID, alljs)
     
   os.rmdir(coutputdir)
+  
+  f = open(".compiled", "w")
+  f.close()
+  
+def has_compiled():
+  try:
+    f = open(".compiled", "r")
+    f.close()
+    return True
+  except:
+    pass
+    
+  try:
+    f = open(os.path.join("bin", ".compiled"), "r")
+    f.close()
+    return True
+  except:
+    pass
+  
+  return False
+  
+def vcheck():
+  if has_compiled():
+    return
+    
+  print >>sys.stderr, "error: not yet compiled, run compile.py first."
+  sys.exit(1)
   
 if __name__ == "__main__":
   main()

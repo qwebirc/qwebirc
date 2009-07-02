@@ -1,5 +1,5 @@
 qwebirc.ui.SWMUI = new Class({
-  Extends: qwebirc.ui.NewLoginUI,
+  Extends: qwebirc.ui.RootUI,
   initialize: function(parentElement, theme, options) {
     this.parent(parentElement, qwebirc.ui.SWMUI.Window, "swmui", options);
 

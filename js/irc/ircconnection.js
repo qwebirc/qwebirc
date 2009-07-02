@@ -9,7 +9,8 @@ qwebirc.irc.IRCConnection = new Class({
     floodMax: 10,
     floodReset: 5000,
     errorAlert: true,
-    maxRetries: 5
+    maxRetries: 5,
+    serverPassword: null
   },
   initialize: function(options) {
     this.setOptions(options);
@@ -28,8 +29,6 @@ qwebirc.irc.IRCConnection = new Class({
     this.__timeoutId = null;
     this.__lastActiveRequest = null;
     this.__activeRequest = null;
-    
-    this.haha = 0
   },
   __error: function(text) {
     this.fireEvent("error", text);
@@ -40,23 +39,9 @@ qwebirc.irc.IRCConnection = new Class({
     if(this.disconnected)
       return null;
       
-    if(floodProtection) {
-      var t = new Date().getTime();
-      
-      if(t - this.__floodLastRequest < this.options.floodInterval) {
-        if(this.__floodLastFlood != 0 && (t - this.__floodLastFlood > this.options.floodReset)) {
-          this.floodCounter = 0;
-        }
-        this.__floodLastFlood = t;
-        if(this.__floodCounter++ >= this.options.floodMax) {
-          if(!this.disconnected) {
-            this.disconnect();
-            this.__error("BUG: uncontrolled flood detected -- disconnected.");
-          }
-          return null;
-        }
-      }
-      this.__floodLastRequest = t;
+    if(floodProtection && !this.disconnected && this.__isFlooding()) {
+      this.disconnect();
+      this.__error("BUG: uncontrolled flood detected -- disconnected.");
     }
     
     var r = new Request.JSON({
@@ -82,6 +67,21 @@ qwebirc.irc.IRCConnection = new Class({
       r.setHeader("If-Modified-Since", "Sat, 1 Jan 2000 00:00:00 GMT");
 
     return r;
+  },
+  __isFlooding: function() {
+    var t = new Date().getTime();
+      
+    if(t - this.__floodLastRequest < this.options.floodInterval) {
+      if(this.__floodLastFlood != 0 && (t - this.__floodLastFlood > this.options.floodReset))
+        this.__floodCounter = 0;
+
+      this.__floodLastFlood = t;
+      if(this.__floodCounter++ >= this.options.floodMax)
+        return true;
+    }
+
+    this.__floodLastRequest = t;
+    return false;
   },
   send: function(data) {
     if(this.disconnected)
@@ -146,7 +146,7 @@ qwebirc.irc.IRCConnection = new Class({
   },
   __checkRetries: function() {
     /* hmm, something went wrong! */
-    if(this.__retryAttempts++ >= this.options.maxRetries) {
+    if(this.__retryAttempts++ >= this.options.maxRetries && !this.disconnected) {
       this.disconnect();
       
       this.__error("Error: connection closed after several requests failed.");
@@ -214,7 +214,12 @@ qwebirc.irc.IRCConnection = new Class({
       
       this.recv();    
     }.bind(this));
-    r.send("nick=" + encodeURIComponent(this.initialNickname));
+    
+    var postdata = "nick=" + encodeURIComponent(this.initialNickname);
+    if($defined(this.options.serverPassword))
+      postdata+="&password=" + encodeURIComponent(this.options.serverPassword);
+      
+    r.send(postdata);
   },
   __cancelRequests: function() {
     if($defined(this.__lastActiveRequest)) {

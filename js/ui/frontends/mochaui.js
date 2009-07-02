@@ -1,5 +1,5 @@
 qwebirc.ui.MochaUI = new Class({
-  Extends: qwebirc.ui.NewLoginUI,
+  Extends: qwebirc.ui.RootUI,
   initialize: function(parentElement, theme, options) {
     this.parent(parentElement, qwebirc.ui.MochaUI.Window, "mochaui");
     this.theme = theme;

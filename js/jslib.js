@@ -102,9 +102,9 @@ qwebirc.util.NBSPCreate = function(text, element) {
 
 qwebirc.util.longtoduration = function(l) {
   var seconds = l % 60;
-  var minutes = Math.round((l % 3600) / 60);
-  var hours = Math.round((l % (3600 * 24)) / 3600);
-  var days = Math.round(l / (24*3600));
+  var minutes = Math.floor((l % 3600) / 60);
+  var hours = Math.floor((l % (3600 * 24)) / 3600);
+  var days = Math.floor(l / (24*3600));
   
   return days + " days " + hours + " hours " + minutes + " minutes " + seconds + " seconds";
 }
@@ -311,4 +311,56 @@ qwebirc.util.b64Decode = function(data) {
   }
 
   return output.join("");
+}
+
+qwebirc.util.composeAnd = function() {
+ var xargs = arguments;
+
+  return function() {
+    for(var i=0;i<xargs.length;i++)
+      if(!xargs[i].apply(this, arguments))
+        return false;
+        
+    return true;
+  }
+}
+
+qwebirc.util.invertFn = function(fn) {
+  return function() {
+    return !fn.apply(this, arguments);
+  }
+}
+
+qwebirc.util.deviceHasKeyboard = function() {
+  var determine = function() {
+    if(Browser.Engine.ipod)
+      return true;
+
+    var MOBILE_UAs = ["Nintendo Wii", " PIE", "BlackBerry", "IEMobile", "Windows CE", "Nokia", "Opera Mini", "Mobile", "mobile", "Pocket", "pocket", "Android"];
+    /* safari not included because iphones/ipods send that, and we checked for iphone/ipod specifically above */
+    var DESKTOP_UAs = ["Chrome", "Firefox", "Camino", "Iceweasel", "K-Meleon", "Konqueror", "SeaMonkey", "Windows NT", "Windows 9"];
+
+    var ua = navigator.userAgent;
+
+    var contains = function(v) {
+      return ua.indexOf(v) > -1;
+    }
+
+    for(var i=0;i<MOBILE_UAs.length;i++)
+      if(contains(MOBILE_UAs[i]))
+        return false;
+      
+    for(var i=0;i<DESKTOP_UAs.length;i++)
+      if(contains(DESKTOP_UAs[i]))
+        return true;
+      
+    return false;
+  };
+  var v = determine();
+  
+  qwebirc.util.deviceHasKeyboard = function() {
+    return v;
+  }
+  
+  return v;
 }

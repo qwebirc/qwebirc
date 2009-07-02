@@ -3,7 +3,7 @@ qwebirc.irc.RegisteredCTCPs = {
     return "qwebirc v" + qwebirc.VERSION + ", copyright (C) Chris Porter 2008-2009 -- " + qwebirc.util.browserVersion();
   },
   "USERINFO": function(x) { return "qwebirc"; },
-  "TIME": function(x) { return qwebirc.irc.IRCTime(new Date()); },
+  "TIME": function(x) { return qwebirc.irc.IRCDate(new Date()); },
   "PING": function(x) { return x; },
   "CLIENTINFO": function(x) { return "PING VERSION TIME USERINFO CLIENTINFO"; }
 };
@@ -16,20 +16,26 @@ qwebirc.irc.BaseIRCClient = new Class({
   initialize: function(options) {
     this.setOptions(options);
 
+    this.toIRCLower = qwebirc.irc.RFC1459toIRCLower;
+
     this.nickname = this.options.nickname;
-    
+    this.lowerNickname = this.toIRCLower(this.nickname);    
+
     this.__signedOn = false;
     this.pmodes = {b: true, k: true, o: true, l: true, v: true};
     this.channels = {}
     this.nextctcp = 0;    
 
-    this.connection = new qwebirc.irc.IRCConnection({initialNickname: this.nickname, onRecv: this.dispatch.bind(this)});
+    this.connection = new qwebirc.irc.IRCConnection({
+      initialNickname: this.nickname,
+      onRecv: this.dispatch.bind(this),
+      serverPassword: this.options.serverPassword
+    });
   
     this.send = this.connection.send.bind(this.connection);
     this.connect = this.connection.connect.bind(this.connection);
     this.disconnect = this.connection.disconnect.bind(this.connection);
 
-    this.toIRCLower = qwebirc.irc.RFC1459toIRCLower;
     this.setupGenericErrors();
   },
   dispatch: function(data) {
@@ -79,10 +85,11 @@ qwebirc.irc.BaseIRCClient = new Class({
         /* TODO: warn */
       }
     }
+    this.lowerNickname = this.toIRCLower(this.nickname);
   },
   irc_RPL_WELCOME: function(prefix, params) {
     this.nickname = params[0];
-    
+    this.lowerNickname = this.toIRCLower(this.nickname);
     this.__signedOn = true;
     this.signedOn(this.nickname);
   },
@@ -105,9 +112,11 @@ qwebirc.irc.BaseIRCClient = new Class({
     var oldnick = user.hostToNick();
     var newnick = params[0];
     
-    if(this.nickname == oldnick)
+    if(this.nickname == oldnick) {
       this.nickname = newnick;
-      
+      this.lowerNickname = this.toIRCLower(this.nickname);
+    }
+    
     this.nickChanged(user, newnick);
     
     return true;
@@ -128,12 +137,21 @@ qwebirc.irc.BaseIRCClient = new Class({
 
     var nick = user.hostToNick();
     
-    if((nick == this.nickname) && this.channels[channel])
-      delete this.channels[channel];
+    if((nick == this.nickname) && this.__getChannel(channel))
+      this.__killChannel(channel);
       
     this.userPart(user, channel, message);
     
     return true;
+  },
+  __getChannel: function(name) {
+    return this.channels[this.toIRCLower(name)];
+  },
+  __killChannel: function(name) {
+    delete this.channels[this.toIRCLower(name)];
+  },
+  __nowOnChannel: function(name) {
+    this.channels[this.toIRCLower(name)] = 1;
   },
   irc_KICK: function(prefix, params) {
     var kicker = prefix;
@@ -141,8 +159,8 @@ qwebirc.irc.BaseIRCClient = new Class({
     var kickee = params[1];
     var message = params[2];
     
-    if((kickee == this.nickname) && this.channels[channel])
-      delete this.channels[channel];
+    if((kickee == this.nickname) && this.__getChannel(channel))
+      this.__killChannel(channel);
       
     this.userKicked(kicker, channel, kickee, message);
     
@@ -159,7 +177,7 @@ qwebirc.irc.BaseIRCClient = new Class({
     var nick = user.hostToNick();
         
     if(nick == this.nickname)
-      this.channels[channel] = true;
+      this.__nowOnChannel(channel);
 
     this.userJoined(user, channel);
     
@@ -326,7 +344,7 @@ qwebirc.irc.BaseIRCClient = new Class({
   irc_RPL_NOTOPIC: function(prefix, params) {
     var channel = params[1];
 
-    if(this.channels[channel]) {
+    if(this.__getChannel(channel)) {
       this.initialTopic(channel, "");
       return true;
     }
@@ -335,7 +353,7 @@ qwebirc.irc.BaseIRCClient = new Class({
     var channel = params[1];
     var topic = params.indexFromEnd(-1);
     
-    if(this.channels[channel]) {
+    if(this.__getChannel(channel)) {
       this.initialTopic(channel, topic);
       return true;
     }
@@ -387,7 +405,13 @@ qwebirc.irc.BaseIRCClient = new Class({
     var opername = params[2];
 
     return this.whois(nick, "opername", {opername: params[2]});
-  },  
+  },
+  irc_RPL_WHOISGENERICTEXT: function(prefix, params) {
+    var nick = params[1];
+    var text = params.indexFromEnd(-1);
+    
+    return this.whois(nick, "generictext", {text: text});
+  },
   irc_RPL_ENDOFWHOIS: function(prefix, params) {
     var nick = params[1];
     var text = params.indexFromEnd(-1);
@@ -431,5 +455,24 @@ qwebirc.irc.BaseIRCClient = new Class({
   irc_RPL_UNAWAY: function(prefix, params) {
     this.awayStatus(false, params.indexFromEnd(-1));
     return true;
+  },
+  irc_WALLOPS: function(prefix, params) {
+    var user = prefix;
+    var text = params.indexFromEnd(-1);
+    
+    this.wallops(user, text);
+    return true;
+  },
+  irc_RPL_CREATIONTIME: function(prefix, params) {
+    var channel = params[1];
+    var time = params[2];
+
+    this.channelCreationTime(channel, time);    
+  },
+  irc_RPL_CHANNELMODEIS: function(prefix, params) {
+    var channel = params[1];
+    var modes = params.slice(2);
+
+    this.channelModeIs(channel, modes);
   }
 });

@@ -2,7 +2,7 @@ from twisted.web import resource, server, static, error as http_error
 from twisted.names import client
 from twisted.internet import reactor, error
 from authgateengine import login_optional, getSessionData
-import simplejson, md5, sys, os, time, config, weakref, traceback, socket
+import simplejson, md5, sys, os, time, config, qwebirc.config_options as config_options, traceback, socket
 import qwebirc.ircclient as ircclient
 from adminengine import AdminEngineAction
 from qwebirc.util import HitCounter
@@ -52,6 +52,7 @@ class IRCSession:
     self.id = id
     self.subscriptions = []
     self.buffer = []
+    self.buflen = 0
     self.throttle = 0
     self.schedule = None
     self.closed = False
@@ -106,7 +107,8 @@ class IRCSession:
 
     encdata = simplejson.dumps(self.buffer)
     self.buffer = []
-    
+    self.buflen = 0
+
     newsubs = []
     for x in self.subscriptions:
       if x.write(encdata):
@@ -117,13 +119,14 @@ class IRCSession:
       cleanupSession(self.id)
 
   def event(self, data):
-    bufferlen = sum(map(len, self.buffer))
-    if bufferlen + len(data) > config.MAXBUFLEN:
+    newbuflen = self.buflen + len(data)
+    if newbuflen > config.MAXBUFLEN:
       self.buffer = []
       self.client.error("Buffer overflow.")
       return
 
     self.buffer.append(data)
+    self.buflen = newbuflen
     self.flush()
     
   def push(self, data):
@@ -187,6 +190,10 @@ class AJAXEngine(resource.Resource):
       raise AJAXException, "Nickname not supplied."
     nick = ircclient.irc_decode(nick[0])
 
+    password = request.args.get("password")
+    if password is not None:
+      password = ircclient.irc_decode(password[0])
+      
     for i in xrange(10):
       id = get_session_id()
       if not Sessions.get(id):
@@ -205,16 +212,24 @@ class AJAXEngine(resource.Resource):
       perform = ["PRIVMSG %s :TICKETAUTH %s" % (msg_mask, qticket)]
 
     ident, realname = config.IDENT, config.REALNAME
-    if ident is None:
+    if ident is config_options.IDENT_HEX or ident is None: # latter is legacy
       ident = socket.inet_aton(ip).encode("hex")
+    elif ident is config_options.IDENT_NICKNAME:
+      ident = nick
 
     self.__connect_hit()
 
     def proceed(hostname):
-      client = ircclient.createIRC(session, nick=nick, ident=ident, ip=ip, realname=realname, perform=perform, hostname=hostname)
+      kwargs = dict(nick=nick, ident=ident, ip=ip, realname=realname, perform=perform, hostname=hostname)
+      if password is not None:
+        kwargs["password"] = password
+        
+      client = ircclient.createIRC(session, **kwargs)
       session.client = client
 
-    if config.WEBIRC_MODE != "hmac":
+    if not hasattr(config, "WEBIRC_MODE") or config.WEBIRC_MODE == "hmac":
+      proceed(None)
+    elif config.WEBIRC_MODE != "hmac":
       notice = lambda x: session.event(connect_notice(x))
       notice("Looking up your hostname...")
       def callback(hostname):
@@ -224,8 +239,6 @@ class AJAXEngine(resource.Resource):
         notice("Couldn't look up your hostname!")
         proceed(ip)
       qdns.lookupAndVerifyPTR(ip, timeout=[config.DNS_TIMEOUT]).addCallbacks(callback, errback)
-    else:
-      proceed(None) # hmac doesn't care
 
     Sessions[id] = session
     
