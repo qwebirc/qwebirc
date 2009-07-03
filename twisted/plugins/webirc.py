@@ -11,6 +11,7 @@ from qwebirc.root import RootSite
 
 class Options(usage.Options):
   optParameters = [["port", "p", "9090","Port to start the server on."],
+    ["ip", "i", "0.0.0.0", "IP address to listen on."],
     ["logfile", "l", None, "Path to web CLF (Combined Log Format) log file."],
     ["https", None, None, "Port to listen on for Secure HTTP."],
     ["certificate", "c", "server.pem", "SSL certificate to use for HTTPS. "],
@@ -47,9 +48,9 @@ class QWebIRCServiceMaker(object):
     site.displayTracebacks = not config["notracebacks"]
     if config['https']:
       from twisted.internet.ssl import DefaultOpenSSLContextFactory
-      i = internet.SSLServer(int(config['https']), site, DefaultOpenSSLContextFactory(config['privkey'], config['certificate']))
+      i = internet.SSLServer(int(config['https']), site, DefaultOpenSSLContextFactory(config['privkey'], config['certificate']), interface=config['ip'])
     else:
-      i = internet.TCPServer(int(config['port']), site)
+      i = internet.TCPServer(int(config['port']), site, interface=config['ip'])
       
     return i
   
