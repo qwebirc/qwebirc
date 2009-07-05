@@ -132,7 +132,7 @@ qwebirc.ui.QueryTabCompleter = new Class({
 qwebirc.ui.QueryNickTabCompleter = new Class({
   Extends: qwebirc.ui.BaseTabCompleter,
   initialize: function(prefix, existingText, suffix, window) {
-    nick = window.name
+    var nick = window.name
     this.parent(window.client, prefix, existingText, suffix, [nick]);
   }
 });
