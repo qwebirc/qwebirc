@@ -29,6 +29,8 @@ qwebirc.ui.TabCompleterFactory = new Class({
         obj = qwebirc.ui.ChannelNameTabCompleter;
       } else if(ltext.match(/^\/(q|query|msg) /i)) {
         obj = qwebirc.ui.QueryTabCompleter;
+      } else if(w.type == qwebirc.ui.WINDOW_QUERY) {
+        obj = qwebirc.ui.QueryNickTabCompleter;
       } else if(w.type == qwebirc.ui.WINDOW_CHANNEL) {
         /* "slug[TAB]" == "slug: " */
         if(preword == "") {
@@ -124,6 +126,14 @@ qwebirc.ui.QueryTabCompleter = new Class({
   Extends: qwebirc.ui.BaseTabCompleter,
   initialize: function(prefix, existingNick, suffix, window) {
     this.parent(window.client, prefix, existingNick, suffix, window.client.lastNicks);
+  }
+});
+
+qwebirc.ui.QueryNickTabCompleter = new Class({
+  Extends: qwebirc.ui.BaseTabCompleter,
+  initialize: function(prefix, existingText, suffix, window) {
+    nick = window.name
+    this.parent(window.client, prefix, existingText, suffix, [nick]);
   }
 });
 
