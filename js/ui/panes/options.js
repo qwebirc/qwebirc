@@ -36,7 +36,8 @@ qwebirc.config.DEFAULT_OPTIONS = [
   [8, "LASTPOS_LINE", "Show a last position indicator for each window", true, {
     enabled: qwebirc.ui.supportsFocus
   }],
-  [9, "NICK_COLOURS", "Automatically colour nicknames", false]
+  [9, "NICK_COLOURS", "Automatically colour nicknames", false],
+  [10, "HIDE_JOINPARTS", "Hide JOINS/PARTS/QUITS", false]
 ];
 
 qwebirc.config.DefaultOptions = null;
