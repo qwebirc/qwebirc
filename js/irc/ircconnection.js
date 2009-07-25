@@ -29,6 +29,9 @@ qwebirc.irc.IRCConnection = new Class({
     this.__timeoutId = null;
     this.__lastActiveRequest = null;
     this.__activeRequest = null;
+    
+    this.__sendQueue = [];
+    this.__sendQueueActive = false;
   },
   __error: function(text) {
     this.fireEvent("error", text);
@@ -91,20 +94,46 @@ qwebirc.irc.IRCConnection = new Class({
   send: function(data, synchronous) {
     if(this.disconnected)
       return false;
-    var r = this.newRequest("p", false, synchronous);
     
+    if(synchronous) {
+      this.__send(data, false);
+    } else {
+      this.__sendQueue.push(data);
+      this.__processSendQueue();
+    }
+    
+    return true;
+  },
+  __processSendQueue: function() {
+    if(this.__sendQueueActive || this.__sendQueue.length == 0)
+      return;
+
+    this.sendQueueActive = true;      
+    this.__send(this.__sendQueue.shift(), true);
+  },
+  __send: function(data, queued) {
+    var r = this.newRequest("p", false, !queued); /* !queued == synchronous */
+    if(r === null)
+      return;
+      
     r.addEvent("complete", function(o) {
+      if(queued)
+        this.__sendQueueActive = false;
+
       if(!o || (o[0] == false)) {
+        this.__sendQueue = [];
+        
         if(!this.disconnected) {
           this.disconnected = true;
           this.__error("An error occured: " + o[1]);
         }
         return false;
       }
+      
+      this.__processSendQueue();
     }.bind(this));
     
     r.send("s=" + this.sessionid + "&c=" + encodeURIComponent(data));
-    return true;
   },
   __processData: function(o) {
     if(o[0] == false) {
