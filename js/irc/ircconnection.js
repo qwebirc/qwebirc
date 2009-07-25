@@ -35,7 +35,7 @@ qwebirc.irc.IRCConnection = new Class({
     if(this.options.errorAlert)
       alert(text);
   },
-  newRequest: function(url, floodProtection) {
+  newRequest: function(url, floodProtection, synchronous) {
     if(this.disconnected)
       return null;
       
@@ -44,8 +44,13 @@ qwebirc.irc.IRCConnection = new Class({
       this.__error("BUG: uncontrolled flood detected -- disconnected.");
     }
     
+    var asynchronous = true;
+    if(synchronous)
+      asynchronous = false;
+
     var r = new Request.JSON({
-      url: "/e/" + url + "?r=" + this.cacheAvoidance + "&t=" + this.counter++
+      url: "/e/" + url + "?r=" + this.cacheAvoidance + "&t=" + this.counter++,
+      async: asynchronous
     });
     
     /* try to minimise the amount of headers */
@@ -83,10 +88,10 @@ qwebirc.irc.IRCConnection = new Class({
     this.__floodLastRequest = t;
     return false;
   },
-  send: function(data) {
+  send: function(data, synchronous) {
     if(this.disconnected)
       return false;
-    var r = this.newRequest("p");
+    var r = this.newRequest("p", false, synchronous);
     
     r.addEvent("complete", function(o) {
       if(!o || (o[0] == false)) {
