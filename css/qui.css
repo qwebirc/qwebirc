@@ -46,7 +46,7 @@ html {
 }
 
 .qwebirc-qui .ircwindow {
-  font-family: Consolas, "Lucida Console", Verdana, monospace, sans-serif, "sans serif";
+  font-family: Consolas, "Lucida Console", monospace, Verdana, sans-serif, "sans serif";
 }
 
 .qwebirc-qui .tab-invisible {
