@@ -233,7 +233,11 @@ qwebirc.ui.Window = new Class({
       if(!this.lastPositionLineInserted) {
         this.scrollAdd(this.lastPositionLine);
       } else if(this.lines.lastChild != this.lastPositionLine) {
-        this.lines.removeChild(this.lastPositionLine);
+        try {
+          this.lines.removeChild(this.lastPositionLine);
+        } catch(e) {
+          /* IGNORE, /clear removes lastPositionLine from the dom without resetting it. */
+        }
         this.scrollAdd(this.lastPositionLine);
       }
     } else {
