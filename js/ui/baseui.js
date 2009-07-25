@@ -331,6 +331,22 @@ qwebirc.ui.StandardUI = new Class({
   },
   resetTabComplete: function() {
     this.tabCompleter.reset();
+  },
+  setModifiableStylesheet: function(name) {
+    this.__styleSheet = new qwebirc.ui.style.ModifiableStylesheet("/css/" + name + qwebirc.FILE_SUFFIX + ".mcss");
+    
+    if($defined(this.options.hue)) {
+      this.setModifiableStylesheetValues(this.options.hue, 0, 0);
+    } else {
+      this.setModifiableStylesheetValues(210, 0, 0);
+    }
+  },
+  setModifiableStylesheetValues: function(hue, saturation, lightness) {
+    if(!$defined(this.__styleSheet))
+      return;
+    this.__styleSheet.set(function(x) {
+      return x.setHue(hue).setSaturation(x.hsb[1] + saturation).setBrightness(x.hsb[2] + lightness);
+    });
   }
 });
 

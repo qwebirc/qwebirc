@@ -9,14 +9,13 @@ qwebirc.ui.Interface = new Class({
     appTitle: "ExampleNetwork Web IRC",
     searchURL: true,
     theme: undefined,
-    baseURL: null
+    baseURL: null,
+    hue: null
   },
   initialize: function(element, ui, options) {
     this.setOptions(options);
 
     window.addEvent("domready", function() {
-      var ui_ = new ui($(element), new qwebirc.ui.Theme(this.options.theme), this.options);
-      
       var callback = function(options) {
         var IRC = new qwebirc.irc.IRCClient(options, ui_);
         IRC.connect();
@@ -31,7 +30,7 @@ qwebirc.ui.Interface = new Class({
       
       if(this.options.searchURL) {
         var args = qwebirc.util.parseURI(String(document.location));
-        
+        this.options.hue = this.getHueArg(args);
         var url = args["url"];
         var chans, nick = args["nick"];
         
@@ -91,12 +90,23 @@ qwebirc.ui.Interface = new Class({
         }
       }
   
+      var ui_ = new ui($(element), new qwebirc.ui.Theme(this.options.theme), this.options);
+
       var usingAutoNick = !$defined(nick);
       if(usingAutoNick && autoConnect)
         inick = this.options.initialNickname;
       
       var details = ui_.loginBox(callback, inick, ichans, autoConnect, usingAutoNick);
     }.bind(this));
+  },
+  getHueArg: function(args) {
+    var hue = args["hue"];
+    if(!$defined(hue))
+      return null;
+    hue = parseInt(hue);
+    if(hue > 360 || hue < 0)
+      return null;
+    return hue;
   },
   randSub: function(nick) {
     var getDigit = function() { return Math.floor(Math.random() * 10); }

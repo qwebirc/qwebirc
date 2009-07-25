@@ -22,7 +22,7 @@ def jarit(src):
   return data
 
 JAVA_WARNING_SURPRESSED = False
-def jmerge_files(prefix, suffix, output, files, *args):
+def jmerge_files(prefix, suffix, output, files, *args, **kwargs):
   global COPYRIGHT
   output = output + "." + suffix
   o = os.path.join(prefix, "compiled", output)
@@ -50,6 +50,10 @@ def jmerge_files(prefix, suffix, output, files, *args):
     
   f = open(os.path.join(prefix, "static", suffix, output), "wb")
   f.write(COPYRIGHT)
+
+  if kwargs.get("file_prefix"):
+    f.write(kwargs.get("file_prefix"))
+    
   f.write(compiled)
   f.close()
   
@@ -84,6 +88,13 @@ def main(outputdir=".", produce_debug=True):
     csssrc = pagegen.csslist(uiname, True)
     jmerge_files(outputdir, "css", uiname + "-" + ID, csssrc)
     shutil.copy2(os.path.join(outputdir, "static", "css", uiname + "-" + ID + ".css"), os.path.join(outputdir, "static", "css", uiname + ".css"))
+    
+    mcssname = os.path.join("css", uiname + ".mcss")
+    if os.path.exists(mcssname):
+      mcssdest = os.path.join(outputdir, "static", "css", uiname + ".mcss")
+      shutil.copy2(mcssname, mcssdest)
+      shutil.copy2(mcssdest, os.path.join(outputdir, "static", "css", uiname + "-" + ID + ".mcss"))
+    
     #jmerge_files(outputdir, "js", uiname, value["uifiles"], lambda x: os.path.join("js", "ui", "frontends", x + ".js"))
     
     alljs = []
@@ -95,7 +106,7 @@ def main(outputdir=".", produce_debug=True):
       alljs.append(os.path.join("js", y + ".js"))
     for y in value["uifiles"]:
       alljs.append(os.path.join("js", "ui", "frontends", y + ".js"))
-    jmerge_files(outputdir, "js", uiname + "-" + ID, alljs)
+    jmerge_files(outputdir, "js", uiname + "-" + ID, alljs, file_prefix="QWEBIRC_BUILD=\"" + ID + "\";\n")
     
   os.rmdir(coutputdir)
   
