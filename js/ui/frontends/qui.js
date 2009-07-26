@@ -415,7 +415,7 @@ qwebirc.ui.QUI.Window = new Class({
       this.topic.addClass("topic");
       this.topic.addClass("tab-invisible");
       this.topic.set("html", "&nbsp;");
-      this.topic.addEvent("click", this.editTopic.bind(this));
+      this.topic.addEvent("dblclick", this.editTopic.bind(this));
       this.parentObject.qjsui.applyClasses("topic", this.topic);
       
       this.prevNick = null;

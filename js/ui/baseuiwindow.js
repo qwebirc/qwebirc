@@ -148,13 +148,16 @@ qwebirc.ui.Window = new Class({
     
     var prev = parent.getScroll();
     var prevbottom = parent.getScrollSize().y;
-    var prevsize = parent.getSize();
-    
-    /* fixes an IE bug */
-    if(prevbottom < prevsize.y)
-      prevbottom = prevsize.y;
+    var prevheight = parent.clientHeight;
+
+    /*
+     * fixes an IE bug: the scrollheight is less than the actual height
+     * when the div isn't full
+     */
+    if(prevbottom < prevheight)
+      prevbottom = prevheight;
       
-    return prev.y + prevsize.y == prevbottom;
+    return prev.y + prevheight == prevbottom;
   },
   getScrollParent: function() {
     var scrollparent = this.lines;
@@ -233,7 +236,11 @@ qwebirc.ui.Window = new Class({
       if(!this.lastPositionLineInserted) {
         this.scrollAdd(this.lastPositionLine);
       } else if(this.lines.lastChild != this.lastPositionLine) {
-        this.lines.removeChild(this.lastPositionLine);
+        try {
+          this.lines.removeChild(this.lastPositionLine);
+        } catch(e) {
+          /* IGNORE, /clear removes lastPositionLine from the dom without resetting it. */
+        }
         this.scrollAdd(this.lastPositionLine);
       }
     } else {
