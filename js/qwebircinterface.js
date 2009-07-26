@@ -1,3 +1,11 @@
+function qwebirc_ui_onbeforeunload(e) { /* IE sucks */
+  var message = "This action will close all active IRC connections.";
+  var e = e || window.event;
+  if(e)
+    e.returnValue = message;
+  return message;
+}
+
 qwebirc.ui.Interface = new Class({
   Implements: [Options],
   options: {
@@ -20,7 +28,8 @@ qwebirc.ui.Interface = new Class({
       var callback = function(options) {
         var IRC = new qwebirc.irc.IRCClient(options, ui_);
         IRC.connect();
-        window.addEvent("beforeunload", function() {
+        window.onbeforeunload = qwebirc_ui_onbeforeunload;
+        window.addEvent("unload", function() {
           IRC.quit("Page closed");
         });
       };
