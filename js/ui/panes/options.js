@@ -115,11 +115,15 @@ qwebirc.config.HueInput = new Class({
     var i = new Element("div");
     i.addClass("qwebirc-optionspane");
     i.addClass("hue-slider");
-    
     this.parentElement.appendChild(i);
     
     var k = new Element("div");
     k.addClass("knob");
+    if(Browser.Engine.trident) {
+      k.setStyle("top", "0px");
+      k.setStyle("background-color", "black");
+    }
+    
     i.appendChild(k);
     
     var slider = new Slider(i, k, {steps: 36, range: [0, 369], wheel: true});
@@ -214,7 +218,7 @@ qwebirc.config.Option = new Class({
   setSavedValue: function(x) {
     if(this.enabled)
       this.value = x;
-  },
+  }
 });
 
 qwebirc.config.RadioOption = new Class({
