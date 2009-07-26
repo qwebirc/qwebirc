@@ -291,10 +291,12 @@ qwebirc.ui.Options = new Class({
         var type;
         if(stype == "boolean") {
           type = qwebirc.config.CheckOption;
-        } else {
+        } else if(stype == "function") {
           var options = default_();
           type = options.class_;
-          defualt_ = options.default_;
+          default_ = options.default_;
+        } else {
+          type = qwebirc.config.TextOption;
         }
         return new type(optionId, prefix, label, default_, moreextras);
       }
