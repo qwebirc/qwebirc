@@ -37,6 +37,7 @@ parser.add_option("-l", "--logfile", help="Path to twisted log file.", dest="log
 parser.add_option("-c", "--clf", help="Path to web CLF (Combined Log Format) log file.", dest="clogfile")
 parser.add_option("-C", "--certificate", help="Path to SSL certificate.", dest="sslcertificate")
 parser.add_option("-k", "--key", help="Path to SSL key.", dest="sslkey")
+parser.add_option("-P", "--pidfile", help="Path to store PID file", dest="pidfile")
 
 sargs = sys.argv[1:]
 if "ARGS" in dir(config):
@@ -55,7 +56,9 @@ if options.debug:
 if options.reactor != DEFAULT_REACTOR:
   args1+=["--reactor", options.reactor]
 if options.logfile:
-  args+=["--logfile", options.logfile]
+  args1+=["--logfile", options.logfile]
+if options.pidfile:
+  args1+=["--pidfile", options.pidfile]
 
 if not options.tracebacks:
   args2.append("-n")
