@@ -29,7 +29,7 @@ REALNAME = "http://moo.com/"
 #        - a string, e.g. IDENT = "webchat"
 #        - the literal value IDENT_HEX, this will set the ident to the
 #          a hexadecimal version of the users IP address, e.g
-#          IDENT = HEX_IDENT
+#          IDENT = IDENT_HEX
 #        - the literal value IDENT_NICKNAME, this will use the users
 #          supplied nickname as their ident.
 IDENT = "webchat"
