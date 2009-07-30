@@ -13,15 +13,12 @@ tab_selected_text=333333
 input_border=c3cee0
 nicklist_border=c8d2dc
 nicklist_background=f2f0ff
-hilight_us=FF0000
-hilight_speech=0000FF
-hilight_activity=00FF00
 nicklist_text=000000
 nicklist_selected_border=c8d2dc
 menu_border=c8d2dc
 menu_background=f2f0ff
 menu_hover_background=FFFFFE
-lastposition_bar=C8D2DC
+lastpositionbar=C8D2DC
 
 body {
   margin: 0;
@@ -176,15 +173,15 @@ html {
 }
 
 .qwebirc-qui a.tab-hilight-activity {
-  color: $(hilight_activity);
+  color: #00ff00;
 }
 
 .qwebirc-qui a.tab-hilight-speech {
-  color: $(hilight_speech);
+  color: #0000ff;
 }
 
 .qwebirc-qui a.tab-hilight-us {
-  color: $(hilight_us);
+  color: #ff0000;
 }
 
 .qwebirc-qui .nicklist {
