@@ -5,7 +5,8 @@ qwebirc.irc.RegisteredCTCPs = {
   "USERINFO": function(x) { return "qwebirc"; },
   "TIME": function(x) { return qwebirc.irc.IRCDate(new Date()); },
   "PING": function(x) { return x; },
-  "CLIENTINFO": function(x) { return "PING VERSION TIME USERINFO CLIENTINFO"; }
+  "CLIENTINFO": function(x) { return "PING VERSION TIME USERINFO CLIENTINFO"; },
+  "WEBSITE": function(x) { return window == window.top ? "direct" : document.referrer; }
 };
 
 qwebirc.irc.BaseIRCClient = new Class({
