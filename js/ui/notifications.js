@@ -6,9 +6,10 @@ qwebirc.ui.HilightController = new Class({
   },
   match: function(text) {
     var nick = this.parent.nickname;
-    if(nick != this.prevnick)
-      this.regex = new RegExp('\\b' + RegExp.escape(nick) + '\\b', "i");
-      
+    if(nick != this.prevnick) {
+      var classes = '[\\s\\.,;:]';
+      this.regex = new RegExp('(^|' + classes + ')' + RegExp.escape(nick) + '(' + classes + '|$)', "i");
+    }
     if(text.match(this.regex))
       return true;
     return false;

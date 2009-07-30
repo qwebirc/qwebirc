@@ -238,7 +238,9 @@ qwebirc.irc.IRCClient = new Class({
     if(nick == this.nickname) {
       this.newChanLine(channel, "OURJOIN", user);
     } else {
-      this.newChanLine(channel, "JOIN", user);
+      if(!this.ui.uiOptions.HIDE_JOINPARTS) {
+        this.newChanLine(channel, "JOIN", user);
+      }
     }
     this.updateNickList(channel);
   },
@@ -250,7 +252,9 @@ qwebirc.irc.IRCClient = new Class({
       this.tracker.removeChannel(channel);
     } else {
       this.tracker.removeNickFromChannel(nick, channel);
-      this.newChanLine(channel, "PART", user, {"m": message});
+      if(!this.ui.uiOptions.HIDE_JOINPARTS) {
+        this.newChanLine(channel, "PART", user, {"m": message});
+      }
     }
   
     this.updateNickList(channel);
@@ -304,7 +308,9 @@ qwebirc.irc.IRCClient = new Class({
     var clist = [];
     for(var c in channels) {
       clist.push(c);
-      this.newChanLine(c, "QUIT", user, {"m": message});
+      if(!this.ui.uiOptions.HIDE_JOINPARTS) {
+        this.newChanLine(c, "QUIT", user, {"m": message});
+      }
     }
     
     this.tracker.removeNick(nick);
@@ -522,7 +528,7 @@ qwebirc.irc.IRCClient = new Class({
     this.newServerLine("ERROR", {"m": message});
   },
   quit: function(message) {
-    this.send("QUIT :" + message);
+    this.send("QUIT :" + message, true);
     this.disconnect();
   },
   disconnect: function() {

@@ -4,6 +4,7 @@ qwebirc.ui.QUI = new Class({
     this.parent(parentElement, qwebirc.ui.QUI.Window, "qui", options);
     this.theme = theme;
     this.parentElement = parentElement;
+    this.setModifiableStylesheet("qui");
   },
   postInitialize: function() {
     this.qjsui = new qwebirc.ui.QUI.JSUI("qwebirc-qui", this.parentElement);
@@ -414,7 +415,7 @@ qwebirc.ui.QUI.Window = new Class({
       this.topic.addClass("topic");
       this.topic.addClass("tab-invisible");
       this.topic.set("html", "&nbsp;");
-      this.topic.addEvent("click", this.editTopic.bind(this));
+      this.topic.addEvent("dblclick", this.editTopic.bind(this));
       this.parentObject.qjsui.applyClasses("topic", this.topic);
       
       this.prevNick = null;

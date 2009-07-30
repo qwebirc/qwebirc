@@ -1,3 +1,28 @@
+topic_background=f2f0ff
+lines_background=f2f0ff
+topic_border=c8d2dc
+tabbar_border=c3cee0
+tabbar_background=e2ecf9
+tabbar_text=000000
+tab_border=c8d2dc
+tab_text=000000
+tab_hover=ffffff
+tab_selected=ffffff
+tab_selected_border=c8d2dc
+tab_selected_text=333333
+input_border=c3cee0
+nicklist_border=c8d2dc
+nicklist_background=f2f0ff
+hilight_us=FF0000
+hilight_speech=0000FF
+hilight_activity=00FF00
+nicklist_text=000000
+nicklist_selected_border=c8d2dc
+menu_border=c8d2dc
+menu_background=f2f0ff
+menu_hover_background=FFFFFE
+lastposition_bar=C8D2DC
+
 body {
   margin: 0;
   height: 100%;
@@ -42,11 +67,11 @@ html {
   color: black;
   overflow: auto;
   font-size: 0.8em;
-  background: #f2f0ff;
+  background: $(lines_background);
 }
 
 .qwebirc-qui .ircwindow {
-  font-family: Consolas, "Lucida Console", Verdana, monospace, sans-serif, "sans serif";
+  font-family: Consolas, "Lucida Console", monospace, Verdana, sans-serif, "sans serif";
 }
 
 .qwebirc-qui .tab-invisible {
@@ -79,8 +104,8 @@ html {
   left: 0px;
   top: 0px;
   right: 0px;
-  background-color: #F2F0FF;
-  border-bottom: 1px dashed #c8d2dc;
+  background-color: $(topic_background);
+  border-bottom: 1px dashed $(topic_border);
 }
 
 .qwebirc-qui .topic .emptytopic {
@@ -95,19 +120,19 @@ html {
 }
 
 .qwebirc-qui .outertabbar {
-  border-bottom: 1px solid #c3cee0;
-  background: #e2ecf9;
+  border-bottom: 1px solid $(tabbar_border);
+  background: $(tabbar_background);
   white-space: nowrap;
 }
 
 .qwebirc-qui .tabbar {
   padding: 4px;
   font-size: 0.8em;
-  color: #000000;
+  color: $(tabbar_text);
 }
 
 .qwebirc-qui a.tab {
-  border: 1px solid #c8d2dc;
+  border: 1px solid $(tab_border);
   padding: 2px;
   cursor: default;
   margin-right: 2px;
@@ -117,26 +142,26 @@ html {
 
 .qwebirc-qui a.tab {
   text-decoration: none;
-  color: #000000;
+  color: $(tab_text);
 }
 
 .qwebirc-qui .tab:hover {
-  background: #ffffff;
+  background: $(tab_hover);
   border: 1px solid #c8d2dc;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
 }
 
 .qwebirc-qui .tab-selected {
-  background: #ffffff;
-  border: 1px solid #c8d2dc;
+  background: $(tab_selected);
+  border: 1px solid $(tab_selected_border);
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
-  color: #333333;
+  color: $(tab_selected_text);
 }
 
 .qwebirc-qui div.input {
-  border-top: 1px solid #c3cee0;
+  border-top: 1px solid $(input_border);
   padding-left: 3px;
   padding-right: 3px;
 }
@@ -151,26 +176,26 @@ html {
 }
 
 .qwebirc-qui a.tab-hilight-activity {
-  color: green;
+  color: $(hilight_activity);
 }
 
 .qwebirc-qui a.tab-hilight-speech {
-  color: blue;
+  color: $(hilight_speech);
 }
 
 .qwebirc-qui a.tab-hilight-us {
-  color: red;
+  color: $(hilight_us);
 }
 
 .qwebirc-qui .nicklist {
-  border-left: 1px solid #c8d2dc;
+  border-left: 1px solid $(nicklist_border);
   position: absolute;
   top: 0px;
   right: 0px;
   width: 140px;
   overflow: auto;
-  background: #f2f0ff;
-  color: black;
+  background: $(nicklist_background);
+  color: $(nicklist_text);
   font-size: 0.7em;
 }
 
@@ -179,8 +204,8 @@ html {
   color: black;
   text-decoration: none;
   cursor: default;
-  border-top: 1px solid #f2f0ff;
-  border-bottom: 1px solid #f2f0ff;
+  border-top: 1px solid $(nicklist_background);
+  border-bottom: 1px solid $(nicklist_background);
   padding-left: 1px;
 }
 
@@ -189,12 +214,12 @@ html {
   color: black;
   background: white;
   text-decoration: none;
-  border-bottom: #c8d2dc 1px solid;
+  border-bottom: $(nicklist_selected_border) 1px solid;
   cursor: default;
 }
 
 .qwebirc-qui .nicklist a.selected-middle {
-  border-top: #c8d2dc 1px solid;
+  border-top: $(nicklist_selected_border) 1px solid;
 }
 
 div#noscript {
@@ -229,11 +254,11 @@ div#noscript {
 
 .qwebirc-qui .dropdownmenu {
   z-index: 100;
-  border: 1px solid #c8d2dc;
+  border: 1px solid $(menu_border);
   position: relative;
   top: 10px;
   left: 10px;
-  background: #f2f0ff;
+  background: $(menu_background);
 }
 
 .qwebirc-qui .dropdownmenu a {
@@ -249,7 +274,7 @@ div#noscript {
 }
 
 .qwebirc-qui .dropdownmenu a:hover {
-  background: #FFFFFE; /* IE is rubbish and doesn't like #FFFFFF or white */
+  background: $(menu_hover_background); /* IE is rubbish and doesn't like #FFFFFF or white */
 }
 
 .qwebirc-qui .dropdownhint {
@@ -262,7 +287,7 @@ div#noscript {
 
 .qwebirc-qui hr.lastpos {
   border: none;
-  border-top: 1px solid #C8D2DC;
+  border-top: 1px solid $(lastpositionbar);
   margin-left: 3em;
   margin-right: 3em;
 }

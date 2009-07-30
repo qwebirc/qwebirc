@@ -32,6 +32,7 @@ parser.add_option("-b", "--debug", help="Run in the Python Debugger.", action="s
 parser.add_option("-t", "--tracebacks", help="Display tracebacks in error pages (this reveals a LOT of information, do NOT use in production!)", action="store_true", dest="tracebacks", default=False)
 parser.add_option("-r", "--reactor", help="Which reactor to use (see --help-reactors for a list).", dest="reactor", default=DEFAULT_REACTOR)
 parser.add_option("-p", "--port", help="Port to start the server on.", type="int", dest="port", default=DEFAULT_PORT)
+parser.add_option("-i", "--ip", help="IP address to listen on.", dest="ip", default="0.0.0.0")
 parser.add_option("-l", "--logfile", help="Path to twisted log file.", dest="logfile")
 parser.add_option("-c", "--clf", help="Path to web CLF (Combined Log Format) log file.", dest="clogfile")
 parser.add_option("-C", "--certificate", help="Path to SSL certificate.", dest="sslcertificate")
@@ -65,5 +66,7 @@ if options.sslcertificate and options.sslkey:
   args2+=["--certificate", options.sslcertificate, "--privkey", options.sslkey, "--https", options.port]
 else:
   args2+=["--port", options.port]
+
+args2+=["--ip", options.ip]
 
 run_twistd(args1, args2)

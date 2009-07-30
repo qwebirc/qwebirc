@@ -1,7 +1,3 @@
-qwebirc.config.CHECK_BOX = 1;
-qwebirc.config.TEXT_BOX = 2;
-qwebirc.config.RADIO_BUTTONS = 3;
-
 qwebirc.ui.supportsFocus = function() {
   var ua = navigator.userAgent;
   if(!$defined(ua))
@@ -36,7 +32,15 @@ qwebirc.config.DEFAULT_OPTIONS = [
   [8, "LASTPOS_LINE", "Show a last position indicator for each window", true, {
     enabled: qwebirc.ui.supportsFocus
   }],
-  [9, "NICK_COLOURS", "Automatically colour nicknames", false]
+  [9, "NICK_COLOURS", "Automatically colour nicknames", false],
+  [10, "HIDE_JOINPARTS", "Hide JOINS/PARTS/QUITS", false],
+  [11, "STYLE_HUE", "Adjust user interface hue", function() {
+    return {class_: qwebirc.config.HueOption, default_: 210};
+  }, {
+    get: function(value, ui) {
+      ui.setModifiableStylesheetValues(value, 0, 0);
+    }
+  }]
 ];
 
 qwebirc.config.DefaultOptions = null;
@@ -84,6 +88,8 @@ qwebirc.config.Input = new Class({
       return;
       
     t.pass(x, this)();
+  },
+  cancel: function() {
   }
 });
 
@@ -100,6 +106,47 @@ qwebirc.config.TextInput = new Class({
   },
   get: function() {
     return this.parent(this.mainElement.value);
+  }
+});
+
+qwebirc.config.HueInput = new Class({
+  Extends: qwebirc.config.Input,
+  render: function() {
+    var i = new Element("div");
+    i.addClass("qwebirc-optionspane");
+    i.addClass("hue-slider");
+    this.parentElement.appendChild(i);
+    
+    var k = new Element("div");
+    k.addClass("knob");
+    if(Browser.Engine.trident) {
+      k.setStyle("top", "0px");
+      k.setStyle("background-color", "black");
+    }
+    
+    i.appendChild(k);
+    
+    var slider = new Slider(i, k, {steps: 36, range: [0, 369], wheel: true});
+    slider.set(this.value);
+    this.startValue = this.value;
+    
+    slider.addEvent("change", function(step) {
+      this.value = step;
+      this.get();
+    }.bind(this));
+    this.mainElement = i;
+    
+    if(!this.enabled)
+      slider.detach();
+    
+    this.parent();
+  },
+  get: function() {
+    return this.parent(this.value);
+  },
+  cancel: function() {
+    this.value = this.startValue;
+    this.get();
   }
 });
 
@@ -211,6 +258,11 @@ qwebirc.config.CheckOption = new Class({
   Element: qwebirc.config.CheckInput
 });
 
+qwebirc.config.HueOption = new Class({
+  Extends: qwebirc.config.Option,
+  Element: qwebirc.config.HueInput
+});
+
 qwebirc.ui.Options = new Class({
   initialize: function(ui) {
     if(!$defined(qwebirc.config.DefaultOptions))
@@ -243,6 +295,10 @@ qwebirc.ui.Options = new Class({
         var type;
         if(stype == "boolean") {
           type = qwebirc.config.CheckOption;
+        } else if(stype == "function") {
+          var options = default_();
+          type = options.class_;
+          default_ = options.default_;
         } else {
           type = qwebirc.config.TextOption;
         }
@@ -313,6 +369,7 @@ qwebirc.ui.OptionsPane = new Class({
     var cancel = qwebirc.util.createInput("submit", cellb);
     cancel.value = "Cancel";
     cancel.addEvent("click", function() {
+      this.cancel();
       this.fireEvent("close");
     }.bind(this));
   },
@@ -323,6 +380,11 @@ qwebirc.ui.OptionsPane = new Class({
       this.optionObject.setValue(option, box.get());
     }.bind(this));
     this.optionObject.flush();
+  },
+  cancel: function() {
+    this.boxList.forEach(function(x) {
+      x[1].cancel();
+    }.bind(this));
   }
 });
 
