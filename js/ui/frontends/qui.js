@@ -4,6 +4,7 @@ qwebirc.ui.QUI = new Class({
     this.parent(parentElement, qwebirc.ui.QUI.Window, "qui", options);
     this.theme = theme;
     this.parentElement = parentElement;
+    this.setModifiableStylesheet("qui");
   },
   postInitialize: function() {
     this.qjsui = new qwebirc.ui.QUI.JSUI("qwebirc-qui", this.parentElement);

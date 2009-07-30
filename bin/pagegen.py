@@ -16,10 +16,14 @@ def jslist(name, debug):
   return list("js/%s%s.js" % (y, hgid) for y in pages.flatten(x))
 
 def csslist(name, debug, gen=False):
+  ui = pages.UIs[name]
+  nocss = ui.get("nocss")
   if not debug:
     return ["css/%s-%s.css" % (name, gethgid())]
-  ui = pages.UIs[name]
-  return list("css/%s%s.css" % ("debug/" if gen else "", x) for x in pages.flatten([ui.get("extracss", []), "colours", "dialogs", "%s" % name]))
+  css = pages.flatten([ui.get("extracss", []), "colours", "dialogs"])
+  if not nocss:
+    css = list(css) + [name]
+  return list("css/%s%s.css" % ("debug/" if gen else "", x) for x in css)
 
 def _gethgid():
   try:
