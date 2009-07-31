@@ -76,8 +76,7 @@ class AdminEngine(resource.Resource):
         raise AdminEngineException("Action does not exist.")
     
   def render_GET(self, request):
-    _, ip, port = request.transport.getPeer()
-    if ip not in config.ADMIN_ENGINE_HOSTS:
+    if request.getClientIP() not in config.ADMIN_ENGINE_HOSTS:
       raise AdminEngineException("Access denied")
   
     args = request.args.get("engine")
