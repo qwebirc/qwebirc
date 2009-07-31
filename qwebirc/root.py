@@ -4,6 +4,7 @@ import engines
 import mimetypes
 import config
 import sigdebug
+import re
 
 class RootResource(resource.Resource):
   def getChild(self, name, request):
@@ -35,10 +36,36 @@ class TimeoutHTTPChannel(http.HTTPChannel):
     self.cancelTimeout()
     http.HTTPChannel.connectionLost(self, reason)
 
+class ProxyRequest(server.Request):
+  ip_re = re.compile(r"^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$")
+  def validIP(self, ip):
+    m = self.ip_re.match(ip)
+    if m is None:
+      return False
+    return all(int(m.group(x)) < 256 for x in range(1, 4+1))
+    
+  def getClientIP(self):
+    real_ip = http.Request.getClientIP(self)
+    if real_ip not in config.FORWARDED_FOR_IPS:
+      return real_ip
+      
+    fake_ips = self.getHeader(config.FORWARDED_FOR_HEADER)
+    if fake_ips is None:
+      return real_ip
+      
+    fake_ip = fake_ips.split(",")[-1].strip()
+    if not self.validIP(fake_ip):
+      return real_ip
+      
+    return fake_ip
+    
 class RootSite(server.Site):
   # we do this ourselves as the built in timeout stuff is really really buggy
   protocol = TimeoutHTTPChannel
   
+  if hasattr(config, "FORWARDED_FOR_HEADER"):
+    requestFactory = ProxyRequest
+
   def __init__(self, path, *args, **kwargs):
     root = RootResource()
     server.Site.__init__(self, root, *args, **kwargs)

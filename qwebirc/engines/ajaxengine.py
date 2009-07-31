@@ -183,7 +183,7 @@ class AJAXEngine(resource.Resource):
   def newConnection(self, request):
     ticket = login_optional(request)
     
-    _, ip, port = request.transport.getPeer()
+    ip = request.getClientIP()
 
     nick = request.args.get("nick")
     if not nick:
