@@ -413,6 +413,12 @@ qwebirc.irc.BaseIRCClient = new Class({
     
     return this.whois(nick, "generictext", {text: text});
   },
+  irc_RPL_WHOISWEBIRC: function(prefix, params) {
+    var nick = params[1];
+    var text = params.indexFromEnd(-1);
+
+    return this.whois(nick, "generictext", {text: text});
+  },
   irc_RPL_ENDOFWHOIS: function(prefix, params) {
     var nick = params[1];
     var text = params.indexFromEnd(-1);
