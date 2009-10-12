@@ -173,7 +173,7 @@ html {
 }
 
 .qwebirc-qui a.tab-hilight-activity {
-  color: #00ff00;
+  color: #009900;
 }
 
 .qwebirc-qui a.tab-hilight-speech {
