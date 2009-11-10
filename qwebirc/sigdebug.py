@@ -6,5 +6,5 @@ if platform.system() != "Windows":
   import signal
   import traceback
 
-  signal.signal(signal.SIGUSR1, lambda sig, stack: traceback.print_stack(stack))
+  signal.signal(signal.SIGUSR2, lambda sig, stack: traceback.print_stack(stack))
 
