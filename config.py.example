@@ -140,6 +140,12 @@ ADMIN_ENGINE_HOSTS = ["127.0.0.1"]
 #         with them, see run.py --help for a list of options.
 #ARGS = "-n -p 3989"
 
+# OPTION: SYSLOG_ADDR (optional)
+#         Used in conjunction with util/syslog.py and -s option.
+#         This option specifies the address and port that syslog
+#         datagrams will be sent to.
+#SYSLOG_ADDR = "127.0.0.1", 514
+
 # TUNEABLE VALUES
 # ---------------------------------------------------------------------
 #

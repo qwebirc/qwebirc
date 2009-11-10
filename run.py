@@ -38,6 +38,8 @@ parser.add_option("-c", "--clf", help="Path to web CLF (Combined Log Format) log
 parser.add_option("-C", "--certificate", help="Path to SSL certificate.", dest="sslcertificate")
 parser.add_option("-k", "--key", help="Path to SSL key.", dest="sslkey")
 parser.add_option("-P", "--pidfile", help="Path to store PID file", dest="pidfile")
+parser.add_option("-s", "--syslog", help="Log to syslog", action="store_true", dest="syslog", default=False)
+parser.add_option("--syslog-prefix", help="Syslog prefix", dest="syslog_prefix", default="qwebirc")
 
 sargs = sys.argv[1:]
 if "ARGS" in dir(config):
@@ -59,6 +61,11 @@ if options.logfile:
   args1+=["--logfile", options.logfile]
 if options.pidfile:
   args1+=["--pidfile", options.pidfile]
+if options.syslog:
+  args1+=["--syslog"]
+if options.syslog_prefix:
+  import syslog
+  syslog.openlog(options.syslog_prefix)
 
 if not options.tracebacks:
   args2.append("-n")
