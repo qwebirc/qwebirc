@@ -31,7 +31,8 @@ def _gethgid():
   except Exception, e:
     if hasattr(e, "errno") and e.errno == 2:
       raise HGException, "unable to execute"
-      
+    raise HGException, "unknown exception running hg: %s" % repr(e)
+    
   data = p.communicate()[0]
   if p.wait() != 0:
     raise HGException, "unable to get id"
