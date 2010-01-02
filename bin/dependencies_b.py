@@ -76,8 +76,9 @@ def check_twisted():
   except ImportError:
     fail("qwebirc requires twisted (at least 8.2.0), see http://twistedmatrix.com/")
 
-  twisted_fail = lambda x, y=None: fail("you don't seem to have twisted's %s module." % x,
-                                        "your distro is most likely modular, look for a twisted web package%s." % (" %s" % y if y else "",))
+  def twisted_fail(x, y=None):
+    fail("you don't seem to have twisted's %s module." % x,
+         "your distro is most likely modular, look for a twisted %s package%s." % (x, " %s" % y if y else "",))
 
   try:
     import twisted.names
@@ -88,7 +89,6 @@ def check_twisted():
     import twisted.mail
   except ImportError:
     twisted_fail("mail")
-    fail("you don't seem to have twisted's mail module, your distro is most likely modular, look for a twisted mail package.")
 
   try:
     import twisted.web
@@ -98,7 +98,7 @@ def check_twisted():
   try:
     import twisted.words
   except ImportError:
-    twistedfail("words")
+    twisted_fail("words")
 
 if __name__ == "__main__":
   import dependencies
