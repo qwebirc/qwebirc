@@ -39,7 +39,7 @@ IDENT = "webchat"
 #         browser will be sent to IRC.
 #
 #         Possible values include:
-#         - webirc
+#         - the string "webirc", i.e. WEBIRC_MODE = "webirc"
 #           Use WEBIRC type blocks, with a server configuration of
 #           the following style:
 #
@@ -51,12 +51,12 @@ IDENT = "webchat"
 #
 #           Remember to set the WEBIRC_PASSWORD value to be the
 #           same as <password>.
-#         - cgiirc
+#         - the string "cgiirc", i.e. WEBIRC_MODE = "cgiirc"
 #           old style CGIIRC command, set CGIIRC_STRING to be the
 #           command used to set the ip/hostname, and set
 #           WEBIRC_PASSWORD to be the password used in the server's
 #           configuration file.
-#         - None (the literal value)
+#         - the literal value None, i.e. WEBIRC_MODE = None
 #           Send the IP and hostname in the realname field, overrides
 #          the REALNAME option.
 WEBIRC_MODE = None
