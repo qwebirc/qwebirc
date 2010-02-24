@@ -37,6 +37,7 @@ parser.add_option("-l", "--logfile", help="Path to twisted log file.", dest="log
 parser.add_option("-c", "--clf", help="Path to web CLF (Combined Log Format) log file.", dest="clogfile")
 parser.add_option("-C", "--certificate", help="Path to SSL certificate.", dest="sslcertificate")
 parser.add_option("-k", "--key", help="Path to SSL key.", dest="sslkey")
+parser.add_option("-H", "--certificate-chain", help="Path to SSL certificate chain file.", dest="sslchain")
 parser.add_option("-P", "--pidfile", help="Path to store PID file", dest="pidfile")
 parser.add_option("-s", "--syslog", help="Log to syslog", action="store_true", dest="syslog", default=False)
 parser.add_option("--syslog-prefix", help="Syslog prefix", dest="syslog_prefix", default="qwebirc")
@@ -74,6 +75,8 @@ if options.clogfile:
 
 if options.sslcertificate and options.sslkey:
   args2+=["--certificate", options.sslcertificate, "--privkey", options.sslkey, "--https", options.port]
+  if options.sslchain:
+    args2+=["--certificate-chain", options.sslchain]
 else:
   args2+=["--port", options.port]
 
