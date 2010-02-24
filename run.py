@@ -63,7 +63,7 @@ if options.pidfile:
   args1+=["--pidfile", options.pidfile]
 if options.syslog:
   args1+=["--syslog"]
-if options.syslog_prefix:
+if options.syslog and options.syslog_prefix:
   import syslog
   syslog.openlog(options.syslog_prefix)
 
