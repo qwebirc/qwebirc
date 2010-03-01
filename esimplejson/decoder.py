@@ -4,9 +4,9 @@ Implementation of JSONDecoder
 import re
 import sys
 
-from simplejson.scanner import Scanner, pattern
+from esimplejson.scanner import Scanner, pattern
 try:
-    from simplejson._speedups import scanstring as c_scanstring
+    from esimplejson._speedups import scanstring as c_scanstring
 except ImportError:
     pass
 

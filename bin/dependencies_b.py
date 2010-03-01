@@ -16,6 +16,7 @@ def check_dependencies():
   
   check_twisted()
   check_win32()
+  i+=check_json()
   i+=check_java()
   i+=check_hg()
   
@@ -99,7 +100,16 @@ def check_twisted():
     import twisted.words
   except ImportError:
     twisted_fail("words")
-
+    
+def check_json():
+  import qwebirc.util.qjson
+  if qwebirc.util.qjson.slow:
+    warn("simplejson module with C speedups not installed.",
+         "using embedded module (slower); consider installing simplejson from:",
+         "http://pypi.python.org/pypi/simplejson/")
+    return 1
+  return 0
+  
 if __name__ == "__main__":
   import dependencies
   dependencies.check_dependencies()

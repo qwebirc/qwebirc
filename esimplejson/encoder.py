@@ -4,7 +4,7 @@ Implementation of JSONEncoder
 import re
 
 try:
-    from simplejson._speedups import encode_basestring_ascii as c_encode_basestring_ascii
+    from esimplejson._speedups import encode_basestring_ascii as c_encode_basestring_ascii
 except ImportError:
     pass
 

@@ -2,11 +2,12 @@ from twisted.web import resource, server, static, error as http_error
 from twisted.names import client
 from twisted.internet import reactor, error
 from authgateengine import login_optional, getSessionData
-import simplejson, md5, sys, os, time, config, qwebirc.config_options as config_options, traceback, socket
+import md5, sys, os, time, config, qwebirc.config_options as config_options, traceback, socket
 import qwebirc.ircclient as ircclient
 from adminengine import AdminEngineAction
 from qwebirc.util import HitCounter
 import qwebirc.dns as qdns
+import qwebirc.util.qjson as json
 Sessions = {}
 
 def get_session_id():
@@ -25,6 +26,7 @@ class PassthruException(Exception):
   pass
   
 NOT_DONE_YET = None
+EMPTY_JSON_LIST = json.dumps([])
 
 def jsondump(fn):
   def decorator(*args, **kwargs):
@@ -38,7 +40,7 @@ def jsondump(fn):
     except PassthruException, e:
       return str(e)
       
-    return simplejson.dumps(x)
+    return json.dumps(x)
   return decorator
 
 def cleanupSession(id):
@@ -79,7 +81,7 @@ class IRCSession:
     if self.schedule:
       return
       
-    channel.write(simplejson.dumps([]))
+    channel.write(EMPTY_JSON_LIST)
     if channel in self.subscriptions:
       self.subscriptions.remove(channel)
       
@@ -105,7 +107,7 @@ class IRCSession:
         
     self.throttle = t + config.UPDATE_FREQ
 
-    encdata = simplejson.dumps(self.buffer)
+    encdata = json.dumps(self.buffer)
     self.buffer = []
     self.buflen = 0
 

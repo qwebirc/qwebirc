@@ -64,7 +64,7 @@ def main():
     
   compile.main(DEST, produce_debug=False)
   
-  for x in "authgate qwebirc simplejson twisted".split(" "):
+  for x in "authgate qwebirc esimplejson twisted".split(" "):
     copypydir(x, DEST)
   for x in "images panes sound".split(" "):
     copydir(os.path.join("static", x), DEST)

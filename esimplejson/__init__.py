@@ -106,8 +106,8 @@ __all__ = [
 ]
 
 if __name__ == '__main__':
-    from simplejson.decoder import JSONDecoder
-    from simplejson.encoder import JSONEncoder
+    from esimplejson.decoder import JSONDecoder
+    from esimplejson.encoder import JSONEncoder
 else:
     from decoder import JSONDecoder
     from encoder import JSONEncoder
