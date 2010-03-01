@@ -16,40 +16,6 @@ UIs = {
     "uifiles": ["qui"],
     "doctype": "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"" + "\n" \
       "  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">"
-  },
-  "mochaui": {
-    "class": "MochaUI",
-    "uifiles": ["mochaui"],
-    "extra": ["mochaui/mocha"],
-    "buildextra": ["mochaui/mocha-compressed"],
-    "extrajs": ["mochaui/excanvas-compressed"],
-    "doctype": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">",
-    "div": """
-    <div id="desktop">
-      <div id="dockWrapper">
-        <div id="dock">
-          <div id="dockPlacement"></div>
-          <div id="dockAutoHide"></div>
-          <div id="dockSort"><div id="dockClear" class="clear"></div></div>
-        </div>
-      </div>	
-      <div id="pageWrapper"></div>
-    </div>""",
-    "extracss": ["mochaui/ui", "mochaui/content"],
-    "customjs": """
-  <!--[if IE]>
-    <script type="text/javascript" src="js/mochaui/excanvas-compressed.js"></script>		
-  <![endif]-->"""
-  },
-  "swmui": {
-    "class": "SWMUI",
-    "uifiles": ["swmui", "swmlayout"],
-    "doctype": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">"
-  },
-  "uglyui": {
-    "class": "UglyUI",
-    "uifiles": ["uglyui"],
-    "doctype": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">"
   }
 }
 
