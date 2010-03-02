@@ -84,7 +84,7 @@ qwebirc.ui.QUI = new Class({
     
     var dropdown = new Element("div");
     dropdown.addClass("dropdown-tab");
-    dropdown.appendChild(new Element("img", {src: "images/icon.png", title: "menu", alt: "menu"}));
+    dropdown.appendChild(new Element("img", {src: qwebirc.global.staticBaseURL + "images/icon.png", title: "menu", alt: "menu"}));
     dropdown.setStyle("opacity", 1);
 
     var dropdownEffect = new Fx.Tween(dropdown, {duration: "long", property: "opacity", link: "chain"});

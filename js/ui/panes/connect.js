@@ -8,7 +8,7 @@ qwebirc.ui.GenericLoginBox = function(parentElement, callback, initialNickname, 
 
 qwebirc.ui.AuthLogin = function(e) {
   var cookie = Cookie.write("redirect", document.location);
-  document.location = "./auth/";
+  document.location = qwebirc.global.dynamicBaseURL + "auth/";
   new Event(e).stop();
 }
 

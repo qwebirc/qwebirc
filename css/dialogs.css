@@ -240,7 +240,7 @@
   border: 0px solid black;
   width: 360px;
   height: 8px;
-  background-image: url(/images/hue.png);
+  background-image: url(../images/hue.png);
 }
 
 .qwebirc-optionspane div.hue-slider .knob {

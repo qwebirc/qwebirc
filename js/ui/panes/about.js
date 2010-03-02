@@ -4,7 +4,7 @@ qwebirc.ui.AboutPane = new Class({
     var delayfn = function() { parent.set("html", "<div class=\"loading\">Loading. . .</div>"); };
     var cb = delayfn.delay(500);
     
-    var r = new Request.HTML({url: "panes/about.html", update: parent, onSuccess: function() {
+    var r = qwebirc.ui.RequestTransformHTML({url: qwebirc.global.staticBaseURL + "panes/about.html", update: parent, onSuccess: function() {
       $clear(cb);
       parent.getElement("input[class=close]").addEvent("click", function() {
         this.fireEvent("close");

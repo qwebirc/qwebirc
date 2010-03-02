@@ -197,6 +197,20 @@ HTTP_AJAX_REQUEST_TIMEOUT = 30
 #         that haven't started/completed an HTTP request.
 HTTP_REQUEST_TIMEOUT = 5
 
+# OPTION: STATIC_BASE_URL
+#         This value is used to build the URL for all static HTTP
+#         requests.
+#         You'd find this useful if you're running multiple qwebirc
+#         instances on the same host.
+STATIC_BASE_URL = ""
+
+# OPTION: DYNAMIC_BASE_URL
+#         This value is used to build the URL for all dynamic HTTP
+#         requests.
+#         You'd find this useful if you're running multiple qwebirc
+#         instances on the same host.
+DYNAMIC_BASE_URL = ""
+
 # QUAKENET SPECIFIC VALUES
 # ---------------------------------------------------------------------
 #

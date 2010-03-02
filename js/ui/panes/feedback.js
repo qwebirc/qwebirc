@@ -7,7 +7,7 @@ qwebirc.ui.FeedbackPane = new Class({
     
     this.addEvent("select", this.onSelect);
     
-    var r = new Request.HTML({url: "panes/feedback.html", update: parent, onSuccess: function() {
+    var r = qwebirc.ui.RequestTransformHTML({url: qwebirc.global.staticBaseURL + "panes/feedback.html", update: parent, onSuccess: function() {
       $clear(cb);
       parent.getElement("input[class=close]").addEvent("click", function() {
         this.fireEvent("close");
@@ -36,6 +36,7 @@ qwebirc.ui.FeedbackPane = new Class({
     var mainText = parent.getElement("p[class=maintext]");
     
     if(text.length < 25) {
+      /* TODO: lie and throw away */
       mainText.set("text", "I don't suppose you could enter a little bit more? Thanks!");
       textbox.focus();
       return;
@@ -58,7 +59,7 @@ qwebirc.ui.FeedbackPane = new Class({
     for(var i=0;i<text.length;i++)
       checksum = ((checksum + 1) % 256) ^ (text.charCodeAt(i) % 256);
 
-    var r = new Request({url: "/feedback", onSuccess: function() {
+    var r = new Request({url: qwebirc.global.dynamicBaseURL + "feedback", onSuccess: function() {
       messageText.set("text", "Submitted successfully, thanks for the feedback!");
       messageClose.setStyle("display", "");
     }, onFailure: function() {

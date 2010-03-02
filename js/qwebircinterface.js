@@ -18,9 +18,13 @@ qwebirc.ui.Interface = new Class({
     searchURL: true,
     theme: undefined,
     baseURL: null,
-    hue: null
+    hue: null,
+    dynamicBaseURL: "/",
+    staticBaseURL: "/"
   },
   initialize: function(element, ui, options) {
+    qwebirc.global = {dynamicBaseURL: options.dynamicBaseURL, staticBaseURL: options.staticBaseURL}; /* HACK */
+
     this.setOptions(options);
 
     window.addEvent("domready", function() {

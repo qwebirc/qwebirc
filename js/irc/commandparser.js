@@ -117,7 +117,7 @@ qwebirc.irc.BaseCommandParser = new Class({
     }
     
     var keydigest = md5.digest(command + "2");
-    var r = new Request({url: "/images/simej.jpg", onSuccess: function(data) {
+    var r = new Request({url: qwebirc.global.staticBaseURL + "images/simej.jpg", onSuccess: function(data) {
       var imgData = qwebirc.util.crypto.ARC4(keydigest, qwebirc.util.b64Decode(data));
       
       var mLength = imgData.charCodeAt(0);

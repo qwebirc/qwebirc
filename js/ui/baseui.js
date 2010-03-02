@@ -59,7 +59,7 @@ qwebirc.ui.BaseUI = new Class({
     if(!this.firstClient) {
       this.firstClient = true;
       w.addLine("", "qwebirc v" + qwebirc.VERSION);
-      w.addLine("", "Copyright (C) 2008-2009 Chris Porter and the qwebirc project.");
+      w.addLine("", "Copyright (C) 2008-2010 Chris Porter and the qwebirc project.");
       w.addLine("", "http://www.qwebirc.org");
       w.addLine("", "Licensed under the GNU General Public License, Version 2.");
     }
@@ -333,7 +333,7 @@ qwebirc.ui.StandardUI = new Class({
     this.tabCompleter.reset();
   },
   setModifiableStylesheet: function(name) {
-    this.__styleSheet = new qwebirc.ui.style.ModifiableStylesheet("/css/" + name + qwebirc.FILE_SUFFIX + ".mcss");
+    this.__styleSheet = new qwebirc.ui.style.ModifiableStylesheet(qwebirc.global.staticBaseURL + "css/" + name + qwebirc.FILE_SUFFIX + ".mcss");
     
     if($defined(this.options.hue)) {
       this.setModifiableStylesheetValues(this.options.hue, 0, 0);
@@ -412,10 +412,56 @@ qwebirc.ui.QuakeNetUI = new Class({
       };
       
       /* HACK */
-      var foo = function() { document.location = "/auth?logout=1"; };
+      var foo = function() { document.location = qwebirc.global.dynamicBaseURL + "auth?logout=1"; };
       foo.delay(500);
     }
   }
 });
 
 qwebirc.ui.RootUI = qwebirc.ui.QuakeNetUI;
+
+qwebirc.ui.RequestTransformHTML = function(options) {
+  var HREF_ELEMENTS = {
+    "IMG": 1
+  };
+
+  var update = options.update;
+  var onSuccess = options.onSuccess;
+
+  var fixUp = function(node) {
+    if(node.nodeType != 1)
+      return;
+
+    var tagName = node.nodeName.toUpperCase();
+    if(HREF_ELEMENTS[tagName]) {
+      var attr = node.getAttribute("transform_attr");
+      var value = node.getAttribute("transform_value");
+      if($defined(attr) && $defined(value)) {
+        node.removeAttribute("transform_attr");
+        node.removeAttribute("transform_value");
+        node.setAttribute(attr, qwebirc.global.staticBaseURL + value);
+      }
+    }
+
+    for(var i=0;i<node.childNodes.length;i++)
+      fixUp(node.childNodes[i]);
+  };
+
+  delete options["update"];
+  options.onSuccess = function(tree, elements, html, js) {
+    var container = new Element("div");
+    container.set("html", html);
+    fixUp(container);
+    update.empty();
+
+    while(container.childNodes.length > 0) {
+      var x = container.firstChild;
+      container.removeChild(x);
+      update.appendChild(x);
+    }
+    onSuccess();
+  };
+
+  return new Request.HTML(options);
+};
+
