@@ -65,7 +65,7 @@ def producehtml(name, debug):
   <base />
   <title>%s (qwebirc)</title>
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
-  <link rel="icon" type="image/png" href="%simages/favicon.png"/>
+  <link rel="shortcut icon" type="image/png" href="%simages/favicon.png"/>
 %s%s
 %s
   <script type="text/javascript">

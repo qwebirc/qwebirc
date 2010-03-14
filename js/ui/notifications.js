@@ -56,15 +56,15 @@ qwebirc.ui.Flasher = new Class({
     this.canUpdateTitle = true;
     this.titleText = document.title;
 
-    var favIcons = $$("link[rel=icon]"), favIconParent = $$("head");
-    if(favIcons && favIcons.length > 0 && favIconParent && favIconParent.length > 0) {
-      this.favIcon = favIcons[0];
-      this.favIconParent = favIconParent[0];
+    var favIcon = this._getFavIcon();
+    if($defined(favIcon)) {
+      this.favIcon = favIcon;
+      this.favIconParent = favIcon.parentNode;
       this.favIconVisible = true;
       this.emptyFavIcon = new Element("link");
       this.emptyFavIcon.rel = "shortcut icon";
       this.emptyFavIcon.href = qwebirc.global.staticBaseURL + "images/empty_favicon.ico";
-      
+      this.emptyFavIcon.type = "image/x-icon";
       this.flashing = false;
     
       this.canFlash = true;
@@ -72,7 +72,13 @@ qwebirc.ui.Flasher = new Class({
       document.addEvent("keydown", this.cancelFlash.bind(this));
     } else {
       this.canFlash = false;
-    }    
+    }
+  },
+  _getFavIcon: function() {
+    var favIcons = $$("head link");
+    for(var i=0;i<favIcons.length;i++)
+      if(favIcons[i].getAttribute("rel") == "shortcut icon")
+        return favIcons[i];
   },
   flash: function() {
     if(!this.uiOptions.FLASH_ON_MENTION || this.windowFocused || !this.canFlash || this.flashing)
@@ -113,6 +119,7 @@ qwebirc.ui.Flasher = new Class({
   },
   hideFavIcon: function() {
     if(this.favIconVisible) {
+      /* only seems to work in firefox */
       this.favIconVisible = false;
       this.favIconParent.removeChild(this.favIcon);
       this.favIconParent.appendChild(this.emptyFavIcon);
