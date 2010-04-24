@@ -5,12 +5,12 @@ qwebirc.irc.PMODE_REGULAR_MODE = 3;
 
 qwebirc.irc.RegisteredCTCPs = {
   "VERSION": function(x) {
-    return "qwebirc v" + qwebirc.VERSION + ", copyright (C) Chris Porter 2008-2009 -- " + qwebirc.util.browserVersion();
+    return "qwebirc v" + qwebirc.VERSION + ", copyright (C) 2008-2010 Chris Porter and the qwebirc project -- " + qwebirc.util.browserVersion();
   },
   "USERINFO": function(x) { return "qwebirc"; },
   "TIME": function(x) { return qwebirc.irc.IRCDate(new Date()); },
   "PING": function(x) { return x; },
-  "CLIENTINFO": function(x) { return "PING VERSION TIME USERINFO CLIENTINFO"; },
+  "CLIENTINFO": function(x) { return "PING VERSION TIME USERINFO CLIENTINFO WEBSITE"; },
   "WEBSITE": function(x) { return window == window.top ? "direct" : document.referrer; }
 };
 
