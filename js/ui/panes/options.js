@@ -9,6 +9,10 @@ qwebirc.ui.supportsFocus = function() {
   return [true];
 }
 
+/**
+ * Note that options are settable by the uioptions url arg by default unless you specifiy
+ * settableByURL...
+ */
 qwebirc.config.DEFAULT_OPTIONS = [
   [1, "BEEP_ON_MENTION", "Beep when nick mentioned or on query activity (requires Flash)", true, {
     enabled: function() {
@@ -27,8 +31,12 @@ qwebirc.config.DEFAULT_OPTIONS = [
   [2, "DEDICATED_MSG_WINDOW", "Send privmsgs to dedicated messages window", false],
   [4, "DEDICATED_NOTICE_WINDOW", "Send notices to dedicated message window", false],
   [3, "NICK_OV_STATUS", "Show status (@/+) before nicknames in channel lines", true],
-  [5, "ACCEPT_SERVICE_INVITES", "Automatically join channels when invited by Q", true],
-  [6, "USE_HIDDENHOST", "Hide your hostmask when authed to Q (+x)", true],
+  [5, "ACCEPT_SERVICE_INVITES", "Automatically join channels when invited by Q", true, {
+    settableByURL: false
+  }],
+  [6, "USE_HIDDENHOST", "Hide your hostmask when authed to Q (+x)", true, {
+    settableByURL: false
+  }],
   [8, "LASTPOS_LINE", "Show a last position indicator for each window", true, {
     enabled: qwebirc.ui.supportsFocus
   }],
@@ -213,7 +221,13 @@ qwebirc.config.Option = new Class({
         this.default_ = enabledResult[1];
     } else {
       this.enabled = true;
-    }    
+    }
+    
+    if($defined(extras) && $defined(extras.settableByURL)) {
+      this.settableByURL = extras.settableByURL;
+    } else {
+      this.settableByURL = true;
+    }
   },
   setSavedValue: function(x) {
     if(this.enabled)
@@ -411,6 +425,41 @@ qwebirc.ui.CookieOptions = new Class({
   }
 });
 
+qwebirc.ui.SuppliedArgOptions = new Class({
+  Extends: qwebirc.ui.CookieOptions,
+  initialize: function(ui, arg) {
+    var p = {};
+    
+    if($defined(arg) && arg != "") {
+      var decoded = qwebirc.util.b64Decode(arg);
+      if(decoded)
+        p = qwebirc.util.parseURI("?" + decoded);
+    }
+    
+    this.parsedOptions = p;
+    this.parent(ui);
+  },
+  _get: function(x) {
+    if(x.settableByURL !== true)
+      return this.parent(x);
+
+    var opt = this.parsedOptions[x.optionId];
+    if(!$defined(opt))
+      return this.parent(x);
+      
+    return opt;
+  },
+  serialise: function() {
+    var result = [];
+    this.getOptionList().forEach(function(x) {
+      if(x.settableByURL && x.default_ != x.value)
+        result.push(x.optionId + "=" + x.value);
+    }.bind(this));
+    
+    return qwebirc.util.b64Encode(result.join("&")).replaceAll("=", "");
+  }
+});
+
 qwebirc.ui.DefaultOptionsClass = new Class({
-  Extends: qwebirc.ui.CookieOptions
+  Extends: qwebirc.ui.SuppliedArgOptions
 });

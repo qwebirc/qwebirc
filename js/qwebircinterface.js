@@ -19,6 +19,7 @@ qwebirc.ui.Interface = new Class({
     theme: undefined,
     baseURL: null,
     hue: null,
+    uiOptionsArg: null,
     dynamicBaseURL: "/",
     staticBaseURL: "/"
   },
@@ -44,6 +45,10 @@ qwebirc.ui.Interface = new Class({
       if(this.options.searchURL) {
         var args = qwebirc.util.parseURI(String(document.location));
         this.options.hue = this.getHueArg(args);
+        
+        if($defined(args["uio"]))
+          this.options.uiOptionsArg = args["uio"];
+
         var url = args["url"];
         var chans, nick = args["nick"];
         

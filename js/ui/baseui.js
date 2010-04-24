@@ -190,7 +190,7 @@ qwebirc.ui.StandardUI = new Class({
     this.parent(parentElement, windowClass, uiName, options);
 
     this.tabCompleter = new qwebirc.ui.TabCompleterFactory(this);
-    this.uiOptions = new qwebirc.ui.DefaultOptionsClass(this);
+    this.uiOptions = new qwebirc.ui.DefaultOptionsClass(this, options.uiOptionsArg);
     this.customWindows = {};
     
     var ev;
@@ -293,7 +293,9 @@ qwebirc.ui.StandardUI = new Class({
     d.setSubWindow(ew);
   },
   embeddedWindow: function() {
-    this.addCustomWindow("Embedding wizard", qwebirc.ui.EmbedWizard, "embeddedwizard", {baseURL: this.options.baseURL});
+    this.addCustomWindow("Embedding wizard", qwebirc.ui.EmbedWizard, "embeddedwizard", {baseURL: this.options.baseURL, uiOptions: this.uiOptions, optionsCallback: function() {
+      this.optionsWindow();
+    }.bind(this)});
   },
   optionsWindow: function() {
     this.addCustomWindow("Options", qwebirc.ui.OptionsPane, "optionspane", this.uiOptions);

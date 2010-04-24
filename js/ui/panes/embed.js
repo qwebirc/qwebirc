@@ -32,11 +32,16 @@ qwebirc.ui.EmbedWizardStep = new Class({
 qwebirc.ui.EmbedWizard = new Class({
   Implements: [Options, Events],
   options: {
-    parent: null,
+    uiOptions: null,
+    optionsCallback: null,
     baseURL: "http://webchat.quakenet.org/"
   },
   initialize: function(parent, options) {
-    this.setOptions(options);
+    /* for some unknown reason setOptions doesn't work... */
+    this.options.uiOptions = options.uiOptions;
+    this.options.baseURL = options.baseURL;
+    this.options.optionsCallback = options.optionsCallback;
+    
     this.create(parent);
     this.addSteps();
   },
@@ -110,7 +115,7 @@ qwebirc.ui.EmbedWizard = new Class({
     };
   
     this.welcome = this.newStep({
-      "title": "Welcome!",
+      "title": "Add webchat to your website",
       "first": "This wizard will help you create an embedded client by asking you questions then giving you the code to add to your website.<br/><br/>You can use the <b>Next</b> and <b>Back</b> buttons to navigate through the wizard; click <b>Next</b> to continue."
     });
     
@@ -142,6 +147,17 @@ qwebirc.ui.EmbedWizard = new Class({
       "first": "Do you want the user to be shown the connect dialog (with the values you have supplied pre-entered) or just a connect confirmation?",
       middle: promptdiv,
       "hint": "You need to display the dialog if you want the user to be able to set their nickname before connecting."
+    });
+
+    var changeOptions = new Element("input");
+    changeOptions.type = "submit";
+    changeOptions.value = "Alter current look and feel";
+    changeOptions.addEvent("click", this.options.optionsCallback);
+
+    this.lookandfeel = this.newStep({
+      "title": "Alter look and feel?",
+      "first": "The look and feel will be copied from the current settings.",
+      middle: changeOptions
     });
     
     var autoconnect = this.newRadio(promptdiv, "Connect without displaying the dialog.", "prompt", true);
@@ -216,6 +232,7 @@ qwebirc.ui.EmbedWizard = new Class({
     if(this.chanBox.value != "" && !this.choosenick.checked)
       this.steps.push(this.connectdialog);
     
+    this.steps.push(this.lookandfeel);
     this.steps.push(this.finish);
   },
   showStep: function() {
@@ -278,6 +295,10 @@ qwebirc.ui.EmbedWizard = new Class({
     if(connectdialog)
       URL.push("prompt=1");
 
+    var uioptions = this.options.uiOptions.serialise();
+    if(uioptions != "")
+      URL.push("uio=" + uioptions);
+      
     return this.options.baseURL + (URL.length>0?"?":"") + URL.join("&");
   }
 });
