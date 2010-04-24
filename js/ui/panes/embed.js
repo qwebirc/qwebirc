@@ -41,7 +41,6 @@ qwebirc.ui.EmbedWizard = new Class({
     this.options.uiOptions = options.uiOptions;
     this.options.baseURL = options.baseURL;
     this.options.optionsCallback = options.optionsCallback;
-    
     this.create(parent);
     this.addSteps();
   },
@@ -94,8 +93,12 @@ qwebirc.ui.EmbedWizard = new Class({
     var p = new Element("div");
     parent.appendChild(p);
 
-    var r = qwebirc.util.createInput("radio", p, name, selected);
-    p.appendChild(document.createTextNode(text));
+    var id = qwebirc.util.generateID();
+    var r = qwebirc.util.createInput("radio", p, name, selected, id);
+    
+    var label = new Element("label", {"for": id});
+    label.appendChild(document.createTextNode(text));
+    p.appendChild(label);
       
     return r;
   },
@@ -131,7 +134,7 @@ qwebirc.ui.EmbedWizard = new Class({
     
     var customnickDiv = new Element("div");
     this.customnick = this.newStep({
-      "title": "Nickname mode",
+      "title": "Choose a nickname mode",
       "first": "At startup would you like the client to use a random nickname, a preset nickname or a nickname of the users choice?",
       "hint": "It is recommended that you only use a preset nickname if the client is for your own personal use.",
       middle: customnickDiv
@@ -149,13 +152,20 @@ qwebirc.ui.EmbedWizard = new Class({
       "hint": "You need to display the dialog if you want the user to be able to set their nickname before connecting."
     });
 
-    var changeOptions = new Element("input");
-    changeOptions.type = "submit";
-    changeOptions.value = "Alter current look and feel";
-    changeOptions.addEvent("click", this.options.optionsCallback);
+    var changeOptions = new Element("div");
+    this.currentLF = this.newRadio(changeOptions, "Use the current look and feel (", "lookandfeel", true);
 
+    var alterButton = new Element("input");
+    alterButton.type = "submit";
+    alterButton.value = "alter";
+    alterButton.addEvent("click", this.options.optionsCallback);
+    changeOptions.firstChild.appendChild(alterButton);
+    changeOptions.firstChild.appendChild(document.createTextNode(")."));
+    
+    this.defaultLF = this.newRadio(changeOptions, "Use the default look and feel.", "lookandfeel");
+    
     this.lookandfeel = this.newStep({
-      "title": "Alter look and feel?",
+      "title": "Configure look and feel",
       "first": "The look and feel will be copied from the current settings.",
       middle: changeOptions
     });
@@ -167,7 +177,7 @@ qwebirc.ui.EmbedWizard = new Class({
     this.nicknameBox.addClass("text");
     this.nickname = this.newStep({
       "title": "Set nickname",
-      "first": "Enter the nickname you would like the client to use by default (use a . for a random number):",
+      "first": "Enter the nickname you would like the client to use by default:",
       "premove": function() {
         if(this.nicknameBox.value == "") {
           alert("You must supply a nickname.");
@@ -176,7 +186,8 @@ qwebirc.ui.EmbedWizard = new Class({
         }
         return true;
       }.bind(this),
-      middle: this.nicknameBox
+      middle: this.nicknameBox,
+      hint: "If you use a . (dot/period) then it will be substituted with a random number."
     }).addEvent("show", af.bind(this.nicknameBox));
 
     var codeDiv = new Element("div");
@@ -295,10 +306,12 @@ qwebirc.ui.EmbedWizard = new Class({
     if(connectdialog)
       URL.push("prompt=1");
 
-    var uioptions = this.options.uiOptions.serialise();
-    if(uioptions != "")
-      URL.push("uio=" + uioptions);
-      
+    if(this.currentLF.checked) {
+      var uioptions = this.options.uiOptions.serialise();
+      if(uioptions != "")
+        URL.push("uio=" + uioptions);
+    }
+    
     return this.options.baseURL + (URL.length>0?"?":"") + URL.join("&");
   }
 });

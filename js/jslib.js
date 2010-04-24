@@ -238,7 +238,7 @@ qwebirc.util.importJS = function(name, watchFor, onload) {
   document.getElementsByTagName("head")[0].appendChild(script);
 }
 
-qwebirc.util.createInput = function(type, parent, name, selected) {
+qwebirc.util.createInput = function(type, parent, name, selected, id) {
   var r;
   if(Browser.Engine.trident) {
     if(name) {
@@ -246,12 +246,19 @@ qwebirc.util.createInput = function(type, parent, name, selected) {
     } else {
       name = "";
     }
-    r = $(document.createElement("<input type=\"" + type + "\"" + name + " " + (selected?" checked":"") + "/>"));
+    if(id) {
+      id = " id=\"" + escape(id) + "\"";
+    } else {
+      id = "";
+    }
+    r = $(document.createElement("<input type=\"" + type + "\"" + name + id + " " + (selected?" checked":"") + "/>"));
   } else {    
     r = new Element("input");
     r.type = type;
     if(name)
       r.name = name;
+    if(id)
+      r.id = id;
       
     if(selected)
       r.checked = true;
@@ -368,4 +375,9 @@ qwebirc.util.deviceHasKeyboard = function() {
   }
   
   return v;
+}
+
+qwebirc.util.generateID_ID = 0;
+qwebirc.util.generateID = function() {
+  return "qqa-" + qwebirc.util.generateID_ID++;
 }

@@ -64,11 +64,11 @@ qwebirc.config.Input = new Class({
     
     this.render();
   },
-  createInput: function(type, parent, name, selected) {
+  createInput: function(type, parent, name, selected, id) {
     if(!$defined(parent))
       parent = this.parentElement;
 
-    return qwebirc.util.createInput(type, parent, name, selected);
+    return qwebirc.util.createInput(type, parent, name, selected, this.option.id);
   },
   FE: function(element, parent) {
     var n = new Element(element);
@@ -161,7 +161,7 @@ qwebirc.config.HueInput = new Class({
 qwebirc.config.CheckInput = new Class({
   Extends: qwebirc.config.Input,
   render: function() {
-    var i = this.createInput("checkbox");
+    var i = this.createInput("checkbox", null, null, null, this.id);
     this.mainElement = i;
     
     i.checked = this.value;
@@ -362,7 +362,11 @@ qwebirc.ui.OptionsPane = new Class({
       
       var row = FE("tr", tb);
       var cella = FE("td", row);
-      cella.set("text", x.label + ":");
+      
+      x.id = qwebirc.util.generateID();
+      var label = new Element("label", {"for": x.id});
+      cella.appendChild(label);
+      label.set("text", x.label + ":");
 
       var cellb = FE("td", row);
       this.boxList.push([x, new x.Element(cellb, x, i, this)]);
