@@ -516,6 +516,28 @@ qwebirc.irc.IRCClient = new Class({
    
     return entry.prefixes.indexOf(prefix) != -1;
   },
+  nickOnChanHasAtLeastPrefix: function(nick, channel, prefix) {
+    var entry = this.tracker.getNickOnChannel(nick, channel);
+    if(!$defined(entry))
+      return false; /* shouldn't happen */
+   
+    /* this array is sorted */
+    var pos = this.prefixes.indexOf(prefix);
+    if(pos == -1)
+      return false;  /* shouldn't happen */
+
+    var modehash = {};
+    this.prefixes.slice(0, pos + 1).split("").each(function(x) {
+      modehash[x] = true;
+    });
+    
+    var prefixes = entry.prefixes;
+    for(var i=0;i<prefixes.length;i++)
+      if(modehash[prefixes.charAt(i)])
+        return true;
+        
+    return false;
+  },
   supported: function(key, value) {
     if(key == "PREFIX") {
       var l = (value.length - 2) / 2;

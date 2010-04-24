@@ -12,7 +12,7 @@ qwebirc.ui.MENU_ITEMS = function() {
     var channel = this.name; /* window name */
     var myNick = this.client.nickname;
 
-    return this.client.nickOnChanHasPrefix(myNick, channel, "@");
+    return this.client.nickOnChanHasAtLeastPrefix(myNick, channel, "@");
   };
 
   var isVoiced = function(nick) {
