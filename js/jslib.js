@@ -293,6 +293,11 @@ qwebirc.util.b64Decode = function(data) {
 
   var output = [];
   var table = qwebirc.util.b64Table;
+  
+  /* grossly inefficient... so sue me */
+  while(data.length % 4 != 0)
+    data = data + "=";
+    
   for(var i=0;i<data.length;) {
     var enc1 = table.indexOf(data.charAt(i++));
     var enc2 = table.indexOf(data.charAt(i++));

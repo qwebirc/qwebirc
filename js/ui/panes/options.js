@@ -430,9 +430,11 @@ qwebirc.ui.SuppliedArgOptions = new Class({
   initialize: function(ui, arg) {
     var p = {};
     
-    if($defined(arg) && arg != "") {
-      var decoded = qwebirc.util.b64Decode(arg);
-      if(decoded)
+    if($defined(arg) && arg != "" && arg.length > 2) {
+      var checksum = arg.substr(arg.length - 2, 2);
+      var decoded = qwebirc.util.b64Decode(arg.substr(0, arg.length - 2));
+      
+      if(decoded && (new qwebirc.util.crypto.MD5().digest(decoded).slice(0, 2) == checksum))
         p = qwebirc.util.parseURI("?" + decoded);
     }
     
@@ -456,7 +458,9 @@ qwebirc.ui.SuppliedArgOptions = new Class({
         result.push(x.optionId + "=" + x.value);
     }.bind(this));
     
-    return qwebirc.util.b64Encode(result.join("&")).replaceAll("=", "");
+    var raw = result.join("&");
+    var checksum = new qwebirc.util.crypto.MD5().digest(raw).slice(0, 2);
+    return (qwebirc.util.b64Encode(raw)).replaceAll("=", "") + checksum;
   }
 });
 
