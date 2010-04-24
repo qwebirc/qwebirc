@@ -73,7 +73,6 @@ qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initi
 
   var yes = new Element("input", {"type": "submit", "value": "Connect"});
   td.appendChild(yes);
-  yes.focus();
   yes.addEvent("click", function(e) {
     parentElement.removeChild(outerbox);
     callback({"nickname": initialNickname, "autojoin": initialChannels});
@@ -85,7 +84,7 @@ qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initi
     auth.addEvent("click", qwebirc.ui.AuthLogin);
   }
   
-  if(!window != window.top) 
+  if(window == window.top) 
     yes.focus();
 }
 
@@ -236,7 +235,7 @@ qwebirc.ui.LoginBox = function(parentElement, callback, initialNickname, initial
   nick.set("value", initialNickname);
   chan.set("value", initialChannels);
 
-  if(!window != window.top) 
+  if(window == window.top)
     nick.focus();
 }
 
