@@ -41,11 +41,16 @@ qwebirc.irc.IRCClient = new Class({
     if(!extra)
       extra = {};
 
-    extra["n"] = user.hostToNick();
-    extra["h"] = user.hostToHost();
+    if($defined(user)) {
+      extra["n"] = user.hostToNick();
+      extra["h"] = user.hostToHost();
+    }
     extra["c"] = channel;
     extra["-"] = this.nickname;
     
+    if(!(this.ui.uiOptions.NICK_OV_STATUS))
+      delete extra["@"];
+      
     this.newLine(channel, type, extra);
   },
   newServerLine: function(type, data) {
