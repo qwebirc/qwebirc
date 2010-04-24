@@ -62,7 +62,7 @@ def merge_files(output, files, root_path=lambda x: x):
 
   for x in files:
     f2 = open(root_path(x), "rb")
-    f.write(f2.read())
+    f.write(f2.read() + "\n")
     f2.close()
   f.close()
 
