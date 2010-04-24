@@ -1,3 +1,8 @@
+qwebirc.irc.PMODE_LIST = 0;
+qwebirc.irc.PMODE_SET_UNSET = 1;
+qwebirc.irc.PMODE_SET_ONLY = 2;
+qwebirc.irc.PMODE_REGULAR_MODE = 3;
+
 qwebirc.irc.RegisteredCTCPs = {
   "VERSION": function(x) {
     return "qwebirc v" + qwebirc.VERSION + ", copyright (C) Chris Porter 2008-2009 -- " + qwebirc.util.browserVersion();
@@ -23,7 +28,7 @@ qwebirc.irc.BaseIRCClient = new Class({
     this.lowerNickname = this.toIRCLower(this.nickname);    
 
     this.__signedOn = false;
-    this.pmodes = {b: true, k: true, o: true, l: true, v: true};
+    this.pmodes = {b: qwebirc.irc.PMODE_LIST, l: qwebirc.irc.PMODE_SET_ONLY, k: qwebirc.irc.PMODE_SET_UNSET, o: qwebirc.irc.PMODE_SET_UNSET, v: qwebirc.irc.PMODE_SET_UNSET};
     this.channels = {}
     this.nextctcp = 0;    
 
@@ -85,8 +90,20 @@ qwebirc.irc.BaseIRCClient = new Class({
       } else {
         /* TODO: warn */
       }
+      this.lowerNickname = this.toIRCLower(this.nickname);
+    } else if(key == "CHANMODES") {
+      var smodes = value.split(",");
+      for(var i=0;i<smodes.length;i++)
+        for(var j=0;j<smodes[i].length;j++)
+          this.pmodes[smodes[i].charAt(j)] = i;
+    } else if(key == "PREFIX") {
+      var l = (value.length - 2) / 2;
+      
+      var modeprefixes = value.substr(1, l).split("");
+      modeprefixes.each(function(modeprefix) {
+        this.pmodes[modeprefix] = qwebirc.irc.PMODE_SET_UNSET;
+      }, this);
     }
-    this.lowerNickname = this.toIRCLower(this.nickname);
   },
   irc_RPL_WELCOME: function(prefix, params) {
     this.nickname = params[0];
@@ -294,7 +311,8 @@ qwebirc.irc.BaseIRCClient = new Class({
         }
 
         var d;
-        if(this.pmodes[mode]) { 
+        var pmode = this.pmodes[mode];
+        if(pmode == qwebirc.irc.PMODE_LIST || pmode == qwebirc.irc.PMODE_SET_UNSET || (cmode == "+" && pmode == qwebirc.irc.PMODE_SET_ONLY)) { 
           d = [cmode, mode, xargs[carg++]]
         } else {
           d = [cmode, mode]
@@ -310,24 +328,21 @@ qwebirc.irc.BaseIRCClient = new Class({
   },  
   irc_RPL_ISUPPORT: function(prefix, params) {
     var supported = params.slice(1, -1);
-    var supportedhash = {};
+    
+    var items = {};
+    for(var i=0;i<supported.length;i++) {
+      var l = supported[i].splitMax("=", 2);
+      items[l[0]] = true;
+    }
+    
+    if(items.CHANMODES && items.PREFIX) /* nasty hack */
+      this.pmodes = {};
     
     for(var i=0;i<supported.length;i++) {
       var l = supported[i].splitMax("=", 2);
       this.supported(l[0], l[1]);
     }
-  },  
-  irc_RPL_MYINFO: function(prefix, params) {
-    if(params.length < 6)
-      return;
-
-    var pmodes = params[5].split("");
-    this.pmodes = {}
-    
-    pmodes.each(function(pmode) {
-      this.pmodes[pmode] = true;
-    }, this);
-  },  
+  },
   irc_RPL_NAMREPLY: function(prefix, params) {
     var channel = params[2];    
     var names = params[3];
