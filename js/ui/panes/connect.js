@@ -84,6 +84,9 @@ qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initi
     td.appendChild(auth);
     auth.addEvent("click", qwebirc.ui.AuthLogin);
   }
+  
+  if(!window != window.top) 
+    yes.focus();
 }
 
 qwebirc.ui.LoginBox = function(parentElement, callback, initialNickname, initialChannels, networkName) {
@@ -233,7 +236,8 @@ qwebirc.ui.LoginBox = function(parentElement, callback, initialNickname, initial
   nick.set("value", initialNickname);
   chan.set("value", initialChannels);
 
-  nick.focus();
+  if(!window != window.top) 
+    nick.focus();
 }
 
 qwebirc.ui.authShowHide = function(checkbox, authRow, usernameBox, usernameRow, passwordRow) {
