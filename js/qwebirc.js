@@ -1,4 +1,4 @@
-var qwebirc = {ui: {themes: {}, style: {}}, irc: {}, util: {crypto: {}}, config: {}, auth: {}, sound: {}};
+var qwebirc = {ui: {themes: {}, style: {}}, irc: {}, util: {crypto: {}}, config: {}, auth: {}, sound: {}, xdomain: {}};
 
 if(typeof QWEBIRC_BUILD != "undefined") {
   qwebirc.BUILD = QWEBIRC_BUILD;

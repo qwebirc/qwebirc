@@ -231,6 +231,8 @@ qwebirc.irc.IRCClient = new Class({
 
       this.exec("/AUTOJOIN");
     }
+
+    this.ui.signedOn();
   },
   userJoined: function(user, channel) {
     var nick = user.hostToNick();

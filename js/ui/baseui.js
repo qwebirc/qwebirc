@@ -180,6 +180,32 @@ qwebirc.ui.BaseUI = new Class({
     var window_ = this.getActiveWindow();
     if($defined(window_))
       window_.focusChange(newValue);
+  },
+  signedOn: function() {
+    this.poller = new qwebirc.xdomain.Poller(this.oobMessage.bind(this));
+  },
+  oobMessage: function(message) {
+    var c = message.splitMax(" ", 2);
+    if(c.length != 2)
+      return;
+
+    var command = c[0];
+    if(command != "CMD")
+      return;
+
+    var d = c[1].splitMax(" ", 2);
+    if(d.length != 2)
+      return;
+
+    var command = d[0];
+    var args = d[1];
+    if(command == "SAY") {
+      var w = this.getActiveIRCWindow();
+      if($defined(w) && w.type == qwebirc.ui.WINDOW_CHANNEL) {
+        w.client.exec("/SAY " + args);
+        return;
+      }
+    }
   }
 });
 
