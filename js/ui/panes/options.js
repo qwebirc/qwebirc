@@ -48,7 +48,8 @@ qwebirc.config.DEFAULT_OPTIONS = [
     get: function(value, ui) {
       ui.setModifiableStylesheetValues(value, 0, 0);
     }
-  }]
+  }],
+  [12, "QUERY_ON_NICK_CLICK", "Query on nickname click in channel", false]
 ];
 
 qwebirc.config.DefaultOptions = null;
