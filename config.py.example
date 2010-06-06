@@ -212,8 +212,11 @@ STATIC_BASE_URL = ""
 DYNAMIC_BASE_URL = ""
 
 # OPTION: CONNECTION_RESOLVER
-#         This specific object (if not None) will be used to resolve
-#         connections made to the IRC server.
+#         A list of (ip, port) tuples of resolvers to use for looking
+#         the SRV record(s) used for connecting to the name set in
+#         IRC_SERVER.
+#         The default value is None, and in this case qwebirc will use
+#         the system's default resolver(s).
 CONNECTION_RESOLVER = None
 
 # QUAKENET SPECIFIC VALUES
