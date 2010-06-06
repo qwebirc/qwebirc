@@ -119,25 +119,23 @@ html {
 .qwebirc-qui .outertabbar {
   border-bottom: 1px solid $(tabbar_border);
   background: $(tabbar_background);
-  white-space: nowrap;
 }
 
 .qwebirc-qui .tabbar {
-  padding: 4px;
   font-size: 0.8em;
   color: $(tabbar_text);
+  margin-left: 38px;
+  line-height: 24px;
 }
 
 .qwebirc-qui a.tab {
   border: 1px solid $(tab_border);
   padding: 2px;
   cursor: default;
-  margin-right: 2px;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
-}
-
-.qwebirc-qui a.tab {
+  margin-right: -2px;
+  white-space: nowrap;
   text-decoration: none;
   color: $(tab_text);
 }
@@ -165,7 +163,8 @@ html {
 
 .qwebirc-qui .tabclose {
   margin-left: 5px;
-  font-size: 0.6em;
+  font-size: 0.7em;
+  line-height: 150%;
   vertical-align: top;
   padding-left: 3px;
   -moz-border-radius: 2px;
@@ -247,6 +246,7 @@ div#noscript {
   cursor: hand;
   float: left;
   padding: 4px;
+  width: 30px;
 }
 
 .qwebirc-qui .dropdownmenu {
