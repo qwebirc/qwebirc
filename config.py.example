@@ -211,6 +211,11 @@ STATIC_BASE_URL = ""
 #         instances on the same host.
 DYNAMIC_BASE_URL = ""
 
+# OPTION: CONNECTION_RESOLVER
+#         This specific object (if not None) will be used to resolve
+#         connections made to the IRC server.
+CONNECTION_RESOLVER = None
+
 # QUAKENET SPECIFIC VALUES
 # ---------------------------------------------------------------------
 #

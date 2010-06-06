@@ -140,8 +140,19 @@ class QWebIRCFactory(protocol.ClientFactory):
     self.publisher.disconnect()
 
 def createIRC(*args, **kwargs):
+  resolver = config.get("CONNECTION_RESOLVER")
   f = QWebIRCFactory(*args, **kwargs)
-  reactor.connectTCP(config.IRCSERVER, config.IRCPORT, f)
+  if resolver is None:
+    reactor.connectTCP(config.IRCSERVER, config.IRCPORT, f)
+    return f
+
+  def callback(addr):
+    reactor.connectTCP(addr, config.IRCPORT, f)
+  def errback(err):
+    f.clientConnectionFailed(None, err) # None?!
+
+  d = resolver.getHostByName(config.IRCSERVER, (1, 3, 11))
+  d.addCallbacks(callback, errback)
   return f
 
 if __name__ == "__main__":
