@@ -1,0 +1,43 @@
+<table class="qwebirc-centrebox">
+  <tr>
+    <td>
+      <table class="qwebirc-loginbox" style="display: none" name="loginbox">
+        <tr class="tr1">
+          <td>
+            <h1>Connect to <span name="networkname"></span> IRC</h1>
+          </td>
+        </tr>
+        <tr class="tr2">
+          <td>
+            <form>
+              <table>
+                <tr>
+                  <td><label for="loginnickname">Nickname:</label></td>
+                  <td><input type="text" name="nickname" id="loginnickname" /></td>
+                </tr>
+                <tr>
+                  <td><label for="loginchannels">Channels:</label></td>
+                  <td><input type="text" name="channels" id="loginchannels" /></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td><input type="submit" value="Connect" name="connect" /></td>
+                </tr>
+              </table>
+            </form>
+          </td>
+        </tr>
+      </table>
+      <table class="qwebirc-confirmbox" style="display: none" name="confirmbox">
+        <tr class="tr1">
+          <td>
+            To connect to <span name="networkname"></span> IRC and join <span name="prettychannels"></span><span name="nickselected" style="display: none"> as <b name="nickname"></b></span> click 'Connect'.
+          </td>
+        </tr>
+        <tr class="tr2">
+          <td><input type="submit" value="Connect" name="connect" /></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

@@ -174,7 +174,11 @@ qwebirc.ui.BaseUI = new Class({
       tricked into getting themselves glined
     */
   loginBox: function(callback, initialNickname, initialChannels, autoConnect, autoNick) {
-    qwebirc.ui.GenericLoginBox(this.parentElement, callback, initialNickname, initialChannels, autoConnect, autoNick, this.options.networkName);
+    this.postInitialize();
+
+    this.addCustomWindow("Connection details", qwebirc.ui.ConnectPane, "connectpane", {
+      initialNickname: initialNickname, initialChannels: initialChannels, autoConnect: autoConnect, networkName: this.options.networkName, callback: callback, autoNick: autoNick
+    }, qwebirc.ui.WINDOW_CONNECT);
   },
   focusChange: function(newValue) {
     var window_ = this.getActiveWindow();
@@ -255,7 +259,7 @@ qwebirc.ui.StandardUI = new Class({
   newCustomWindow: function(name, select, type) {
     if(!type)
       type = qwebirc.ui.WINDOW_CUSTOM;
-      
+
     var w = this.newWindow(qwebirc.ui.CUSTOM_CLIENT, type, name);
     w.addEvent("close", function(w) {
       delete this.windows[qwebirc.ui.CUSTOM_CLIENT][w.identifier];
@@ -266,7 +270,7 @@ qwebirc.ui.StandardUI = new Class({
 
     return w;
   },
-  addCustomWindow: function(windowName, class_, cssClass, options) {
+  addCustomWindow: function(windowName, class_, cssClass, options, type) {
     if(!$defined(options))
       options = {};
       
@@ -275,7 +279,7 @@ qwebirc.ui.StandardUI = new Class({
       return;
     }
     
-    var d = this.newCustomWindow(windowName, true);
+    var d = this.newCustomWindow(windowName, true, type);
     this.customWindows[windowName] = d;
     
     d.addEvent("close", function() {
@@ -383,24 +387,8 @@ qwebirc.ui.NotificationUI = new Class({
   }
 });
 
-qwebirc.ui.NewLoginUI = new Class({
-  Extends: qwebirc.ui.NotificationUI,
-  loginBox: function(callbackfn, initialNickname, initialChannels, autoConnect, autoNick) {
-    this.postInitialize();
-
-    /* I'd prefer something shorter and snappier! */
-    var w = this.newCustomWindow("Connection details", true, qwebirc.ui.WINDOW_CONNECT);
-    var callback = function(args) {
-      w.close();
-      callbackfn(args);
-    };
-    
-    qwebirc.ui.GenericLoginBox(w.lines, callback, initialNickname, initialChannels, autoConnect, autoNick, this.options.networkName);
-  }
-});
-
 qwebirc.ui.QuakeNetUI = new Class({
-  Extends: qwebirc.ui.NewLoginUI,
+  Extends: qwebirc.ui.NotificationUI,
   urlDispatcher: function(name, window) {
     if(name == "qwhois") {
       return ["span", function(auth) {

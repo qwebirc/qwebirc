@@ -1,167 +1,110 @@
-qwebirc.ui.GenericLoginBox = function(parentElement, callback, initialNickname, initialChannels, autoConnect, autoNick, networkName) {
-  if(autoConnect) {
-    qwebirc.ui.ConfirmBox(parentElement, callback, initialNickname, initialChannels, autoNick, networkName);
-  } else {
-    qwebirc.ui.LoginBox(parentElement, callback, initialNickname, initialChannels, networkName);
-  }
-}
+qwebirc.ui.ConnectPane = new Class({
+  Implements: [Events],
+  initialize: function(parent, options) {
+    var callback = options.callback, initialNickname = options.initialNickname, initialChannels = options.initialChannels, networkName = options.networkName, autoConnect = options.autoConnect, autoNick = options.autoNick;
+    this.options = options;
 
-qwebirc.ui.AuthLogin = function(e) {
-  var cookie = Cookie.write("redirect", document.location);
-  document.location = qwebirc.global.dynamicBaseURL + "auth/";
-  new Event(e).stop();
-}
+    var delayfn = function() { parent.set("html", "<div class=\"loading\">Loading. . .</div>"); };
+    var cb = delayfn.delay(500);
 
-qwebirc.ui.ConfirmBox = function(parentElement, callback, initialNickname, initialChannels, autoNick, networkName) {
-  var outerbox = new Element("table");
-  outerbox.addClass("qwebirc-centrebox");
-  parentElement.appendChild(outerbox);
-  var tbody = new Element("tbody");
-  outerbox.appendChild(tbody);
-  var tr = new Element("tr");
-  tbody.appendChild(tr);
-  var td = new Element("td");
-  tr.appendChild(td);
-  
-  var box = new Element("table");
-  box.addClass("qwebirc-confirmbox");
-  td.appendChild(box);
+    var r = qwebirc.ui.RequestTransformHTML({url: qwebirc.global.staticBaseURL + "panes/connect.html", update: parent, onSuccess: function() {
+      $clear(cb);
 
-  var tbody = new Element("tbody");
-  box.appendChild(tbody);
-  
-  var tr = new Element("tr");
-  tbody.appendChild(tr);
-  tr.addClass("tr1");
-  
-  var text = new Element("td");
-  tr.appendChild(text);
-  
-  var nick = new Element("b");
-  nick.set("text", initialNickname);
-  
-  var c = initialChannels.split(" ")[0].split(",");
-  
-  text.appendChild(document.createTextNode("To connect to " + networkName + " IRC and join channel" + ((c.length>1)?"s":"") + " "));
+      var box = (autoConnect ? "confirm" : "login");
+      var rootElement = parent.getElement("[name=" + box + "box]");
+      this.rootElement = rootElement;
+      
+      this.util.exec = function(n, x) { rootElement.getElements(n).each(x); };
+      var util = this.util;
+      var exec = util.exec;
+      util.makeVisible(rootElement);
 
-  for(var i=0;i<c.length;i++) {
-    if((c.length > 1) && (i == c.length - 1)) {
-      text.appendChild(document.createTextNode(" and "));
-    } else if(i > 0) {
-      text.appendChild(document.createTextNode(", "));
+      exec("[name=nickname]", util.setText(initialNickname));
+      exec("[name=channels]", util.setText(initialChannels));
+      exec("[name=prettychannels]", function(node) { this.__buildPrettyChannels(node, initialChannels); }.bind(this));
+      exec("[name=networkname]", util.setText(networkName));
+
+      var focus = "connect";
+      if(autoConnect) {
+        if(!autoNick)
+          exec("[name=nickselected]", util.makeVisible);
+
+        this.__validate = this.__validateConfirmData;
+      } else {
+	if(!initialNickname) {
+          focus = "nickname";
+        } else if(initialNickname && !initialChannels) {
+          focus = "channels";
+        }
+
+        this.__validate = this.__validateLoginData;
+      }
+
+      exec("[name=" + focus + "]", util.focus);
+      exec("[name=connect]", util.attachClick(this.__connect.bind(this)));
+    }.bind(this)});
+    r.get();
+  },
+  util: {
+    makeVisible: function(x) { x.setStyle("display", ""); },
+    focus: function(x) { x.focus(); },
+    attachClick: function(fn) { return function(x) { x.addListener("click", fn); } },
+    setText: function(x) { return function(y) {
+      if(typeof y.value === "undefined") {
+        y.set("text", x);
+      } else {
+        y.value = x === null ? "" : x;
+      }
+    } }
+  },
+  validate: function() {
+    return this.__validate();
+  },
+  __connect: function(e) {
+    new Event(e).stop();
+    var data = this.validate();
+    if(data === false)
+      return;
+
+    this.fireEvent("close");
+    this.options.callback(data);
+  },
+  __validateConfirmData: function() {
+    return {nickname: this.options.initialNickname, autojoin: this.options.initialChannels};
+  },
+  __validateLoginData: function() {
+    var nick = this.rootElement.getElement("input[name=nickname]"), chan = this.rootElement.getElement("input[name=channels]");
+
+    var nickname = nick.value;
+    var chans = chan.value;
+    if(chans == "#") /* sorry channel "#" :P */
+      chans = "";
+
+    if(!nickname) {
+      alert("You must supply a nickname.");
+      nick.focus();
+      return false;
     }
-    text.appendChild(new Element("b").set("text", c[i]));
-    
-  }
-  
-  if(!autoNick) {
-    text.appendChild(document.createTextNode(" as "));
-    text.appendChild(nick);
-  }
-  
-  text.appendChild(document.createTextNode(" click 'Connect'."));
-  text.appendChild(new Element("br"));
-  if(qwebirc.auth.enabled() && qwebirc.auth.quakeNetAuth() && !qwebirc.auth.loggedin())
-    text.appendChild(document.createTextNode("If you'd like to connect using your Q auth click 'Log in'."));
 
-  var tr = new Element("tr");
-  tbody.appendChild(tr);
-  tr.addClass("tr2");
-  
-  var td = new Element("td");
-  tr.appendChild(td);
-
-  var yes = new Element("input", {"type": "submit", "value": "Connect"});
-  td.appendChild(yes);
-  yes.addEvent("click", function(e) {
-    parentElement.removeChild(outerbox);
-    callback({"nickname": initialNickname, "autojoin": initialChannels});
-  });
-  
-  if(qwebirc.auth.enabled() && qwebirc.auth.quakeNetAuth() && !qwebirc.auth.loggedin()) {
-    var auth = new Element("input", {"type": "submit", "value": "Log in"});
-    td.appendChild(auth);
-    auth.addEvent("click", qwebirc.ui.AuthLogin);
-  }
-  
-  if(window == window.top) 
-    yes.focus();
-}
-
-qwebirc.ui.LoginBox = function(parentElement, callback, initialNickname, initialChannels, networkName) {
-  var outerbox = new Element("table");
-  outerbox.addClass("qwebirc-centrebox");
-  parentElement.appendChild(outerbox);
-  var tbody = new Element("tbody");
-  outerbox.appendChild(tbody);
-  var tr = new Element("tr");
-  tbody.appendChild(tr);
-  var td = new Element("td");
-  tr.appendChild(td);
-  
-  var box = new Element("table");
-  box.addClass("qwebirc-loginbox");
-  td.appendChild(box);
-  
-  var tbody = new Element("tbody");
-  box.appendChild(tbody);
-  
-  var tr = new Element("tr");
-  tbody.appendChild(tr);
-  tr.addClass("tr1");
-  
-  var td = new Element("td");
-  tr.appendChild(td);
-  td.set("html", "<h1>Connect to " + networkName + " IRC</h1>");  
-    
-  var tr = new Element("tr");
-  tbody.appendChild(tr);
-  tr.addClass("tr2");
-  
-  var td = new Element("td");
-  tr.appendChild(td);
-  
-  var form = new Element("form");
-  td.appendChild(form);
-
-  var boxtable = new Element("table");
-  form.appendChild(boxtable);
-
-  var tbody = new Element("tbody");
-  boxtable.appendChild(tbody); /* stupid IE */
-
-  function createRow(label, e2, style) {
-    var r = new Element("tr");
-    tbody.appendChild(r);
-
-    var d1 = new Element("td");
-    if(label)
-      d1.set("text", label);
-    r.appendChild(d1);
-
-    var d2 = new Element("td");
-    r.appendChild(d2);
-    
-    if($defined(e2))
-      d2.appendChild(e2);
-    if($defined(style)) {
-      r.setStyles(style);
-      return [r, d2];
+    var data = {nickname: nickname, autojoin: chans};
+    return data;
+  },
+  __buildPrettyChannels: function(node, channels) {
+    var c = channels.split(" ")[0].split(",");
+    node.appendChild(document.createTextNode("channel" + ((c.length>1)?"s":"") + " "));
+    for(var i=0;i<c.length;i++) {
+      if((c.length > 1) && (i == c.length - 1)) {
+        node.appendChild(document.createTextNode(" and "));
+      } else if(i > 0) {
+        node.appendChild(document.createTextNode(", "));
+      }
+      node.appendChild(new Element("b").set("text", c[i]));
     }
-    
-    return d2;
   }
+});
 
-  var nick = new Element("input");
-  createRow("Nickname:", nick);
-  
-  var chanStyle = null;
-  if(qwebirc.auth.enabled() && qwebirc.auth.bouncerAuth())
-    chanStyle = {display: "none"};
-  
-  var chan = new Element("input");
-  createRow("Channels:", chan, chanStyle);
-
+qwebirc.ui.LoginBox2 = function(parentElement, callback, initialNickname, initialChannels, networkName) {
+/*
   if(qwebirc.auth.enabled()) {
     if(qwebirc.auth.passAuth()) {
       var authRow = createRow("Auth to services:");
@@ -179,29 +122,14 @@ qwebirc.ui.LoginBox = function(parentElement, callback, initialNickname, initial
       var passwordBox = qwebirc.util.createInput("password", passwordRow, "connect_auth_password");
     }
   }
-  
+  */
+
   var connbutton = new Element("input", {"type": "submit"});
   connbutton.set("value", "Connect");
   var r = createRow(undefined, connbutton);
   
-  if(qwebirc.auth.enabled() && qwebirc.auth.quakeNetAuth() && !qwebirc.auth.loggedin()) {
-    var auth = new Element("input", {"type": "submit", "value": "Log in"});
-    r.appendChild(auth);
-    auth.addEvent("click", qwebirc.ui.AuthLogin);
-  }
-
   form.addEvent("submit", function(e) {
     new Event(e).stop();
-    var nickname = nick.value;
-    var chans = chan.value;
-    if(chans == "#") /* sorry channel "#" :P */
-      chans = "";
-
-    if(!nickname) {
-      alert("You must supply a nickname.");
-      nick.focus();
-      return;
-    }
 
     var data = {"nickname": nickname, "autojoin": chans};
     if(qwebirc.auth.enabled()) {
