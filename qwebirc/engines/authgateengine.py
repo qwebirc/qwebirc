@@ -2,6 +2,7 @@ from twisted.web import resource, server, static
 import config, urlparse, urllib, hashlib, re
 import qwebirc.util.rijndael, qwebirc.util.ciphers
 import qwebirc.util
+import qwebirc.util.qjson as json
 
 authgate = config.AUTHGATEPROVIDER.twisted
 BLOCK_SIZE = 128/8
@@ -35,6 +36,10 @@ class AuthgateEngine(resource.Resource):
         getSessionData(request)["qticket"] = decodeQTicket(qt)
       
       self.__hit()
+      if request.getCookie("jslogin"):
+        self.deleteCookie(request, "jslogin")
+        return """<html><head><script>window.opener.__qwebircAuthCallback(%s);</script></head></html>""" % json.dumps(ticket.username)
+
       location = request.getCookie("redirect")
       if location is None:
         location = "/"

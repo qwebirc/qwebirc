@@ -5,15 +5,15 @@ qwebirc.auth.loggedin = function() {
 }
 
 qwebirc.auth.enabled = function() {
-  return false;
+  return true;
 }
 
 qwebirc.auth.quakeNetAuth = function() {
-  return false;
+  return true;
 }
 
 qwebirc.auth.passAuth = function() {
-  return true;
+  return false;
 }
 
 qwebirc.auth.bouncerAuth = function() {

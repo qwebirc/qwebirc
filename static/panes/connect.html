@@ -19,9 +19,27 @@
                   <td><label for="loginchannels">Channels:</label></td>
                   <td><input type="text" name="channels" id="loginchannels" /></td>
                 </tr>
-                <tr>
+                <tr name="connectbutton" style="display: none">
                   <td></td>
-                  <td><input type="submit" value="Connect" name="connect" /></td>
+                  <td>
+                    <input type="submit" value="Join chat" name="connect" />
+                  </td>
+                </tr>
+                <tr name="loginbutton" style="display: none">
+                  <td></td>
+                  <td><input type="submit" value="Log in to Q" name="login" /></td>
+                </tr>
+                <tr name="loginconnectbutton" style="display: none">
+                  <td></td>
+                  <td><input type="submit" value="Join chat (Q account required)" name="loginconnect" /></td>
+                </tr>
+                <tr name="loginstatus" style="display: none">
+                  <td></td>
+                  <td><small>(logged in as <b name="authname"></b>)</small></td>
+                </tr>
+                <tr name="loggingin" style="display: none">
+                  <td></td>
+                  <td><small>(waiting for you to log in...)</td>
                 </tr>
               </table>
             </form>
@@ -31,11 +49,23 @@
       <table class="qwebirc-confirmbox" style="display: none" name="confirmbox">
         <tr class="tr1">
           <td>
-            To connect to <span name="networkname"></span> IRC and join <span name="prettychannels"></span><span name="nickselected" style="display: none"> as <b name="nickname"></b></span> click 'Connect'.
+            To connect to <span name="networkname"></span> IRC and join <span name="prettychannels"></span><span name="nickselected" style="display: none"> as <b name="nickname"></b></span> click 'Join chat'.
           </td>
         </tr>
-        <tr class="tr2">
-          <td><input type="submit" value="Connect" name="connect" /></td>
+        <tr class="tr2" name="connectbutton" style="display: none">
+          <td><input type="submit" value="Join chat" name="connect" /></td>
+        </tr>
+        <tr class="tr2" name="loginbutton" style="display: none">
+          <td><input type="submit" value="Log in to Q" name="login" /></td>
+        </tr>
+        <tr class="tr2" name="loginconnectbutton" style="display: none;">
+          <td><input type="submit" value="Join chat (Q account required)" name="loginconnect" /></td>
+        </tr>
+        <tr class="tr2" name="loginstatus" style="display: none">
+          <td><small>(logged in as <b name="authname"></b>)</small></td>
+        </tr>
+        <tr class="tr2" name="loggingin" style="display: none">
+          <td><small>(waiting for you to log in...)</small></td>
         </tr>
       </table>
     </td>

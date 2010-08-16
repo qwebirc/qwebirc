@@ -27,6 +27,10 @@
   text-align: left;
 }
 
+.qwebirc-loginbox input#loginnickname, .qwebirc-loginbox input#loginchannels {
+  width: 200px;
+}
+
 /**************** CONFIRM LOGIN BOX *******************/
 .qwebirc-confirmbox {
   width: 100%;
