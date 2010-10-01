@@ -439,8 +439,12 @@ qwebirc.ui.SuppliedArgOptions = new Class({
       var checksum = arg.substr(arg.length - 2, 2);
       var decoded = qwebirc.util.b64Decode(arg.substr(0, arg.length - 2));
       
-      if(decoded && (new qwebirc.util.crypto.MD5().digest(decoded).slice(0, 2) == checksum))
-        p = qwebirc.util.parseURI("?" + decoded);
+      if(decoded && (new qwebirc.util.crypto.MD5().digest(decoded).slice(0, 2) == checksum)) {
+        var p2 = qwebirc.util.parseURI("?" + decoded);
+        for(var k in p2) {
+          p[k] = JSON.decode(p2[k], true);
+        }
+      }
     }
     
     this.parsedOptions = p;
@@ -460,7 +464,7 @@ qwebirc.ui.SuppliedArgOptions = new Class({
     var result = [];
     this.getOptionList().forEach(function(x) {
       if(x.settableByURL && x.default_ != x.value)
-        result.push(x.optionId + "=" + x.value);
+        result.push(x.optionId + "=" + JSON.encode(x.value));
     }.bind(this));
     
     var raw = result.join("&");
