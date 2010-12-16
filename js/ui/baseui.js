@@ -205,7 +205,7 @@ qwebirc.ui.BaseUI = new Class({
     var args = d[1];
     if(command == "SAY") {
       var w = this.getActiveIRCWindow();
-      if($defined(w) && w.type == qwebirc.ui.WINDOW_CHANNEL) {
+      if($defined(w) && (w.type == qwebirc.ui.WINDOW_CHANNEL || w.type == qwebirc.ui.WINDOW_QUERY)) {
         w.client.exec("/SAY " + args);
         return;
       }
