@@ -341,11 +341,7 @@ qwebirc.ui.StandardUI = new Class({
   setModifiableStylesheet: function(name) {
     this.__styleSheet = new qwebirc.ui.style.ModifiableStylesheet(qwebirc.global.staticBaseURL + "css/" + name + qwebirc.FILE_SUFFIX + ".mcss");
     
-    if($defined(this.options.hue)) {
-      this.setModifiableStylesheetValues(this.options.hue, 0, 0);
-    } else {
-      this.setModifiableStylesheetValues(this.uiOptions.STYLE_HUE, 0, 0);
-    }
+    this.setModifiableStylesheetValues($defined(this.options.hue) ? this.options.hue : this.uiOptions.STYLE_HUE, $defined(this.options.saturation) ? this.options.saturation : 0, $defined(this.options.lightness) ? this.options.lightness : 0);
   },
   setModifiableStylesheetValues: function(hue, saturation, lightness) {
     if(!$defined(this.__styleSheet))
