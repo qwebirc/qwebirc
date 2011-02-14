@@ -59,16 +59,23 @@ qwebirc.irc.IRCConnection = new Class({
     /* try to minimise the amount of headers */
     r.headers = new Hash;
     r.addEvent("request", function() {
-      var setHeader = function(key, value) {
+      var kill = ["Accept", "Accept-Language"];
+      var killBit = "";
+
+      if(Browser.Engine.trident) {
+        killBit = "?";
+        kill.push("User-Agent");
+        kill.push("Connection");
+      } else if(/Firefox[\/\s]\d+\.\d+/.test(navigator.userAgent)) { /* HACK */
+        killBit = null;
+      }
+
+      for(var i=0;i<kill.length;i++) {
         try {
-          this.setRequestHeader(key, value);
+          this.setRequestHeader(kill[i], killBit);
         } catch(e) {
         }
-      }.bind(this);
-    
-      setHeader("User-Agent", null);
-      setHeader("Accept", null);
-      setHeader("Accept-Language", null);
+      }
     }.bind(r.xhr));
     
     if(Browser.Engine.trident)
