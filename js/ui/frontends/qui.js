@@ -331,12 +331,12 @@ qwebirc.ui.QUI.JSUI = new Class({
     bottom.setStyle("top", (docsize.y - bottomsize.y));
     this.fireEvent("reflow");
   },
-  showChannel: function(state) {
+  showChannel: function(state, nicklistVisible) {
     var display = "none";
     if(state)
       display = "block";
 
-    this.right.setStyle("display", display);
+    this.right.setStyle("display", nicklistVisible ? display : "none");
     this.topic.setStyle("display", display);
   },
   showInput: function(state) {
@@ -581,7 +581,7 @@ qwebirc.ui.QUI.Window = new Class({
     this.parentObject.setLines(this.lines);
     this.parentObject.setChannelItems(this.nicklist, this.topic);
     this.parentObject.qjsui.showInput(inputVisible);
-    this.parentObject.qjsui.showChannel($defined(this.nicklist));
+    this.parentObject.qjsui.showChannel($defined(this.nicklist), this.parentObject.uiOptions.SHOW_NICKLIST);
 
     this.reflow();
     
