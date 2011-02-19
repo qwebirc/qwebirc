@@ -34,6 +34,14 @@ REALNAME = "http://moo.com/"
 #          supplied nickname as their ident.
 IDENT = "webchat"
 
+# OPTION: OUTGOING_IP
+#         The IP address to bind to when connecting to the IRC server.
+#
+#         This will not change the IP address that qwebirc listens on. 
+#         You will need to call run.py with the --ip/-i option if you 
+#         want that.
+#OUTGOING_IP = "127.0.0.1"
+
 # OPTION: WEBIRC_MODE
 #         This option controls how the IP/hostname of the connecting
 #         browser will be sent to IRC.
