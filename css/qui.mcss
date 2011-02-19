@@ -1,24 +1,24 @@
-topic_background=f2f0ff
-lines_background=f2f0ff
-topic_border=c8d2dc
-tabbar_border=c3cee0
-tabbar_background=e2ecf9
-tabbar_text=000000
-tab_border=c8d2dc
-tab_text=000000
-tab_hover=ffffff
-tab_selected=ffffff
-tab_selected_border=c8d2dc
-tab_selected_text=333333
-input_border=c3cee0
-nicklist_border=c8d2dc
-nicklist_background=f2f0ff
-nicklist_text=000000
-nicklist_selected_border=c8d2dc
-menu_border=c8d2dc
-menu_background=f2f0ff
-menu_hover_background=FFFFFE
-lastpositionbar=C8D2DC
+topic_background=c,f2f0ff
+lines_background=c,f2f0ff
+topic_border=c,c8d2dc
+tabbar_border=c,c3cee0
+tabbar_background=c,e2ecf9
+tabbar_text=c,000000
+tab_border=c,c8d2dc
+tab_text=c,000000
+tab_hover=c,ffffff
+tab_selected=c,ffffff
+tab_selected_border=c,c8d2dc
+tab_selected_text=c,333333
+input_border=c,c3cee0
+nicklist_border=c,c8d2dc
+nicklist_background=c,f2f0ff
+nicklist_text=c,000000
+nicklist_selected_border=c,c8d2dc
+menu_border=c,c8d2dc
+menu_background=c,f2f0ff
+menu_hover_background=c,FFFFFE
+lastpositionbar=c,C8D2DC
 
 body {
   margin: 0;

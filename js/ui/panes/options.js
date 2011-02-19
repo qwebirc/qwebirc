@@ -46,7 +46,7 @@ qwebirc.config.DEFAULT_OPTIONS = [
     return {class_: qwebirc.config.HueOption, default_: 210};
   }, {
     applyChanges: function(value, ui) {
-      ui.setModifiableStylesheetValues(value, 0, 0);
+      ui.setModifiableStylesheetValues({hue: value});
     }
   }],
   [12, "QUERY_ON_NICK_CLICK", "Query on nickname click in channel", false],

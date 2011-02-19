@@ -193,6 +193,11 @@ qwebirc.ui.StandardUI = new Class({
     this.uiOptions = new qwebirc.ui.DefaultOptionsClass(this, options.uiOptionsArg);
     this.customWindows = {};
     
+    this.__styleValues = {hue: this.uiOptions.STYLE_HUE, saturation: 0, lightness: 0};
+    if($defined(this.options.hue)) this.__styleValues.hue = this.options.hue;
+    if($defined(this.options.saturation)) this.__styleValues.saturation = this.options.saturation;
+    if($defined(this.options.lightness)) this.__styleValues.lightness = this.options.lightness;
+    
     var ev;
     if(Browser.Engine.trident) {
       ev = "keydown";
@@ -340,15 +345,30 @@ qwebirc.ui.StandardUI = new Class({
   },
   setModifiableStylesheet: function(name) {
     this.__styleSheet = new qwebirc.ui.style.ModifiableStylesheet(qwebirc.global.staticBaseURL + "css/" + name + qwebirc.FILE_SUFFIX + ".mcss");
-    
-    this.setModifiableStylesheetValues($defined(this.options.hue) ? this.options.hue : this.uiOptions.STYLE_HUE, $defined(this.options.saturation) ? this.options.saturation : 0, $defined(this.options.lightness) ? this.options.lightness : 0);
+    this.setModifiableStylesheetValues({});
   },
-  setModifiableStylesheetValues: function(hue, saturation, lightness) {
+  setModifiableStylesheetValues: function(values) {
+    for(var k in values)
+      this.__styleValues[k] = values[k];
+      
     if(!$defined(this.__styleSheet))
       return;
-    this.__styleSheet.set(function(x) {
-      return x.setHue(hue).setSaturation(x.hsb[1] + saturation).setBrightness(x.hsb[2] + lightness);
-    });
+      
+    var hue = this.__styleValues.hue, lightness = this.__styleValues.lightness, saturation = this.__styleValues.saturation;
+    
+    this.__styleSheet.set(function() {
+      var mode = arguments[0];
+      if(mode == "c") {
+        var x = new Color(arguments[1]);
+        var c = x.setHue(hue).setSaturation(x.hsb[1] + saturation).setBrightness(x.hsb[2] + lightness);
+        if(c == "255,255,255") /* IE confuses white with transparent... */
+          c = "255,255,254";
+        
+        return "rgb(" + c + ")";
+      } else if(mode == "o") {
+        return this.uiOptions[arguments[1]] ? arguments[2] : arguments[3];
+      }
+    }.bind(this));
   }
 });
 
