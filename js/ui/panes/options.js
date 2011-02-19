@@ -20,7 +20,7 @@ qwebirc.config.DEFAULT_OPTIONS = [
         return [false, false]; /* [disabled, default_value] */
       return [true];
     },
-    get: function(value, ui) {
+    applyChanges: function(value, ui) {
       if(ui.setBeepOnMention)
         ui.setBeepOnMention(value);
     }
@@ -45,7 +45,7 @@ qwebirc.config.DEFAULT_OPTIONS = [
   [11, "STYLE_HUE", "Adjust user interface hue", function() {
     return {class_: qwebirc.config.HueOption, default_: 210};
   }, {
-    get: function(value, ui) {
+    applyChanges: function(value, ui) {
       ui.setModifiableStylesheetValues(value, 0, 0);
     }
   }],
@@ -86,9 +86,8 @@ qwebirc.config.Input = new Class({
   render: function() {
     this.event("render", this.mainElement);
   },
-  get: function(value) {
-    this.event("get", [value, this.parentObject.optionObject.ui]);
-    return value;
+  applyChanges: function() {
+    this.event("applyChanges", [this.get(), this.parentObject.optionObject.ui]);
   },
   event: function(name, x) {
     if(!$defined(this.option.extras))
@@ -115,7 +114,7 @@ qwebirc.config.TextInput = new Class({
     this.parent();
   },
   get: function() {
-    return this.parent(this.mainElement.value);
+    return this.mainElement.value;
   }
 });
 
@@ -142,7 +141,7 @@ qwebirc.config.HueInput = new Class({
     
     slider.addEvent("change", function(step) {
       this.value = step;
-      this.get();
+      this.applyChanges();
     }.bind(this));
     this.mainElement = i;
     
@@ -152,11 +151,11 @@ qwebirc.config.HueInput = new Class({
     this.parent();
   },
   get: function() {
-    return this.parent(this.value);
+    return this.value;
   },
   cancel: function() {
     this.value = this.startValue;
-    this.get();
+    this.applyChanges();
   }
 });
 
@@ -172,7 +171,7 @@ qwebirc.config.CheckInput = new Class({
     this.parent();
   },
   get: function() {
-    return this.parent(this.mainElement.checked);
+    return this.mainElement.checked;
   }
 });
 
@@ -201,7 +200,7 @@ qwebirc.config.RadioInput = new Class({
       var x = this.elements[i];
       if(x.checked) {
         this.option.position = i;
-        return this.parent(this.option.options[i][1]);
+        return this.option.options[i][1];
       }
     }
   }
@@ -398,6 +397,9 @@ qwebirc.ui.OptionsPane = new Class({
       var option = x[0];
       var box = x[1];
       this.optionObject.setValue(option, box.get());
+    }.bind(this));
+    this.boxList.forEach(function(x) {
+      x[1].applyChanges();
     }.bind(this));
     this.optionObject.flush();
   },
