@@ -56,7 +56,8 @@ qwebirc.ui.ConnectPane = new Class({
         }
       }
 
-      exec("[name=" + focus + "]", util.focus);
+      if(window == window.top) /* don't focus when we're iframe'd */
+        exec("[name=" + focus + "]", util.focus);
       exec("[name=connect]", util.attachClick(this.__connect.bind(this)));
       exec("[name=loginconnect]", util.attachClick(this.__loginConnect.bind(this)));
       exec("[name=login]", util.attachClick(this.__login.bind(this)));
