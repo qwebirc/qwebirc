@@ -148,7 +148,7 @@ qwebirc.ui.QUI = new Class({
     var inputbox = new Element("input");
     form.appendChild(inputbox);
     this.inputbox = inputbox;
-    this.inputbox.maxLength = 512;
+    this.inputbox.maxLength = 470;
 
     var sendInput = function() {
       if(inputbox.value == "")
