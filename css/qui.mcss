@@ -67,8 +67,11 @@ html {
   background: $(lines_background);
 }
 
-.qwebirc-qui .ircwindow {
-  font-family: Consolas, "Lucida Console", monospace, Verdana, sans-serif, "sans serif";
+.qwebirc-qui .ircwindow div {
+  font-family: Consolas, "Lucida Console", monospace;
+  text-indent: -4px;
+  padding-left: 1px;
+  word-wrap: break-word;
 }
 
 .qwebirc-qui .tab-invisible {
