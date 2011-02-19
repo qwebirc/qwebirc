@@ -129,7 +129,12 @@ qwebirc.ui.Window = new Class({
     if(type)
       line = this.parentObject.theme.message(type, line, lhilight);
     
-    qwebirc.ui.Colourise(qwebirc.irc.IRCTimestamp(new Date()) + " " + line, element, this.client.exec, this.parentObject.urlDispatcher.bind(this.parentObject), this);
+    var tsE = document.createElement("span");
+    tsE.className = "timestamp";
+    tsE.appendChild(document.createTextNode(qwebirc.irc.IRCTimestamp(new Date()) + " "));
+    element.appendChild(tsE);
+    
+    qwebirc.ui.Colourise(line, element, this.client.exec, this.parentObject.urlDispatcher.bind(this.parentObject), this);
     this.scrollAdd(element);
   },
   errorMessage: function(message) {

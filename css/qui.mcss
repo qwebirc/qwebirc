@@ -19,6 +19,9 @@ menu_border=c,c8d2dc
 menu_background=c,f2f0ff
 menu_hover_background=c,FFFFFE
 lastpositionbar=c,C8D2DC
+timestamp_display=o,SHOW_TIMESTAMPS,inline,none
+timestamp_padding_left=o,SHOW_TIMESTAMPS,7px,11px
+timestamp_text_indent=o,SHOW_TIMESTAMPS,-7px,-9px
 
 body {
   margin: 0;
@@ -67,10 +70,14 @@ html {
   background: $(lines_background);
 }
 
+.qwebirc-qui .lines .timestamp {
+  display: $(timestamp_display);
+}
+
 .qwebirc-qui .ircwindow div {
   font-family: Consolas, "Lucida Console", monospace;
-  text-indent: -4px;
-  padding-left: 1px;
+  text-indent: $(timestamp_text_indent);
+  padding-left: $(timestamp_padding_left);
   word-wrap: break-word;
 }
 
