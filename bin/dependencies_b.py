@@ -15,6 +15,7 @@ def check_dependencies():
   i = 0
   
   check_twisted()
+  check_zope()
   check_win32()
   i+=check_json()
   i+=check_java()
@@ -71,6 +72,18 @@ def check_hg():
     
   return 0
   
+def check_zope():
+  try:
+    from zope.interface import Interface
+  except ImportError:
+    if sys.platform.startswith("win"):
+      fail("qwebirc requires zope interface",
+           "see pypi: http://pypi.python.org/pypi/zope.interface")
+    else:
+      fail("qwebirc requires zope interface.",
+           "this should normally come with twisted, but can be downloaded",
+           "from pypi: http://pypi.python.org/pypi/zope.interface")
+           
 def check_twisted():
   try:
     import twisted

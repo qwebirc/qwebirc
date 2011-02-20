@@ -17,6 +17,7 @@ qwebirc.util.dictCopy = function(d) {
 
 /* how horribly inefficient */
 String.prototype.replaceAll = function(f, t) {
+  //return new RegExp("/" + RegExp.escape(f) + "/g").replace(f, RegExp.escape(t));
   var i = this.indexOf(f);
   var c = this;
  
@@ -117,15 +118,7 @@ qwebirc.util.pad = function(x) {
 }
 
 RegExp.escape = function(text) {
-  if(!arguments.callee.sRE) {
-    var specials = [
-      '/', '.', '*', '+', '?', '|',
-      '(', ')', '[', ']', '{', '}', '\\'
-    ];
-    arguments.callee.sRE = new RegExp('(\\' + specials.join('|\\') + ')', 'g');
-  }
-  
-  return text.replace(arguments.callee.sRE, '\\$1');
+  return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
 }
 
 qwebirc.ui.insertAt = function(position, parent, element) {

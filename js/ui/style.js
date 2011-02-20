@@ -66,12 +66,10 @@ qwebirc.ui.style.ModifiableStylesheet = new Class({
 	  
     var text = this.__cssText;
     for(var key in this.rules) {
-      var value = mutator(new Color(this.rules[key]));
+      var s = this.rules[key].split(",");
+      var value = mutator.pass(s);
       
-      if(value == "255,255,255") /* IE confuses white with transparent... */
-        value = "255,255,254";
-        
-      text = text.replaceAll("$(" + key + ")", "rgb(" + value + ")");
+      text = text.replaceAll("$(" + key + ")", value);
     }
     
     this.__setStylesheet(text);

@@ -1,24 +1,27 @@
-topic_background=f2f0ff
-lines_background=f2f0ff
-topic_border=c8d2dc
-tabbar_border=c3cee0
-tabbar_background=e2ecf9
-tabbar_text=000000
-tab_border=c8d2dc
-tab_text=000000
-tab_hover=ffffff
-tab_selected=ffffff
-tab_selected_border=c8d2dc
-tab_selected_text=333333
-input_border=c3cee0
-nicklist_border=c8d2dc
-nicklist_background=f2f0ff
-nicklist_text=000000
-nicklist_selected_border=c8d2dc
-menu_border=c8d2dc
-menu_background=f2f0ff
-menu_hover_background=FFFFFE
-lastpositionbar=C8D2DC
+topic_background=c,f2f0ff
+lines_background=c,f2f0ff
+topic_border=c,c8d2dc
+tabbar_border=c,c3cee0
+tabbar_background=c,e2ecf9
+tabbar_text=c,000000
+tab_border=c,c8d2dc
+tab_text=c,000000
+tab_hover=c,ffffff
+tab_selected=c,ffffff
+tab_selected_border=c,c8d2dc
+tab_selected_text=c,333333
+input_border=c,c3cee0
+nicklist_border=c,c8d2dc
+nicklist_background=c,f2f0ff
+nicklist_text=c,000000
+nicklist_selected_border=c,c8d2dc
+menu_border=c,c8d2dc
+menu_background=c,f2f0ff
+menu_hover_background=c,FFFFFE
+lastpositionbar=c,C8D2DC
+timestamp_display=o,SHOW_TIMESTAMPS,inline,none
+timestamp_padding_left=o,SHOW_TIMESTAMPS,7px,11px
+timestamp_text_indent=o,SHOW_TIMESTAMPS,-7px,-9px
 
 body {
   margin: 0;
@@ -67,8 +70,15 @@ html {
   background: $(lines_background);
 }
 
-.qwebirc-qui .ircwindow {
-  font-family: Consolas, "Lucida Console", monospace, Verdana, sans-serif, "sans serif";
+.qwebirc-qui .lines .timestamp {
+  display: $(timestamp_display);
+}
+
+.qwebirc-qui .ircwindow div {
+  font-family: Consolas, "Lucida Console", monospace;
+  text-indent: $(timestamp_text_indent);
+  padding-left: $(timestamp_padding_left);
+  word-wrap: break-word;
 }
 
 .qwebirc-qui .tab-invisible {

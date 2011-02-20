@@ -22,13 +22,19 @@ qwebirc.ui.Interface = new Class({
     saturation: null,
     lightness: null,
     uiOptionsArg: null,
+    nickValidation: null,
     dynamicBaseURL: "/",
     staticBaseURL: "/"
   },
   initialize: function(element, ui, options) {
-    qwebirc.global = {dynamicBaseURL: options.dynamicBaseURL, staticBaseURL: options.staticBaseURL}; /* HACK */
-
     this.setOptions(options);
+    
+    /* HACK */
+    qwebirc.global = {
+      dynamicBaseURL: options.dynamicBaseURL,
+      staticBaseURL: options.staticBaseURL,
+      nicknameValidator: $defined(options.nickValidation) ? new qwebirc.irc.NicknameValidator(options.nickValidation) : new qwebirc.irc.DummyNicknameValidator()
+    };
 
     window.addEvent("domready", function() {
       var callback = function(options) {

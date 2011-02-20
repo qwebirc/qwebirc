@@ -194,6 +194,14 @@ qwebirc.ui.ConnectPane = new Class({
       return false;
     }
 
+    var stripped = qwebirc.global.nicknameValidator.validate(nickname);
+    if(stripped != nickname) {
+      nick.value = stripped;
+      alert("Your nickname was invalid and has been corrected; please check your altered nickname and try again.");
+      nick.focus();
+      return false;
+    }
+    
     var data = {nickname: nickname, autojoin: chans};
     return data;
   },
@@ -239,6 +247,24 @@ qwebirc.ui.LoginBox2 = function(parentElement, callback, initialNickname, initia
   form.addEvent("submit", function(e) {
     new Event(e).stop();
 
+    var nickname = nick.value;
+    var chans = chan.value;
+    if(chans == "#") /* sorry channel "#" :P */
+      chans = "";
+
+    if(!nickname) {
+      alert("You must supply a nickname.");
+      nick.focus();
+      return;
+    }
+    var stripped = qwebirc.global.nicknameValidator.validate(nickname);
+    if(stripped != nickname) {
+      nick.value = stripped;
+      alert("Your nickname was invalid and has been corrected; please check your altered nickname and press Connect again.");
+      nick.focus();
+      return;
+    }
+    
     var data = {"nickname": nickname, "autojoin": chans};
     if(qwebirc.auth.enabled()) {
       if(qwebirc.auth.passAuth() && authCheckBox.checked) {

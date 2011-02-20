@@ -184,6 +184,13 @@ qwebirc.ui.EmbedWizard = new Class({
           this.nicknameBox.focus();
           return false;
         }
+        var v = qwebirc.global.nicknameValidator.validate(this.nicknameBox.value, true);
+        if(v != this.nicknameBox.value) {
+          this.nicknameBox.value = v;
+          alert("The supplied nickname was invalid and has been corrected.");
+          this.nicknameBox.focus();
+          return false;
+         }
         return true;
       }.bind(this),
       middle: this.nicknameBox,
@@ -202,7 +209,7 @@ qwebirc.ui.EmbedWizard = new Class({
       var url = this.generateURL(false);
       
       alink.href = url;
-      alink.target = "new";
+      alink.target = "_blank";
       alink.appendChild(document.createTextNode(url));
       abox.value = "<iframe src=\"" + url + "\" width=\"647\" height=\"400\"></iframe>";
       

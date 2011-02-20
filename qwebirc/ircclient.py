@@ -146,13 +146,18 @@ class QWebIRCFactory(protocol.ClientFactory):
 
 def createIRC(*args, **kwargs):
   f = QWebIRCFactory(*args, **kwargs)
+  
+  tcpkwargs = {}
+  if hasattr(config, "OUTGOING_IP"):
+    tcpkwargs["bindAddress"] = (config.OUTGOING_IP, 0)
+  
   if CONNECTION_RESOLVER is None:
-    reactor.connectTCP(config.IRCSERVER, config.IRCPORT, f)
+    reactor.connectTCP(config.IRCSERVER, config.IRCPORT, f, **tcpkwargs)
     return f
 
   def callback(result):
     name, port = random.choice(sorted((str(x.payload.target), x.payload.port) for x in result[0]))
-    reactor.connectTCP(name, port, f)
+    reactor.connectTCP(name, port, f, **tcpkwargs)
   def errback(err):
     f.clientConnectionFailed(None, err) # None?!
 
