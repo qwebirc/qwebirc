@@ -96,6 +96,36 @@ NETWORK_NAME = "FooNet"
 #         The title of the application in the web browser.
 APP_TITLE = NETWORK_NAME + " Web IRC"
 
+# NICKNAME VALIDATION OPTIONS
+# ---------------------------------------------------------------------
+#
+# OPTION: NICKNAME_VALIDATE
+#         If True then user nicknames will be validated according to
+#         the configuration below, otherwise they will be passed
+#         directly to the ircd.
+NICKNAME_VALIDATE = True
+
+# OPTION: NICKNAME_VALID_FIRST_CHAR
+#         A string containing valid characters for the first letter of
+#         a nickname.
+#         Default is as in RFC1459.
+import string
+NICKNAME_VALID_FIRST_CHAR = string.letters + "_[]{}`^\\|"
+
+# OPTION: NICKNAME_VALID_SUBSEQUENT_CHAR
+#         A string containing valid characters for the rest of the
+#         nickname.
+NICKNAME_VALID_SUBSEQUENT_CHARS = NICKNAME_VALID_FIRST_CHAR + string.digits + "-"
+
+# OPTION: NICKNAME_MINIMUM_LENGTH
+#         Minimum characters permitted in a nickname on your network.
+NICKNAME_MINIMUM_LENGTH = 2
+
+# OPTION: NICKNAME_MAXIMUM_LENGTH
+#         Maximum characters permitted in a nickname on your network.
+#         Ideally we'd extract this from the ircd, but we need to know
+#         before we connect.
+NICKNAME_MAXIMUM_LENGTH = 15
 
 # FEEDBACK OPTIONS
 # ---------------------------------------------------------------------

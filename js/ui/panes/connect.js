@@ -202,7 +202,14 @@ qwebirc.ui.LoginBox = function(parentElement, callback, initialNickname, initial
       nick.focus();
       return;
     }
-
+    var stripped = qwebirc.global.nicknameValidator.validate(nickname);
+    if(stripped != nickname) {
+      nick.value = stripped;
+      alert("Your nickname was invalid and has been corrected; please check your altered nickname and press Connect again.");
+      nick.focus();
+      return;
+    }
+    
     var data = {"nickname": nickname, "autojoin": chans};
     if(qwebirc.auth.enabled()) {
       if(qwebirc.auth.passAuth() && authCheckBox.checked) {

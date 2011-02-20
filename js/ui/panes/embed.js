@@ -184,6 +184,13 @@ qwebirc.ui.EmbedWizard = new Class({
           this.nicknameBox.focus();
           return false;
         }
+        var v = qwebirc.global.nicknameValidator.validate(this.nicknameBox.value, true);
+        if(v != this.nicknameBox.value) {
+          this.nicknameBox.value = v;
+          alert("The supplied nickname was invalid and has been corrected.");
+          this.nicknameBox.focus();
+          return false;
+         }
         return true;
       }.bind(this),
       middle: this.nicknameBox,
