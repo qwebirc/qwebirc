@@ -33,6 +33,7 @@ qwebirc.ui.Interface = new Class({
     qwebirc.global = {
       dynamicBaseURL: options.dynamicBaseURL,
       staticBaseURL: options.staticBaseURL,
+      baseURL: options.baseURL,
       nicknameValidator: $defined(options.nickValidation) ? new qwebirc.irc.NicknameValidator(options.nickValidation) : new qwebirc.irc.DummyNicknameValidator()
     };
 
