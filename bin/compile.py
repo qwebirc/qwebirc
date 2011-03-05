@@ -61,6 +61,8 @@ def merge_files(output, files, root_path=lambda x: x):
   f = open(output, "wb")
 
   for x in files:
+    if x.startswith("//"):
+      continue
     f2 = open(root_path(x), "rb")
     f.write(f2.read() + "\n")
     f2.close()

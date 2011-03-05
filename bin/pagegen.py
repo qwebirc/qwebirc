@@ -6,14 +6,14 @@ class HGException(Exception):
 def jslist(name, debug):
   ui = pages.UIs[name]
   if debug:
-    x = [pages.JS_BASE, ui.get("extra", []), pages.DEBUG, ["debug/ui/frontends/%s" % y for y in ui["uifiles"]]]
+    x = [pages.JS_DEBUG_BASE, ui.get("extra", []), pages.DEBUG, ["debug/ui/frontends/%s" % y for y in ui["uifiles"]]]
     hgid = ""
   else:
     #x = [pages.JS_BASE, ui.get("buildextra", ui.get("extra", [])), pages.BUILD_BASE, name]
-    x = [name]
+    x = [pages.JS_RAW_BASE, name]
     hgid = "-" + gethgid()  
   
-  return list("js/%s%s.js" % (y, hgid) for y in pages.flatten(x))
+  return list(y if y.startswith("//") else "js/%s%s.js" % (y, hgid) for y in pages.flatten(x))
 
 def csslist(name, debug, gen=False):
   ui = pages.UIs[name]
@@ -54,7 +54,7 @@ def producehtml(name, debug):
   js = jslist(name, debug)
   css = csslist(name, debug, gen=True)
   csshtml = "\n".join("  <link rel=\"stylesheet\" href=\"%s%s\" type=\"text/css\"/>" % (config.STATIC_BASE_URL, x) for x in css)
-  jshtml = "\n".join("  <script type=\"text/javascript\" src=\"%s%s\"></script>" % (config.STATIC_BASE_URL, x) for x in js)
+  jshtml = "\n".join("  <script type=\"text/javascript\" src=\"%s%s\"></script>" % ("" if x.startswith("//") else config.STATIC_BASE_URL, x) for x in js)
 
   div = ui.get("div", "")
   customjs = ui.get("customjs", "")
