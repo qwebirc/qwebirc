@@ -144,6 +144,7 @@ html {
   cursor: default;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
+  border-radius: 4px;
   margin-right: -2px;
   white-space: nowrap;
   text-decoration: none;
@@ -155,6 +156,7 @@ html {
   border: 1px solid #c8d2dc;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
+  border-radius: 4px;
 }
 
 .qwebirc-qui .tab-selected {
@@ -162,6 +164,7 @@ html {
   border: 1px solid $(tab_selected_border);
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
+  border-radius: 4px;
   color: $(tab_selected_text);
 }
 
@@ -179,6 +182,7 @@ html {
   padding-left: 3px;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
+  border-radius: 2px;
 }
 
 .qwebirc-qui a.tab-hilight-activity {
