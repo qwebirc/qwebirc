@@ -244,18 +244,22 @@ qwebirc.util.createInput = function(type, parent, name, selected, id) {
     } else {
       id = "";
     }
-    r = $(document.createElement("<input type=\"" + type + "\"" + name + id + " " + (selected?" checked":"") + "/>"));
-  } else {    
-    r = new Element("input");
-    r.type = type;
-    if(name)
-      r.name = name;
-    if(id)
-      r.id = id;
-      
-    if(selected)
-      r.checked = true;
+    try {
+      return $(document.createElement("<input type=\"" + type + "\"" + name + id + " " + (selected?" checked":"") + "/>"));
+    } catch(e) {
+      /* fallthough, trying it the proper way... */
+    }
   }
+  
+  r = new Element("input");
+  r.type = type;
+  if(name)
+    r.name = name;
+  if(id)
+    r.id = id;
+      
+  if(selected)
+    r.checked = true;
     
   parent.appendChild(r);
   return r;
