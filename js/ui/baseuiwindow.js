@@ -258,5 +258,7 @@ qwebirc.ui.Window = new Class({
     }
     
     this.lastPositionLineInserted = this.parentObject.uiOptions.LASTPOS_LINE;
+  },
+  rename: function(name) {
   }
 });
