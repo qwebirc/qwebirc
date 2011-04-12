@@ -102,6 +102,17 @@ qwebirc.irc.IRCClient = new Class({
   getWindow: function(name) {
     return this.windows[this.toIRCLower(name)];
   },
+  renameWindow: function(oldname, newname) {
+    var oldwindow = this.getWindow(oldname);
+    if(!oldwindow || this.getWindow(newname))
+      return;
+
+    var window = this.ui.renameWindow(oldwindow, newname);
+    if(window) {
+      this.windows[this.toIRCLower(newname)] = window;
+      delete this.windows[this.toIRCLower(oldname)];
+    }
+  },
   newWindow: function(name, type, select) {
     var w = this.getWindow(name);
     if(!w) {
@@ -339,10 +350,15 @@ qwebirc.irc.IRCClient = new Class({
       var found = true;
       
       this.newChanLine(c, "NICK", user, {"w": newnick});
-      /* TODO: rename queries */
       this.updateNickList(c);
     }
-
+    
+    if(this.getQueryWindow(oldnick)) {
+      var found = true;
+      this.renameWindow(oldnick, newnick);
+      this.newLine(newnick, "NICK", {"n": oldnick, "w": newnick});
+    }
+    
     /* this is quite horrible */
     if(!found)
       this.newServerLine("NICK", {"w": newnick, n: user.hostToNick(), h: user.hostToHost(), "-": this.nickname});

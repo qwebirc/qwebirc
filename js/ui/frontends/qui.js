@@ -434,6 +434,9 @@ qwebirc.ui.QUI.Window = new Class({
     this.nicksColoured = this.parentObject.uiOptions.NICK_COLOURS;
     this.reflow();    
   },
+  rename: function(name) {
+    this.tab.replaceChild(document.createTextNode(name), this.tab.firstChild);
+  },
   editTopic: function() {
     if(!this.client.nickOnChanHasPrefix(this.client.nickname, this.name, "@")) {
 /*      var cmodes = this.client.getChannelModes(channel);

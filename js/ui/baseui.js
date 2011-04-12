@@ -114,6 +114,29 @@ qwebirc.ui.BaseUI = new Class({
   __setActiveWindow: function(window) {
     this.active = window;
   },
+  renameWindow: function(window, name) {
+    if(this.getWindow(window.client, window.type, name))
+      return null;
+    
+    var clientId = this.getClientId(window.client);
+    var index = this.windowArray.indexOf(window);
+    if(index == -1)
+      return null;
+    
+    delete this.windows[clientId][window.identifier];
+    
+    var window = this.windowArray[index];
+    window.name = name;
+    window.identifier = this.getWindowIdentifier(window.client, window.type, window.name);
+    
+    this.windows[clientId][window.identifier] = this.windowArray[index];
+    
+    if(window.active)
+      this.updateTitle(window.name + " - " + this.options.appTitle);
+    
+    window.rename(window.name);
+    return window;
+  },
   selectWindow: function(window) {
     if(this.active)
       this.active.deselect();
