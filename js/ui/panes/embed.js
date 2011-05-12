@@ -319,6 +319,6 @@ qwebirc.ui.EmbedWizard = new Class({
         URL.push("uio=" + uioptions);
     }
     
-    return this.options.baseURL + (URL.length>0?"?":"") + URL.join("&");
+    return qwebirc.global.baseURL + (URL.length>0?"?":"") + URL.join("&");
   }
 });
