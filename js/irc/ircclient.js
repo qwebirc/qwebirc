@@ -669,5 +669,22 @@ qwebirc.irc.IRCClient = new Class({
   },
   channelCreationTime: function(channel, time) {
     this.newTargetOrActiveLine(channel, "CHANNELCREATIONTIME", {c: channel, m: qwebirc.irc.IRCDate(new Date(time * 1000))});
-  }  
+  },
+  qwebircImage: function(target, url) {
+    var w;
+    if(target == "-STATUS") {
+      w = this.statusWindow;
+    } else {
+      w = this.getWindow(target);
+    }
+
+    if(!w)
+      w = this.getActiveWindow();
+
+    var img = new Element("img", {src: qwebirc.global.dynamicBaseURL + "image?filename=" + url});
+    var d = new Element("div", {styles: {"paddingTop": "2px", "paddingBottom": "2px", "paddingLeft": "9px"}});
+    d.appendChild(img);
+    w.scrollAdd(d);
+    return true;
+  }
 });

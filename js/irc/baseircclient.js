@@ -504,5 +504,10 @@ qwebirc.irc.BaseIRCClient = new Class({
 
     this.channelModeIs(channel, modes);
     return true;
+  },
+  irc_QWEBIRCIMAGE: function(prefix, params) {
+    var target = params[0];
+    var url = params.indexFromEnd(-1);
+    return this.qwebircImage(target, url);
   }
 });
