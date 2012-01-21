@@ -167,8 +167,13 @@ qwebirc.ui.ConnectPane = new Class({
     this.util.exec("[name=loggingin]", this.util.setVisible(true));
     this.util.exec("[name=" + calleename + "]", this.util.setVisible(false));
 
-    __qwebircAuthCallback = function(username) {
+    __qwebircAuthCallback = function(username, expiry, serverNow) {
       this.__cancelLoginCallback(true);
+
+      var now = new Date().getTime();
+      var offset = (serverNow * 1000) - now;
+      var ourExpiry = expiry * 1000 - offset;
+      Cookie.write("ticketexpiry", ourExpiry)
 
       this.util.exec("[name=loggingin]", this.util.setVisible(false));
       this.util.exec("[name=loginstatus]", this.util.setVisible(true));
