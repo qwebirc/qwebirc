@@ -20,6 +20,11 @@ from qwebirc.config_options import *
 #         Port of IRC server to connect to.
 IRCSERVER, IRCPORT = "irc.myserver.com", 6667
 
+# OPTION: SSLPORT
+#         SSL port of IRC server to connect to.
+#         If this option is uncommented it will override IRCPORT.
+#SSLPORT = 6697
+
 # OPTION: REALNAME
 #         The realname field of IRC clients will be set to this value.
 REALNAME = "http://moo.com/"
