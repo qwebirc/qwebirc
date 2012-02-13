@@ -1,27 +1,31 @@
-topic_background=c,f2f0ff
-lines_background=c,f2f0ff
-topic_border=c,c8d2dc
-tabbar_border=c,c3cee0
-tabbar_background=c,e2ecf9
-tabbar_text=c,000000
-tab_border=c,c8d2dc
-tab_text=c,000000
-tab_hover=c,ffffff
-tab_selected=c,ffffff
-tab_selected_border=c,c8d2dc
-tab_selected_text=c,333333
-input_border=c,c3cee0
-nicklist_border=c,c8d2dc
-nicklist_background=c,f2f0ff
-nicklist_text=c,000000
-nicklist_selected_border=c,c8d2dc
-menu_border=c,c8d2dc
-menu_background=c,f2f0ff
-menu_hover_background=c,FFFFFE
-lastpositionbar=c,C8D2DC
+topic_background=c,f2f0ff,back
+lines_background=c,f2f0ff,back
+topic_border=c,c8d2dc,front
+tabbar_border=c,c3cee0,front
+tabbar_background=c,e2ecf9,back
+tabbar_text=c,000000,front
+tab_border=c,c8d2dc,front
+tab_text=c,000000,front
+tab_hover=c,ffffff,back
+tab_selected=c,ffffff,back
+tab_selected_border=c,c8d2dc,back
+tab_selected_text=c,333333,front
+input_border=c,c3cee0,front
+nicklist_border=c,c8d2dc,front
+nicklist_background=c,f2f0ff,back
+nicklist_text=c,000000,front
+nicklist_selected_border=c,c8d2dc,front
+menu_border=c,c8d2dc,front
+menu_background=c,f2f0ff,back
+menu_hover_background=c,FFFFFE,back
+lastpositionbar=c,C8D2DC,front
 timestamp_display=o,SHOW_TIMESTAMPS,inline,none
 timestamp_padding_left=o,SHOW_TIMESTAMPS,7px,11px
 timestamp_text_indent=o,SHOW_TIMESTAMPS,-7px,-9px
+nicklist_text=c,000000,front
+lines_text=c,000000,front
+menu_text=c,000000,front
+nicklist_selected_background=c,ffffff,back
 
 body {
   margin: 0;
@@ -64,7 +68,7 @@ html {
 }
 
 .qwebirc-qui .lines {
-  color: black;
+  color: $(lines_text);
   overflow: auto;
   font-size: 0.8em;
   background: $(lines_background);
@@ -211,7 +215,7 @@ html {
 
 .qwebirc-qui .nicklist a {
   display: block;
-  color: black;
+  color: $(nicklist_text);
   text-decoration: none;
   cursor: default;
   border-top: 1px solid $(nicklist_background);
@@ -221,8 +225,8 @@ html {
 
 .qwebirc-qui .nicklist a.selected {
   display: block;
-  color: black;
-  background: white;
+  color: $(nicklist_text);
+  background: $(nicklist_selected_background);
   text-decoration: none;
   border-bottom: $(nicklist_selected_border) 1px solid;
   cursor: default;
@@ -275,7 +279,7 @@ div#noscript {
 .qwebirc-qui .dropdownmenu a {
   display: block;
   font-size: 0.7em;
-  color: black;
+  color: $(menu_text);
   cursor: pointer;
   cursor: hand;  
   padding-top: 1px;

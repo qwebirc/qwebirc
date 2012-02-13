@@ -21,6 +21,9 @@ qwebirc.ui.Interface = new Class({
     hue: null,
     saturation: null,
     lightness: null,
+    thue: null,
+    tsaturation: null,
+    tlightness: null,
     uiOptionsArg: null,
     nickValidation: null,
     dynamicBaseURL: "/",
@@ -69,9 +72,13 @@ qwebirc.ui.Interface = new Class({
       
       if(this.options.searchURL) {
         var args = qwebirc.util.parseURI(String(document.location));
-        this.options.hue = this.getHueArg(args);
-        this.options.saturation = this.getSaturationArg(args);
-        this.options.lightness = this.getLightnessArg(args);
+        this.options.hue = this.getHueArg(args, "");
+        this.options.saturation = this.getSaturationArg(args, "");
+        this.options.lightness = this.getLightnessArg(args, "");
+
+        this.options.thue = this.getHueArg(args, "t");
+        this.options.tsaturation = this.getSaturationArg(args, "t");
+        this.options.tlightness = this.getLightnessArg(args, "t");
         
         if($defined(args["uio"]))
           this.options.uiOptionsArg = args["uio"];
@@ -144,8 +151,8 @@ qwebirc.ui.Interface = new Class({
       var details = ui_.loginBox(callback, inick, ichans, autoConnect, usingAutoNick);
     }.bind(this));
   },
-  getHueArg: function(args) {
-    var hue = args["hue"];
+  getHueArg: function(args, t) {
+    var hue = args[t + "hue"];
     if(!$defined(hue))
       return null;
     hue = parseInt(hue);
@@ -153,8 +160,8 @@ qwebirc.ui.Interface = new Class({
       return null;
     return hue;
   },
-  getSaturationArg: function(args) {
-    var saturation = args["saturation"];
+  getSaturationArg: function(args, t) {
+    var saturation = args[t + "saturation"];
     if(!$defined(saturation))
       return null;
     saturation = parseInt(saturation);
@@ -162,8 +169,8 @@ qwebirc.ui.Interface = new Class({
       return null;
     return saturation;
   },
-  getLightnessArg: function(args) {
-    var lightness = args["lightness"];
+  getLightnessArg: function(args, t) {
+    var lightness = args[t + "lightness"];
     if(!$defined(lightness))
       return null;
     lightness = parseInt(lightness);
