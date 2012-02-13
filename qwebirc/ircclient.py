@@ -1,6 +1,6 @@
 import twisted, sys, codecs, traceback
 from twisted.words.protocols import irc
-from twisted.internet import reactor, protocol, abstract, ssl
+from twisted.internet import reactor, protocol, abstract
 from twisted.web import resource, server
 from twisted.protocols import basic
 from twisted.names.client import Resolver
@@ -153,6 +153,7 @@ def createIRC(*args, **kwargs):
   
   if CONNECTION_RESOLVER is None:
     if hasattr(config, "SSLPORT"):
+      from twisted.internet import ssl
       reactor.connectSSL(config.IRCSERVER, config.SSLPORT, f, ssl.ClientContextFactory(), **tcpkwargs)
     else:
       reactor.connectTCP(config.IRCSERVER, config.IRCPORT, f, **tcpkwargs)
