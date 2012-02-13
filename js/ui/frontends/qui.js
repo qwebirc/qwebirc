@@ -200,7 +200,7 @@ qwebirc.ui.QUI = new Class({
         resultfn = this.commandhistory.upLine;
       } else if(e.key == "down") {
         resultfn = this.commandhistory.downLine;
-      } else if(e.key == "tab") {
+      } else if(e.key == "tab" && !e.altKey && !e.ctrlKey && !e.shiftKey) {
         new Event(e).stop();
         this.tabComplete(inputbox);
         return;

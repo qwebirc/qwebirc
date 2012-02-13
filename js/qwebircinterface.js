@@ -1,9 +1,11 @@
 function qwebirc_ui_onbeforeunload(e) { /* IE sucks */
-  var message = "This action will close all active IRC connections.";
-  var e = e || window.event;
-  if(e)
-    e.returnValue = message;
-  return message;
+  if(qwebirc.connected) {
+    var message = "This action will close all active IRC connections.";
+    var e = e || window.event;
+    if(e)
+      e.returnValue = message;
+    return message;
+  }
 }
 
 qwebirc.ui.Interface = new Class({
