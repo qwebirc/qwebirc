@@ -56,6 +56,9 @@ def producehtml(name, debug):
   csshtml = "\n".join("  <link rel=\"stylesheet\" href=\"%s%s\" type=\"text/css\"/>" % (config.STATIC_BASE_URL, x) for x in css)
   jshtml = "\n".join("  <script type=\"text/javascript\" src=\"%s%s\"></script>" % (config.STATIC_BASE_URL, x) for x in js)
 
+  if hasattr(config, "ANALYTICS_HTML"):
+    jshtml+="\n" + config.ANALYTICS_HTML
+
   div = ui.get("div", "")
   customjs = ui.get("customjs", "")
 

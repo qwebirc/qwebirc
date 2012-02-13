@@ -97,6 +97,12 @@ BASE_URL = "http://foo.foo.org/"
 #         application.
 NETWORK_NAME = "FooNet"
 
+# OPTION: ANALYTICS_HTML
+#         If you have an analytics service, you can paste the HTML
+#         between the triple quotes.
+#ANALYTICS_HTML = """
+#"""
+
 # OPTION: APP_TITLE
 #         The title of the application in the web browser.
 APP_TITLE = NETWORK_NAME + " Web IRC"
