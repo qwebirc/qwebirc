@@ -195,6 +195,9 @@ qwebirc.ui.Window = new Class({
         if(this.scrolltimer)
           $clear(this.scrolltimer);
         this.scrolltimer = this.scrollAdd.delay(50, this, [null]);
+      } else {
+        this.scrollToBottom();
+        this.scrolltimer = null;
       }
     } else {
       this.scrollToBottom();
