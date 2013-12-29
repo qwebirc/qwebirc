@@ -127,10 +127,12 @@ def check_json():
 def check_autobahn():
   try:
     import autobahn.websocket
-    return 1
-  except ImportError:
-    warn("autobahn not installed; websocket support will be disabled")
     return 0
+  except ImportError:
+    warn("autobahn not installed; websocket support will be disabled.",
+         "consider installing autobahn from:",
+         "http://autobahn.ws/python/getstarted/")
+    return 1
 
 if __name__ == "__main__":
   import dependencies
