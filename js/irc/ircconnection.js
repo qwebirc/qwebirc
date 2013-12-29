@@ -33,9 +33,12 @@ qwebirc.irc.IRCConnection = new Class({
     this.__timeout = this.options.initialTimeout;
     this.__lastActiveRequest = null;
     this.__activeRequest = null;
-    
     this.__sendQueue = [];
     this.__sendQueueActive = false;
+    this.__wsAttempted = false;
+    this.__wsEverConnected = false;
+    this.__ws = null;
+    this.__wsAuthed = false;
   },
   __error: function(text) {
     this.fireEvent("error", text);
@@ -108,6 +111,8 @@ qwebirc.irc.IRCConnection = new Class({
     
     if(synchronous) {
       this.__send(data, false);
+    } else if(this.__ws && this.__wsAuthed) {
+      this.__ws.send("p" + data);
     } else {
       this.__sendQueue.push(data);
       this.__processSendQueue();
@@ -136,7 +141,7 @@ qwebirc.irc.IRCConnection = new Class({
         
         if(!this.disconnected) {
           this.disconnected = true;
-          this.__error("An error occured: " + o[1]);
+          this.__error("An error occurred: " + o[1]);
         }
         return false;
       }
@@ -150,7 +155,7 @@ qwebirc.irc.IRCConnection = new Class({
     if(o[0] == false) {
       if(!this.disconnected) {
         this.disconnected = true;
-        this.__error("An error occured: " + o[1]);
+        this.__error("An error occurred: " + o[1]);
       }
       return false;
     }
@@ -186,7 +191,7 @@ qwebirc.irc.IRCConnection = new Class({
     if(this.__timeout + this.options.timeoutIncrement <= this.options.maxTimeout)
       this.__timeout+=this.options.timeoutIncrement;
         
-    this.recv();
+    this.__recvLongPoll();
   },
   __checkRetries: function() {
     /* hmm, something went wrong! */
@@ -203,6 +208,87 @@ qwebirc.irc.IRCConnection = new Class({
     return true;
   },
   recv: function() {
+    if(this.__wsSupported) {
+      this.__recvWebSocket();
+    } else {
+      this.__recvLongPoll();
+    }
+  },
+  __wsURL: function() {
+    var wsproto;
+    if (window.location.protocol === "https:") {
+      wsproto = "wss";
+    } else {
+      wsproto = "ws";
+    }
+    return wsproto + "://" + window.location.host + "/" + qwebirc.global.dynamicBaseURL + "w";
+  },
+  __recvWebSocket: function() {
+    if(this.disconnected)
+      return;
+
+    if(this.__wsAttempted && !this.__wsEverConnected) {
+      /* give up and use long polling */
+      this.__recvLongPoll();
+      return;
+    }
+
+    if(this.__isFlooding()) {
+      this.disconnect();
+      this.__error("BUG: uncontrolled flood detected -- disconnected.");
+    }
+
+    var ws = new WebSocket(this.__wsURL());
+    var doRetry = function(e) {
+      ws.onerror = ws.onclose = null;
+      this.__ws = null;
+      if(this.disconnected)
+        return;
+
+      if(this.__checkRetries())
+        this.__recvWebSocket();
+    }.bind(this);
+
+    this.__wsAttempted = true;
+    this.__wsAuthed = false;
+    ws.onerror = function(e) {
+      doRetry(this, e);
+    }.bind(this);
+    ws.onclose = function(e) {
+      if(e.wasClean && (e.code == 4999 || e.code == 4998)) {
+        if(e.reason) {
+          this.disconnect();
+          this.__error("An error occurred: " + (e.reason ? e.reason : "(no reason returned)"));
+          return;
+        }
+      }
+
+      doRetry(this, e);
+    }.bind(this);
+    ws.onmessage = function(m) {
+      var data = m.data;
+      if(!this.__wsAuthed) {
+        if(data == "sTrue") {
+          this.__wsAuthed = true;
+          this.__wsEverConnected = true;
+          return;
+        }
+      } else {
+        if(data.charAt(0) == "c") {
+          this.__processData(JSON.decode(data.substr(1)));
+          return;
+        }
+      }
+
+      this.disconnect();
+      this.__error("An error occurred: bad message type");
+    }.bind(this);
+    ws.onopen = function() {
+      ws.send("s" + this.sessionid);
+    }.bind(this);
+    this.__ws = ws;
+  },
+  __recvLongPoll: function() {
     var r = this.newRequest("s", true);
     if(!$defined(r))
       return;
@@ -229,12 +315,12 @@ qwebirc.irc.IRCConnection = new Class({
           return;
           
         if(this.__checkRetries())
-          this.recv();
+          this.__recvLongPoll();
         return;
       }
       
       if(this.__processData(o))
-        this.recv();
+        this.__recvLongPoll();
     };
 
     r.addEvent("complete", onComplete.bind(this));
@@ -254,12 +340,23 @@ qwebirc.irc.IRCConnection = new Class({
       }
       if(o[0] == false) {
         this.disconnect();
-        this.__error("An error occured: " + o[1]);
+        this.__error("An error occurred: " + o[1]);
         return;
       }
       this.sessionid = o[1];
-      
-      this.recv();    
+      var transports = o[2];
+
+      this.__wsSupported = false;
+      if(transports.indexOf("websocket") > -1) {
+        if(window.WebSocket) {
+          this.__wsSupported = true;
+        } if(window.MozWebSocket) {
+          window.WebSocket = MozWebSocket;
+          this.__wsSupported = true;
+        }
+      }
+
+      this.recv();
     }.bind(this));
     
     var postdata = "nick=" + encodeURIComponent(this.initialNickname);
@@ -276,6 +373,10 @@ qwebirc.irc.IRCConnection = new Class({
     if($defined(this.__activeRequest)) {
       this.__activeRequest.cancel();
       this.__activeRequest = null;
+    }
+    if($defined(this.__ws)) {
+      this.__ws.close();
+      this.__ws = null;
     }
   },
   disconnect: function() {

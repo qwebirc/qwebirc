@@ -79,6 +79,10 @@ class RootSite(server.Site):
       root.putChild(path, sobj)
       
     register(engines.AJAXEngine, "e")
+    try:
+      register(engines.WebSocketEngine, "w")
+    except AttributeError:
+      pass
     register(engines.FeedbackEngine, "feedback")
     register(engines.AuthgateEngine, "auth")
     register(engines.AdminEngine, "adminengine", services)
