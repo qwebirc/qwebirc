@@ -23,7 +23,19 @@ def help_reactors(*args):
   run_twistd(["--help-reactors"])
   sys.exit(1)
 
-DEFAULT_REACTOR = "select" if os.name == "nt" else "poll"  
+try:
+  from select import epoll
+  DEFAULT_REACTOR = "epoll"
+except ImportError:
+  try:
+    from select import kqueue
+    DEFAULT_REACTOR = "kqueue"
+  except ImportError:
+    try:
+      from select import poll
+      DEFAULT_REACTOR = "poll"
+    except ImportError:
+      DEFAULT_REACTOR = "select"
 
 parser = OptionParser()
 parser.add_option("-n", "--no-daemon", help="Don't run in the background.", action="store_false", dest="daemonise", default=True)
