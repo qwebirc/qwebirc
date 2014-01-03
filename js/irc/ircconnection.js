@@ -1,7 +1,8 @@
 /* This could do with a rewrite from scratch. */
 
-//window.WEB_SOCKET_DEBUG = QWEBIRC_DEBUG;
-//window.WEB_SOCKET_FORCE_FLASH = true;
+//WEB_SOCKET_DEBUG = QWEBIRC_DEBUG;
+//WEB_SOCKET_FORCE_FLASH = true;
+//FORCE_LONGPOLL = true;
 
 qwebirc.irc.IRCConnection = new Class({
   Implements: [Events, Options],
@@ -46,9 +47,14 @@ qwebirc.irc.IRCConnection = new Class({
     this.__wsEverConnected = false;
     this.__ws = null;
     this.__wsAuthed = false;
+
+    this.__pubSeqNo = 0;
+    this.__subSeqNo = 0;
+    this.__sendRetries = 0;
   },
   __error: function(text) {
     this.fireEvent("error", text);
+    this.log("ERROR: " + text);
     if(this.options.errorAlert)
       alert(text);
   },
@@ -113,15 +119,17 @@ qwebirc.irc.IRCConnection = new Class({
     return false;
   },
   send: function(data, synchronous) {
+    this.__pubSeqNo++;
     if(this.disconnected)
       return false;
 
     if(synchronous) {
       this.__send(data, false);
     } else if(this.__ws && this.__wsAuthed) {
-      this.__ws.send("p" + data);
+      /* seqno here is currently pointless but it's nice to enforce it in the protocol */
+      this.__ws.send("p" + this.__pubSeqNo + "," + data);
     } else {
-      this.__sendQueue.push(data);
+      this.__sendQueue.push([this.__pubSeqNo, data]);
       this.__processSendQueue();
     }
     
@@ -132,37 +140,74 @@ qwebirc.irc.IRCConnection = new Class({
       return;
 
     this.__sendQueueActive = true;
-    this.__send(this.__sendQueue.shift(), true);
+    this.__send(this.__sendQueue[0], true);
   },
   __send: function(data, queued) {
+    this.log("called send(" + data[1] + ")");
     var r = this.newRequest("p", false, !queued); /* !queued == synchronous */
     if(r === null)
       return;
-      
+
+    var handled = false;
+    var retryEvent = null;
+    if(queued) {
+      var timeout = function() {
+        this.log("timeout for " + data[1] + " fired");
+        r.cancel();
+        retry();
+      }.delay(7500, this);
+    }
     r.addEvent("complete", function(o) {
-      if(queued)
+      this.log("complete for " + data[1] + " fired");
+      if(queued) {
+        $clear(timeout);
         this.__sendQueueActive = false;
+      }
+      if(retryEvent) {
+        this.log("cleared retry event");
+        $clear(retryEvent);
+      }
+      this.__sendRetries = 0;
+      this.__sendQueue.shift();
 
       if(!o || (o[0] == false)) {
         this.__sendQueue = [];
         
         if(!this.disconnected) {
           this.disconnect();
-          this.__error("An error occurred: " + o[1]);
+          this.__error("An error occurred: " + (o ? o[1] : "(unknown error)"));
         }
         return false;
       }
       
       this.__processSendQueue();
     }.bind(this));
-    
-    r.send("s=" + this.sessionid + "&c=" + encodeURIComponent(data));
+
+    if(queued) {
+      var retry = function() {
+        this.log("retry for " + data[1] + " fired... handled is " + handled);
+        if(handled)
+          return;
+        handled = true;
+        $clear(timeout);
+        this.log("Unable to send command " + data + "... retrying (attempt " + this.__sendRetries + ")");
+        if(this.__sendRetries++ < 3) {
+          retryEvent = this.__send.delay(1500 * this.__sendRetries + Math.random() * 1000, this, [data, queued]);
+        } else {
+          this.disconnect();
+          this.__error("Unable to send command after multiple retries.");
+        }
+      }.bind(this);
+      r.addEvent("error", retry);
+      r.addEvent("failure", retry);
+    }
+    r.send("s=" + this.sessionid + "&c=" + encodeURIComponent(data[1]) + "&n=" + data[0]);
   },
   __processData: function(o) {
-    if(o[0] == false) {
+    if(!o || o[0] == false) {
       if(!this.disconnected) {
         this.disconnect();
-        this.__error("An error occurred: " + o[1]);
+        this.__error("An error occurred: " + (o ? o[1] : "(unknown error)"));
       }
       return false;
     }
@@ -195,8 +240,6 @@ qwebirc.irc.IRCConnection = new Class({
     if(this.__timeout + this.options.timeoutIncrement <= this.options.maxTimeout)
       this.__timeout+=this.options.timeoutIncrement;
 
-    qwebirc.util.log("timeout occurred... timeout value now " + this.__timeout);
-
     this.__recvLongPoll();
   },
   __checkRetries: function() {
@@ -210,8 +253,6 @@ qwebirc.irc.IRCConnection = new Class({
     
     if(this.__timeout - this.options.timeoutIncrement >= this.options.minTimeout)
       this.__timeout-=this.options.timeoutIncrement;
-
-    qwebirc.util.log("checkRetries: timeout value now " + this.__timeout);
 
     return true;
   },
@@ -290,6 +331,9 @@ qwebirc.irc.IRCConnection = new Class({
         }
       } else {
         if(data.charAt(0) == "c") {
+          var message = data.substr(1);
+          var tokens = message.splitMax(",", 2);
+          this.__subSeqNo = Number(tokens[0]);
           this.__processData(JSON.decode(data.substr(1)));
           return;
         }
@@ -306,7 +350,7 @@ qwebirc.irc.IRCConnection = new Class({
     ws.onopen = function() {
       $clear(connectionTimeout);
       this.log("websocket connected");
-      ws.send("s" + this.sessionid);
+      ws.send("s" + this.__subSeqNo + "," + this.sessionid);
     }.bind(this);
     this.__ws = ws;
   },
@@ -322,9 +366,11 @@ qwebirc.irc.IRCConnection = new Class({
       /* if we're a replaced request then no need to fire off another poll as it's already been done */
       if(r.__replaced) {
         this.__lastActiveRequest = null;
-        
-        if(o)          
+        if(o) {
+          this.__subSeqNo = Number(r.xhr.getResponseHeader("N"));
           this.__processData(o);
+        }
+
         return;
       }
 
@@ -340,7 +386,8 @@ qwebirc.irc.IRCConnection = new Class({
           this.__recvLongPoll();
         return;
       }
-      
+
+      this.__subSeqNo = Number(r.xhr.getResponseHeader("N"));
       if(this.__processData(o))
         this.__recvLongPoll();
     };
@@ -348,7 +395,7 @@ qwebirc.irc.IRCConnection = new Class({
     r.addEvent("complete", onComplete.bind(this));
 
     this.__timeoutId = this.__timeoutEvent.delay(this.__timeout, this);
-    r.send("s=" + this.sessionid);
+    r.send("s=" + this.sessionid + "&n=" + this.__subSeqNo);
   },
   connect: function() {
     this.cacheAvoidance = qwebirc.util.randHexString(16);
@@ -429,6 +476,13 @@ qwebirc.util.WebSocket = function(callback) {
   if(state.loading)
     return;
 
+  if(window.FORCE_LONGPOLL) {
+    log("FORCE_LONGPOLL set");
+    state.result = false;
+    callback(false);
+    return;
+  }
+
   if(!window.WEB_SOCKET_FORCE_FLASH) {
     if(window.WebSocket) {
       log("WebSocket detected");
@@ -450,6 +504,7 @@ qwebirc.util.WebSocket = function(callback) {
     log("no WebSocket support in browser and no Flash");
     state.result = false;
     callback(false);
+    return;
   }
 
   log("No WebSocket support present in client, but flash enabled... attempting to load FlashWebSocket...");
