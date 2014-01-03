@@ -1,4 +1,3 @@
-from twisted.protocols.policies import TimeoutMixin
 from twisted.web import resource, server, static, http
 from twisted.internet import error, reactor
 import engines
@@ -12,9 +11,6 @@ class RootResource(resource.Resource):
     if name == "":
       name = "qui.html"
     return self.primaryChild.getChild(name, request)
-
-class HTTPChannel(http.HTTPChannel, TimeoutMixin):
-  timeOut = 5
 
 class ProxyRequest(server.Request):
   ip_re = re.compile(r"^((25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})|(::|(([a-fA-F0-9]{1,4}):){7}(([a-fA-F0-9]{1,4}))|(:(:([a-fA-F0-9]{1,4})){1,6})|((([a-fA-F0-9]{1,4}):){1,6}:)|((([a-fA-F0-9]{1,4}):)(:([a-fA-F0-9]{1,4})){1,6})|((([a-fA-F0-9]{1,4}):){2}(:([a-fA-F0-9]{1,4})){1,5})|((([a-fA-F0-9]{1,4}):){3}(:([a-fA-F0-9]{1,4})){1,4})|((([a-fA-F0-9]{1,4}):){4}(:([a-fA-F0-9]{1,4})){1,3})|((([a-fA-F0-9]{1,4}):){5}(:([a-fA-F0-9]{1,4})){1,2})))$", re.IGNORECASE)
@@ -40,15 +36,14 @@ class ProxyRequest(server.Request):
     return fake_ip
     
 class RootSite(server.Site):
-  protocol = HTTPChannel
-  
+  protocol = http.HTTPChannel
+
   if hasattr(config, "FORWARDED_FOR_HEADER"):
     requestFactory = ProxyRequest
 
-  def __init__(self, path, *args, **kwargs):
+  def __init__(self, path):
     root = RootResource()
-    server.Site.__init__(self, root, *args, **kwargs)
-
+    server.Site.__init__(self, root, timeout=5)
     services = {}
     services["StaticEngine"] = root.primaryChild = engines.StaticEngine(path)
 

@@ -36,7 +36,8 @@ class Options(usage.Options):
         raise usage.UsageError("SSL support not installed")
 
 class FlashPolicyProtocol(protocol.Protocol, policies.TimeoutMixin):
-  timeOut = 5
+  def connectionMade(self):
+    self.setTimeout(5)
 
   def dataReceived(self, data):
     if data == '<policy-file-request/>\0':
@@ -50,7 +51,6 @@ class FlashPolicyProtocol(protocol.Protocol, policies.TimeoutMixin):
       self.transport.protocol = p
       p.connectionMade()
       p.dataReceived(data)
-
 
 class FlashPolicyFactory(protocol.ServerFactory):
   protocol = FlashPolicyProtocol
