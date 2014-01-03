@@ -131,7 +131,7 @@ qwebirc.irc.IRCConnection = new Class({
     if(this.__sendQueueActive || this.__sendQueue.length == 0)
       return;
 
-    this.sendQueueActive = true;
+    this.__sendQueueActive = true;
     this.__send(this.__sendQueue.shift(), true);
   },
   __send: function(data, queued) {
