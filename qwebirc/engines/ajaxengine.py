@@ -312,7 +312,7 @@ class AJAXEngine(resource.Resource):
         if seq_no < 0 or seq_no > MAX_SEQNO:
           raise ValueError
     except ValueError:
-      raise AJAXEngine, "Bad sequence number"
+      raise AJAXEngine("Bad sequence number %r" % seq_no)
 
     session = self.getSession(request)
     try:
