@@ -87,7 +87,7 @@ class IRCSession:
       return
 
     self.unsubscribe(channel)
-    channel.write(EMPTY_JSON_LIST)
+    channel.write(EMPTY_JSON_LIST, self.subSeqNo)
 
   def flush(self, scheduled=False):
     if scheduled:
