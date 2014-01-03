@@ -47,6 +47,14 @@ qwebirc.ui.BaseUI = new Class({
       document.addEvent("focus", focus);
       window.addEvent("focus", focus);
     }
+
+    qwebirc.util.__log = function(x) {
+      if(QWEBIRC_DEBUG) {
+        if(typeof console != "undefined")
+          console.log(x);
+        this.getActiveWindow().addLine(null, x);
+      }
+    }.bind(this);
   },
   newClient: function(client) {
     client.id = this.clientId++;
