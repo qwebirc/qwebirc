@@ -1,3 +1,4 @@
+from twisted.protocols.policies import TimeoutMixin
 from twisted.web import resource, server, static, http
 from twisted.internet import error, reactor
 import engines
@@ -34,16 +35,21 @@ class ProxyRequest(server.Request):
       return real_ip
       
     return fake_ip
-    
+
+class HTTPChannel(http.HTTPChannel):
+  def timeoutConnection(self):
+    self.transport.abortConnection()
+
 class RootSite(server.Site):
-  protocol = http.HTTPChannel
+  protocol = HTTPChannel
 
   if hasattr(config, "FORWARDED_FOR_HEADER"):
     requestFactory = ProxyRequest
 
-  def __init__(self, path):
+  def __init__(self, path, *args, **kwargs):
     root = RootResource()
-    server.Site.__init__(self, root, timeout=5)
+    kwargs["timeout"] = config.HTTP_REQUEST_TIMEOUT
+    server.Site.__init__(self, root, *args, **kwargs)
     services = {}
     services["StaticEngine"] = root.primaryChild = engines.StaticEngine(path)
 

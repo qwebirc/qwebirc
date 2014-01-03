@@ -293,7 +293,7 @@ qwebirc.irc.IRCConnection = new Class({
 
     var ws = new WebSocket(this.__wsURL());
     var doRetry = function(e) {
-      ws.onerror = ws.onclose = null;
+      ws.onerror = ws.onclose = ws.onopen = null;
       this.__ws = null;
       if(this.disconnected)
         return;
@@ -531,7 +531,9 @@ qwebirc.util.WebSocket = function(callback) {
       log("unable to install FlashWebSocket");
     } else {
       var ws = window.WebSocket;
-      WebSocket.loadFlashPolicyFile("xmlsocket://" + window.location.host + "/");
+      if(window.location.scheme == "http") /* no point trying port sharing for https */
+        WebSocket.loadFlashPolicyFile("xmlsocket://" + window.location.host + "/");
+
       state.result = true;
       log("FlashWebSocket loaded and installed");
     }

@@ -40,6 +40,7 @@ parser.add_option("-k", "--key", help="Path to SSL key.", dest="sslkey")
 parser.add_option("-H", "--certificate-chain", help="Path to SSL certificate chain file.", dest="sslchain")
 parser.add_option("-P", "--pidfile", help="Path to store PID file", dest="pidfile")
 parser.add_option("-s", "--syslog", help="Log to syslog", action="store_true", dest="syslog", default=False)
+parser.add_option("-f", "--flash-port", help="Port to listen for flash policy connections on.", type="int", dest="flashPort")
 parser.add_option("--profile", help="Run in profile mode, dumping results to this file", dest="profile")
 parser.add_option("--profiler", help="Name of profiler to use", dest="profiler")
 parser.add_option("--syslog-prefix", help="Syslog prefix", dest="syslog_prefix", default="qwebirc")
@@ -80,6 +81,9 @@ if not options.tracebacks:
   args2.append("-n")
 if options.clogfile:
   args2+=["--logfile", options.clogfile]
+
+if options.flashPort:
+  args2+=["--flashPort", options.flashPort]
 
 if options.sslcertificate and options.sslkey:
   args2+=["--certificate", options.sslcertificate, "--privkey", options.sslkey, "--https", options.port]
