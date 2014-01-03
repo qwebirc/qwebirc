@@ -334,7 +334,7 @@ qwebirc.irc.IRCConnection = new Class({
           var message = data.substr(1);
           var tokens = message.splitMax(",", 2);
           this.__subSeqNo = Number(tokens[0]);
-          this.__processData(JSON.decode(data.substr(1)));
+          this.__processData(JSON.decode(tokens[1]));
           return;
         }
       }
