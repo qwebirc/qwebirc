@@ -28,10 +28,10 @@ qwebirc.sound.SoundPlayer = new Class({
       return;
     }
     
-    var debugMode = false;
-    qwebirc.util.importJS(qwebirc.global.staticBaseURL + "js/" + (debugMode?"soundmanager2":"soundmanager2-nodebug-jsmin") + ".js", "soundManager", function() {
+    qwebirc.util.importJS(qwebirc.global.staticBaseURL + "js/" + (QWEBIRC_DEBUG?"soundmanager2":"soundmanager2-nodebug-jsmin") + ".js", "soundManager", function() {
       soundManager.url = qwebirc.global.staticBaseURL + "sound/";
-      
+
+      var debugMode = false;
       soundManager.debugMode = debugMode;
       soundManager.useConsole = debugMode;
       soundManager.onload = function() {

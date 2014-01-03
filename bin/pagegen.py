@@ -62,6 +62,12 @@ def producehtml(name, debug):
   div = ui.get("div", "")
   customjs = ui.get("customjs", "")
 
+  if debug:
+    customjs = """<script type="text/javascript">
+QWEBIRC_DEBUG = true;
+</script>
+""" + customjs
+
   return """%s
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
