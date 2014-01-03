@@ -73,11 +73,10 @@ class IRCSession:
   def timeout(self, channel):
     if self.schedule:
       return
-      
+
+    self.unsubscribe(channel)
     channel.write(EMPTY_JSON_LIST)
-    if channel in self.subscriptions:
-      self.subscriptions.remove(channel)
-      
+
   def flush(self, scheduled=False):
     if scheduled:
       self.schedule = None
@@ -97,20 +96,20 @@ class IRCSession:
         if not self.schedule:
           self.schedule = reactor.callLater(0, self.flush, True)
         return
-        
+
     self.throttle = t + config.UPDATE_FREQ
 
     encdata = json.dumps(self.buffer)
     self.buffer = []
     self.buflen = 0
 
-    newsubs = []
-    for x in self.subscriptions:
+    subs = self.subscriptions
+    self.subscriptions = newsubs = []
+    for x in subs:
       if x.write(encdata):
         newsubs.append(x)
 
-    self.subscriptions = newsubs
-    if self.closed and not self.subscriptions:
+    if self.closed and not newsubs:
       cleanupSession(self.id)
 
   def event(self, data):
@@ -253,7 +252,7 @@ class AJAXEngine(resource.Resource):
     return session
     
   def subscribe(self, request):
-    request.channel.cancelTimeout()
+    request.channel.setTimeout(None)
 
     channel = RequestChannel(request)
     session = self.getSession(request)
@@ -262,11 +261,11 @@ class AJAXEngine(resource.Resource):
 
     timeout_entry = reactor.callLater(config.HTTP_AJAX_REQUEST_TIMEOUT, session.timeout, channel)
     def cancel_timeout(result):
-      session.unsubscribe(self)
       try:
         timeout_entry.cancel()
       except error.AlreadyCalled:
         pass
+      session.unsubscribe(channel)
     notifier.addCallbacks(cancel_timeout, cancel_timeout)
     return server.NOT_DONE_YET
 
@@ -363,7 +362,10 @@ if has_websocket:
 
     def __cancelTimeout(self):
       if self.__timeout is not None:
-        self.__timeout.cancel()
+        try:
+          self.__timeout.cancel()
+        except error.AlreadyCalled:
+          pass
         self.__timeout = None
 
     def close(self, reason=None):
@@ -382,7 +384,7 @@ if has_websocket:
 
   class WebSocketResource(autobahn.resource.WebSocketResource):
     def render(self, request):
-      request.channel.cancelTimeout()
+      request.channel.setTimeout(None)
       return autobahn.resource.WebSocketResource.render(self, request)
 
   def WebSocketEngine(path=None):

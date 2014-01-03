@@ -1,3 +1,4 @@
+from twisted.protocols.policies import TimeoutMixin
 from twisted.web import resource, server, static, http
 from twisted.internet import error, reactor
 import engines
@@ -12,29 +13,8 @@ class RootResource(resource.Resource):
       name = "qui.html"
     return self.primaryChild.getChild(name, request)
 
-# we do NOT use the built-in timeOut mixin as it's very very buggy!
-class TimeoutHTTPChannel(http.HTTPChannel):
-  timeout = config.HTTP_REQUEST_TIMEOUT
-
-  def connectionMade(self):
-    self.customTimeout = reactor.callLater(self.timeout, self.timeoutOccured)
-    http.HTTPChannel.connectionMade(self)
-    
-  def timeoutOccured(self):
-    self.customTimeout = None
-    self.transport.loseConnection()
-    
-  def cancelTimeout(self):
-    if self.customTimeout is not None:
-      try:
-        self.customTimeout.cancel()
-        self.customTimeout = None
-      except error.AlreadyCalled:
-        pass
-
-  def connectionLost(self, reason):
-    self.cancelTimeout()
-    http.HTTPChannel.connectionLost(self, reason)
+class HTTPChannel(http.HTTPChannel, TimeoutMixin):
+  timeOut = 5
 
 class ProxyRequest(server.Request):
   ip_re = re.compile(r"^((25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})|(::|(([a-fA-F0-9]{1,4}):){7}(([a-fA-F0-9]{1,4}))|(:(:([a-fA-F0-9]{1,4})){1,6})|((([a-fA-F0-9]{1,4}):){1,6}:)|((([a-fA-F0-9]{1,4}):)(:([a-fA-F0-9]{1,4})){1,6})|((([a-fA-F0-9]{1,4}):){2}(:([a-fA-F0-9]{1,4})){1,5})|((([a-fA-F0-9]{1,4}):){3}(:([a-fA-F0-9]{1,4})){1,4})|((([a-fA-F0-9]{1,4}):){4}(:([a-fA-F0-9]{1,4})){1,3})|((([a-fA-F0-9]{1,4}):){5}(:([a-fA-F0-9]{1,4})){1,2})))$", re.IGNORECASE)
@@ -60,8 +40,7 @@ class ProxyRequest(server.Request):
     return fake_ip
     
 class RootSite(server.Site):
-  # we do this ourselves as the built in timeout stuff is really really buggy
-  protocol = TimeoutHTTPChannel
+  protocol = HTTPChannel
   
   if hasattr(config, "FORWARDED_FOR_HEADER"):
     requestFactory = ProxyRequest

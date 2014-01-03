@@ -238,7 +238,7 @@ DNS_TIMEOUT = 5
 #         Note that this value is intimately linked with the client
 #         AJAX code at this time, changing it will result in bad
 #         things happening.
-HTTP_AJAX_REQUEST_TIMEOUT = 30
+HTTP_AJAX_REQUEST_TIMEOUT = 295
 
 # OPTION: HTTP_REQUEST_TIMEOUT
 #         Connections made to everything but the AJAX engine will
