@@ -233,9 +233,10 @@ qwebirc.irc.BaseIRCClient = new Class({
       var replyfn = qwebirc.irc.RegisteredCTCPs[type];
       if(replyfn) {
         var t = new Date().getTime() / 1000;
-        if(t > this.nextctcp)
+        if(t > this.nextctcp) {
           this.send("NOTICE " + user.hostToNick() + " :\x01" + type + " " + replyfn(ctcp[1]) + "\x01");
-        this.nextctcp = t + 5;
+          this.nextctcp = t + 10;
+        }
       }
       
       if(target == this.nickname) {
