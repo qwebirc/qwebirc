@@ -380,7 +380,7 @@ if has_websocket:
       message_type, message = msg[:1], msg[1:]
       if state == self.AWAITING_AUTH:
         if message_type == "s":  # subscribe
-          tokens = message.split(",", 2)
+          tokens = message.split(",", 1)
           if len(tokens) != 2:
             self.close("Bad tokens")
             return
@@ -407,7 +407,7 @@ if has_websocket:
           return
       elif state == self.AUTHED:
         if message_type == "p":  # push
-          tokens = message.split(",", 2)
+          tokens = message.split(",", 1)
           if len(tokens) != 2:
             self.close("Bad tokens")
             return
