@@ -65,7 +65,7 @@ class IRCSession:
     if len(self.subscriptions) >= config.MAXSUBSCRIPTIONS:
       self.subscriptions.pop(0).close()
 
-    if seqNo < self.subSeqNo:
+    if seqNo is not None and seqNo < self.subSeqNo:
       if self.old_buffer is None or seqNo != self.old_buffer[0]:
         channel.write(json.dumps([False, "Unable to reconnect -- sequence number too old."]), seqNo + 1)
         return
