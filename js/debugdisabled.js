@@ -1,0 +1,1 @@
+QWEBIRC_DEBUG = false;

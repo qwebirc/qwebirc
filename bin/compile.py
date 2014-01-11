@@ -50,7 +50,6 @@ def jmerge_files(prefix, suffix, output, files, *args, **kwargs):
     
   f = open(os.path.join(prefix, "static", suffix, output), "wb")
   f.write(COPYRIGHT)
-  f.write("QWEBIRC_DEBUG = false;")
 
   if kwargs.get("file_prefix"):
     f.write(kwargs.get("file_prefix"))
@@ -98,7 +97,7 @@ def main(outputdir=".", produce_debug=True):
     
     #jmerge_files(outputdir, "js", uiname, value["uifiles"], lambda x: os.path.join("js", "ui", "frontends", x + ".js"))
     
-    alljs = []
+    alljs = ["js/debugdisabled.js"]
     for y in pages.JS_BASE:
       alljs.append(os.path.join("static", "js", y + ".js"))
     for y in value.get("buildextra", []):
