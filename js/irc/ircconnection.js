@@ -51,6 +51,8 @@ qwebirc.irc.IRCConnection = new Class({
     this.__pubSeqNo = 0;
     this.__subSeqNo = 0;
     this.__sendRetries = 0;
+
+    this.transportStatus = "unknown";
   },
   __error: function(text) {
     this.fireEvent("error", text);
@@ -279,6 +281,7 @@ qwebirc.irc.IRCConnection = new Class({
     if(this.__wsAttempted) {
       if(!this.__wsEverConnected) {
         this.log("Failed first websocket connection... falling back to longpoll");
+        this.transportStatus += "(nowDisabled)";
         /* give up and use long polling */
         this.__recvLongPoll();
         return;
@@ -432,7 +435,8 @@ qwebirc.irc.IRCConnection = new Class({
       this.recv();
       return;
     }
-    qwebirc.util.WebSocket(function(supported) {
+    qwebirc.util.WebSocket(function(supported, transport) {
+      this.transportStatus = transport;
       if(supported) {
         this.log("websocket present on client and server: using websocket");
         this.__wsSupported = true;
@@ -463,48 +467,46 @@ qwebirc.irc.IRCConnection = new Class({
   }
 });
 
-qwebirc.util.__WebSocketState = { "loading": false, "result": null, "callbacks": [] };
+qwebirc.util.__WebSocketState = { "loading": false, "result": undefined, "callbacks": [] };
 qwebirc.util.WebSocket = function(callback) {
   var log = qwebirc.util.log;
   var state = qwebirc.util.__WebSocketState;
+  var fire = latch = function(x, y) {
+    if($defined(x)) {
+      state.result = [x, y];
+    }
+    callback(state.result[0], state.result[1]);
+  };
 
-  if(state.result !== null) {
-    callback(state.result);
-    return;
-  }
+  if($defined(state.result))
+    return fire();
 
   if(state.loading)
     return;
 
   if(window.FORCE_LONGPOLL) {
     log("FORCE_LONGPOLL set");
-    state.result = false;
-    callback(false);
-    return;
+    return latch(false, "longPoll(forced)");
   }
 
+  var modeSuffix = "";
   if(!window.WEB_SOCKET_FORCE_FLASH) {
     if(window.WebSocket) {
       log("WebSocket detected");
-      state.result = true;
-      callback(true);
-      return;
+      return latch(true, "native");
     } if(window.MozWebSocket) {
       log("MozWebSocket detected");
       window.WebSocket = MozWebSocket;
-      state.result = true;
-      callback(true);
-      return;
+      return latch(true, "nativeMoz");
     }
   } else {
     log("FORCE_FLASH enabled");
+    modeSuffix = "(forced)";
   }
 
   if(!$defined(Browser.Plugins.Flash)) {
     log("no WebSocket support in browser and no Flash");
-    state.result = false;
-    callback(false);
-    return;
+    return latch(false, "noFlash" + modeSuffix);
   }
 
   log("No WebSocket support present in client, but flash enabled... attempting to load FlashWebSocket...");
@@ -513,13 +515,14 @@ qwebirc.util.WebSocket = function(callback) {
 
   var fireCallbacks = function() {
     for(var i=0;i<state.callbacks.length;i++) {
-      state.callbacks[i](state.result);
+      state.callbacks[i](state.result[0], state.result[1]);
     }
     state.callbacks = [];
   };
   var timeout = function() {
     log("timed out waiting for flash socket to load");
-    state.result = state.loading = false;
+    state.loading = false;
+    state.result = [false, "longPoll(flashTimeout)" + modeSuffix];
     fireCallbacks();
   }.delay(3000);
 
@@ -527,15 +530,15 @@ qwebirc.util.WebSocket = function(callback) {
     $clear(timeout);
     state.loading = false;
     if(!window.WebSocket) {
-      state.result = false;
+      state.result = [false, "longPoll(flashFailed)" + modeSuffix];
       log("unable to install FlashWebSocket");
     } else {
       var ws = window.WebSocket;
       if(window.location.scheme == "http") /* no point trying port sharing for https */
         WebSocket.loadFlashPolicyFile("xmlsocket://" + window.location.host + "/");
 
-      state.result = true;
       log("FlashWebSocket loaded and installed");
+      state.result = [true, "flash" + modeSuffix];
     }
     fireCallbacks();
   });
