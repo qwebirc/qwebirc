@@ -1,4 +1,4 @@
-/* This could do with a rewrite from scratch. */
+/* This could do with a rewrite from scratch... by splitting into about 10 classes... */
 
 //WEB_SOCKET_DEBUG = QWEBIRC_DEBUG;
 //WEB_SOCKET_FORCE_FLASH = true;
@@ -38,7 +38,6 @@ qwebirc.irc.IRCConnection = new Class({
     
     this.__timeoutId = null;
     this.__timeout = this.options.initialTimeout;
-    this.__lastActiveRequest = null;
     this.__activeRequest = null;
     this.__sendQueue = [];
     this.__sendQueueActive = false;
@@ -233,12 +232,10 @@ qwebirc.irc.IRCConnection = new Class({
     if(!$defined(this.__activeRequest))
       return;
       
-    if(this.__lastActiveRequest)
-      this.__lastActiveRequest.cancel();
-        
     this.__activeRequest.__replaced = true;
-    this.__lastActiveRequest = this.__activeRequest;
-      
+    this.__activeRequest.cancel();
+    this.__activeRequest = null;
+
     if(this.__timeout + this.options.timeoutIncrement <= this.options.maxTimeout)
       this.__timeout+=this.options.timeoutIncrement;
 
@@ -295,7 +292,12 @@ qwebirc.irc.IRCConnection = new Class({
     }
 
     var ws = new WebSocket(this.__wsURL());
+    var retryExecuted = false;
     var doRetry = function(e) {
+      if(retryExecuted)
+        return;
+      retryExecuted = true;
+
       ws.onerror = ws.onclose = ws.onopen = null;
       this.__ws = null;
       if(this.disconnected)
@@ -351,6 +353,8 @@ qwebirc.irc.IRCConnection = new Class({
       doRetry(this);
     }.delay(5000, this);
     ws.onopen = function() {
+      if(retryExecuted || this.disconnected || this.__ws == null)
+        return;
       $clear(connectionTimeout);
       this.log("websocket connected");
       ws.send("s" + this.__subSeqNo + "," + this.sessionid);
@@ -366,18 +370,9 @@ qwebirc.irc.IRCConnection = new Class({
     r.__replaced = false;
     
     var onComplete = function(o) {
-      /* if we're a replaced request then no need to fire off another poll as it's already been done */
-      if(r.__replaced) {
-        this.__lastActiveRequest = null;
-        if(o) {
-          this.__subSeqNo = Number(r.xhr.getResponseHeader("N"));
-          this.__processData(o);
-        }
-
+      if(r.__replaced)
         return;
-      }
 
-      /* ok, we're the active request */
       this.__activeRequest = null;
       this.__cancelTimeout();
       
@@ -447,11 +442,8 @@ qwebirc.irc.IRCConnection = new Class({
     }.bind(this));
   },
   __cancelRequests: function() {
-    if($defined(this.__lastActiveRequest)) {
-      this.__lastActiveRequest.cancel();
-      this.__lastActiveRequest = null;
-    }
     if($defined(this.__activeRequest)) {
+      this.__activeRequest.__replaced = true;
       this.__activeRequest.cancel();
       this.__activeRequest = null;
     }
