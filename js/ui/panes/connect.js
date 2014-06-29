@@ -60,7 +60,11 @@ qwebirc.ui.ConnectPane = new Class({
         exec("[name=" + focus + "]", util.focus);
       exec("[name=connect]", util.attachClick(this.__connect.bind(this)));
       exec("[name=loginconnect]", util.attachClick(this.__loginConnect.bind(this)));
+
       exec("[name=login]", util.attachClick(this.__login.bind(this)));
+
+      if(qwebirc.ui.isHideAuth())
+       exec("[name=login]", util.setVisible(false));
     }.bind(this)});
     r.get();
   },
@@ -323,6 +327,14 @@ qwebirc.ui.isAuthRequired = (function() {
   var value = $defined(args) && args["authrequired"];
   return function() {
     return value && qwebirc.auth.enabled();
+  };
+})();
+
+qwebirc.ui.isHideAuth = (function() {
+  var args = qwebirc.util.parseURI(String(document.location));
+  var value = $defined(args) && args["hideauth"];
+  return function() {
+    return value;
   };
 })();
 
