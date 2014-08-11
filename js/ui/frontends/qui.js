@@ -148,16 +148,12 @@ qwebirc.ui.QUI = new Class({
     var inputbox = new Element("input");
     this.addEvent("signedOn", function() {
       inputbox.placeholder = "type commands here, for example: /JOIN #channel";
-      inputbox.addClass("input-flash");
-      var d = function() {
-        inputbox.removeClass("input-flash");
-      }.delay(250);
-      var d = function() {
-        inputbox.addClass("input-flash");
-      }.delay(500);
-      var d = function() {
-        inputbox.removeClass("input-flash");
-      }.delay(1250);
+      var d = function() { inputbox.addClass("input-flash"); }.delay(250);
+      var d = function() { inputbox.removeClass("input-flash"); }.delay(500);
+      var d = function() { inputbox.addClass("input-flash"); }.delay(750);
+      var d = function() { inputbox.removeClass("input-flash"); }.delay(1000);
+      var d = function() { inputbox.addClass("input-flash"); }.delay(1250);
+      var d = function() { inputbox.removeClass("input-flash"); }.delay(1750);
     });
     form.appendChild(inputbox);
     this.inputbox = inputbox;
