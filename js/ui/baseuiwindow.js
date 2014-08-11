@@ -156,19 +156,19 @@ qwebirc.ui.Window = new Class({
       return true;
       
     var parent = this.lines;
-    
-    var prev = parent.getScroll();
-    var prevbottom = parent.getScrollSize().y;
-    var prevheight = parent.clientHeight;
+
+    var scrollPos = parent.getScroll().y;
+    var linesHeight = parent.getScrollSize().y;
+    var windowHeight = parent.clientHeight;
 
     /*
      * fixes an IE bug: the scrollheight is less than the actual height
      * when the div isn't full
      */
-    if(prevbottom < prevheight)
-      prevbottom = prevheight;
-      
-    return prev.y + prevheight == prevbottom;
+    if(linesHeight < windowHeight)
+      linesHeight = windowHeight;
+
+    return scrollPos + windowHeight >= linesHeight - 3; /* window of error */
   },
   getScrollParent: function() {
     var scrollparent = this.lines;
@@ -195,14 +195,9 @@ qwebirc.ui.Window = new Class({
       parent.appendChild(element);
       if(parent.childNodes.length > qwebirc.ui.MAXIMUM_LINES_PER_WINDOW)
         parent.removeChild(parent.firstChild);
-      if(sd) {
-        if(this.scrolltimer)
-          $clear(this.scrolltimer);
+
+      if(sd && !this.scrollTimer)
         this.scrolltimer = this.scrollAdd.delay(50, this, [null]);
-      } else {
-        this.scrollToBottom();
-        this.scrolltimer = null;
-      }
     } else {
       this.scrollToBottom();
       this.scrolltimer = null;
@@ -249,6 +244,9 @@ qwebirc.ui.Window = new Class({
   },
   replaceLastPositionLine: function() {
     if(this.parentObject.uiOptions.LASTPOS_LINE) {
+      if(!this.scrolledDown())
+        return;
+
       if(!this.lastPositionLineInserted) {
         this.scrollAdd(this.lastPositionLine);
       } else if(this.lines.lastChild != this.lastPositionLine) {
