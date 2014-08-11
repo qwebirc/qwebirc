@@ -1,7 +1,7 @@
 qwebirc.irc.IgnoreController = new Class({
   initialize: function(toIRCLower) {
     this.toIRCLower = toIRCLower;
-    this.ignored = {};
+    this.ignored = new QHash();
   },
   __toHostKey: function(host) {
     if(host.indexOf("!") == -1 && host.indexOf("@") == -1)
@@ -14,7 +14,7 @@ qwebirc.irc.IgnoreController = new Class({
       return false;
 
     var hostKey = this.__toHostKey(host);
-    this.ignored[hostKey] = [host, new RegExp("^" + RegExp.fromIRCPattern(hostKey) + "$")];
+    this.ignored.put(hostKey, [host, new RegExp("^" + RegExp.fromIRCPattern(hostKey) + "$")]);
 
     return hostKey;
   },
@@ -23,33 +23,25 @@ qwebirc.irc.IgnoreController = new Class({
       return null;
 
     var hostKey = this.__toHostKey(host);
-    delete this.ignored[hostKey];
+    this.ignored.remove(hostKey);
 
     return hostKey;
   },
   get: function() {
-    var l = [];
-    for(var key in this.ignored)
-      if(this.ignored.hasOwnProperty(key))
-        l.push(this.ignored[key][0]);
-    return l;
+    return this.ignored.map(function(k, v) {
+      return v[0];
+    });
   },
   isIgnored: function(nick, host) {
-    if(host === undefined) {
-      return this.ignored[this.__toHostKey(nick)] !== undefined;
-    }
+    if(host === undefined)
+      return this.ignored.contains(this.__toHostKey(nick));
 
     var mask = this.toIRCLower(nick + "!" + host);
-    for(var key in this.ignored) {
-      if(!this.ignored.hasOwnProperty(key))
-        continue;
 
-      var r = this.ignored[key][1];
-      if(mask.match(r)) {
-//        console.log(key + " (" + this.ignored[key][0] + ")" + " matched against " + mask);
+    return this.ignored.each(function(k, v) {
+//      console.log(k + " (" + v[0] + ")" + " matched against " + mask);
+      if(mask.match(v[1]))
         return true;
-      }
-    }
-    return false;
+    }) === true;
   }
 });

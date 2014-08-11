@@ -67,18 +67,18 @@ qwebirc.ui.Interface = new Class({
         this.options.tsaturation = this.getSaturationArg(args, "t");
         this.options.tlightness = this.getLightnessArg(args, "t");
         
-        if($defined(args["uio"]))
-          this.options.uiOptionsArg = args["uio"];
+        if(args.contains("uio"))
+          this.options.uiOptionsArg = args.get("uio");
 
-        var url = args["url"];
-        var chans, nick = args["nick"];
+        var url = args.get("url");
+        var chans, nick = args.get("nick");
         
         if($defined(url)) {
           ichans = this.parseIRCURL(url);
           if($defined(chans) && chans != "")
             canAutoConnect = true;
         } else {
-          chans = args["channels"];
+          chans = args.get("channels");
 
           var canAutoConnect = false;
         
@@ -104,12 +104,12 @@ qwebirc.ui.Interface = new Class({
         if($defined(nick))
           inick = this.randSub(nick);
           
-        if(args["randomnick"] && args["randomnick"] == 1)
+        if(args.contains("randomnick") && args.get("randomnick") == 1)
           inick = this.options.initialNickname;
           
         /* we only consider autoconnecting if the nick hasn't been supplied, or it has and it's not "" */
         if(canAutoConnect && (!$defined(inick) || ($defined(inick) && (inick != "")))) {
-          var p = args["prompt"];
+          var p = args.get("prompt");
           var pdefault = false;
           
           if(!$defined(p) || p == "") {
@@ -140,7 +140,7 @@ qwebirc.ui.Interface = new Class({
     }.bind(this));
   },
   getHueArg: function(args, t) {
-    var hue = args[t + "hue"];
+    var hue = args.get(t + "hue");
     if(!$defined(hue))
       return null;
     hue = parseInt(hue);
@@ -149,7 +149,7 @@ qwebirc.ui.Interface = new Class({
     return hue;
   },
   getSaturationArg: function(args, t) {
-    var saturation = args[t + "saturation"];
+    var saturation = args.get(t + "saturation");
     if(!$defined(saturation))
       return null;
     saturation = parseInt(saturation);
@@ -158,7 +158,7 @@ qwebirc.ui.Interface = new Class({
     return saturation;
   },
   getLightnessArg: function(args, t) {
-    var lightness = args[t + "lightness"];
+    var lightness = args.get(t + "lightness");
     if(!$defined(lightness))
       return null;
     lightness = parseInt(lightness);
@@ -222,16 +222,14 @@ qwebirc.ui.Interface = new Class({
     }
 
     if($defined(queryArgs)) {
-      for(var key_ in queryArgs) {
-        var value = queryArgs[key_];
-        
+      queryArgs.each(function(key_, value) {
         if(key_ == "key") {
           key = value;
           needkey = true;
         } else {
           not_supported.push(key_);
         }
-      }
+      });
     }
     
     if(needkey) {

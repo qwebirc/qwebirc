@@ -3,7 +3,7 @@ qwebirc.irc.PMODE_SET_UNSET = 1;
 qwebirc.irc.PMODE_SET_ONLY = 2;
 qwebirc.irc.PMODE_REGULAR_MODE = 3;
 
-qwebirc.irc.RegisteredCTCPs = {
+qwebirc.irc.RegisteredCTCPs = new QHash({
   "VERSION": function(x) {
     return "qwebirc v" + qwebirc.VERSION + ", copyright (C) 2008-2014 Chris Porter and the qwebirc project -- " + qwebirc.util.browserVersion();
   },
@@ -12,7 +12,7 @@ qwebirc.irc.RegisteredCTCPs = {
   "PING": function(x) { return x; },
   "CLIENTINFO": function(x) { return "PING VERSION TIME USERINFO CLIENTINFO WEBSITE"; },
   "WEBSITE": function(x) { return window == window.top ? "direct" : document.referrer; }
-};
+});
 
 qwebirc.irc.BaseIRCClient = new Class({
   Implements: [Options, Events],
@@ -28,9 +28,9 @@ qwebirc.irc.BaseIRCClient = new Class({
     this.lowerNickname = this.toIRCLower(this.nickname);    
 
     this.__signedOn = false;
-    this.pmodes = {b: qwebirc.irc.PMODE_LIST, l: qwebirc.irc.PMODE_SET_ONLY, k: qwebirc.irc.PMODE_SET_UNSET, o: qwebirc.irc.PMODE_SET_UNSET, v: qwebirc.irc.PMODE_SET_UNSET};
-    this.channels = {};
-    this.chanPrefixes = {"#": true, "&": true};
+    this.pmodes = new QHash({b: qwebirc.irc.PMODE_LIST, l: qwebirc.irc.PMODE_SET_ONLY, k: qwebirc.irc.PMODE_SET_UNSET, o: qwebirc.irc.PMODE_SET_UNSET, v: qwebirc.irc.PMODE_SET_UNSET});
+    this.channels = new QSet();
+    this.chanPrefixes = new QSet("#", "&");
     this.nextctcp = 0;
 
     this.connection = new qwebirc.irc.IRCConnection({
@@ -63,7 +63,7 @@ qwebirc.irc.BaseIRCClient = new Class({
        
       var prefix = data[2];
       var sl = data[3];
-      var n = qwebirc.irc.Numerics[command];
+      var n = qwebirc.irc.Numerics.get(command);
       
       var x = n;
       if(!n)
@@ -82,7 +82,7 @@ qwebirc.irc.BaseIRCClient = new Class({
   },
   isChannel: function(target) {
     var c = target.charAt(0);
-    return this.chanPrefixes[c] === true;
+    return this.chanPrefixes.contains(c);
   },
   supported: function(key, value) {
     if(key == "CASEMAPPING") {
@@ -98,17 +98,17 @@ qwebirc.irc.BaseIRCClient = new Class({
       var smodes = value.split(",");
       for(var i=0;i<smodes.length;i++)
         for(var j=0;j<smodes[i].length;j++)
-          this.pmodes[smodes[i].charAt(j)] = i;
+          this.pmodes.put(smodes[i].charAt(j), i);
     } else if(key == "CHANTYPES") {
-      this.chanPrefixes = {};
+      this.chanPrefixes = new QSet();
       for(var i=0;i<value.length;i++)
-        this.chanPrefixes[value.charAt(i)] = true;
+        this.chanPrefixes.add(value.charAt(i));
     } else if(key == "PREFIX") {
       var l = (value.length - 2) / 2;
       
       var modeprefixes = value.substr(1, l).split("");
       modeprefixes.each(function(modeprefix) {
-        this.pmodes[modeprefix] = qwebirc.irc.PMODE_SET_UNSET;
+        this.pmodes.put(modeprefix, qwebirc.irc.PMODE_SET_UNSET);
       }, this);
     }
   },
@@ -170,13 +170,13 @@ qwebirc.irc.BaseIRCClient = new Class({
     return true;
   },
   __getChannel: function(name) {
-    return this.channels[this.toIRCLower(name)];
+    return this.channels.contains(this.toIRCLower(name));
   },
   __killChannel: function(name) {
-    delete this.channels[this.toIRCLower(name)];
+    this.channels.remove(this.toIRCLower(name));
   },
   __nowOnChannel: function(name) {
-    this.channels[this.toIRCLower(name)] = 1;
+    this.channels.add(this.toIRCLower(name));
   },
   irc_KICK: function(prefix, params) {
     var kicker = prefix;
@@ -237,7 +237,7 @@ qwebirc.irc.BaseIRCClient = new Class({
     if(ctcp) {
       var type = ctcp[0].toUpperCase();
       
-      var replyfn = qwebirc.irc.RegisteredCTCPs[type];
+      var replyfn = qwebirc.irc.RegisteredCTCPs.get(type);
       if(replyfn) {
         var t = new Date().getTime() / 1000;
         if(t > this.nextctcp)
@@ -318,7 +318,7 @@ qwebirc.irc.BaseIRCClient = new Class({
         }
 
         var d;
-        var pmode = this.pmodes[mode];
+        var pmode = this.pmodes.get(mode);
         if(pmode == qwebirc.irc.PMODE_LIST || pmode == qwebirc.irc.PMODE_SET_UNSET || (cmode == "+" && pmode == qwebirc.irc.PMODE_SET_ONLY)) { 
           d = [cmode, mode, xargs[carg++]]
         } else {
@@ -336,14 +336,14 @@ qwebirc.irc.BaseIRCClient = new Class({
   irc_RPL_ISUPPORT: function(prefix, params) {
     var supported = params.slice(1, -1);
     
-    var items = {};
+    var items = new QSet();
     for(var i=0;i<supported.length;i++) {
       var l = supported[i].splitMax("=", 2);
-      items[l[0]] = true;
+      items.add(l[0]);
     }
     
-    if(items.CHANMODES && items.PREFIX) /* nasty hack */
-      this.pmodes = {};
+    if(items.contains("CHANMODES") && items.contains("PREFIX")) /* nasty hack */
+      this.pmodes = new QHash();
     
     for(var i=0;i<supported.length;i++) {
       var l = supported[i].splitMax("=", 2);

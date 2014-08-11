@@ -3,7 +3,7 @@ qwebirc.irc.Commands = new Class({
   initialize: function(parentObject) {
     this.parent(parentObject);
     
-    this.aliases = {
+    this.aliases = new QHash({
       "J": "JOIN",
       "K": "KICK",
       "MSG": "PRIVMSG",
@@ -14,7 +14,7 @@ qwebirc.irc.Commands = new Class({
       "": "SAY",
       "BLOCK": "IGNORE",
       "UNBLOCK": "UNIGNORE"
-    };
+    });
   },
   
   newUIWindow: function(property) {

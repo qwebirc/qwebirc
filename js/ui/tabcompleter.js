@@ -141,19 +141,16 @@ qwebirc.ui.ChannelNameTabCompleter = new Class({
   Extends: qwebirc.ui.BaseTabCompleter,
   initialize: function(prefix, existingText, suffix, window) {
 
-    /* WTB map */
-    var l = [];
-    var wa = window.parentObject.windows[window.parentObject.getClientId(window.client)];
-    
-    for(var c in window.client.channels) {
-      var w = wa[c];
+    var wa = window.parentObject.windows.get(window.parentObject.getClientId(window.client));
+    var l = window.client.channels.map(function(c) {
+      var w = wa.get(c);
       
       /* redundant? */
       if($defined(w))
         w = w.lastSelected;
         
-      l.push([w, c]);
-    }
+      return [w, c];
+    });
     
     l.sort(function(a, b) {
       return b[0] - a[0];

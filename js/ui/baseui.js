@@ -12,9 +12,9 @@ qwebirc.ui.BaseUI = new Class({
   initialize: function(parentElement, windowClass, uiName, options) {
     this.options = options;
     
-    this.windows = {};
-    this.clients = {};
-    this.windows[qwebirc.ui.CUSTOM_CLIENT] = {};
+    this.windows = new QHash();
+    this.clients = new QHash();
+    this.windows.put(qwebirc.ui.CUSTOM_CLIENT, new QHash());
     this.windowArray = [];
     this.windowClass = windowClass;
     this.parentElement = parentElement;
@@ -49,13 +49,13 @@ qwebirc.ui.BaseUI = new Class({
     }
   },
   newClient: function(client) {
-    client.id = this.clientId++;
+    client.id = String(this.clientId++);
     client.hilightController = new qwebirc.ui.HilightController(client);
     client.addEvent("signedOn", function() {
       this.fireEvent("signedOn", client);
     }.bind(this));
-    this.windows[client.id] = {}
-    this.clients[client.id] = client;
+    this.windows.put(client.id, new QHash());
+    this.clients.put(client.id, client);
     var w = this.newWindow(client, qwebirc.ui.WINDOW_STATUS, "Status");
     this.selectWindow(w);
     if(!this.firstClient) {
@@ -91,13 +91,14 @@ qwebirc.ui.BaseUI = new Class({
       return w;
       
     var wId = this.getWindowIdentifier(client, type, name);
-    var w = this.windows[this.getClientId(client)][wId] = new this.windowClass(this, client, type, name, wId);
+    var w = new this.windowClass(this, client, type, name, wId);
+    this.windows.get(this.getClientId(client)).put(wId, w);
     this.windowArray.push(w);
     
     return w;
   },
   getWindow: function(client, type, name) {
-    var c = this.windows[this.getClientId(client)];
+    var c = this.windows.get(this.getClientId(client));
     if(!$defined(c))
       return null;
       
@@ -108,7 +109,7 @@ qwebirc.ui.BaseUI = new Class({
   },
   getActiveIRCWindow: function(client) {
     if(!this.active || this.active.type == qwebirc.ui.WINDOW_CUSTOM) {
-      return this.windows[this.getClientId(client)][this.getWindowIdentifier(client, qwebirc.ui.WINDOW_STATUS)];
+      return this.windows.get(this.getClientId(client)).get(this.getWindowIdentifier(client, qwebirc.ui.WINDOW_STATUS));
     } else {
       return this.active;
     }
@@ -125,13 +126,13 @@ qwebirc.ui.BaseUI = new Class({
     if(index == -1)
       return null;
     
-    delete this.windows[clientId][window.identifier];
+    this.windows.get(clientId).remove(window.identifier);
     
     var window = this.windowArray[index];
     window.name = name;
     window.identifier = this.getWindowIdentifier(window.client, window.type, window.name);
     
-    this.windows[clientId][window.identifier] = this.windowArray[index];
+    this.windows.get(clientId).put(window.identifier, this.windowArray[index]);
     
     if(window.active)
       this.updateTitle(window.name + " - " + this.options.appTitle);
@@ -189,7 +190,7 @@ qwebirc.ui.BaseUI = new Class({
     }
     
     this.windowArray = this.windowArray.erase(window);
-    delete this.windows[this.getClientId(window.client)][window.identifier];
+    this.windows.get(this.getClientId(window.client)).remove(window.identifier);
   },
     /*
       this shouldn't be called by overriding classes!
@@ -216,7 +217,7 @@ qwebirc.ui.StandardUI = new Class({
 
     this.tabCompleter = new qwebirc.ui.TabCompleterFactory(this);
     this.uiOptions = new qwebirc.ui.DefaultOptionsClass(this, options.uiOptionsArg);
-    this.customWindows = {};
+    this.customWindows = new QHash();
     
     this.__styleValues = {hue: this.uiOptions.STYLE_HUE, saturation: 0, lightness: 0};
     if($defined(this.options.hue)) this.__styleValues.hue = this.options.hue;
@@ -292,7 +293,7 @@ qwebirc.ui.StandardUI = new Class({
       
     var w = this.newWindow(qwebirc.ui.CUSTOM_CLIENT, type, name);
     w.addEvent("close", function(w) {
-      delete this.windows[qwebirc.ui.CUSTOM_CLIENT][w.identifier];
+      this.windows.get(qwebirc.ui.CUSTOM_CLIENT).remove(w.identifier);
     }.bind(this));
     
     if(select)
@@ -304,16 +305,16 @@ qwebirc.ui.StandardUI = new Class({
     if(!$defined(options))
       options = {};
       
-    if(this.customWindows[windowName]) {
-      this.selectWindow(this.customWindows[windowName]);
+    if(this.customWindows.contains(windowName)) {
+      this.selectWindow(this.customWindows.get(windowName));
       return;
     }
     
     var d = this.newCustomWindow(windowName, true);
-    this.customWindows[windowName] = d;
+    this.customWindows.put(windowName, d);
     
     d.addEvent("close", function() {
-      this.customWindows[windowName] = null;
+      this.customWindows.remove(windowName);
     }.bind(this));
         
     if(cssClass)
@@ -468,9 +469,9 @@ qwebirc.ui.QuakeNetUI = new Class({
     if(!qwebirc.auth.loggedin())
       return;
     if(confirm("Log out?")) {
-      for(var client in this.clients) {
-        this.clients[client].quit("Logged out");
-      };
+      this.clients.each(function(k, v) {
+        v.quit("Logged out");
+      }, this);
       
       /* HACK */
       var foo = function() { document.location = qwebirc.global.dynamicBaseURL + "auth?logout=1"; };
