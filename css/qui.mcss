@@ -100,7 +100,7 @@ html {
 }
 
 .qwebirc-qui .input-flash {
-  background: #ffdddd;
+  background: #ddffdd;
 }
 
 .qwebirc-qui .input input.mobile-input {
