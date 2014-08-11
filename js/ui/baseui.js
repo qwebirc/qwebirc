@@ -379,7 +379,7 @@ qwebirc.ui.StandardUI = new Class({
     this.tabCompleter.reset();
   },
   setModifiableStylesheet: function(name) {
-    this.__styleSheet = new qwebirc.ui.style.ModifiableStylesheet(qwebirc.global.staticBaseURL + "css/" + name + qwebirc.FILE_SUFFIX + ".mcss");
+    this.__styleSheet = new qwebirc.ui.style.ModifiableStylesheet(qwebirc.global.staticBaseURL + "css/" + (QWEBIRC_DEBUG ? "debug/" : "") + name + qwebirc.FILE_SUFFIX + ".mcss");
     this.setModifiableStylesheetValues({});
   },
   setModifiableStylesheetValues: function(values) {
