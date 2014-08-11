@@ -140,8 +140,12 @@ qwebirc.ui.Window = new Class({
   errorMessage: function(message) {
     this.addLine("", message, "warncolour");
   },
-  infoMessage: function(message) {
-    this.addLine("", message, "infocolour");
+  infoMessage: function(type, message) {
+    if(message === undefined) {
+      this.addLine("", type, "infocolour");
+    } else {
+      this.addLine(type, message, "infocolour");
+    }
   },
   setHilighted: function(state) {
     if(state == qwebirc.ui.HILIGHT_NONE || state >= this.hilighted)

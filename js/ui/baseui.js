@@ -51,7 +51,9 @@ qwebirc.ui.BaseUI = new Class({
   newClient: function(client) {
     client.id = this.clientId++;
     client.hilightController = new qwebirc.ui.HilightController(client);
-    
+    client.addEvent("signedOn", function() {
+      this.fireEvent("signedOn", client);
+    }.bind(this));
     this.windows[client.id] = {}
     this.clients[client.id] = client;
     var w = this.newWindow(client, qwebirc.ui.WINDOW_STATUS, "Status");

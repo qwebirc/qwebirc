@@ -15,7 +15,7 @@ qwebirc.irc.RegisteredCTCPs = {
 };
 
 qwebirc.irc.BaseIRCClient = new Class({
-  Implements: [Options],
+  Implements: [Options, Events],
   options: {
     nickname: "qwebirc"
   },
@@ -40,10 +40,12 @@ qwebirc.irc.BaseIRCClient = new Class({
     });
   
     this.send = this.connection.send.bind(this.connection);
-    this.connect = this.connection.connect.bind(this.connection);
     this.disconnect = this.connection.disconnect.bind(this.connection);
 
     this.setupGenericErrors();
+  },
+  connect: function() {
+    this.connection.connect.apply(this.connection);
   },
   dispatch: function(data) {
     var message = data[0];
