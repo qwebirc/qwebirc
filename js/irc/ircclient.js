@@ -26,6 +26,10 @@ qwebirc.irc.IRCClient = new Class({
     this.loginRegex = new RegExp(this.ui.options.loginRegex);
     this.tracker = new qwebirc.irc.IRCTracker(this);
   },
+  connect: function() {
+    this.parent();
+    this.newServerInfoLine("CONNECTING", "");
+  },
   newLine: function(window, type, data) {
     if(!data)
       data = {};
@@ -55,6 +59,9 @@ qwebirc.irc.IRCClient = new Class({
   },
   newServerLine: function(type, data) {
     this.statusWindow.addLine(type, data);
+  },
+  newServerInfoLine: function(type, data) {
+    this.statusWindow.infoMessage(type, data);
   },
   newActiveLine: function(type, data) {
     this.getActiveWindow().addLine(type, data);
@@ -225,7 +232,7 @@ qwebirc.irc.IRCClient = new Class({
     /* we guarantee that +x is sent out before the joins */
     if(this.ui.uiOptions.USE_HIDDENHOST)
       this.exec("/UMODE +x");
-      
+
     if(this.options.autojoin) {
       if(qwebirc.auth.loggedin() && this.ui.uiOptions.USE_HIDDENHOST) {
         var d = function() {
@@ -241,7 +248,11 @@ qwebirc.irc.IRCClient = new Class({
       }
 
       this.exec("/AUTOJOIN");
+    } else {
+      var d = function() { this.newServerInfoLine("CONNECTED", ""); }.delay(1000, this);
     }
+
+    this.fireEvent("signedOn");
   },
   userJoined: function(user, channel) {
     var nick = user.hostToNick();
@@ -567,7 +578,7 @@ qwebirc.irc.IRCClient = new Class({
   },
   connected: function() {
     qwebirc.connected = true;
-    this.newServerLine("CONNECT");
+    this.newServerInfoLine("CONNECT", "");
   },
   serverError: function(message) {
     this.newServerLine("ERROR", {"m": message});

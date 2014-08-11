@@ -10,7 +10,8 @@ qwebirc.irc.Commands = new Class({
       "Q": "QUERY",
       "BACK": "AWAY",
       "PRIVACY": "PRIVACYPOLICY",
-      "HOP": "CYCLE"
+      "HOP": "CYCLE",
+      "": "SAY"
     };
   },
   
@@ -141,7 +142,12 @@ qwebirc.irc.Commands = new Class({
     this.automode("-", "v", args);
   }],
   cmd_TOPIC: [true, 1, 1, function(args) {
-    this.send("TOPIC " + this.getActiveWindow().name + " :" + args[0]);
+    var w = this.getActiveWindow();
+    if(w.client.isChannel(args[0])) {
+      this.send("TOPIC " + args[0]);
+    } else {
+      this.send("TOPIC " + w.name + " :" + args[0]);
+    }
   }],
   cmd_AWAY: [false, 1, 0, function(args) {
     this.send("AWAY :" + (args?args[0]:""));
@@ -187,6 +193,13 @@ qwebirc.irc.Commands = new Class({
   }],
   cmd_AUTOJOIN: [false, undefined, undefined, function(args) {
     return ["JOIN", this.parentObject.options.autojoin];
+  }],
+  cmd_HELP: [false, undefined, undefined, function(args) {
+    if(qwebirc.global.helpURL) {
+      this.newUIWindow("helpWindow");
+    } else {
+      this.send("HELP" + (args ? (" " + args[0]) : ""));
+    }
   }],
   cmd_CLEAR: [false, undefined, undefined, function(args) {
     var w = this.getActiveWindow().lines;

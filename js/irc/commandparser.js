@@ -47,8 +47,16 @@ qwebirc.irc.BaseCommandParser = new Class({
     if(line.length == 0)
       return;
 
-    if(line.charAt(0) != "/")
+    if(line.charAt(0) != "/") {
+      if (this.getActiveWindow().type == qwebirc.ui.WINDOW_STATUS) {
+        if(line.charAt(0) != "#")
+          line = "#" + line;
+
+        this.getActiveWindow().errorMessage("To join a channel type: /JOIN " + line);
+        return;
+      }
       line = "/SAY " + line;
+    }
     
     var line = line.substr(1);
     var allargs = line.splitMax(" ", 2);

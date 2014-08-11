@@ -20,5 +20,8 @@ def get_options():
       validFirstChar=config.NICKNAME_VALID_FIRST_CHAR,
       validSubChars=config.NICKNAME_VALID_SUBSEQUENT_CHARS
     )
-    
+
+  if hasattr(config, "HELP_URL") and config.HELP_URL:
+    options["helpURL"] = config.HELP_URL
+
   return json.dumps(options)
