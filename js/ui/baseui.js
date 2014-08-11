@@ -59,7 +59,10 @@ qwebirc.ui.BaseUI = new Class({
   newClient: function(client) {
     client.id = this.clientId++;
     client.hilightController = new qwebirc.ui.HilightController(client);
-    
+    client.addEvent("signedOn", function() {
+      this.poller = new qwebirc.xdomain.Poller(this.oobMessage.bind(this));
+      this.fireEvent("signedOn", client);
+    }.bind(this));
     this.windows[client.id] = {}
     this.clients[client.id] = client;
     var w = this.newWindow(client, qwebirc.ui.WINDOW_STATUS, "Status");
@@ -215,9 +218,6 @@ qwebirc.ui.BaseUI = new Class({
     var window_ = this.getActiveWindow();
     if($defined(window_))
       window_.focusChange(newValue);
-  },
-  signedOn: function() {
-    this.poller = new qwebirc.xdomain.Poller(this.oobMessage.bind(this));
   },
   oobMessage: function(message) {
     var c = message.splitMax(" ", 2);
@@ -379,8 +379,8 @@ qwebirc.ui.StandardUI = new Class({
   feedbackWindow: function() {
     this.addCustomWindow("Feedback", qwebirc.ui.FeedbackPane, "feedbackpane", this.uiOptions);
   },
-  faqWindow: function() {
-    this.addCustomWindow("FAQ", qwebirc.ui.FAQPane, "faqpane", this.uiOptions);
+  helpWindow: function() {
+    this.addCustomWindow("Help!", qwebirc.ui.HelpPane, "helppane", this.uiOptions);
   },
   urlDispatcher: function(name, window) {
     if(name == "embedded")
@@ -409,7 +409,7 @@ qwebirc.ui.StandardUI = new Class({
     this.tabCompleter.reset();
   },
   setModifiableStylesheet: function(name) {
-    this.__styleSheet = new qwebirc.ui.style.ModifiableStylesheet(qwebirc.global.staticBaseURL + "css/" + name + qwebirc.FILE_SUFFIX + ".mcss");
+    this.__styleSheet = new qwebirc.ui.style.ModifiableStylesheet(qwebirc.global.staticBaseURL + "css/" + (QWEBIRC_DEBUG ? "debug/" : "") + name + qwebirc.FILE_SUFFIX + ".mcss");
     this.setModifiableStylesheetValues({});
   },
   setModifiableStylesheetValues: function(values) {

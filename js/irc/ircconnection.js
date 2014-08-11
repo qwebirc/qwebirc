@@ -127,9 +127,9 @@ qwebirc.irc.IRCConnection = new Class({
     if(synchronous) {
       this.__send([this.__pubSeqNo, data], false);
     } else if(this.__ws && this.__wsAuthed) {
-      /* seqno here is currently pointless but it's nice to enforce it in the protocol */
       this.__ws.send("p" + this.__pubSeqNo + "," + data);
     } else {
+      /* seqno here is currently pointless but it's nice to enforce it in the protocol */
       this.__sendQueue.push([this.__pubSeqNo, data]);
       this.__processSendQueue();
     }

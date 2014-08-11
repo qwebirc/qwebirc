@@ -146,6 +146,15 @@ qwebirc.ui.QUI = new Class({
     form.addClass("input");
     
     var inputbox = new Element("input");
+    this.addEvent("signedOn", function() {
+      inputbox.placeholder = "type commands here, for example: /JOIN #channel";
+      var d = function() { inputbox.addClass("input-flash"); }.delay(250);
+      var d = function() { inputbox.removeClass("input-flash"); }.delay(500);
+      var d = function() { inputbox.addClass("input-flash"); }.delay(750);
+      var d = function() { inputbox.removeClass("input-flash"); }.delay(1000);
+      var d = function() { inputbox.addClass("input-flash"); }.delay(1250);
+      var d = function() { inputbox.removeClass("input-flash"); }.delay(1750);
+    });
     form.appendChild(inputbox);
     this.inputbox = inputbox;
     this.inputbox.maxLength = 470;
@@ -157,6 +166,7 @@ qwebirc.ui.QUI = new Class({
       this.resetTabComplete();
       this.getActiveWindow().historyExec(inputbox.value);
       inputbox.value = "";
+      inputbox.placeholder = "";
     }.bind(this);
 
     if(!qwebirc.util.deviceHasKeyboard()) {

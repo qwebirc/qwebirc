@@ -28,6 +28,7 @@ qwebirc.ui.Interface = new Class({
     tlightness: null,
     uiOptionsArg: null,
     nickValidation: null,
+    helpURL: null,
     dynamicBaseURL: "/",
     staticBaseURL: "/"
   },
@@ -54,9 +55,9 @@ qwebirc.ui.Interface = new Class({
       dynamicBaseURL: options.dynamicBaseURL,
       staticBaseURL: options.staticBaseURL,
       baseURL: options.baseURL,
+      helpURL: options.helpURL,
       nicknameValidator: $defined(options.nickValidation) ? new qwebirc.irc.NicknameValidator(options.nickValidation) : new qwebirc.irc.DummyNicknameValidator()
     };
-
 
     window.addEvent("domready", function() {
       var callback = function(options) {
@@ -105,8 +106,9 @@ qwebirc.ui.Interface = new Class({
           
             for(var i=0;i<chans.length;i++) {
               chans2[i] = chans[i];
-            
-              if(chans[i].charAt(0) != '#')
+
+                var prefix = chans[i].charAt(0);
+                if(prefix != '#' && prefix != '&')
                 chans2[i] = "#" + chans2[i]
             }
             cdata[0] = chans2.join(",");
