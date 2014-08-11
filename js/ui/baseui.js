@@ -47,6 +47,14 @@ qwebirc.ui.BaseUI = new Class({
       document.addEvent("focus", focus);
       window.addEvent("focus", focus);
     }
+
+    qwebirc.util.__log = function(x) {
+      if(QWEBIRC_DEBUG) {
+        if(typeof console != "undefined")
+          console.log(x);
+        this.getActiveWindow().addLine(null, x);
+      }
+    }.bind(this);
   },
   newClient: function(client) {
     client.id = this.clientId++;
@@ -59,7 +67,7 @@ qwebirc.ui.BaseUI = new Class({
     if(!this.firstClient) {
       this.firstClient = true;
       w.addLine("", "qwebirc v" + qwebirc.VERSION);
-      w.addLine("", "Copyright (C) 2008-2012 Chris Porter and the qwebirc project.");
+      w.addLine("", "Copyright (C) 2008-2014 Chris Porter and the qwebirc project.");
       w.addLine("", "http://www.qwebirc.org");
       w.addLine("", "Licensed under the GNU General Public License, Version 2.");
     }

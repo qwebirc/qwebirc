@@ -378,3 +378,22 @@ qwebirc.util.generateID_ID = 0;
 qwebirc.util.generateID = function() {
   return "qqa-" + qwebirc.util.generateID_ID++;
 }
+
+qwebirc.util.__log = function(x) {
+  if(QWEBIRC_DEBUG) {
+    if(typeof console == "undefined") {
+      alert("log: " + x);
+    } else {
+      console.log(x);
+    }
+  }
+};
+
+qwebirc.util.logger = {
+  log: function(x) { qwebirc.util.__log("L " + x) },
+  info: function(x) { qwebirc.util.__log("I " + x) },
+  error: function(x) { qwebirc.util.__log("E " + x) },
+  warn: function(x) { qwebirc.util.__log("W " + x) }
+};
+
+qwebirc.util.log = qwebirc.util.logger.log;

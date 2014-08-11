@@ -23,7 +23,19 @@ def help_reactors(*args):
   run_twistd(["--help-reactors"])
   sys.exit(1)
 
-DEFAULT_REACTOR = "select" if os.name == "nt" else "poll"  
+try:
+  from select import epoll
+  DEFAULT_REACTOR = "epoll"
+except ImportError:
+  try:
+    from select import kqueue
+    DEFAULT_REACTOR = "kqueue"
+  except ImportError:
+    try:
+      from select import poll
+      DEFAULT_REACTOR = "poll"
+    except ImportError:
+      DEFAULT_REACTOR = "select"
 
 parser = OptionParser()
 parser.add_option("-n", "--no-daemon", help="Don't run in the background.", action="store_false", dest="daemonise", default=True)
@@ -40,6 +52,7 @@ parser.add_option("-k", "--key", help="Path to SSL key.", dest="sslkey")
 parser.add_option("-H", "--certificate-chain", help="Path to SSL certificate chain file.", dest="sslchain")
 parser.add_option("-P", "--pidfile", help="Path to store PID file", dest="pidfile")
 parser.add_option("-s", "--syslog", help="Log to syslog", action="store_true", dest="syslog", default=False)
+parser.add_option("-f", "--flash-port", help="Port to listen for flash policy connections on.", type="int", dest="flashPort")
 parser.add_option("--profile", help="Run in profile mode, dumping results to this file", dest="profile")
 parser.add_option("--profiler", help="Name of profiler to use", dest="profiler")
 parser.add_option("--syslog-prefix", help="Syslog prefix", dest="syslog_prefix", default="qwebirc")
@@ -80,6 +93,9 @@ if not options.tracebacks:
   args2.append("-n")
 if options.clogfile:
   args2+=["--logfile", options.clogfile]
+
+if options.flashPort:
+  args2+=["--flashPort", options.flashPort]
 
 if options.sslcertificate and options.sslkey:
   args2+=["--certificate", options.sslcertificate, "--privkey", options.sslkey, "--https", options.port]

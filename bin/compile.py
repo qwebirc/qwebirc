@@ -11,7 +11,7 @@ class MinifyException(Exception):
   
 def jarit(src):
   try:
-    p = subprocess.Popen(["java", "-jar", "bin/yuicompressor-2.4.2.jar", src], stdout=subprocess.PIPE)
+    p = subprocess.Popen(["java", "-jar", "bin/yuicompressor-2.4.2.jar", src], stdout=subprocess.PIPE, shell=os.name == "nt")
   except Exception, e:
     if hasattr(e, "errno") and e.errno == 2:
       raise MinifyException, "unable to run java"
@@ -99,7 +99,7 @@ def main(outputdir=".", produce_debug=True):
     
     #jmerge_files(outputdir, "js", uiname, value["uifiles"], lambda x: os.path.join("js", "ui", "frontends", x + ".js"))
     
-    alljs = []
+    alljs = ["js/debugdisabled.js"]
     for y in pages.JS_BASE:
       alljs.append(os.path.join("static", "js", y + ".js"))
     for y in value.get("buildextra", []):
@@ -109,7 +109,7 @@ def main(outputdir=".", produce_debug=True):
     for y in value["uifiles"]:
       alljs.append(os.path.join("js", "ui", "frontends", y + ".js"))
     jmerge_files(outputdir, "js", uiname + "-" + ID, alljs, file_prefix="QWEBIRC_BUILD=\"" + ID + "\";\n")
-    
+
   os.rmdir(coutputdir)
   
   f = open(".compiled", "w")
