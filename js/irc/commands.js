@@ -194,6 +194,13 @@ qwebirc.irc.Commands = new Class({
   cmd_AUTOJOIN: [false, undefined, undefined, function(args) {
     return ["JOIN", this.parentObject.options.autojoin];
   }],
+  cmd_HELP: [false, undefined, undefined, function(args) {
+    if(qwebirc.global.helpURL) {
+      this.newUIWindow("helpWindow");
+    } else {
+      this.send("HELP" + (args ? (" " + args[0]) : ""));
+    }
+  }],
   cmd_CLEAR: [false, undefined, undefined, function(args) {
     var w = this.getActiveWindow().lines;
     while(w.childNodes.length > 0)

@@ -268,6 +268,11 @@ DYNAMIC_BASE_URL = ""
 #         the system's default resolver(s).
 CONNECTION_RESOLVER = None
 
+# OPTION: HELP_URL
+#         Shown to the user if they type /HELP or click on the Help!
+#         option in the user interface.
+HELP_URL = ""
+
 # QUAKENET SPECIFIC VALUES
 # ---------------------------------------------------------------------
 #

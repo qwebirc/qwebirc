@@ -28,6 +28,7 @@ qwebirc.ui.Interface = new Class({
     tlightness: null,
     uiOptionsArg: null,
     nickValidation: null,
+    helpURL: null,
     dynamicBaseURL: "/",
     staticBaseURL: "/"
   },
@@ -38,6 +39,7 @@ qwebirc.ui.Interface = new Class({
     qwebirc.global = {
       dynamicBaseURL: options.dynamicBaseURL,
       staticBaseURL: options.staticBaseURL,
+      helpURL: options.helpURL,
       nicknameValidator: $defined(options.nickValidation) ? new qwebirc.irc.NicknameValidator(options.nickValidation) : new qwebirc.irc.DummyNicknameValidator()
     };
 

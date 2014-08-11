@@ -343,8 +343,8 @@ qwebirc.ui.StandardUI = new Class({
   feedbackWindow: function() {
     this.addCustomWindow("Feedback", qwebirc.ui.FeedbackPane, "feedbackpane", this.uiOptions);
   },
-  faqWindow: function() {
-    this.addCustomWindow("FAQ", qwebirc.ui.FAQPane, "faqpane", this.uiOptions);
+  helpWindow: function() {
+    this.addCustomWindow("Help!", qwebirc.ui.HelpPane, "helppane", this.uiOptions);
   },
   urlDispatcher: function(name, window) {
     if(name == "embedded")
