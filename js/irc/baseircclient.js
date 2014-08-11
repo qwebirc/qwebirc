@@ -29,8 +29,9 @@ qwebirc.irc.BaseIRCClient = new Class({
 
     this.__signedOn = false;
     this.pmodes = {b: qwebirc.irc.PMODE_LIST, l: qwebirc.irc.PMODE_SET_ONLY, k: qwebirc.irc.PMODE_SET_UNSET, o: qwebirc.irc.PMODE_SET_UNSET, v: qwebirc.irc.PMODE_SET_UNSET};
-    this.channels = {}
-    this.nextctcp = 0;    
+    this.channels = {};
+    this.chanPrefixes = {"#": true, "&": true};
+    this.nextctcp = 0;
 
     this.connection = new qwebirc.irc.IRCConnection({
       initialNickname: this.nickname,
@@ -79,7 +80,7 @@ qwebirc.irc.BaseIRCClient = new Class({
   },
   isChannel: function(target) {
     var c = target.charAt(0);
-    return c == '#';
+    return this.chanPrefixes[c] === true;
   },
   supported: function(key, value) {
     if(key == "CASEMAPPING") {
@@ -96,6 +97,10 @@ qwebirc.irc.BaseIRCClient = new Class({
       for(var i=0;i<smodes.length;i++)
         for(var j=0;j<smodes[i].length;j++)
           this.pmodes[smodes[i].charAt(j)] = i;
+    } else if(key == "CHANTYPES") {
+      this.chanPrefixes = {};
+      for(var i=0;i<value.length;i++)
+        this.chanPrefixes[value.charAt(i)] = true;
     } else if(key == "PREFIX") {
       var l = (value.length - 2) / 2;
       
