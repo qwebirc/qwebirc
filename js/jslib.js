@@ -39,6 +39,7 @@ String.prototype.splitMax = function(by, max) {
   return newitems;
 }
 
+
 /* returns the arguments */
 qwebirc.util.parseURI = function(uri) {
   var result = {}
@@ -119,6 +120,32 @@ qwebirc.util.pad = function(x) {
 
 RegExp.escape = function(text) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
+
+RegExp.fromIRCPattern = function(t) {
+  /* escape everything but ? . and * */
+  var t = t.replace(/[-[\]{}()+,\\^$|#\s]/g, "\\$&");
+  t = t.split("");
+  var out = [];
+
+  /* now process the rest */
+  for(var i=0;i<t.length;i++) {
+    var c = t[i];
+    switch(c) {
+      case '.':
+        out.push("\\.");
+        break;
+      case '?':
+        out.push(".");
+        break;
+      case '*':
+        out.push(".*");
+        break;
+      default:
+        out.push(c);
+    }
+  }
+  return out.join("");
 }
 
 qwebirc.ui.insertAt = function(position, parent, element) {

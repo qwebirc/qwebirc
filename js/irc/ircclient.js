@@ -25,6 +25,10 @@ qwebirc.irc.IRCClient = new Class({
     
     this.loginRegex = new RegExp(this.ui.options.loginRegex);
     this.tracker = new qwebirc.irc.IRCTracker(this);
+
+    this.__silenceSupported = false;
+    this.__silenced = null;
+    this.ignoreController = new qwebirc.irc.IgnoreController(function(x) { return this.toIRCLower(x) }.bind(this));
   },
   connect: function() {
     this.parent();
@@ -428,16 +432,30 @@ qwebirc.irc.IRCClient = new Class({
   },
   channelPrivmsg: function(user, channel, message) {
     var nick = user.hostToNick();
-    
+    var host = user.hostToHost();
+
+    if(this.isIgnored(nick, host))
+      return;
+
     this.tracker.updateLastSpoke(nick, channel, new Date().getTime()); 
     this.newChanLine(channel, "CHANMSG", user, {"m": message, "@": this.getNickStatus(channel, nick)});
   },
   channelNotice: function(user, channel, message) {
+    var nick = user.hostToNick();
+    var host = user.hostToHost();
+
+    if(this.isIgnored(nick, host))
+      return;
+
     this.newChanLine(channel, "CHANNOTICE", user, {"m": message, "@": this.getNickStatus(channel, user.hostToNick())});
   },
   userPrivmsg: function(user, message) {
     var nick = user.hostToNick();
     var host = user.hostToHost();
+
+    if(this.isIgnored(nick, host))
+      return;
+
     this.newQueryWindow(nick, true);
     this.pushLastNick(nick);
     this.newQueryLine(nick, "PRIVMSG", {"m": message, "h": host, "n": nick}, true);
@@ -465,6 +483,9 @@ qwebirc.irc.IRCClient = new Class({
     var nick = user.hostToNick();
     var host = user.hostToHost();
 
+    if(this.isIgnored(nick, host))
+      return;
+
     if(this.ui.uiOptions.DEDICATED_NOTICE_WINDOW) {
       this.newQueryWindow(nick, false);
       this.newQueryOrActiveLine(nick, "PRIVNOTICE", {"m": message, "h": host, "n": nick}, false);
@@ -485,6 +506,9 @@ qwebirc.irc.IRCClient = new Class({
   userInvite: function(user, channel) {
     var nick = user.hostToNick();
     var host = user.hostToHost();
+
+    if(this.isIgnored(nick, host))
+      return;
 
     this.newServerLine("INVITE", {"c": channel, "h": host, "n": nick});
     if(this.ui.uiOptions.ACCEPT_SERVICE_INVITES && this.isNetworkService(user)) {
@@ -572,6 +596,8 @@ qwebirc.irc.IRCClient = new Class({
 
       this.modeprefixes = value.substr(1, l);
       this.prefixes = value.substr(l + 2, l);
+    } else if(key == "SILENCE") {
+      this.__silenceSupported = true;
     }
 
     this.parent(key, value);
@@ -680,5 +706,43 @@ qwebirc.irc.IRCClient = new Class({
   },
   channelCreationTime: function(channel, time) {
     this.newTargetOrActiveLine(channel, "CHANNELCREATIONTIME", {c: channel, m: qwebirc.irc.IRCDate(new Date(time * 1000))});
-  }  
+  },
+  ignore: function(host) {
+    var host = this.ignoreController.ignore(host);
+    if(host === null)
+      return false;
+
+    if(this.__silenceSupported) {
+      this.__silenced = "+" + host;
+      this.exec("/SILENCE +" + host);
+    }
+
+    return true;
+  },
+  unignore: function(host) {
+    var host = this.ignoreController.unignore(host);
+    if(host === null)
+      return false;
+
+    if(this.__silenceSupported) {
+      this.__silenced = "-" + host;
+      this.exec("/SILENCE -" + host);
+    }
+
+    return true;
+  },
+  getIgnoreList: function() {
+    return this.ignoreController.get();
+  },
+  silenced: function(host) {
+    if (host === this.__silenced) {
+      this.__silenced = null;
+      return;
+    }
+
+    this.newServerLine("SILENCE", {h: host});
+  },
+  isIgnored: function(nick, host) {
+    return this.ignoreController.isIgnored(nick, host);
+  }
 });

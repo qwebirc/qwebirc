@@ -511,5 +511,10 @@ qwebirc.irc.BaseIRCClient = new Class({
 
     this.channelModeIs(channel, modes);
     return true;
+  },
+  irc_SILENCE: function(prefix, params) {
+    var host = params[0];
+    this.silenced(host);
+    return true;
   }
 });

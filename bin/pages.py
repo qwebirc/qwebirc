@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-IRC_BASE = ["ircconnection", "irclib", "numerics", "baseircclient", "irctracker", "commandparser", "commands", "ircclient", "commandhistory", "nicknamevalidator"]
+IRC_BASE = ["ircconnection", "irclib", "numerics", "baseircclient", "irctracker", "commandparser", "commands", "ircclient", "commandhistory", "nicknamevalidator", "ignorecontroller"]
 PANES = ["connect", "embed", "options", "about", "privacypolicy", "feedback", "help"]
 UI_BASE = ["menuitems", "baseui", "baseuiwindow", "colour", "url", "theme", "notifications", "tabcompleter", "style"]
 UI_BASE.extend(["panes/%s" % x for x in PANES])
