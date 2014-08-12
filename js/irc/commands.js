@@ -3,7 +3,7 @@ qwebirc.irc.Commands = new Class({
   initialize: function(parentObject) {
     this.parent(parentObject);
     
-    this.aliases = {
+    this.aliases = new QHash({
       "J": "JOIN",
       "K": "KICK",
       "MSG": "PRIVMSG",
@@ -11,8 +11,10 @@ qwebirc.irc.Commands = new Class({
       "BACK": "AWAY",
       "PRIVACY": "PRIVACYPOLICY",
       "HOP": "CYCLE",
-      "": "SAY"
-    };
+      "": "SAY",
+      "BLOCK": "IGNORE",
+      "UNBLOCK": "UNIGNORE"
+    });
   },
   
   newUIWindow: function(property) {
@@ -90,6 +92,30 @@ qwebirc.irc.Commands = new Class({
       args = "";
       
     return ["PRIVMSG", this.getActiveWindow().name + " " + args]
+  }],
+  cmd_IGNORE: [false, 1, 0, function(args) {
+    var w = this.getActiveWindow();
+    var info = w.infoMessage.bind(w);
+    if(!args || args.length == 0) {
+      var l = this.parentObject.getIgnoreList();
+      if(l.length == 0) {
+        info("IGNOREEMPTY", "");
+      } else {
+        info("IGNOREHEADER", "");
+        l.forEach(function(v) {
+          info("IGNOREENTRY", {"h": v});
+        });
+      }
+    } else {
+      var nick = args[0];
+      this.parentObject.ignore(nick);
+      info("IGNORED", {"n": nick});
+    }
+  }],
+  cmd_UNIGNORE: [false, 1, 1, function(args) {
+    var nick = args[0];
+    this.parentObject.unignore(nick);
+    this.parentObject.getActiveWindow().infoMessage("UNIGNORED", {"n": nick});
   }],
   cmd_LOGOUT: [false, undefined, undefined, function(args) {
     this.parentObject.ui.logout();

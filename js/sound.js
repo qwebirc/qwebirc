@@ -42,10 +42,18 @@ qwebirc.sound.SoundPlayer = new Class({
     }.bind(this));
   },
   createSound: function(name, src) {
-    soundManager.createSound(name, src);
+    try {
+      soundManager.createSound(name, src);
+    } catch(e) {
+      /* ignore... flashblock triggers this */
+    }
   },
   playSound: function(name) {
-    soundManager.play(name);
+    try {
+      soundManager.play(name);
+    } catch(e) {
+      /* ignore... */
+    }
   },
   beep: function() {
     if(!this.beepLoaded) {

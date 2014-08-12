@@ -78,7 +78,7 @@ qwebirc.irc.IRCConnection = new Class({
     });
     
     /* try to minimise the amount of headers */
-    r.headers = new Hash;
+    r.headers = new Hash();
     r.addEvent("request", function() {
       var kill = ["Accept", "Accept-Language"];
       var killBit = "";

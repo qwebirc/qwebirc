@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-IRC_BASE = ["ircconnection", "irclib", "numerics", "baseircclient", "irctracker", "commandparser", "commands", "ircclient", "commandhistory", "nicknamevalidator"]
+IRC_BASE = ["ircconnection", "irclib", "numerics", "baseircclient", "irctracker", "commandparser", "commands", "ircclient", "commandhistory", "nicknamevalidator", "ignorecontroller"]
 PANES = ["connect", "embed", "options", "about", "privacypolicy", "feedback", "help"]
 UI_BASE = ["menuitems", "baseui", "baseuiwindow", "colour", "url", "theme", "notifications", "tabcompleter", "style"]
 UI_BASE.extend(["panes/%s" % x for x in PANES])
 
-DEBUG_BASE = ["qwebirc", "version", "jslib", "crypto", "md5", ["irc/%s" % x for x in IRC_BASE], ["ui/%s" % x for x in UI_BASE], "qwebircinterface", "auth", "sound"]
+DEBUG_BASE = ["qwebirc", "version", "qhash", "jslib", "crypto", "md5", ["irc/%s" % x for x in IRC_BASE], ["ui/%s" % x for x in UI_BASE], "qwebircinterface", "auth", "sound"]
 BUILD_BASE = ["qwebirc"]
 JS_BASE = ["mootools-1.2.5-core", "mootools-1.2.5.1-more"]
 JS_EXTRA = ["soundmanager2"]

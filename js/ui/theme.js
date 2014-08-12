@@ -69,7 +69,13 @@ qwebirc.ui.themes.Default = {
   "GENERICMESSAGE": ["$m", true],
   "WALLOPS": ["WALLOP $n: $t", true],
   "CHANNELCREATIONTIME": ["Channel $c was created at: $m", true],
-  "CHANNELMODEIS": ["Channel modes on $c are: $m", true]
+  "CHANNELMODEIS": ["Channel modes on $c are: $m", true],
+  "IGNORED": ["Ignored $n, to unignore type: /UNIGNORE $n", false],
+  "UNIGNORED": ["Unignored $n.", false],
+  "IGNOREHEADER": ["Ignore list:", false],
+  "IGNOREENTRY": ["- $h", false],
+  "IGNOREEMPTY": ["Ignore list is empty.", false],
+  "SILENCE": ["Silenced: $h", false]
 };
 
 qwebirc.ui.Theme = new Class({

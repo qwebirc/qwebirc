@@ -1,4 +1,4 @@
-qwebirc.irc.Numerics = {
+qwebirc.irc.Numerics = new QHash({
   "001": "RPL_WELCOME",
   "433": "ERR_NICKNAMEINUSE",
   "004": "RPL_MYINFO",
@@ -28,4 +28,4 @@ qwebirc.irc.Numerics = {
   "306": "RPL_NOWAWAY",
   "324": "RPL_CHANNELMODEIS",
   "329": "RPL_CREATIONTIME"
-};
+});

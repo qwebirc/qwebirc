@@ -12,7 +12,7 @@ qwebirc.irc.IRCClient = new Class({
 
     this.prefixes = "@+";
     this.modeprefixes = "ov";
-    this.windows = {};
+    this.windows = new QHash();
     
     this.commandparser = new qwebirc.irc.Commands(this);
     this.exec = this.commandparser.dispatch.bind(this.commandparser);
@@ -25,6 +25,10 @@ qwebirc.irc.IRCClient = new Class({
     
     this.loginRegex = new RegExp(this.ui.options.loginRegex);
     this.tracker = new qwebirc.irc.IRCTracker(this);
+
+    this.__silenceSupported = false;
+    this.__silenced = null;
+    this.ignoreController = new qwebirc.irc.IgnoreController(function(x) { return this.toIRCLower(x) }.bind(this));
   },
   connect: function() {
     this.parent();
@@ -74,32 +78,31 @@ qwebirc.irc.IRCClient = new Class({
     }
   },
   updateNickList: function(channel) {
-    var n1 = this.tracker.getChannel(channel);
-    var names = new Array();
     var tff = String.fromCharCode(255);
-    var nh = {}
-    
-    /* MEGAHACK */
-    for(var n in n1) {
-      var nc = n1[n];
-      var nx;
-      
-      if(nc.prefixes.length > 0) {
-        var c = nc.prefixes.charAt(0);
-        nx = String.fromCharCode(this.prefixes.indexOf(c)) + this.toIRCLower(n);
-        nh[nx] = c + n;
-      } else {
-        nx = tff + this.toIRCLower(n);
-        nh[nx] = n;
-      }
-      names.push(nx);
-    };
-    
+    var names = new Array();
+    var nh = new QHash();
+
+    var n1 = this.tracker.getChannel(channel);
+    if($defined(n1)) {
+      /* MEGAHACK */
+      n1.each(function (n, nc) {
+        var nx;
+        if (nc.prefixes.length > 0) {
+          var c = nc.prefixes.charAt(0);
+          nx = String.fromCharCode(this.prefixes.indexOf(c)) + this.toIRCLower(n);
+          nh.put(nx, c + n);
+        } else {
+          nx = tff + this.toIRCLower(n);
+          nh.put(nx, n);
+        }
+        names.push(nx);
+      }, this);
+    }
     names.sort();
     
     var sortednames = new Array();
     names.each(function(name) {
-      sortednames.push(nh[name]);
+      sortednames.push(nh.get(name));
     });
     
     var w = this.getWindow(channel);
@@ -107,7 +110,7 @@ qwebirc.irc.IRCClient = new Class({
       w.updateNickList(sortednames);
   },
   getWindow: function(name) {
-    return this.windows[this.toIRCLower(name)];
+    return this.windows.get(this.toIRCLower(name));
   },
   renameWindow: function(oldname, newname) {
     var oldwindow = this.getWindow(oldname);
@@ -116,17 +119,18 @@ qwebirc.irc.IRCClient = new Class({
 
     var window = this.ui.renameWindow(oldwindow, newname);
     if(window) {
-      this.windows[this.toIRCLower(newname)] = window;
-      delete this.windows[this.toIRCLower(oldname)];
+      this.windows.put(this.toIRCLower(newname), window);
+      this.windows.remove(this.toIRCLower(oldname));
     }
   },
   newWindow: function(name, type, select) {
     var w = this.getWindow(name);
     if(!w) {
-      w = this.windows[this.toIRCLower(name)] = this.ui.newWindow(this, type, name);
+      w = this.ui.newWindow(this, type, name);
+      this.windows.put(this.toIRCLower(name), w);
       
       w.addEvent("close", function(w) {
-        delete this.windows[this.toIRCLower(name)];
+        this.windows.remove(this.toIRCLower(name));
       }.bind(this));
     }
     
@@ -274,7 +278,7 @@ qwebirc.irc.IRCClient = new Class({
   userPart: function(user, channel, message) {
     var nick = user.hostToNick();
     var host = user.hostToHost();
-        
+
     if(nick == this.nickname) {
       this.tracker.removeChannel(channel);
     } else {
@@ -283,11 +287,11 @@ qwebirc.irc.IRCClient = new Class({
         this.newChanLine(channel, "PART", user, {"m": message});
       }
     }
-  
+
     this.updateNickList(channel);
-    
+
     if(nick == this.nickname) {
-      var w = this.getWindow(channel)
+      var w = this.getWindow(channel);
       if(w)
         w.close();
     }
@@ -329,17 +333,17 @@ qwebirc.irc.IRCClient = new Class({
   },
   userQuit: function(user, message) {
     var nick = user.hostToNick();
-    
-    var channels = this.tracker.getNick(nick);
-    
+
     var clist = [];
-    for(var c in channels) {
-      clist.push(c);
-      if(!this.ui.uiOptions.HIDE_JOINPARTS) {
-        this.newChanLine(c, "QUIT", user, {"m": message});
-      }
+    var channels = this.tracker.getNick(nick);
+    if($defined(channels)) {
+      channels.each(function (c) {
+        clist.push(c);
+        if (!this.ui.uiOptions.HIDE_JOINPARTS) {
+          this.newChanLine(c, "QUIT", user, {"m": message});
+        }
+      }, this);
     }
-    
     this.tracker.removeNick(nick);
     
     clist.each(function(cli) {
@@ -354,16 +358,18 @@ qwebirc.irc.IRCClient = new Class({
       
     this.tracker.renameNick(oldnick, newnick);
 
-    var channels = this.tracker.getNick(newnick);
     var found = false;
-    
-    for(var c in channels) {
-      var found = true;
-      
-      this.newChanLine(c, "NICK", user, {"w": newnick});
-      this.updateNickList(c);
+
+    var channels = this.tracker.getNick(newnick);
+    if($defined(channels)) {
+      channels.each(function (c) {
+        var found = true;
+
+        this.newChanLine(c, "NICK", user, {"w": newnick});
+        this.updateNickList(c);
+      }, this);
     }
-    
+
     if(this.getQueryWindow(oldnick)) {
       var found = true;
       this.renameWindow(oldnick, newnick);
@@ -428,16 +434,30 @@ qwebirc.irc.IRCClient = new Class({
   },
   channelPrivmsg: function(user, channel, message) {
     var nick = user.hostToNick();
-    
+    var host = user.hostToHost();
+
+    if(this.isIgnored(nick, host))
+      return;
+
     this.tracker.updateLastSpoke(nick, channel, new Date().getTime()); 
     this.newChanLine(channel, "CHANMSG", user, {"m": message, "@": this.getNickStatus(channel, nick)});
   },
   channelNotice: function(user, channel, message) {
+    var nick = user.hostToNick();
+    var host = user.hostToHost();
+
+    if(this.isIgnored(nick, host))
+      return;
+
     this.newChanLine(channel, "CHANNOTICE", user, {"m": message, "@": this.getNickStatus(channel, user.hostToNick())});
   },
   userPrivmsg: function(user, message) {
     var nick = user.hostToNick();
     var host = user.hostToHost();
+
+    if(this.isIgnored(nick, host))
+      return;
+
     this.newQueryWindow(nick, true);
     this.pushLastNick(nick);
     this.newQueryLine(nick, "PRIVMSG", {"m": message, "h": host, "n": nick}, true);
@@ -465,6 +485,9 @@ qwebirc.irc.IRCClient = new Class({
     var nick = user.hostToNick();
     var host = user.hostToHost();
 
+    if(this.isIgnored(nick, host))
+      return;
+
     if(this.ui.uiOptions.DEDICATED_NOTICE_WINDOW) {
       this.newQueryWindow(nick, false);
       this.newQueryOrActiveLine(nick, "PRIVNOTICE", {"m": message, "h": host, "n": nick}, false);
@@ -485,6 +508,9 @@ qwebirc.irc.IRCClient = new Class({
   userInvite: function(user, channel) {
     var nick = user.hostToNick();
     var host = user.hostToHost();
+
+    if(this.isIgnored(nick, host))
+      return;
 
     this.newServerLine("INVITE", {"c": channel, "h": host, "n": nick});
     if(this.ui.uiOptions.ACCEPT_SERVICE_INVITES && this.isNetworkService(user)) {
@@ -527,11 +553,14 @@ qwebirc.irc.IRCClient = new Class({
     }, this);
   },
   disconnected: function(message) {
-    for(var x in this.windows) {
-      var w = this.windows[x];
-      if(w.type == qwebirc.ui.WINDOW_CHANNEL)
-        w.close();
-    }
+    var toClose = [];
+    this.windows.each(function(k, v) {
+      if(v.type == qwebirc.ui.WINDOW_CHANNEL)
+        toClose.push(v);
+    });
+    for(var i=0;i<toClose.length;i++)
+      toClose[i].close();
+
     this.tracker = undefined;
     
     qwebirc.connected = false;
@@ -554,14 +583,14 @@ qwebirc.irc.IRCClient = new Class({
     if(pos == -1)
       return false;  /* shouldn't happen */
 
-    var modehash = {};
+    var modehash = new QSet();
     this.prefixes.slice(0, pos + 1).split("").each(function(x) {
-      modehash[x] = true;
+      modehash.add(x);
     });
     
     var prefixes = entry.prefixes;
     for(var i=0;i<prefixes.length;i++)
-      if(modehash[prefixes.charAt(i)])
+      if(modehash.contains(prefixes.charAt(i)))
         return true;
         
     return false;
@@ -572,6 +601,8 @@ qwebirc.irc.IRCClient = new Class({
 
       this.modeprefixes = value.substr(1, l);
       this.prefixes = value.substr(l + 2, l);
+    } else if(key == "SILENCE") {
+      this.__silenceSupported = true;
     }
 
     this.parent(key, value);
@@ -680,5 +711,43 @@ qwebirc.irc.IRCClient = new Class({
   },
   channelCreationTime: function(channel, time) {
     this.newTargetOrActiveLine(channel, "CHANNELCREATIONTIME", {c: channel, m: qwebirc.irc.IRCDate(new Date(time * 1000))});
-  }  
+  },
+  ignore: function(host) {
+    var host = this.ignoreController.ignore(host);
+    if(host === null)
+      return false;
+
+    if(this.__silenceSupported) {
+      this.__silenced = "+" + host;
+      this.exec("/SILENCE +" + host);
+    }
+
+    return true;
+  },
+  unignore: function(host) {
+    var host = this.ignoreController.unignore(host);
+    if(host === null)
+      return false;
+
+    if(this.__silenceSupported) {
+      this.__silenced = "-" + host;
+      this.exec("/SILENCE -" + host);
+    }
+
+    return true;
+  },
+  getIgnoreList: function() {
+    return this.ignoreController.get();
+  },
+  silenced: function(host) {
+    if (host === this.__silenced) {
+      this.__silenced = null;
+      return;
+    }
+
+    this.newServerLine("SILENCE", {h: host});
+  },
+  isIgnored: function(nick, host) {
+    return this.ignoreController.isIgnored(nick, host);
+  }
 });

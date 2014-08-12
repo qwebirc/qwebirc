@@ -41,7 +41,7 @@ String.prototype.splitMax = function(by, max) {
 
 /* returns the arguments */
 qwebirc.util.parseURI = function(uri) {
-  var result = {}
+  var result = new QHash();
 
   var start = uri.indexOf('?');
   if(start == -1)
@@ -56,11 +56,11 @@ qwebirc.util.parseURI = function(uri) {
     if(r.length < 2)
       continue;
       
-    result[unescape(r[0])] = unescape(r[1]);
+    result.put(unescape(r[0]), unescape(r[1]));
   }
   
   return result;
-}
+};
 
 qwebirc.util.DaysOfWeek = {
   0: "Sun",
@@ -119,6 +119,32 @@ qwebirc.util.pad = function(x) {
 
 RegExp.escape = function(text) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
+
+RegExp.fromIRCPattern = function(t) {
+  /* escape everything but ? . and * */
+  var t = t.replace(/[-[\]{}()+,\\^$|#\s]/g, "\\$&");
+  t = t.split("");
+  var out = [];
+
+  /* now process the rest */
+  for(var i=0;i<t.length;i++) {
+    var c = t[i];
+    switch(c) {
+      case '.':
+        out.push("\\.");
+        break;
+      case '?':
+        out.push(".");
+        break;
+      case '*':
+        out.push(".*");
+        break;
+      default:
+        out.push(c);
+    }
+  }
+  return out.join("");
 }
 
 qwebirc.ui.insertAt = function(position, parent, element) {

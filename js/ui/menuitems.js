@@ -32,6 +32,10 @@ qwebirc.ui.MENU_ITEMS = function() {
     return this.client.nickOnChanHasPrefix(nick, channel, "+");
   };
 
+  var isIgnored = function(nick) {
+    return this.client.isIgnored(nick);
+  };
+
   var invert = qwebirc.util.invertFn, compose = qwebirc.util.composeAnd;
   
   var command = function(cmd) {
@@ -78,6 +82,16 @@ qwebirc.ui.MENU_ITEMS = function() {
       text: "devoice",
       fn: command("devoice"),
       predicate: compose(isOpped, targetVoiced)
+    },
+    {
+      text: "ignore",
+      fn: command("ignore"),
+      predicate: invert(isIgnored)
+    },
+    {
+      text: "unignore",
+      fn: command("unignore"),
+      predicate: isIgnored
     }
   ];
 }();
