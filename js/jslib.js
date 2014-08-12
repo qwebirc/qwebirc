@@ -197,6 +197,10 @@ String.prototype.startsWith = function(what) {
   return this.substring(0, what.length) == what;
 }
 
+String.prototype.endsWith = function(what) {
+  return this.substring(this.length - what.length, this.length) == what;
+};
+
 /* NOT cryptographically secure! */
 qwebirc.util.randHexString = function(numBytes) {
   var getByte = function() {

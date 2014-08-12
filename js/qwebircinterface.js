@@ -34,21 +34,20 @@ qwebirc.ui.Interface = new Class({
   },
   initialize: function(element, ui, options) {
     this.setOptions(options);
-    var extractHost = function(uri) {
-      var start = uri.indexOf('?');
-      if(start != -1)
-        uri = uri.substring(0, start);
-      var start = uri.indexOf('#');
-      if(start != -1)
-        uri = uri.substring(0, start);
+    var extractHost = function() {
+      var uri = document.location.origin + document.location.pathname;
 
+      if(QWEBIRC_DEBUG && uri.endsWith(".html")) {
+        var last = uri.lastIndexOf("/");
+        uri = uri.substring(0, last + 1);
+      }
       if(uri.substr(uri.length - 1) != "/")
         uri = uri + "/";
 
       return uri;
     };
 
-    options.baseURL = extractHost(document.location.href);
+    options.baseURL = extractHost();
     
     /* HACK */
     qwebirc.global = {
