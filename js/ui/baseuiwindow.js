@@ -21,7 +21,7 @@ qwebirc.ui.Window = new Class({
     this.commandhistory = this.parentObject.commandhistory;
     this.scrolleddown = true;
     this.scrollpos = null;
-    this.lastNickHash = {};
+    this.lastNickHash = new QHash();
     this.lastSelected = null;
     this.subWindow = null;
     this.closed = false;
@@ -204,26 +204,27 @@ qwebirc.ui.Window = new Class({
     }
   },
   updateNickList: function(nicks) {
-    var nickHash = {}, present = {};
+    var nickHash = new QHash(), present = new QSet();
     var added = [];
     var lnh = this.lastNickHash;
     
     for(var i=0;i<nicks.length;i++)
-      present[nicks[i]] = 1;
-    
-    for(var k in lnh)
-      if(!present[k])
-        this.nickListRemove(k, lnh[k]);
-        
+      present.add(nicks[i]);
+
+    lnh.each(function(k, v) {
+      if(!present.contains(k))
+        this.nickListRemove(k, v);
+    }, this);
+
     for(var i=0;i<nicks.length;i++) {
       var n = nicks[i];
-      var l = lnh[n];
+      var l = lnh.get(n);
       if(!l) {
         l = this.nickListAdd(n, i);
         if(!l)
           l = 1;
       }
-      nickHash[n] = l;
+      nickHash.put(n, l);
     }
     
     this.lastNickHash = nickHash;

@@ -78,7 +78,7 @@ qwebirc.irc.IRCConnection = new Class({
     });
     
     /* try to minimise the amount of headers */
-    r.headers = new Hash;
+    r.headers = new Hash();
     r.addEvent("request", function() {
       var kill = ["Accept", "Accept-Language"];
       var killBit = "";
@@ -269,7 +269,7 @@ qwebirc.irc.IRCConnection = new Class({
     } else {
       wsproto = "ws";
     }
-    return wsproto + "://" + window.location.host + "/" + qwebirc.global.dynamicBaseURL + "w";
+    return wsproto + "://" + window.location.host + "/" + (qwebirc.global.dynamicBaseURL ? qwebirc.global.dynamicBaseURL : "/") + "w";
   },
   __recvWebSocket: function() {
     if(this.disconnected)

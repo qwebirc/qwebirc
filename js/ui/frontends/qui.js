@@ -147,7 +147,7 @@ qwebirc.ui.QUI = new Class({
     
     var inputbox = new Element("input");
     this.addEvent("signedOn", function() {
-      inputbox.placeholder = "type commands here, for example: /JOIN #channel";
+      inputbox.placeholder = "chat here! you can also use commands, like /JOIN or /HELP";
       var d = function() { inputbox.addClass("input-flash"); }.delay(250);
       var d = function() { inputbox.removeClass("input-flash"); }.delay(500);
       var d = function() { inputbox.addClass("input-flash"); }.delay(750);

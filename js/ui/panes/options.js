@@ -437,7 +437,7 @@ qwebirc.ui.CookieOptions = new Class({
 qwebirc.ui.SuppliedArgOptions = new Class({
   Extends: qwebirc.ui.CookieOptions,
   initialize: function(ui, arg) {
-    var p = {};
+    var p = new QHash();
     
     if($defined(arg) && arg != "" && arg.length > 2) {
       var checksum = arg.substr(arg.length - 2, 2);
@@ -445,9 +445,9 @@ qwebirc.ui.SuppliedArgOptions = new Class({
       
       if(decoded && (new qwebirc.util.crypto.MD5().digest(decoded).slice(0, 2) == checksum)) {
         var p2 = qwebirc.util.parseURI("?" + decoded);
-        for(var k in p2) {
-          p[k] = JSON.decode(p2[k], true);
-        }
+        p2.each(function(k, v) {
+          p.put(k, JSON.decode(v, true));
+        });
       }
     }
     
@@ -458,7 +458,7 @@ qwebirc.ui.SuppliedArgOptions = new Class({
     if(x.settableByURL !== true)
       return this.parent(x);
 
-    var opt = this.parsedOptions[x.optionId];
+    var opt = this.parsedOptions.get(String(x.optionId));
     if(!$defined(opt))
       return this.parent(x);
       

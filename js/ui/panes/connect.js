@@ -324,7 +324,7 @@ qwebirc.ui.authShowHide = function(checkbox, authRow, usernameBox, usernameRow, 
 
 qwebirc.ui.isAuthRequired = (function() {
   var args = qwebirc.util.parseURI(String(document.location));
-  var value = $defined(args) && args["authrequired"];
+  var value = $defined(args) && args.get("authrequired");
   return function() {
     return value && qwebirc.auth.enabled();
   };
@@ -332,7 +332,7 @@ qwebirc.ui.isAuthRequired = (function() {
 
 qwebirc.ui.isHideAuth = (function() {
   var args = qwebirc.util.parseURI(String(document.location));
-  var value = $defined(args) && args["hideauth"];
+  var value = $defined(args) && args.get("hideauth");
   return function() {
     return value;
   };

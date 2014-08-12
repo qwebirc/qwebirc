@@ -63,7 +63,7 @@ qwebirc.irc.BaseCommandParser = new Class({
     var command = allargs[0].toUpperCase();
     var args = allargs[1];
         
-    var aliascmd = this.aliases[command];
+    var aliascmd = this.aliases.get(command);
     if(aliascmd)
       command = aliascmd;
     
