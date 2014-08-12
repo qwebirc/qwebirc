@@ -62,12 +62,6 @@ def producehtml(name, debug):
   div = ui.get("div", "")
   customjs = ui.get("customjs", "")
 
-  if debug:
-    customjs = """<script type="text/javascript">
-QWEBIRC_DEBUG = true;
-</script>
-""" + customjs
-
   return """%s
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -75,7 +69,7 @@ QWEBIRC_DEBUG = true;
   <title>%s (qwebirc)</title>
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
   <link rel="shortcut icon" type="image/png" href="%simages/favicon.png"/>
-%s%s
+%s<script type="text/javascript">QWEBIRC_DEBUG=%s;</script>%s
 %s
   <script type="text/javascript">
     var ui = new qwebirc.ui.Interface("ircui", qwebirc.ui.%s, %s);
@@ -89,7 +83,7 @@ QWEBIRC_DEBUG = true;
   </div>
 </body>
 </html>
-""" % (ui["doctype"], config.APP_TITLE, config.STATIC_BASE_URL, csshtml, customjs, jshtml, ui["class"], optionsgen.get_options(), div)
+""" % (ui["doctype"], config.APP_TITLE, config.STATIC_BASE_URL, csshtml, debug and "true" or "false", customjs, jshtml, ui["class"], optionsgen.get_options(), div)
 
 def main(outputdir=".", produce_debug=True):
   p = os.path.join(outputdir, "static")
