@@ -609,7 +609,7 @@ qwebirc.irc.IRCClient = new Class({
   },
   connected: function() {
     qwebirc.connected = true;
-    this.newServerLine("CONNECT");
+    this.newServerInfoLine("CONNECT", "");
   },
   serverError: function(message) {
     this.newServerLine("ERROR", {"m": message});
