@@ -1,3 +1,7 @@
+window.WEB_SOCKET_SWF_LOCATION = qwebirc.global.staticBaseURL + "/WebSocketMain.swf";
+window.WEB_SOCKET_LOGGER = qwebirc.util.logger;
+/* note: FLASH_WEBSOCKET_LOADED = 1; at end */
+
 /* SWFObject v2.2 <http://code.google.com/p/swfobject/>
  is released under the MIT License <http://www.opensource.org/licenses/mit-license.php>
  */
@@ -12,15 +16,15 @@ var swfobject=function(){var D="undefined",r="object",S="Shockwave Flash",W="Sho
 //Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
 //Neither the name of the Hiroshi Ichikawa nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
 //THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
+
+/* PASTE START revision  f64a2b962be1b9c3d569fa375b47b0de0427adad  (including swf file) */
 // Copyright: Hiroshi Ichikawa <http://gimite.net/en/>
 // License: New BSD License
 // Reference: http://dev.w3.org/html5/websockets/
 // Reference: http://tools.ietf.org/html/rfc6455
-window.WEB_SOCKET_SWF_LOCATION = qwebirc.global.staticBaseURL + "/WebSocketMain.swf";
-window.WEB_SOCKET_LOGGER = qwebirc.util.logger;
 
 (function() {
+
   if (window.WEB_SOCKET_FORCE_FLASH) {
     // Keeps going.
   } else if (window.WebSocket) {
@@ -48,7 +52,7 @@ window.WEB_SOCKET_LOGGER = qwebirc.util.logger;
   }
   if (location.protocol == "file:") {
     logger.error(
-      "WARNING: web-socket-js doesn't work in file:///... URL " +
+        "WARNING: web-socket-js doesn't work in file:///... URL " +
         "unless you set Flash Security Settings properly. " +
         "Open the page via Web server i.e. http://...");
   }
@@ -284,7 +288,7 @@ window.WEB_SOCKET_LOGGER = qwebirc.util.logger;
       var swfHost = RegExp.$1;
       if (location.host != swfHost) {
         logger.error(
-          "[WebSocket] You must host HTML and WebSocketMain.swf in the same host " +
+            "[WebSocket] You must host HTML and WebSocketMain.swf in the same host " +
             "('" + location.host + "' != '" + swfHost + "'). " +
             "See also 'How to host HTML file and SWF file in different domains' section " +
             "in README.md. If you use WebSocketMainInsecure.swf, you can suppress this message " +
@@ -412,5 +416,5 @@ window.WEB_SOCKET_LOGGER = qwebirc.util.logger;
   }
 
 })();
-
+/* PASTE END */
 FLASH_WEBSOCKET_LOADED = 1;
