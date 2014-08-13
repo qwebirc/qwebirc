@@ -167,7 +167,7 @@ qwebirc.irc.Commands = new Class({
   cmd_DEVOICE: [true, 6, 1, function(args) {
     this.automode("-", "v", args);
   }],
-  cmd_TOPIC: [true, 1, 1, function(args) {
+  cmd_TOPIC: [false, 1, 1, function(args) {
     var w = this.getActiveWindow();
     if(w.client.isChannel(args[0])) {
       this.send("TOPIC " + args[0]);
