@@ -363,7 +363,7 @@ qwebirc.irc.IRCClient = new Class({
     var channels = this.tracker.getNick(newnick);
     if($defined(channels)) {
       channels.each(function (c) {
-        var found = true;
+        found = true;
 
         this.newChanLine(c, "NICK", user, {"w": newnick});
         this.updateNickList(c);
@@ -371,7 +371,7 @@ qwebirc.irc.IRCClient = new Class({
     }
 
     if(this.getQueryWindow(oldnick)) {
-      var found = true;
+      found = true;
       this.renameWindow(oldnick, newnick);
       this.newLine(newnick, "NICK", {"n": oldnick, "w": newnick});
     }
