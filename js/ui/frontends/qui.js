@@ -51,9 +51,6 @@ qwebirc.ui.QUI = new Class({
     this.createInput();
     this.reflow();
     this.reflow.delay(100); /* Konqueror fix */
-    
-    /* HACK, in Chrome this should work immediately but doesn't */
-    this.__createDropdownHint.delay(100, this);
   },
   __createDropdownMenu: function() {
     var dropdownMenu = new Element("span");
@@ -87,17 +84,10 @@ qwebirc.ui.QUI = new Class({
     dropdown.appendChild(new Element("img", {src: qwebirc.global.staticBaseURL + "images/icon.png", title: "menu", alt: "menu"}));
     dropdown.setStyle("opacity", 1);
 
-    var dropdownEffect = new Fx.Tween(dropdown, {duration: "long", property: "opacity", link: "chain"});
-    dropdownEffect.start(0.25);
-    dropdownEffect.start(1);
-    dropdownEffect.start(0.33);
-    dropdownEffect.start(1);
-    
     this.outerTabs.appendChild(dropdown);
     dropdownMenu.show = function(x) {
       new Event(x).stop();
-      this.hideHint();
-      
+
       if(dropdownMenu.visible) {
         dropdownMenu.hide();
         return;
@@ -113,31 +103,6 @@ qwebirc.ui.QUI = new Class({
     }.bind(this);
     dropdown.addEvent("mousedown", function(e) { new Event(e).stop(); });
     dropdown.addEvent("click", dropdownMenu.show);
-  },
-  __createDropdownHint: function() {
-    var dropdownhint = new Element("div");
-    dropdownhint.addClass("dropdownhint");
-    dropdownhint.set("text", "Click the icon for the main menu.");
-    dropdownhint.setStyle("top", this.outerTabs.getSize().y + 5);
-
-    this.parentElement.appendChild(dropdownhint);
-    new Fx.Morph(dropdownhint, {duration: "normal", transition: Fx.Transitions.Sine.easeOut}).start({left: [900, 5]});
-    
-    var hider = function() {
-      new Fx.Morph(dropdownhint, {duration: "long"}).start({left: [5, -900]});
-    }.delay(4000, this);
-    
-    var hider2 = function() {
-      if(dropdownhint.hidden)
-        return;
-      this.parentElement.removeChild(dropdownhint);
-      dropdownhint.hidden = 1;
-    }.bind(this);
-    hider2.delay(4000);
-    this.hideHint = hider2;
-    
-    document.addEvent("mousedown", hider2);
-    document.addEvent("keypress", hider2);
   },
   createInput: function() {
     var form = new Element("form");

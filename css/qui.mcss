@@ -146,7 +146,7 @@ html {
 .qwebirc-qui .tabbar {
   font-size: 0.8em;
   color: $(tabbar_text);
-  margin-left: 38px;
+  margin-left: 25px;
   line-height: 24px;
 }
 
@@ -272,7 +272,7 @@ div#noscript {
   cursor: hand;
   float: left;
   padding: 4px;
-  width: 30px;
+  width: 17px;
 }
 
 .qwebirc-qui .dropdownmenu {
