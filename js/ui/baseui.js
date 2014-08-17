@@ -445,7 +445,7 @@ qwebirc.ui.NewLoginUI = new Class({
     this.postInitialize();
 
     /* I'd prefer something shorter and snappier! */
-    var w = this.newCustomWindow("Connection details", true, qwebirc.ui.WINDOW_CONNECT);
+    var w = this.newCustomWindow("Connect", true, qwebirc.ui.WINDOW_CONNECT);
     var callback = function(args) {
       w.close();
       callbackfn(args);

@@ -14,30 +14,38 @@ qwebirc.ui.QUI = new Class({
         w.onResize();
     }.bind(this));
     this.qjsui.top.addClass("outertabbar");
-    
+    this.qjsui.left.addClass("outertabbar");
+
+    this.qjsui.top.addClass("outertabbar_top");
+    this.qjsui.left.addClass("outertabbar_left");
+
     this.qjsui.bottom.addClass("input");
     this.qjsui.right.addClass("nicklist");
     this.qjsui.topic.addClass("topic");
     this.qjsui.middle.addClass("lines");
     
-    this.outerTabs = this.qjsui.top;
+    this.outerTabs = new Element("div");
+    this.sideTabs = null;
 
     this.tabs = new Element("div");
     this.tabs.addClass("tabbar");
     
     this.__createDropdownMenu();
-    
+
     this.outerTabs.appendChild(this.tabs);
     this.origtopic = this.topic = this.qjsui.topic;
-    this.origlines = this.lines = this.qjsui.middle;
+    this.lines = this.qjsui.middle;
     this.orignicklist = this.nicklist = this.qjsui.right;
     
     this.input = this.qjsui.bottom;
     this.reflow = this.qjsui.reflow.bind(this.qjsui);
     
     this.tabs.addEvent("mousewheel", function(x) {
+      if(this.sideTabs)
+        return;
+
       var event = new Event(x);
-      
+
       /* up */
       if(event.wheel > 0) {
         this.nextWindow();
@@ -51,6 +59,13 @@ qwebirc.ui.QUI = new Class({
     this.createInput();
     this.reflow();
     this.reflow.delay(100); /* Konqueror fix */
+    this.setSideTabs(this.uiOptions.SIDE_TABS);
+
+  },
+  newWindow: function(client, type, name) {
+    var w = this.parent(client, type, name);
+    w.setSideTabs(this.sideTabs);
+    return w;
   },
   __createDropdownMenu: function() {
     var dropdownMenu = new Element("span");
@@ -92,9 +107,9 @@ qwebirc.ui.QUI = new Class({
         dropdownMenu.hide();
         return;
       }
-      var top = this.outerTabs.getSize().y;
-      
-      dropdownMenu.setStyle("left", 0);
+      var parentSize = this.outerTabs.parentNode.getSize().y;
+
+      dropdownMenu.setStyle("left", parentSize.x);
       dropdownMenu.setStyle("top", top-1); /* -1 == top border */
       dropdownMenu.setStyle("display", "inline-block");
       dropdownMenu.visible = true;
@@ -214,6 +229,31 @@ qwebirc.ui.QUI = new Class({
 
     this.topic.parentNode.replaceChild(topic, this.topic);
     this.qjsui.topic = this.topic = topic;
+  },
+  setSideTabs: function(value) {
+    if(value === this.sideTabs)
+      return;
+
+    if(this.sideTabs === true) {
+      this.qjsui.left.removeChild(this.outerTabs);
+    } else if(this.sideTabs === false) {
+      this.qjsui.top.removeChild(this.outerTabs);
+    }
+    if(value) {
+      this.qjsui.left.appendChild(this.outerTabs);
+      this.qjsui.top.style.display = "none";
+      this.qjsui.left.style.display = "";
+    } else {
+      this.qjsui.top.appendChild(this.outerTabs);
+      this.qjsui.top.style.display = "";
+      this.qjsui.left.style.display = "none";
+    }
+    this.sideTabs = value;
+    this.windows.each(function(k, v) {
+      v.each(function(k, v2) {
+        v2.setSideTabs(value);
+      });
+    });
   }
 });
 
@@ -222,7 +262,7 @@ qwebirc.ui.QUI.JSUI = new Class({
   initialize: function(class_, parent, sizer) {
     this.parent = parent;
     this.sizer = $defined(sizer)?sizer:parent;
-    
+
     this.class_ = class_;
     this.create();
     
@@ -235,20 +275,7 @@ qwebirc.ui.QUI.JSUI = new Class({
   applyClasses: function(pos, l) {
     l.addClass("dynamicpanel");    
     l.addClass(this.class_);
-
-    if(pos == "middle") {
-      l.addClass("leftboundpanel");
-    } else if(pos == "top") {
-      l.addClass("topboundpanel");
-      l.addClass("widepanel");
-    } else if(pos == "topic") {
-      l.addClass("widepanel");
-    } else if(pos == "right") {
-      l.addClass("rightboundpanel");
-    } else if(pos == "bottom") {
-      l.addClass("bottomboundpanel");
-      l.addClass("widepanel");
-    }
+    l.addClass(pos + "boundpanel");
   },
   create: function() {
     var XE = function(pos) {
@@ -260,6 +287,7 @@ qwebirc.ui.QUI.JSUI = new Class({
     }.bind(this);
     
     this.top = XE("top");
+    this.left = XE("left");
     this.topic = XE("topic");
     this.middle = XE("middle");
     this.right = XE("right");
@@ -280,19 +308,37 @@ qwebirc.ui.QUI.JSUI = new Class({
     var right = this.right;
     var topic = this.topic;
     var top = this.top;
-    
+    var left = this.left;
+
+    /* |----------------------------------------------|
+     * | top                                          |
+     * |----------------------------------------------|
+     * | left | topic                         | right |
+     * |      |-------------------------------|       |
+     * |      | middle                        |       |
+     * |      |                               |       |
+     * |      |                               |       |
+     * |      |---------------------------------------|
+     * |      | bottom                                |
+     * |----------------------------------------------|
+     */
+
     var topicsize = topic.getSize();
     var topsize = top.getSize();
     var rightsize = right.getSize();
     var bottomsize = bottom.getSize();
+    var leftsize = left.getSize();
     var docsize = this.sizer.getSize();
     
     var mheight = (docsize.y - topsize.y - bottomsize.y - topicsize.y);
     var mwidth = (docsize.x - rightsize.x);
 
+    left.setStyle("top", topsize.y);
     topic.setStyle("top", topsize.y);
+    topic.setStyle("left", leftsize.x);
     
     middle.setStyle("top", (topsize.y + topicsize.y));
+    middle.setStyle("left", leftsize.x);
     if(mheight > 0) {
       middle.setStyle("height", mheight);
       right.setStyle("height", mheight);
@@ -301,9 +347,8 @@ qwebirc.ui.QUI.JSUI = new Class({
     if(mwidth > 0)
       middle.setStyle("width", mwidth);
     right.setStyle("top", (topsize.y + topicsize.y));
-    right.setStyle("left", mwidth);
-    
-    bottom.setStyle("top", (docsize.y - bottomsize.y));
+
+    bottom.setStyle("left",  leftsize.x);
     this.fireEvent("reflow");
   },
   showChannel: function(state, nicklistVisible) {
@@ -333,7 +378,42 @@ qwebirc.ui.QUI.Window = new Class({
     this.spaceNode = document.createTextNode(" ");
     parentObject.tabs.appendChild(this.tab);
     parentObject.tabs.appendChild(this.spaceNode);
-    
+
+    if(type != qwebirc.ui.WINDOW_STATUS && type != qwebirc.ui.WINDOW_CONNECT) {
+      var tabclose = new Element("span");
+      this.tabclose = tabclose;
+      tabclose.set("text", "X");
+      tabclose.addClass("tabclose");
+      var close = function(e) {
+        new Event(e).stop();
+
+        if(this.closed)
+          return;
+
+        if(type == qwebirc.ui.WINDOW_CHANNEL)
+          this.client.exec("/PART " + name);
+
+        this.close();
+
+        //parentObject.inputbox.focus();
+      }.bind(this);
+
+      tabclose.addEvent("click", close);
+      this.tab.addEvent("mouseup", function(e) {
+        var button = 1;
+
+        if(Browser.Engine.trident)
+          button = 4;
+
+        if(e.event.button == button)
+          close(e);
+      }.bind(this));
+
+      this.tab.appendChild(tabclose);
+    } else {
+      this.tabclose = null;
+    }
+
     this.tab.appendText(name);
     this.tab.addEvent("click", function(e) {
       new Event(e).stop();
@@ -344,37 +424,6 @@ qwebirc.ui.QUI.Window = new Class({
       parentObject.selectWindow(this);
     }.bind(this));
     
-    if(type != qwebirc.ui.WINDOW_STATUS && type != qwebirc.ui.WINDOW_CONNECT) {
-      var tabclose = new Element("span");
-      tabclose.set("text", "X");
-      tabclose.addClass("tabclose");
-      var close = function(e) {
-        new Event(e).stop();
-        
-        if(this.closed)
-          return;
-          
-        if(type == qwebirc.ui.WINDOW_CHANNEL)
-          this.client.exec("/PART " + name);
-
-        this.close();
-        
-        //parentObject.inputbox.focus();
-      }.bind(this);
-      
-      tabclose.addEvent("click", close);
-      this.tab.addEvent("mouseup", function(e) {
-        var button = 1;
-        
-        if(Browser.Engine.trident)
-          button = 4;
-
-        if(e.event.button == button)
-          close(e);
-      }.bind(this));
-      
-      this.tab.appendChild(tabclose);
-    }
 
     this.lines = new Element("div");
     this.parentObject.qjsui.applyClasses("middle", this.lines);
@@ -389,6 +438,7 @@ qwebirc.ui.QUI.Window = new Class({
     
     if(type == qwebirc.ui.WINDOW_CHANNEL) {
       this.topic = new Element("div");
+      this.parentObject.qjsui.applyClasses("topic", this.topic);
       this.topic.addClass("topic");
       this.topic.addClass("tab-invisible");
       this.topic.set("html", "&nbsp;");
@@ -400,14 +450,14 @@ qwebirc.ui.QUI.Window = new Class({
       this.nicklist.addClass("nicklist");
       this.nicklist.addClass("tab-invisible");
       this.nicklist.addEvent("click", this.removePrevMenu.bind(this));
-      this.parentObject.qjsui.applyClasses("nicklist", this.nicklist);
+      this.parentObject.qjsui.applyClasses("right", this.nicklist);
     }
     
     if(type == qwebirc.ui.WINDOW_CHANNEL)
       this.updateTopic("");
 
     this.nicksColoured = this.parentObject.uiOptions.NICK_COLOURS;
-    this.reflow();    
+    this.reflow();
   },
   rename: function(name) {
     this.tab.replaceChild(document.createTextNode(name), this.tab.firstChild);
@@ -636,6 +686,16 @@ qwebirc.ui.QUI.Window = new Class({
       case qwebirc.ui.HILIGHT_ACTIVITY:
         this.tab.addClass("tab-hilight-activity");
         break;
+    }
+  },
+  setSideTabs: function(value) {
+    if(this.tabclose === null)
+      return;
+    this.tab.removeChild(this.tabclose);
+    if(value) {
+      this.tab.insertBefore(this.tabclose, this.tab.firstChild);
+    } else {
+      this.tab.appendChild(this.tabclose);
     }
   }
 });

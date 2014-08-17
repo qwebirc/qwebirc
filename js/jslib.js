@@ -260,12 +260,12 @@ qwebirc.util.importJS = function(name, watchFor, onload) {
 qwebirc.util.createInput = function(type, parent, name, selected, id) {
   var created = false;
   var r;
-  if(name)
+  if (name)
     name = "__input" + name;
 
-  if(Browser.Engine.trident) {
+  if (Browser.Engine.trident) {
     var name2;
-    if(name) {
+    if (name) {
       name2 = " name=\"" + escape(name) + "\"";
     } else {
       name2 = "";
@@ -274,8 +274,8 @@ qwebirc.util.createInput = function(type, parent, name, selected, id) {
       var h = "<input type=\"" + type + "\"" + name2 + "/>";
       r = $(document.createElement(h));
       if (type == "radio") {
-        r.addEvent("click", function() {
-          $(document.body).getElements("input[name=" + name + "]").forEach(function(x) {
+        r.addEvent("click", function () {
+          $(document.body).getElements("input[name=" + name + "]").forEach(function (x) {
             x.setAttribute("defaultChecked", x.checked ? "defaultChecked" : "");
           });
         });
@@ -285,10 +285,11 @@ qwebirc.util.createInput = function(type, parent, name, selected, id) {
       /* fallthough, trying it the proper way... */
     }
   }
-  if(!created)
-    r = new Element("input");
 
-  r.setAttribute("type", type);
+  if(!created) {
+    r = new Element("input");
+    r.setAttribute("type", type);
+  }
   if(name)
     r.setAttribute("name", name);
   if(id)

@@ -51,20 +51,25 @@ html {
 .qwebirc-qui .dynamicpanel {
   position: absolute;
 }
-.qwebirc-qui .widepanel, .leftboundpanel {
+.qwebirc-qui .leftboundpanel {
   left: 0px;
-}
-.qwebirc-qui .widepanel {
-  width: 100%;
+  width: 150px;
+  height: 100%;
 }
 .qwebirc-qui .topboundpanel {
   top: 0px;
+  width: 100%;
+}
+.qwebirc-qui .topicboundpanel {
+  width: 100%;
 }
 .qwebirc-qui .rightboundpanel {
-  /*right: 0px;*/
+  right: 0px;
+  width: 140px;
 }
 .qwebirc-qui .bottomboundpanel {
-  color: red;
+  bottom: 0px;
+  right: 0px;
 }
 
 .qwebirc-qui .lines {
@@ -139,8 +144,37 @@ html {
 }
 
 .qwebirc-qui .outertabbar {
-  border-bottom: 1px solid $(tabbar_border);
   background: $(tabbar_background);
+}
+
+.qwebirc-qui .outertabbar_left {
+  border-right: 1px solid $(tabbar_border);
+  overflow: auto;
+
+}
+
+.qwebirc-qui .outertabbar_left .tab {
+  display: block;
+  margin-right: 3px;
+  margin-top: 2px;
+  line-height: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.qwebirc-qui .outertabbar_left .tabclose {
+  float: right;
+  padding-left: 0 !important;
+  margin-top: -2px;
+}
+
+.qwebirc-qui .outertabbar_left .tabbar {
+  margin-left: 5px;
+}
+
+.qwebirc-qui .outertabbar_top {
+  border-bottom: 1px solid $(tabbar_border);
 }
 
 .qwebirc-qui .tabbar {
@@ -211,10 +245,6 @@ html {
 
 .qwebirc-qui .nicklist {
   border-left: 1px solid $(nicklist_border);
-  position: absolute;
-  top: 0px;
-  right: 0px;
-  width: 140px;
   overflow: auto;
   background: $(nicklist_background);
   color: $(nicklist_text);
