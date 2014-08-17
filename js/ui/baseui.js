@@ -412,15 +412,24 @@ qwebirc.ui.NotificationUI = new Class({
     
     this.__beeper = new qwebirc.ui.Beeper(this.uiOptions);
     this.__flasher = new qwebirc.ui.Flasher(this.uiOptions);
-    
-    this.beep = this.__beeper.beep.bind(this.__beeper);
-    
-    this.flash = this.__flasher.flash.bind(this.__flasher);
+    this.__notifier = new qwebirc.ui.Notifier(this.uiOptions);
+
     this.cancelFlash = this.__flasher.cancelFlash.bind(this.__flasher);
+  },
+  beep: function() {
+    this.__beeper.beep();
+  },
+  notify: function(title, message, callback) {
+    this.__beeper.beep();
+    this.__flasher.flash();
+    this.__notifier.notify(title, message, callback);
   },
   setBeepOnMention: function(value) {
     if(value)
       this.__beeper.soundInit();
+  },
+  setNotifications: function(value) {
+    this.__notifier.setEnabled(value);
   },
   updateTitle: function(text) {
     if(this.__flasher.updateTitle(text))
@@ -429,6 +438,7 @@ qwebirc.ui.NotificationUI = new Class({
   focusChange: function(value) {
     this.parent(value);
     this.__flasher.focusChange(value);
+    this.__notifier.focusChange(value);
   }
 });
 

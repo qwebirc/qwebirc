@@ -14,10 +14,21 @@ qwebirc.ui.supportsFocus = function() {
  * settableByURL...
  */
 qwebirc.config.DEFAULT_OPTIONS = [
-  [1, "BEEP_ON_MENTION", "Beep when nick mentioned or on query activity", true, {
+  [1, "BEEP_ON_MENTION", "Beep on activity", true, {
     applyChanges: function(value, ui) {
       if(ui.setBeepOnMention)
         ui.setBeepOnMention(value);
+    }
+  }],
+  [16, "NOTIFICATIONS", "Emit HTML5 notifications on activity", false, {
+    enabled: function() {
+      if(!("Notification" in window))
+        return [false, false]; /* [disabled, default_value] */
+      return [true];
+    },
+    applyChanges: function(value, ui) {
+      if(ui.setNotifications)
+        ui.setNotifications(value);
     }
   }],
   [7, "FLASH_ON_MENTION", "Flash titlebar when nick mentioned or on query activity", true, {
