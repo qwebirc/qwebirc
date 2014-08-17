@@ -331,7 +331,7 @@ qwebirc.ui.QUI.JSUI = new Class({
     var docsize = this.sizer.getSize();
     
     var mheight = (docsize.y - topsize.y - bottomsize.y - topicsize.y);
-    var mwidth = (docsize.x - rightsize.x);
+    var mwidth = (docsize.x - rightsize.x - leftsize.x);
 
     left.setStyle("top", topsize.y);
     topic.setStyle("top", topsize.y);
