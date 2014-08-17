@@ -98,8 +98,10 @@ qwebirc.ui.Window = new Class({
   addLine: function(type, line, colour, element) {
     var hilight = qwebirc.ui.HILIGHT_NONE;
     var lhilight = false;
-    
+
     if(type) {
+      var selectMe = function() { this.parentObject.selectWindow(this); }.bind(this);
+      var message = $defined(line) ? line["m"] : null;
       hilight = qwebirc.ui.HILIGHT_ACTIVITY;
       
       if(type.match(/(NOTICE|ACTION|MSG)$/)) {
@@ -108,15 +110,13 @@ qwebirc.ui.Window = new Class({
             hilight = qwebirc.ui.HILIGHT_ACTIVITY;
           } else {
             hilight = qwebirc.ui.HILIGHT_US;
-            this.parentObject.beep();
-            this.parentObject.flash();
+            this.parentObject.notify("Private message from " + this.name, message, selectMe);
           }
         }
-        if(!type.match(/^OUR/) && this.client.hilightController.match(line["m"])) {
+        if(!type.match(/^OUR/) && this.client.hilightController.match(message)) {
           lhilight = true;
           hilight = qwebirc.ui.HILIGHT_US;
-          this.parentObject.beep();
-          this.parentObject.flash();
+          this.parentObject.notify("Hilighted in " + this.name, message, selectMe);
         } else if(hilight != qwebirc.ui.HILIGHT_US) {
           hilight = qwebirc.ui.HILIGHT_SPEECH;
         }
