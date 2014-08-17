@@ -211,7 +211,7 @@ qwebirc.ui.BaseUI = new Class({
   loginBox: function(callback, initialNickname, initialChannels, autoConnect, autoNick) {
     this.postInitialize();
 
-    this.addCustomWindow("Connection details", qwebirc.ui.ConnectPane, "connectpane", {
+    this.addCustomWindow("Connect", qwebirc.ui.ConnectPane, "connectpane", {
       initialNickname: initialNickname, initialChannels: initialChannels, autoConnect: autoConnect, networkName: this.options.networkName, callback: callback, autoNick: autoNick
     }, qwebirc.ui.WINDOW_CONNECT);
   },
