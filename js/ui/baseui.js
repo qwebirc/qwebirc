@@ -228,28 +228,19 @@ qwebirc.ui.StandardUI = new Class({
     if(this.options.tsaturation !== null) this.__styleValues.textSaturation = this.options.tsaturation;
     if(this.options.tlightness !== null) this.__styleValues.textLightness = this.options.tlightness;
     
-    var ev;
-    if(Browser.Engine.trident) {
-      ev = "keydown";
-    } else {
-      ev = "keypress";
-    }
-    document.addEvent(ev, this.__handleHotkey.bind(this));
+    document.addEvent("keydown", this.__handleHotkey.bind(this));
   },
   __handleHotkey: function(x) {
-    if(!x.alt || x.control) {
-      if(x.key == "backspace" || x.key == "/")
-        if(!this.getInputFocused(x))
-          new Event(x).stop();
-      return;
-    }
     var success = false;
-    if(x.key == "a" || x.key == "A") {
+    if(!x.alt || x.control) {
+      if((x.key == "backspace" || x.key == "/") && !this.getInputFocused(x)) {
+        success = true;
+      }
+    } else if(x.key == "a" || x.key == "A") {
       var highestNum = 0;
       var highestIndex = -1;
       success = true;
-      
-      new Event(x).stop();
+
       for(var i=0;i<this.windowArray.length;i++) {
         var h = this.windowArray[i].hilighted;
         if(h > highestNum) {
@@ -279,8 +270,10 @@ qwebirc.ui.StandardUI = new Class({
       this.nextWindow();
       success = true;
     }
-    if(success)
+    if(success) {
       new Event(x).stop();
+      x.preventDefault();
+    }
   },
   getInputFocused: function(x) {
     if($$("input").indexOf(x.target) == -1 && $$("textarea").indexOf(x.target) == -1)
