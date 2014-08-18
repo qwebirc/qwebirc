@@ -1,8 +1,9 @@
-# this is seperate to allow us to use python 2.5 syntax without
+# this is separate to allow us to use python 2.5 syntax without
 # the dependency checker breaking on earlier versions.
 
 import sys
 import subprocess
+import os
 
 def fail(*message):
   print >>sys.stderr, "\n".join(message)
@@ -126,10 +127,10 @@ def check_json():
 
 def check_autobahn():
   try:
-    import autobahn, autobahn.websocket
+    import autobahn, autobahn.twisted.websocket
     x = autobahn.version.split(".")
     if len(x) != 3:
-      raise ImportError("Unknown version: %s", autobahn.vesrion)
+      raise ImportError()
     if (int(x[1]) < 8) or (int(x[1]) == 8 and int(x[2]) < 14):
       raise ImportError()
     return 0
