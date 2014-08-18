@@ -129,22 +129,31 @@ qwebirc.irc.IRCTracker = new Class({
     if($defined(nc))
       nc.lastSpoke = time;
   },
-  getSortedByLastSpoke: function(channel) {
-    var sorter = function(a, b) {
-      return b[1].lastSpoke - a[1].lastSpoke;
-    };
-    
+  __mapAndSortEntries: function(channel, fn, pos) {
     var c = this.getChannel(channel);
     if(!c)
       return;
-      
-    var n = c.items();
-    n.sort(sorter);
+
+    var n = c.map(fn);
+    n.sort();
 
     var n2 = [];
     for(var i=0;i<n.length;i++)
-      n2.push(n[i][0]);
-    
+      n2.push(n[i][pos]);
+
     return n2;
+  },
+  getSortedByLastSpoke: function(channel) {
+    var l = this.toIRCLower.bind(this);
+    return this.__mapAndSortEntries(channel, function(nick, nc) {
+      return [-nc.lastSpoke, l(nick)];
+    }, 2);
+  },
+  getSortedByLastSpokePrefix: function(channel) {
+    var p = this.owner.getPrefixPriority.bind(this.owner);
+    var l = this.toIRCLower.bind(this);
+    return this.__mapAndSortEntries(channel, function(nick, nc) {
+      return [-nc.lastSpoke, p(nc.prefixes), l(nick), nick];
+    }, 3);
   }
 });
