@@ -127,10 +127,10 @@ def check_json():
 
 def check_autobahn():
   try:
-    import autobahn, autobahn.websocket
+    import autobahn, autobahn.twisted.websocket
     x = autobahn.version.split(".")
     if len(x) != 3:
-      raise ImportError("Unknown version: %s", autobahn.vesrion)
+      raise ImportError()
     if (int(x[1]) < 8) or (int(x[1]) == 8 and int(x[2]) < 14):
       raise ImportError()
     return 0
