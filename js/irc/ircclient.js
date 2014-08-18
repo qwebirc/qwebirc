@@ -77,32 +77,38 @@ qwebirc.irc.IRCClient = new Class({
       this.newActiveLine(type, data);
     }
   },
+  getPrefixPriority: function(prefixes) {
+    if (prefixes.length > 0) {
+      var c = prefixes.charAt(0);
+      var p = this.prefixes.indexOf(c);
+      if(p > -1)
+        return -p - 1;
+    }
+    return 0;
+  },
   updateNickList: function(channel) {
-    var tff = String.fromCharCode(255);
-    var names = new Array();
+    var names = [];
     var nh = new QHash();
 
     var n1 = this.tracker.getChannel(channel);
     if($defined(n1)) {
-      /* MEGAHACK */
       n1.each(function (n, nc) {
-        var nx;
-        if (nc.prefixes.length > 0) {
-          var c = nc.prefixes.charAt(0);
-          nx = String.fromCharCode(this.prefixes.indexOf(c)) + this.toIRCLower(n);
-          nh.put(nx, c + n);
+        var prefix, pri;
+        if(nc.prefixes.length > 0) {
+          prefix = nc.prefixes.charAt(0);
+          pri = this.getPrefixPriority(nc.prefixes);
         } else {
-          nx = tff + this.toIRCLower(n);
-          nh.put(nx, n);
+          prefix = "";
+          pri = 0;
         }
-        names.push(nx);
+        names.push([pri, this.toIRCLower(n), prefix + n]);
       }, this);
     }
     names.sort();
     
-    var sortednames = new Array();
+    var sortednames = [];
     names.each(function(name) {
-      sortednames.push(nh.get(name));
+      sortednames.push(name[2]);
     });
     
     var w = this.getWindow(channel);

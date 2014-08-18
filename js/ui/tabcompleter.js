@@ -166,7 +166,7 @@ qwebirc.ui.ChannelNameTabCompleter = new Class({
 qwebirc.ui.ChannelUsersTabCompleter = new Class({
   Extends: qwebirc.ui.BaseTabCompleter,
   initialize: function(prefix, existingText, suffix, window) {
-    var nc = window.client.tracker.getSortedByLastSpoke(window.name);
+    var nc = window.client.tracker.getSortedByLastSpokePrefix(window.name);
 
     this.parent(window.client, prefix, existingText, suffix, nc);
   }
