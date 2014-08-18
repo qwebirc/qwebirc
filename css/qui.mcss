@@ -151,18 +151,17 @@ html {
 .qwebirc-qui .outertabbar_left {
   border-right: 1px solid $(tabbar_border);
   overflow: auto;
-
 }
 
 .qwebirc-qui .outertabbar_left .tab {
   display: block;
   margin-right: 3px;
-  margin-top: 2px;
+  margin-top: 3px;
   line-height: normal;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-height: 15px;
 }
-
 
 .qwebirc-qui .outertabbar_left .tabclose {
   float: right;
@@ -171,7 +170,7 @@ html {
 }
 
 .qwebirc-qui .outertabbar_left .tabbar {
-  margin-left: 5px;
+  margin-left: 2px;
 }
 
 .qwebirc-qui .outertabbar_top {
@@ -302,7 +301,7 @@ div#noscript {
   cursor: pointer;
   cursor: hand;
   float: left;
-  padding: 4px;
+  padding: 3px;
   width: 17px;
 }
 

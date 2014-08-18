@@ -427,6 +427,7 @@ qwebirc.irc.IRCConnection = new Class({
     this.log("server supports " + transports);
     if(transports.indexOf("websocket") == -1) {
       this.log("no websocket on server: using longpoll");
+      this.transportStatus = "longpoll(serverNoWS)";
       this.recv();
       return;
     }

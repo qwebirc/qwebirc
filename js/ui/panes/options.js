@@ -56,7 +56,7 @@ qwebirc.config.DEFAULT_OPTIONS = [
     }
   }],
   [12, "QUERY_ON_NICK_CLICK", "Query on nickname click in channel", false],
-  [13, "SHOW_NICKLIST", "Show nickname list in channels", true],
+  [13, "SHOW_NICKLIST", "Show nickname list in channels", qwebirc.util.deviceHasKeyboard()],
   [14, "SHOW_TIMESTAMPS", "Show timestamps", true], /* we rely on the hue update */
   [15, "SIDE_TABS", "Show tabs on the side", false, {
     enabled: function() {
