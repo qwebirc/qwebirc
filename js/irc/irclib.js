@@ -67,5 +67,5 @@ qwebirc.irc.IRCDate = function(d) {
 }
 
 qwebirc.irc.toIRCCompletion = function(client, data) {
-  return client.toIRCLower(data).replace(/[^\w]+/g, "");
+  return client.toIRCLower(data);
 }
