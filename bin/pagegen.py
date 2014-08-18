@@ -27,7 +27,7 @@ def csslist(name, debug, gen=False):
 
 def _gethgid():
   try:
-    p = subprocess.Popen(["hg", "id"], stdout=subprocess.PIPE)
+    p = subprocess.Popen(["hg", "id"], stdout=subprocess.PIPE, shell=os.name == "nt")
   except Exception, e:
     if hasattr(e, "errno") and e.errno == 2:
       raise HGException, "unable to execute"
