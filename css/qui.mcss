@@ -148,6 +148,15 @@ html {
   background: $(tabbar_background);
 }
 
+.qwebirc-qui .outertabbar_top .dropdown-tab {
+  padding: 4px 3px 0 3px;
+}
+
+.qwebirc-qui .outertabbar_left .dropdown-tab {
+  padding: 3px 3px 0 3px;
+  margin-right: 2px;
+}
+
 .qwebirc-qui .outertabbar_left {
   border-right: 1px solid $(tabbar_border);
   overflow: auto;
@@ -156,7 +165,7 @@ html {
 .qwebirc-qui .outertabbar_left .tab {
   display: block;
   margin-right: 3px;
-  margin-top: 3px;
+  margin-top: 1px;
   line-height: normal;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -301,7 +310,6 @@ div#noscript {
   cursor: pointer;
   cursor: hand;
   float: left;
-  padding: 3px;
   width: 17px;
 }
 
