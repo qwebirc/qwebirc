@@ -126,10 +126,15 @@ def check_json():
 
 def check_autobahn():
   try:
-    import autobahn.websocket
+    import autobahn, autobahn.websocket
+    x = autobahn.version.split(".")
+    if len(x) != 3:
+      raise ImportError("Unknown version: %s", autobahn.vesrion)
+    if (int(x[1]) < 8) or (int(x[1]) == 8 and int(x[2]) < 14):
+      raise ImportError()
     return 0
   except ImportError:
-    warn("autobahn not installed; websocket support will be disabled.",
+    warn("autobahn 0.8.14 (minimum) not installed; websocket support will be disabled.",
          "consider installing autobahn from:",
          "http://autobahn.ws/python/getstarted/")
     return 1

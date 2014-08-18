@@ -13,8 +13,15 @@ import urlparse
 TRANSPORTS = ["longpoll"]
 
 try:
-  import autobahn.websocket
-  import autobahn.resource
+  import autobahn
+  x = autobahn.version.split(".")
+  if len(x) != 3:
+    raise ImportError("Unknown version: %s", autobahn.vesrion)
+  if (int(x[1]) < 8) or (int(x[1]) == 8 and int(x[2]) < 14):
+    raise ImportError()
+
+  import autobahn.twisted.websocket
+  import autobahn.twisted.resource
   has_websocket = True
   TRANSPORTS.append("websocket")
 except ImportError:
@@ -355,7 +362,7 @@ if has_websocket:
     def close(self):
       self.channel.close()
 
-  class WebSocketEngineProtocol(autobahn.websocket.WebSocketServerProtocol):
+  class WebSocketEngineProtocol(autobahn.twisted.websocket.WebSocketServerProtocol):
     AWAITING_AUTH, AUTHED = 0, 1
 
     def __init__(self, *args, **kwargs):
@@ -446,23 +453,14 @@ if has_websocket:
     def send(self, message_type, message):
       self.sendMessage(message_type + message)
 
-  class WebSocketResource(autobahn.resource.WebSocketResource):
+  class WebSocketResource(autobahn.twisted.resource.WebSocketResource):
     def render(self, request):
       request.channel.setTimeout(None)
-      return autobahn.resource.WebSocketResource.render(self, request)
+      return autobahn.twisted.resource.WebSocketResource.render(self, request)
 
   def WebSocketEngine(path=None):
-    parsed = urlparse.urlparse(config.BASE_URL)
-    port = parsed.port
-    if port is None:
-      if parsed.scheme == "http":
-        port = 80
-      elif parsed.scheme == "https":
-        port = 443
-      else:
-        raise Exception("Unable to determine port from BASE_URL: " + config.BASE_URL)
-
-    factory = autobahn.websocket.WebSocketServerFactory("ws://localhost:%d" % port)
+    factory = autobahn.twisted.websocket.WebSocketServerFactory("ws://localhost")
+    factory.externalPort = None
     factory.protocol = WebSocketEngineProtocol
     factory.setProtocolOptions(maxMessagePayloadSize=512, maxFramePayloadSize=512, tcpNoDelay=False)
     resource = WebSocketResource(factory)
