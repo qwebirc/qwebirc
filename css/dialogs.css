@@ -12,19 +12,51 @@
 .qwebirc-centrebox table table {
   width: auto;
 }
+
 .qwebirc-loginbox .tr1 td {
   width: 100%;
   text-align: center;
 }
 
+.bar-spacer {
+  height: 5px;
+}
+
+.collapse {
+  border-spacing: 0;
+  padding: 0;
+}
+
 .qwebirc-loginbox .tr2 td {
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 .qwebirc-loginbox .tr2 table {
   margin-left: auto;
   margin-right: auto;
   text-align: left;
+}
+
+.qwebirc-loginbox .bar {
+  background: url(../images/logo.png) 0 -68px repeat-x;
+  height: 8px;
+}
+
+.qwebirc-loginbox .bar-background {
+  background: url(../images/logo.png) 0 -76px repeat-x;
+  height: 68px;
+  padding: 10px;
+}
+
+.qwebirc-loginbox .bar-logo {
+  background: url(../images/logo.png);
+  width: 225px;
+  height: 68px;
+  left: 50%;
+  margin: 0 auto;
+  margin-top: 3px;
+  _filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../images/logo.png',sizingMethod='crop');
+  _background: none;
 }
 
 .qwebirc-loginbox input#loginnickname, .qwebirc-loginbox input#loginchannels {

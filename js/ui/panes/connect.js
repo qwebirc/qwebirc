@@ -20,6 +20,9 @@ qwebirc.ui.ConnectPane = new Class({
       var exec = util.exec;
       util.makeVisible(rootElement);
 
+      if(!autoConnect)
+        util.makeVisible(parent.getElement("[name=loginheader]"));
+
       exec("[name=nickname]", util.setText(initialNickname));
       exec("[name=channels]", util.setText(initialChannels));
       exec("[name=prettychannels]", function(node) { this.__buildPrettyChannels(node, initialChannels); }.bind(this));
