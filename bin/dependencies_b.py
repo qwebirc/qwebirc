@@ -1,8 +1,9 @@
-# this is seperate to allow us to use python 2.5 syntax without
+# this is separate to allow us to use python 2.5 syntax without
 # the dependency checker breaking on earlier versions.
 
 import sys
 import subprocess
+import os
 
 def fail(*message):
   print >>sys.stderr, "\n".join(message)
