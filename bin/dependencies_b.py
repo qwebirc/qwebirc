@@ -46,7 +46,7 @@ def check_java():
     warn(specific, "java is not required, but allows qwebirc to compress output,", "making it faster to download.", "you can get java at http://www.java.com/")
     
   try:
-    p = subprocess.Popen(["java", "-version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(["java", "-version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=os.name == "nt")
     p.communicate()
     if p.wait() != 0:
       java_warn("something went wrong looking for java.")
@@ -62,7 +62,7 @@ def check_hg():
     warn(specific, "mercurial (hg) is not required, but allows qwebirc to save bandwidth by versioning.", "you can get hg at http://www.selenic.com/mercurial/")
     
   try:
-    p = subprocess.Popen(["hg", "id"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(["hg", "id"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=os.name == "nt")
     p.communicate()
     if p.wait() != 0:
       hg_warn("something went wrong looking for mercurial.")

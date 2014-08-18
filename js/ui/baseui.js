@@ -236,28 +236,19 @@ qwebirc.ui.StandardUI = new Class({
     if(this.options.tsaturation !== null) this.__styleValues.textSaturation = this.options.tsaturation;
     if(this.options.tlightness !== null) this.__styleValues.textLightness = this.options.tlightness;
     
-    var ev;
-    if(Browser.Engine.trident) {
-      ev = "keydown";
-    } else {
-      ev = "keypress";
-    }
-    document.addEvent(ev, this.__handleHotkey.bind(this));
+    document.addEvent("keydown", this.__handleHotkey.bind(this));
   },
   __handleHotkey: function(x) {
-    if(!x.alt || x.control) {
-      if(x.key == "backspace" || x.key == "/")
-        if(!this.getInputFocused(x))
-          new Event(x).stop();
-      return;
-    }
     var success = false;
-    if(x.key == "a" || x.key == "A") {
+    if(!x.alt || x.control) {
+      if((x.key == "backspace" || x.key == "/") && !this.getInputFocused(x)) {
+        success = true;
+      }
+    } else if(x.key == "a" || x.key == "A") {
       var highestNum = 0;
       var highestIndex = -1;
       success = true;
-      
-      new Event(x).stop();
+
       for(var i=0;i<this.windowArray.length;i++) {
         var h = this.windowArray[i].hilighted;
         if(h > highestNum) {
@@ -287,8 +278,10 @@ qwebirc.ui.StandardUI = new Class({
       this.nextWindow();
       success = true;
     }
-    if(success)
+    if(success) {
       new Event(x).stop();
+      x.preventDefault();
+    }
   },
   getInputFocused: function(x) {
     if($$("input").indexOf(x.target) == -1 && $$("textarea").indexOf(x.target) == -1)
@@ -427,15 +420,24 @@ qwebirc.ui.NotificationUI = new Class({
     
     this.__beeper = new qwebirc.ui.Beeper(this.uiOptions);
     this.__flasher = new qwebirc.ui.Flasher(this.uiOptions);
-    
-    this.beep = this.__beeper.beep.bind(this.__beeper);
-    
-    this.flash = this.__flasher.flash.bind(this.__flasher);
+    this.__notifier = new qwebirc.ui.Notifier(this.uiOptions);
+
     this.cancelFlash = this.__flasher.cancelFlash.bind(this.__flasher);
+  },
+  beep: function() {
+    this.__beeper.beep();
+  },
+  notify: function(title, message, callback) {
+    this.__beeper.beep();
+    this.__flasher.flash();
+    this.__notifier.notify(title, message, callback);
   },
   setBeepOnMention: function(value) {
     if(value)
       this.__beeper.soundInit();
+  },
+  setNotifications: function(value) {
+    this.__notifier.setEnabled(value);
   },
   updateTitle: function(text) {
     if(this.__flasher.updateTitle(text))
@@ -444,6 +446,7 @@ qwebirc.ui.NotificationUI = new Class({
   focusChange: function(value) {
     this.parent(value);
     this.__flasher.focusChange(value);
+    this.__notifier.focusChange(value);
   }
 });
 
@@ -453,7 +456,7 @@ qwebirc.ui.NewLoginUI = new Class({
     this.postInitialize();
 
     /* I'd prefer something shorter and snappier! */
-    var w = this.newCustomWindow("Connection details", true, qwebirc.ui.WINDOW_CONNECT);
+    var w = this.newCustomWindow("Connect", true, qwebirc.ui.WINDOW_CONNECT);
     var callback = function(args) {
       w.close();
       callbackfn(args);

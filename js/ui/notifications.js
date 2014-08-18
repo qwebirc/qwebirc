@@ -143,3 +143,60 @@ qwebirc.ui.Flasher = new Class({
       this.cancelFlash();
   }
 });
+
+qwebirc.ui.Notifier = new Class({
+  initialize: function(uiOptions) {
+    this.uiOptions = uiOptions;
+
+    this.windowFocused = false;
+    this.previous = null;
+    this.setEnabled(this.uiOptions.NOTIFICATIONS);
+  },
+  focusChange: function(value) {
+    this.windowFocused = value;
+  },
+  setEnabled: function(value) {
+    this.enabled = value;
+    if(!value)
+      return;
+
+    if(this.isGranted())
+      return;
+
+    Notification.requestPermission(function (permission) {
+      if (!("permission" in Notification))
+        Notification.permission = permission;
+    });
+  },
+  isGranted: function() {
+    if(!("Notification" in window))
+      return false;
+
+    return Notification.permission === "granted";
+  },
+  notify: function(title, message, callback) {
+    if(this.windowFocused && !this.enabled || !this.isGranted())
+      return;
+
+    if(this.previous)
+      this.previous.close();
+
+    var n = new Notification(title, {body: message, icon: qwebirc.global.staticBaseURL + "images/qwebircsmall.png"});
+    var delay = function() {
+      n.close();
+      this.previous = null;
+    }.bind(this).delay(5000);
+
+    this.previous = n;
+    if(callback) {
+      n.addEventListener("click", function() {
+        this.previous = null;
+        window.focus();
+        callback();
+      });
+      n.addEventListener("close", function() {
+        this.previous = null;
+      }.bind(this));
+    }
+  }
+});

@@ -14,15 +14,21 @@ qwebirc.ui.supportsFocus = function() {
  * settableByURL...
  */
 qwebirc.config.DEFAULT_OPTIONS = [
-  [1, "BEEP_ON_MENTION", "Beep when nick mentioned or on query activity (requires Flash)", true, {
+  [1, "BEEP_ON_MENTION", "Beep on activity", true, {
+    applyChanges: function(value, ui) {
+      if(ui.setBeepOnMention)
+        ui.setBeepOnMention(value);
+    }
+  }],
+  [16, "NOTIFICATIONS", "Emit HTML5 notifications on activity", false, {
     enabled: function() {
-      if(!$defined(Browser.Plugins.Flash) || Browser.Plugins.Flash.version < 8)
+      if(!("Notification" in window))
         return [false, false]; /* [disabled, default_value] */
       return [true];
     },
     applyChanges: function(value, ui) {
-      if(ui.setBeepOnMention)
-        ui.setBeepOnMention(value);
+      if(ui.setNotifications)
+        ui.setNotifications(value);
     }
   }],
   [7, "FLASH_ON_MENTION", "Flash titlebar when nick mentioned or on query activity", true, {
@@ -51,7 +57,17 @@ qwebirc.config.DEFAULT_OPTIONS = [
   }],
   [12, "QUERY_ON_NICK_CLICK", "Query on nickname click in channel", false],
   [13, "SHOW_NICKLIST", "Show nickname list in channels", true],
-  [14, "SHOW_TIMESTAMPS", "Show timestamps", true] /* we rely on the hue update */
+  [14, "SHOW_TIMESTAMPS", "Show timestamps", true], /* we rely on the hue update */
+  [15, "SIDE_TABS", "Show tabs on the side", false, {
+    enabled: function() {
+      if(Browser.Engine.trident && Browser.Engine.version < 8)
+        return [false, false]; /* [disabled, default_value] */
+      return [true];
+    },
+    applyChanges: function(value, ui) {
+      ui.setSideTabs(value);
+    }
+  }]
 ];
 
 qwebirc.config.DefaultOptions = null;

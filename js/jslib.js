@@ -258,35 +258,48 @@ qwebirc.util.importJS = function(name, watchFor, onload) {
 }
 
 qwebirc.util.createInput = function(type, parent, name, selected, id) {
+  var created = false;
   var r;
-  if(Browser.Engine.trident) {
-    if(name) {
-      name = " name=\"" + escape(name) + "\"";
+  if (name)
+    name = "__input" + name;
+
+  if (Browser.Engine.trident) {
+    var name2;
+    if (name) {
+      name2 = " name=\"" + escape(name) + "\"";
     } else {
-      name = "";
-    }
-    if(id) {
-      id = " id=\"" + escape(id) + "\"";
-    } else {
-      id = "";
+      name2 = "";
     }
     try {
-      return $(document.createElement("<input type=\"" + type + "\"" + name + id + " " + (selected?" checked":"") + "/>"));
-    } catch(e) {
+      var h = "<input type=\"" + type + "\"" + name2 + "/>";
+      r = $(document.createElement(h));
+      if (type == "radio") {
+        r.addEvent("click", function () {
+          $(document.body).getElements("input[name=" + name + "]").forEach(function (x) {
+            x.setAttribute("defaultChecked", x.checked ? "defaultChecked" : "");
+          });
+        });
+      }
+      created = true;
+    } catch (e) {
       /* fallthough, trying it the proper way... */
     }
   }
-  
-  r = new Element("input");
-  r.type = type;
+
+  if(!created) {
+    r = new Element("input");
+    r.setAttribute("type", type);
+  }
   if(name)
-    r.name = name;
+    r.setAttribute("name", name);
   if(id)
-    r.id = id;
-      
-  if(selected)
-    r.checked = true;
-    
+    r.setAttribute("id", id);
+  if(selected) {
+    r.setAttribute("checked", "checked");
+    if(type == "radio" && Browser.Engine.trident)
+      r.setAttribute("defaultChecked", "defaultChecked");
+  }
+
   parent.appendChild(r);
   return r;
 }
