@@ -118,7 +118,7 @@ qwebirc.irc.IRCTracker = new Class({
     n.each(function(channel) {
       var c = this.channels.get(this.toIRCLower(channel));
       c.put(newnick, c.get(oldnick));
-      c.remove[oldnick];
+      c.remove(oldnick);
     }, this);
     
     this.nicknames.put(newnick, this.nicknames.get(oldnick));
