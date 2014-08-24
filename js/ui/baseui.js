@@ -219,14 +219,13 @@ qwebirc.ui.StandardUI = new Class({
     this.uiOptions = new qwebirc.ui.DefaultOptionsClass(this, options.uiOptionsArg);
     this.customWindows = new QHash();
     
-    this.__styleValues = {hue: this.uiOptions.STYLE_HUE, saturation: 0, lightness: 0};
+    this.__styleValues = {hue: this.uiOptions.STYLE_HUE, saturation: 0, lightness: 0, textHue: this.uiOptions.STYLE_HUE, textSaturation: 0, textLightness: 0};
     if($defined(this.options.hue)) this.__styleValues.hue = this.options.hue;
     if($defined(this.options.saturation)) this.__styleValues.saturation = this.options.saturation;
     if($defined(this.options.lightness)) this.__styleValues.lightness = this.options.lightness;
-
-    if(this.options.thue !== null) this.__styleValues.textHue = this.options.thue;
-    if(this.options.tsaturation !== null) this.__styleValues.textSaturation = this.options.tsaturation;
-    if(this.options.tlightness !== null) this.__styleValues.textLightness = this.options.tlightness;
+    if($defined(this.options.thue)) this.__styleValues.textHue = this.options.thue;
+    if($defined(this.options.tsaturation)) this.__styleValues.textSaturation = this.options.tsaturation;
+    if($defined(this.options.tlightness)) this.__styleValues.textLightness = this.options.tlightness;
     
     document.addEvent("keydown", this.__handleHotkey.bind(this));
   },
