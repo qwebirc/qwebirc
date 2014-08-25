@@ -102,7 +102,7 @@ qwebirc.ui.BaseUI = new Class({
     if(!$defined(c))
       return null;
       
-    return c[this.getWindowIdentifier(client, type, name)];
+    return c.get(this.getWindowIdentifier(client, type, name));
   },
   getActiveWindow: function() {
     return this.active;
