@@ -75,7 +75,20 @@ qwebirc.ui.themes.Default = {
   "IGNOREHEADER": ["Ignore list:", false],
   "IGNOREENTRY": ["- $h", false],
   "IGNOREEMPTY": ["Ignore list is empty.", false],
-  "SILENCE": ["Silenced: $h", false]
+  "SILENCE": ["Silenced: $h", false],
+
+  "NOTIFYCHANMSGTITLE": ["Mentioned on $c:", false],
+  "NOTIFYCHANMSGBODY": ["<$@$n> $m", false],
+  "NOTIFYCHANACTIONTITLE": ["Mentioned on $c:", false],
+  "NOTIFYCHANACTIONBODY": [" * $n $m", false],
+  "NOTIFYPRIVMSGTITLE": ["Private message from $n:", false],
+  "NOTIFYPRIVMSGBODY": ["$m", false],
+  "NOTIFYPRIVACTIONTITLE": ["Private message from $n:", false],
+  "NOTIFYPRIVACTIONBODY": [" * $n $m", false],
+  "NOTIFYCHANNOTICETITLE": ["Mentioned on $c:", false],
+  "NOTIFYCHANNOTICEBODY": ["-$n- $m", false],
+  "NOTIFYPRIVNOTICETITLE": ["Private notice from $n:", false],
+  "NOTIFYPRIVNOTICEBODY": ["$m", false]
 };
 
 qwebirc.ui.Theme = new Class({

@@ -100,25 +100,35 @@ qwebirc.ui.Window = new Class({
     var lhilight = false;
 
     if(type) {
-      var selectMe = function() { this.parentObject.selectWindow(this); }.bind(this);
-      var message = $defined(line) ? line["m"] : null;
       hilight = qwebirc.ui.HILIGHT_ACTIVITY;
-      
+
       if(type.match(/(NOTICE|ACTION|MSG)$/)) {
-        if(this.type == qwebirc.ui.WINDOW_QUERY || this.type == qwebirc.ui.WINDOW_MESSAGES) {
-          if(type.match(/^OUR/) || type.match(/NOTICE$/)) {
-            hilight = qwebirc.ui.HILIGHT_ACTIVITY;
+        var message = $defined(line) ? line["m"] : null;
+
+        /* https://dl.dropboxusercontent.com/u/180911/notify.png */
+        if(type.match(/^OUR/)) {
+          if(type.match(/NOTICE$/)) {
+            /* default */
           } else {
-            hilight = qwebirc.ui.HILIGHT_US;
-            this.parentObject.notify("Private message from " + this.name, message, selectMe);
+            hilight = qwebirc.ui.HILIGHT_SPEECH;
           }
-        }
-        if(!type.match(/^OUR/) && this.client.hilightController.match(message)) {
-          lhilight = true;
+        } else if(this.client.hilightController.match(message)) {
           hilight = qwebirc.ui.HILIGHT_US;
-          this.parentObject.notify("Hilighted in " + this.name, message, selectMe);
-        } else if(hilight != qwebirc.ui.HILIGHT_US) {
+          lhilight = true;
+        } else if(type.match(/NOTICE$/)) {
+          /* default */
+        } else if(this.type == qwebirc.ui.WINDOW_QUERY || this.type == qwebirc.ui.WINDOW_MESSAGES) {
+          hilight = qwebirc.ui.HILIGHT_US;
+        } else {
           hilight = qwebirc.ui.HILIGHT_SPEECH;
+        }
+
+        if(hilight == qwebirc.ui.HILIGHT_US) {
+          var title = this.parentObject.theme.message("NOTIFY" + type + "TITLE", line, false);
+          var body = this.parentObject.theme.message("NOTIFY" + type + "BODY", line, false);
+          var selectMe = function() { this.parentObject.selectWindow(this); }.bind(this);
+
+          this.parentObject.notify(title, body, selectMe);
         }
       }
     }
