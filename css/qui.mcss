@@ -174,8 +174,10 @@ html {
 
 .qwebirc-qui .outertabbar_left .tabclose {
   float: right;
-  padding-left: 0;
+  padding-left: 5px;
+  margin-left: 0px;
   margin-top: -2px;
+  position: relative;
 }
 
 .qwebirc-qui .outertabbar_left .tabbar {
