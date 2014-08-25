@@ -416,4 +416,19 @@ qwebirc.util.deviceHasKeyboard = function() {
 qwebirc.util.generateID_ID = 0;
 qwebirc.util.generateID = function() {
   return "qqa-" + qwebirc.util.generateID_ID++;
-}
+};
+
+qwebirc.util.arrayCmp = function(a, b) {
+  for(var p=0;p<a.length;p++) {
+    var ap = a[p];
+    var bp = b[p];
+    if(ap == bp)
+      continue;
+
+    if(ap < bp)
+      return -1;
+
+    return 1;
+  }
+  return 0;
+};

@@ -1,7 +1,7 @@
 qwebirc.irc.NickChanEntry = function() {
   this.prefixes = "";
-  this.lastSpoke = 0;
-}
+  this.lastSpoke = -Infinity;
+};
 
 qwebirc.irc.IRCTracker = new Class({
   initialize: function(owner) {
@@ -135,7 +135,7 @@ qwebirc.irc.IRCTracker = new Class({
       return;
 
     var n = c.map(fn);
-    n.sort();
+    n.sort(qwebirc.util.arrayCmp);
 
     var n2 = [];
     for(var i=0;i<n.length;i++)
