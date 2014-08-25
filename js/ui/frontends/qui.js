@@ -345,6 +345,7 @@ qwebirc.ui.QUI.JSUI = new Class({
     left.setStyle("top", topsize.y);
     topic.setStyle("top", topsize.y);
     topic.setStyle("left", leftsize.x);
+    topic.setStyle("width", docsize.x - leftsize.x);
     
     middle.setStyle("top", (topsize.y + topicsize.y));
     middle.setStyle("left", leftsize.x);
