@@ -39,8 +39,8 @@ qwebirc.ui.QUI = new Class({
     
     this.input = this.qjsui.bottom;
     this.reflow = this.qjsui.reflow.bind(this.qjsui);
-    
-    this.tabs.addEvent("mousewheel", function(x) {
+
+    var scrollHandler = function(x) {
       var event = new Event(x);
       var up, down;
       if(this.sideTabs) {
@@ -63,8 +63,10 @@ qwebirc.ui.QUI = new Class({
         this.prevWindow();
       }
       event.stop();
-    }.bind(this));
-    
+    }.bind(this);
+    this.qjsui.left.addEvent("mousewheel", scrollHandler);
+    this.qjsui.top.addEvent("mousewheel", scrollHandler);
+
     this.createInput();
     this.reflow();
     this.reflow.delay(100); /* Konqueror fix */
