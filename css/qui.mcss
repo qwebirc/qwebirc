@@ -243,18 +243,23 @@ html {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
   border-radius: 2px;
+  font-weight: normal;
+  color: $(tab_text);
 }
 
 .qwebirc-qui a.tab-hilight-activity {
-  color: #009900;
+  color: #22bb22;
+  font-weight: bold;
 }
 
 .qwebirc-qui a.tab-hilight-speech {
-  color: #0000ff;
+  color: #2222bb;
+  font-weight: bold;
 }
 
 .qwebirc-qui a.tab-hilight-us {
-  color: #ff0000;
+  color: #bb4444;
+  font-weight: bold;
 }
 
 .qwebirc-qui .nicklist {

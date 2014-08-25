@@ -103,8 +103,10 @@
 
 .qwebirc .warncolour {
   background-color: #ff9090;
+  color: black;
 }
 
 .qwebirc .infocolour {
   background-color: #d6d6ff;
+  color: black;
 }
