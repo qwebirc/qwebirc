@@ -6,6 +6,7 @@ qwebirc.ui.WINDOW_CONNECT =  0x10;
 qwebirc.ui.WINDOW_MESSAGES = 0x20;
 
 qwebirc.ui.CUSTOM_CLIENT = "custom";
+qwebirc.ui.DEFAULT_HUE = 210; /* nice blue */
 
 qwebirc.ui.BaseUI = new Class({
   Implements: [Events],
@@ -215,18 +216,25 @@ qwebirc.ui.StandardUI = new Class({
   initialize: function(parentElement, windowClass, uiName, options) {
     this.parent(parentElement, windowClass, uiName, options);
 
+    this.__styleValues = {hue: qwebirc.ui.DEFAULT_HUE, saturation: 0, lightness: 0, textHue: null, textSaturation: null, textLightness: null};
+    if($defined(this.options.hue)) this.__styleValues.hue = this.options.hue;
     this.tabCompleter = new qwebirc.ui.TabCompleterFactory(this);
     this.uiOptions = new qwebirc.ui.DefaultOptionsClass(this, options.uiOptionsArg);
     this.customWindows = new QHash();
-    
-    this.__styleValues = {hue: this.uiOptions.STYLE_HUE, saturation: 0, lightness: 0, textHue: this.uiOptions.STYLE_HUE, textSaturation: 0, textLightness: 0};
-    if($defined(this.options.hue)) this.__styleValues.hue = this.options.hue;
+
     if($defined(this.options.saturation)) this.__styleValues.saturation = this.options.saturation;
     if($defined(this.options.lightness)) this.__styleValues.lightness = this.options.lightness;
-    if($defined(this.options.thue)) this.__styleValues.textHue = this.options.thue;
     if($defined(this.options.tsaturation)) this.__styleValues.textSaturation = this.options.tsaturation;
     if($defined(this.options.tlightness)) this.__styleValues.textLightness = this.options.tlightness;
-    
+
+    if($defined(this.options.hue)) { /* overridden in url */
+      /* ugh... this will go away when we add proper options for hue/sat/light for text and background */
+      this.uiOptions.setValueByPrefix("STYLE_HUE", this.__styleValues.hue);
+    } else {
+      this.__styleValues.hue = this.uiOptions.STYLE_HUE; /* otherwise copy from serialised store */
+    }
+    this.__styleValues.textHue = $defined(this.options.thue) ? this.options.thue : this.__styleValues.hue;
+
     document.addEvent("keydown", this.__handleHotkey.bind(this));
   },
   __handleHotkey: function(x) {
@@ -370,18 +378,19 @@ qwebirc.ui.StandardUI = new Class({
     this.setModifiableStylesheetValues({});
   },
   setModifiableStylesheetValues: function(values) {
-    for(var k in values)
+    for (var k in values)
       this.__styleValues[k] = values[k];
-      
-    if(!$defined(this.__styleSheet))
+
+    if (!$defined(this.__styleSheet))
       return;
-      
+
     var back = {hue: this.__styleValues.hue, lightness: this.__styleValues.lightness, saturation: this.__styleValues.saturation};
-    var front = {hue: this.__styleValues.textHue, lightness: this.__styleValues.textLightness, saturation: this.__styleValues.textSaturation};
-
-    if(!this.__styleValues.textHue && !this.__styleValues.textLightness && !this.__styleValues.textSaturation)
+    var front;
+    if (!$defined(this.__styleValues.textHue) && !$defined(this.__styleValues.textLightness) && !$defined(this.__styleValues.textSaturation)) {
       front = back;
-
+    } else {
+      front = {hue: Number(this.__styleValues.textHue), lightness: Number(this.__styleValues.textLightness), saturation: Number(this.__styleValues.textSaturation)}
+    }
     var colours = {
       back: back,
       front: front
