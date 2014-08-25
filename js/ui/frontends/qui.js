@@ -381,7 +381,7 @@ qwebirc.ui.QUI.Window = new Class({
   initialize: function(parentObject, client, type, name, identifier) {
     this.parent(parentObject, client, type, name, identifier);
 
-    this.tab = new Element("a", {"href": "#"});
+    this.tab = new Element("a");
     this.tab.addClass("tab");
     this.tab.addEvent("focus", function() { this.blur() }.bind(this.tab));;
 
@@ -517,7 +517,6 @@ qwebirc.ui.QUI.Window = new Class({
       var e2 = new Element("a");
       e.appendChild(e2);
 
-      e2.href = "#";
       e2.set("text", "- " + x.text);
 
       e2.addEvent("focus", function() { this.blur() }.bind(e2));
@@ -557,8 +556,6 @@ qwebirc.ui.QUI.Window = new Class({
     
     var e = new Element("a");
     qwebirc.ui.insertAt(position, this.nicklist, e);
-    
-    e.href = "#";
     var span = new Element("span");
     if(this.parentObject.uiOptions.NICK_COLOURS) {
       var colour = realNick.toHSBColour(this.client);
