@@ -448,7 +448,7 @@ qwebirc.ui.QUI.Window = new Class({
       this.scrollpos = this.getScrollParent().getScroll();
     }.bind(this));
     
-    if(type == qwebirc.ui.WINDOW_CHANNEL) {
+    if(type == qwebirc.ui.WINDOW_CHANNEL || type == qwebirc.ui.WINDOW_QUERY) {
       this.topic = new Element("div");
       this.parentObject.qjsui.applyClasses("topic", this.topic);
       this.topic.addClass("topic");
@@ -456,25 +456,35 @@ qwebirc.ui.QUI.Window = new Class({
       this.topic.set("html", "&nbsp;");
       this.topic.addEvent("dblclick", this.editTopic.bind(this));
       this.parentObject.qjsui.applyClasses("topic", this.topic);
-      
+
       this.prevNick = null;
       this.nicklist = new Element("div");
       this.nicklist.addClass("nicklist");
       this.nicklist.addClass("tab-invisible");
       this.nicklist.addEvent("click", this.removePrevMenu.bind(this));
       this.parentObject.qjsui.applyClasses("right", this.nicklist);
+
+      this.updateTopic("");
     }
     
-    if(type == qwebirc.ui.WINDOW_CHANNEL)
-      this.updateTopic("");
-
     this.nicksColoured = this.parentObject.uiOptions.NICK_COLOURS;
     this.reflow();
   },
   rename: function(name) {
-    this.tab.replaceChild(document.createTextNode(name), this.tab.firstChild);
+    var newNode = document.createTextNode(name);
+    if(this.parentObject.sideTabs) {
+      this.tab.replaceChild(newNode, this.tab.childNodes[1]);
+    } else {
+      this.tab.replaceChild(newNode, this.tab.firstChild);
+    }
+
+    if(this.type == qwebirc.ui.WINDOW_QUERY)
+      this.updateTopic("");
   },
   editTopic: function() {
+    if(this.type != qwebirc.ui.WINDOW_CHANNEL)
+      return;
+
     if(!this.client.nickOnChanHasPrefix(this.client.nickname, this.name, "@")) {
 /*      var cmodes = this.client.getChannelModes(channel);
       if(cmodes.indexOf("t")) {*/
@@ -597,16 +607,23 @@ qwebirc.ui.QUI.Window = new Class({
     while(t.firstChild)
       t.removeChild(t.firstChild);
 
-    if(topic) {
-      t.topicText = topic;
-      this.parent(topic, t);
+    var suffix;
+    if(this.type == qwebirc.ui.WINDOW_CHANNEL) {
+      suffix = ": ";
     } else {
-      t.topicText = topic;
-      var e = new Element("div");
-      e.set("text", "(no topic set)");
-      e.addClass("emptytopic");
-      t.appendChild(e);
+      suffix = "";
     }
+    qwebirc.ui.Colourise(this.name + suffix, t, null, null, this);
+
+    if(this.type == qwebirc.ui.WINDOW_CHANNEL) {
+      t.topicText = topic;
+      if (topic) {
+        this.parent(topic, t);
+      } else {
+        t.appendChild(document.createTextNode("(no topic set)"));
+      }
+    }
+
     this.reflow();
   },
   select: function() {

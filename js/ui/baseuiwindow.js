@@ -33,7 +33,7 @@ qwebirc.ui.Window = new Class({
     }
   },
   updateTopic: function(topic, element)  {
-    qwebirc.ui.Colourise("[" + topic + "]", element, this.client.exec, this.parentObject.urlDispatcher.bind(this.parentObject), this);
+    qwebirc.ui.Colourise(topic, element, this.client.exec, this.parentObject.urlDispatcher.bind(this.parentObject), this);
   },
   close: function() {
     this.closed = true;
