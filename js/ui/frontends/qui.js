@@ -41,16 +41,25 @@ qwebirc.ui.QUI = new Class({
     this.reflow = this.qjsui.reflow.bind(this.qjsui);
     
     this.tabs.addEvent("mousewheel", function(x) {
-      if(this.sideTabs)
-        return;
-
       var event = new Event(x);
+      var up, down;
+      if(this.sideTabs) {
+        var p = this.qjsui.left;
 
-      /* up */
-      if(event.wheel > 0) {
+        /* don't scroll if we're scrollable */
+        if(p.getScrollSize().y > p.clientHeight)
+          return;
+
+        up = event.wheel < 0;
+        down = event.wheel > 0;
+      } else {
+        up = event.wheel > 0;
+        down = event.wheel < 0;
+      }
+
+      if(up) {
         this.nextWindow();
-      } else if(event.wheel < 0) {
-        /* down */
+      } else if(down) {
         this.prevWindow();
       }
       event.stop();
