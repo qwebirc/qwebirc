@@ -82,9 +82,9 @@ qwebirc.irc.IRCClient = new Class({
       var c = prefixes.charAt(0);
       var p = this.prefixes.indexOf(c);
       if(p > -1)
-        return -p - 1;
+        return p;
     }
-    return 0;
+    return Infinity;
   },
   updateNickList: function(channel) {
     var names = [];
@@ -93,18 +93,16 @@ qwebirc.irc.IRCClient = new Class({
     var n1 = this.tracker.getChannel(channel);
     if($defined(n1)) {
       n1.each(function (n, nc) {
-        var prefix, pri;
+        var prefix, pri = this.getPrefixPriority(nc.prefixes);
         if(nc.prefixes.length > 0) {
           prefix = nc.prefixes.charAt(0);
-          pri = this.getPrefixPriority(nc.prefixes);
         } else {
           prefix = "";
-          pri = 0;
         }
         names.push([pri, this.toIRCLower(n), prefix + n]);
       }, this);
     }
-    names.sort();
+    names.sort(qwebirc.util.arrayCmp);
     
     var sortednames = [];
     names.each(function(name) {

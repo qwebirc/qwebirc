@@ -48,8 +48,8 @@ qwebirc.config.DEFAULT_OPTIONS = [
   }],
   [9, "NICK_COLOURS", "Automatically colour nicknames", false],
   [10, "HIDE_JOINPARTS", "Hide JOINS/PARTS/QUITS", false],
-  [11, "STYLE_HUE", "Adjust user interface hue", function() {
-    return {class_: qwebirc.config.HueOption, default_: 210};
+  [11, "STYLE_HUE", "Adjust user interface hue", function(ui) {
+    return {class_: qwebirc.config.HueOption, default_: ui.__styleValues.hue};
   }, {
     applyChanges: function(value, ui) {
       ui.setModifiableStylesheetValues({hue: value});
@@ -297,13 +297,14 @@ qwebirc.config.HueOption = new Class({
 
 qwebirc.ui.Options = new Class({
   initialize: function(ui) {
+    this.ui = ui;
+
     if(!$defined(qwebirc.config.DefaultOptions))
       this.__configureDefaults();
     
     this.optionList = qwebirc.config.DefaultOptions.slice();
-    this.optionHash = {}
-    this.ui = ui;
-    
+    this.optionHash = {};
+
     this._setup();
     this.optionList.forEach(function(x) {
       x.setSavedValue(this._get(x));
@@ -328,7 +329,7 @@ qwebirc.ui.Options = new Class({
         if(stype == "boolean") {
           type = qwebirc.config.CheckOption;
         } else if(stype == "function") {
-          var options = default_();
+          var options = default_.call(this, this.ui);
           type = options.class_;
           default_ = options.default_;
         } else {
@@ -336,11 +337,15 @@ qwebirc.ui.Options = new Class({
         }
         return new type(optionId, prefix, label, default_, moreextras);
       }
-    });
+    }, this);
   },
   setValue: function(option, value) {
     this.optionHash[option.prefix].value = value;
     this[option.prefix] = value;
+  },
+  setValueByPrefix: function(prefix, value) {
+    this.optionHash[prefix].value = value;
+    this[prefix] = value;
   },
   getOptionList: function() {
     return this.optionList;

@@ -34,7 +34,6 @@ qwebirc.ui.urlificate = function(element, text, execfn, cmdfn, window) {
     var punct = text.substring(newtext.length);
 
     var a = new Element("span");
-    a.href = "#";
     a.addClass("hyperlink-channel");
     a.addEvent("click", function(e) {
       new Event(e).stop();
