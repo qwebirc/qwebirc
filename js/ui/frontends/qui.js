@@ -189,25 +189,30 @@ qwebirc.ui.QUI = new Class({
       new Event(e).stop();
       sendInput();
     });
-    
-    inputbox.addEvent("focus", this.resetTabComplete.bind(this));
-    inputbox.addEvent("mousedown", this.resetTabComplete.bind(this));
-    
+
+    var reset = this.resetTabComplete.bind(this);
+    inputbox.addEvent("focus", reset);
+    inputbox.addEvent("mousedown", reset);
+    inputbox.addEvent("keypress", reset);
+
     inputbox.addEvent("keydown", function(e) {
       var resultfn;
       var cvalue = inputbox.value;
-      
-      if(e.key == "up") {
+
+      if(e.alt || e.control || e.meta)
+        return;
+
+      if(e.key == "up" && !e.shift) {
         resultfn = this.commandhistory.upLine;
-      } else if(e.key == "down") {
+      } else if(e.key == "down" && !e.shift) {
         resultfn = this.commandhistory.downLine;
-      } else if(e.key == "tab" && !e.altKey && !e.ctrlKey && !e.shiftKey) {
+      } else if(e.key == "tab") {
+        this.tabComplete(inputbox, e.shift);
+
         new Event(e).stop();
-        this.tabComplete(inputbox);
+        e.preventDefault();
         return;
       } else {
-        /* ideally alt and other keys wouldn't break this */
-        this.resetTabComplete();
         return;
       }
       
@@ -218,6 +223,8 @@ qwebirc.ui.QUI = new Class({
       var result = resultfn.bind(this.commandhistory)();
       
       new Event(e).stop();
+      e.preventDefault();
+
       if(!result)
         result = "";
       this.lastcvalue = result;
