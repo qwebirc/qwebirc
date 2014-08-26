@@ -239,10 +239,12 @@ qwebirc.ui.StandardUI = new Class({
   },
   __handleHotkey: function(x) {
     var success = false;
-    if(!x.alt || x.control) {
+    if(!x.alt && !x.control && !x.shift && !x.meta) {
       if((x.key == "backspace" || x.key == "/") && !this.getInputFocused(x)) {
         success = true;
       }
+    } else if(!x.alt || x.control || x.meta) {
+      /* do nothing */
     } else if(x.key == "a" || x.key == "A") {
       var highestNum = 0;
       var highestIndex = -1;
@@ -257,7 +259,7 @@ qwebirc.ui.StandardUI = new Class({
       }
       if(highestIndex > -1)
         this.selectWindow(this.windowArray[highestIndex]);
-    } else if(x.key >= '0' && x.key <= '9') {
+    } else if((x.key >= '0' && x.key <= '9') && !x.shift) {
       success = true;
       
       number = x.key - '0';
@@ -270,13 +272,14 @@ qwebirc.ui.StandardUI = new Class({
         return;
         
       this.selectWindow(this.windowArray[number]);
-    } else if(x.key == "left") {
+    } else if((x.key == "left" || x.key == "up") && !x.shift) {
       this.prevWindow();
       success = true;
-    } else if(x.key == "right") {
+    } else if((x.key == "right" || x.key == "down") && !x.shift) {
       this.nextWindow();
       success = true;
     }
+
     if(success) {
       new Event(x).stop();
       x.preventDefault();
@@ -367,8 +370,8 @@ qwebirc.ui.StandardUI = new Class({
 
     return null;
   },
-  tabComplete: function(element) {
-    this.tabCompleter.tabComplete(element);
+  tabComplete: function(element, backwards) {
+    this.tabCompleter.tabComplete(element, backwards);
   },
   resetTabComplete: function() {
     this.tabCompleter.reset();

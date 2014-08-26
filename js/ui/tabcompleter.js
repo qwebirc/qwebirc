@@ -3,7 +3,7 @@ qwebirc.ui.TabCompleterFactory = new Class({
     this.ui = ui;
     this.reset();
   },
-  tabComplete: function(textBox) {
+  tabComplete: function(textBox, backwards) {
     var text = textBox.value;
     
     if(!$defined(this.obj)) {
@@ -54,7 +54,7 @@ qwebirc.ui.TabCompleterFactory = new Class({
         return;
     }
       
-    var r = this.obj.get();
+    var r = this.obj.get(backwards);
     if(!$defined(r))
       return;
       
@@ -94,13 +94,23 @@ qwebirc.ui.TabIterator = new Class({
      * ideally next would do the list gubbins recursively, but no JS engine currently
      * support tail recursion :(
      */
-    if(!$defined(this.list))
+    if(!$defined(this.list) || this.list.length == 0)
       return null;
     
     this.pos = this.pos + 1;
     if(this.pos >= this.list.length)
       this.pos = 0;
       
+    return this.list[this.pos];
+  },
+  prev: function() {
+    if(!$defined(this.list) || this.list.length == 0)
+      return null;
+
+    this.pos = this.pos - 1;
+    if(this.pos < 0)
+      this.pos = this.list.length - 1;
+
     return this.list[this.pos];
   }
 });
@@ -112,8 +122,8 @@ qwebirc.ui.BaseTabCompleter = new Class({
     this.suffix = suffix;
     this.iterator = new qwebirc.ui.TabIterator(client, existingNick, list);
   },
-  get: function() {
-    var n = this.iterator.next();
+  get: function(backwards) {
+    var n = backwards ? this.iterator.prev() : this.iterator.next();
     if(!$defined(n))
       return null;
       
