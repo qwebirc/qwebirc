@@ -14,9 +14,9 @@ def warn(*message):
 
 def check_dependencies():
   i = 0
-  
-  check_twisted()
+
   check_zope()
+  check_twisted()
   check_win32()
   i+=check_json()
   i+=check_java()
