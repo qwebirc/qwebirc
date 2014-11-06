@@ -118,10 +118,7 @@ qwebirc.ui.QUI = new Class({
         dropdownMenu.hide();
         return;
       }
-      var parentSize = this.outerTabs.parentNode.getSize().y;
 
-      dropdownMenu.setStyle("left", parentSize.x);
-      dropdownMenu.setStyle("top", top-1); /* -1 == top border */
       dropdownMenu.setStyle("display", "inline-block");
       dropdownMenu.visible = true;
       
