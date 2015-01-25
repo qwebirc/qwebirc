@@ -69,7 +69,13 @@ qwebirc.ui.QUI = new Class({
 
     this.createInput();
     this.reflow();
-    this.reflow.delay(100); /* Konqueror fix */
+    for(var i=50;i<1000;i+=50)
+      this.reflow.delay(i, true);
+    for(var i=1000;i<2000;i+=100)
+      this.reflow.delay(i);
+    for(var i=2000;i<15000;i+=500)
+      this.reflow.delay(i);
+
     this.setSideTabs(this.uiOptions.SIDE_TABS);
 
   },
@@ -452,7 +458,7 @@ qwebirc.ui.QUI.Window = new Class({
       this.scrollpos = this.getScrollParent().getScroll();
     }.bind(this));
     
-    if(type == qwebirc.ui.WINDOW_CHANNEL || type == qwebirc.ui.WINDOW_QUERY) {
+    if(type == qwebirc.ui.WINDOW_CHANNEL) {
       this.topic = new Element("div");
       this.parentObject.qjsui.applyClasses("topic", this.topic);
       this.topic.addClass("topic");
