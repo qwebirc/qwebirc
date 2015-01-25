@@ -455,7 +455,7 @@ qwebirc.ui.QUI.Window = new Class({
       this.scrollpos = this.getScrollParent().getScroll();
     }.bind(this));
     
-    if(type == qwebirc.ui.WINDOW_CHANNEL || type == qwebirc.ui.WINDOW_QUERY) {
+    if(type == qwebirc.ui.WINDOW_CHANNEL) {
       this.topic = new Element("div");
       this.parentObject.qjsui.applyClasses("topic", this.topic);
       this.topic.addClass("topic");
