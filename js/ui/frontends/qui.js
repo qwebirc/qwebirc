@@ -69,7 +69,13 @@ qwebirc.ui.QUI = new Class({
 
     this.createInput();
     this.reflow();
-    this.reflow.delay(100); /* Konqueror fix */
+    for(var i=50;i<1000;i+=50)
+      this.reflow.delay(i, true);
+    for(var i=1000;i<2000;i+=100)
+      this.reflow.delay(i);
+    for(var i=2000;i<15000;i+=500)
+      this.reflow.delay(i);
+
     this.setSideTabs(this.uiOptions.SIDE_TABS);
 
   },
