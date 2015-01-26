@@ -292,6 +292,7 @@ qwebirc.irc.IRCConnection = new Class({
     }
 
     var ws = new WebSocket(this.__wsURL());
+    this.__ws = ws;
     var retryExecuted = false;
     var doRetry = function(e) {
       if(retryExecuted)
@@ -359,7 +360,6 @@ qwebirc.irc.IRCConnection = new Class({
       this.log("websocket connected");
       ws.send("s" + this.__subSeqNo + "," + this.sessionid);
     }.bind(this);
-    this.__ws = ws;
   },
   __recvLongPoll: function() {
     var r = this.newRequest("s", true);
