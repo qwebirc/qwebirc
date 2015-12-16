@@ -220,7 +220,7 @@ qwebirc.irc.Commands = new Class({
   cmd_AUTOJOIN: [false, undefined, undefined, function(args) {
     return ["JOIN", this.parentObject.options.autojoin];
   }],
-  cmd_HELP: [false, undefined, undefined, function(args) {
+  cmd_HELP: [false, 1, undefined, function(args) {
     if(qwebirc.global.helpURL) {
       this.newUIWindow("helpWindow");
     } else {
