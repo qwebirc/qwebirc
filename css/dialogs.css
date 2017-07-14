@@ -269,14 +269,25 @@
 
 /************* OPTIONS *****************/
 
-.qwebirc-optionspane div.hue-slider {
+.qwebirc-optionspane div.slider {
   border: 0px solid black;
   width: 360px;
   height: 8px;
+}
+
+.qwebirc-optionspane div.hue-slider {
   background-image: url(../images/hue.png);
 }
 
-.qwebirc-optionspane div.hue-slider .knob {
+.qwebirc-optionspane div.saturation-slider {
+  background-image: url(../images/saturation.png);
+}
+
+.qwebirc-optionspane div.lightness-slider {
+  background-image: url(../images/lightness.png);
+}
+
+.qwebirc-optionspane div.slider .knob {
   width: 8px;
   height: 16px;
   top: -5px;
