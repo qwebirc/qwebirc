@@ -1,53 +1,53 @@
 import os, sys, pages, subprocess, re, optionsgen, config
 
-class HGException(Exception):
+class GitException(Exception):
   pass
   
 def jslist(name, debug):
   ui = pages.UIs[name]
   if debug:
     x = [pages.JS_BASE, ui.get("extra", []), pages.DEBUG, ["debug/ui/frontends/%s" % y for y in ui["uifiles"]]]
-    hgid = ""
+    gitid = ""
   else:
     #x = [pages.JS_BASE, ui.get("buildextra", ui.get("extra", [])), pages.BUILD_BASE, name]
     x = [name]
-    hgid = "-" + gethgid()  
+    gitid = "-" + getgitid()  
   
-  return list("js/%s%s.js" % (y, hgid) for y in pages.flatten(x))
+  return list("js/%s%s.js" % (y, gitid) for y in pages.flatten(x))
 
 def csslist(name, debug, gen=False):
   ui = pages.UIs[name]
   nocss = ui.get("nocss")
   if not debug:
-    return ["css/%s-%s.css" % (name, gethgid())]
+    return ["css/%s-%s.css" % (name, getgitid())]
   css = pages.flatten([ui.get("extracss", []), "colours", "dialogs"])
   if not nocss:
     css = list(css) + [name]
   return list("css/%s%s.css" % ("debug/" if gen else "", x) for x in css)
 
-def _gethgid():
+def _getgitid():
   try:
-    p = subprocess.Popen(["hg", "id"], stdout=subprocess.PIPE, shell=os.name == "nt")
+    p = subprocess.Popen(["git", "rev-parse", "HEAD"], stdout=subprocess.PIPE, shell=os.name == "nt")
   except Exception, e:
     if hasattr(e, "errno") and e.errno == 2:
-      raise HGException, "unable to execute"
-    raise HGException, "unknown exception running hg: %s" % repr(e)
+      raise GitException, "unable to execute"
+    raise GitException, "unknown exception running git: %s" % repr(e)
     
   data = p.communicate()[0]
   if p.wait() != 0:
-    raise HGException, "unable to get id"
+    raise GitException, "unable to get id"
   return re.match("^([0-9a-f]+).*", data).group(1)
 
-HGID = None
-def gethgid():
-  global HGID
-  if HGID is None:
+GITID = None
+def getgitid():
+  global GITID
+  if GITID is None:
     try:
-      HGID =  _gethgid()
-    except HGException, e:
-      print >>sys.stderr, "warning: hg: %s (using a random id)." % e
-      HGID = os.urandom(10).encode("hex")
-  return HGID
+      GITID =  _getgitid()
+    except GitException, e:
+      print >>sys.stderr, "warning: git: %s (using a random id)." % e
+      GITID = os.urandom(10).encode("hex")
+  return GITID
     
 def producehtml(name, debug):
   ui = pages.UIs[name]

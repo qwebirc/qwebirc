@@ -20,7 +20,7 @@ def check_dependencies():
   check_win32()
   i+=check_json()
   i+=check_java()
-  i+=check_hg()
+  i+=check_git()
   
   print "0 errors, %d warnings." % i
   
@@ -57,18 +57,18 @@ def check_java():
     
   return 0
   
-def check_hg():
-  def hg_warn(specific):
-    warn(specific, "mercurial (hg) is not required, but allows qwebirc to save bandwidth by versioning.", "you can get hg at http://www.selenic.com/mercurial/")
+def check_git():
+  def git_warn(specific):
+    warn(specific, "git is not required, but allows qwebirc to save bandwidth by versioning.")
     
   try:
-    p = subprocess.Popen(["hg", "id"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=os.name == "nt")
+    p = subprocess.Popen(["git", "rev-parse", "HEAD"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=os.name == "nt")
     p.communicate()
     if p.wait() != 0:
-      hg_warn("something went wrong looking for mercurial.")
+      git_warn("something went wrong looking for git.")
       return 1
   except: # ugh
-    hg_warn("couldn't find mercurial.")
+    git_warn("couldn't find git.")
     return 1
     
   return 0
