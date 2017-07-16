@@ -69,7 +69,7 @@ def merge_files(output, files, root_path=lambda x: x):
   f.close()
 
 def main(outputdir=".", produce_debug=True):
-  ID = pagegen.gethgid()
+  ID = pagegen.getgitid()
   
   pagegen.main(outputdir, produce_debug=produce_debug)
 

@@ -9,8 +9,8 @@ def trymkdir(*dir):
 
 def copywalk(src, dest, visitor):
   for root, dirs, files in os.walk(src):
-    if ".hg" in dirs:
-      dirs.remove(".hg")
+    if ".git" in dirs:
+      dirs.remove(".git")
       
     newdir = os.path.join(dest, root)
     if not os.path.exists(newdir):
