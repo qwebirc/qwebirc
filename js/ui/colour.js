@@ -3,8 +3,9 @@ qwebirc.ui.Colourise = function(line, entity, execfn, cmdfn, window) {
   var bg;
   var underline = false;
   var bold = false;
+  var italic = false;
   var autoNickColour = false;
-  
+
   var out = [];
   var xline = line.split("");
   var element = document.createElement("span");
@@ -72,6 +73,8 @@ qwebirc.ui.Colourise = function(line, entity, execfn, cmdfn, window) {
       classes.push("Xb");
     if(underline)
       classes.push("Xu");
+    if(italic)
+      classes.push("Xi");
     element.className = classes.join(" ");
   }
   
@@ -118,12 +121,19 @@ qwebirc.ui.Colourise = function(line, entity, execfn, cmdfn, window) {
       underline = !underline;
       
       emitStartToken();
+    } else if(lc == "\x1D") {
+      emitEndToken();
+
+      italic = !italic;
+      
+      emitStartToken();
     } else if(lc == "\x0F") {
       emitEndToken();
       
       fg = undefined;
       bg = undefined;
       underline = false;
+      italic = false;
       bold = false;
     } else if(lc == "\x03") {
       emitEndToken();
