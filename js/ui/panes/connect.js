@@ -1,8 +1,9 @@
 qwebirc.ui.ConnectPane = new Class({
   Implements: [Events],
   initialize: function(parent, options) {
-    var callback = options.callback, initialNickname = options.initialNickname, initialChannels = options.initialChannels, networkName = options.networkName, autoConnect = options.autoConnect, autoNick = options.autoNick;
+    var callback = options.callback, initialNickname = options.initialNickname, initialChannels = options.initialChannels, autoConnect = options.autoConnect, autoNick = options.autoNick;
     this.options = options;
+    var uiOptions = options.uiOptions;
     this.__windowName = "authgate_" + Math.floor(Math.random() * 100000);
 
     var delayfn = function() { parent.set("html", "<div class=\"loading\">Loading. . .</div>"); };
@@ -11,22 +12,30 @@ qwebirc.ui.ConnectPane = new Class({
     var r = qwebirc.ui.RequestTransformHTML({url: qwebirc.global.staticBaseURL + "panes/connect.html", update: parent, onSuccess: function() {
       $clear(cb);
 
-      var box = (autoConnect ? "confirm" : "login");
-      var rootElement = parent.getElement("[name=" + box + "box]");
+      var rootElement = parent.getElement("[name=connectroot]");
       this.rootElement = rootElement;
       
       this.util.exec = function(n, x) { rootElement.getElements(n).each(x); };
       var util = this.util;
       var exec = util.exec;
-      util.makeVisible(rootElement);
 
-      if(!autoConnect)
-        util.makeVisible(parent.getElement("[name=loginheader]"));
+      var box = (autoConnect ? "confirm" : "login");
+      exec("[name=" + box + "box]", util.setVisible(true));
+
+      if(!autoConnect) {
+        if(uiOptions.logoURL) {
+          var logoBar = parent.getElement("[class=bar-logo]");
+          logoBar.setAttribute("style", "background: url(" + uiOptions.logoURL + ") no-repeat center top; _filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + uiOptions.logoURL + "',sizingMethod='crop');");
+          util.makeVisible(parent.getElement("[name=loginheader]"));
+        } else {
+          util.makeVisible(parent.getElement("[name=nologologinheader]"));
+        }
+      }
 
       exec("[name=nickname]", util.setText(initialNickname));
       exec("[name=channels]", util.setText(initialChannels));
       exec("[name=prettychannels]", function(node) { this.__buildPrettyChannels(node, initialChannels); }.bind(this));
-      exec("[name=networkname]", util.setText(networkName));
+      exec("[name=networkname]", util.setText(uiOptions.networkName));
 
       var focus = "connect";
       if(autoConnect) {

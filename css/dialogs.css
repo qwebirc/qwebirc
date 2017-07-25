@@ -38,24 +38,24 @@
 }
 
 .qwebirc-loginbox .bar {
-  background: url(../images/logo.png) 0 -68px repeat-x;
   height: 8px;
+  background: white;
+  border-bottom: 1px rgb(95,110,124) solid;
+  border-top: 1px rgb(95,110,124) solid;
 }
 
 .qwebirc-loginbox .bar-background {
-  background: url(../images/logo.png) 0 -76px repeat-x;
   height: 68px;
+  background: rgb(95,110,124);
   padding: 10px;
 }
 
 .qwebirc-loginbox .bar-logo {
-  background: url(../images/logo.png);
   width: 225px;
   height: 68px;
   left: 50%;
   margin: 0 auto;
   margin-top: 3px;
-  _filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../images/logo.png',sizingMethod='crop');
   _background: none;
 }
 

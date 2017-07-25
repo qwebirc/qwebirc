@@ -37,12 +37,7 @@ qwebirc.config.DEFAULT_OPTIONS = [
   [2, "DEDICATED_MSG_WINDOW", "Send privmsgs to dedicated messages window", false],
   [4, "DEDICATED_NOTICE_WINDOW", "Send notices to dedicated message window", false],
   [3, "NICK_OV_STATUS", "Show status (@/+) before nicknames in channel lines", true],
-  [5, "ACCEPT_SERVICE_INVITES", "Automatically join channels when invited by Q", false, {
-    settableByURL: false
-  }],
-  [6, "USE_HIDDENHOST", "Hide your hostmask when authed to Q (+x)", true, {
-    settableByURL: false
-  }],
+  /* 5 and 6 are reserved */
   [8, "LASTPOS_LINE", "Show a last position indicator for each window", true, {
     enabled: qwebirc.ui.supportsFocus
   }],
@@ -67,6 +62,15 @@ qwebirc.config.DEFAULT_OPTIONS = [
     applyChanges: function(value, ui) {
       ui.setSideTabs(value);
     }
+  }]
+];
+
+qwebirc.config.QUAKENET_OPTIONS = [
+  [5, "ACCEPT_SERVICE_INVITES", "Automatically join channels when invited by Q", false, {
+    settableByURL: false
+  }],
+  [6, "USE_HIDDENHOST", "Hide your hostmask when authed to Q (+x)", true, {
+    settableByURL: false
   }]
 ];
 
@@ -313,7 +317,17 @@ qwebirc.ui.Options = new Class({
     }.bind(this));
   },
   __configureDefaults: function() {
-    qwebirc.config.DefaultOptions = qwebirc.config.DEFAULT_OPTIONS.map(function(x) {
+    var combined = qwebirc.config.DEFAULT_OPTIONS.slice(0);
+
+    var xo = null;
+    if(this.ui.options.networkName == "QuakeNet") /* HACK */
+      xo = qwebirc.config.QUAKENET_OPTIONS;
+
+    if(xo)
+      for(var i=0;i<xo.length;i++)
+        combined.push(xo[i]);
+
+    qwebirc.config.DefaultOptions = combined.map(function(x) {
       var optionId = x[0];
       var prefix = x[1];
       var label = x[2];

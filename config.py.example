@@ -97,6 +97,11 @@ BASE_URL = "http://foo.foo.org/"
 #         application.
 NETWORK_NAME = "FooNet"
 
+# OPTION: LOGO_URL
+#         URL to your logo (max height 68 pixels).
+#         If not set the default network name will shown in text.
+#LOGO_URL="images/logo.png"
+
 # OPTION: ANALYTICS_HTML
 #         If you have an analytics service, you can paste the HTML
 #         between the triple quotes.
@@ -272,6 +277,10 @@ CONNECTION_RESOLVER = None
 #         Shown to the user if they type /HELP or click on the Help!
 #         option in the user interface.
 HELP_URL = ""
+
+# OPTION: ACCOUNT_WHOIS_COMMAND
+#         Command sent when a username is clicked.
+#ACCOUNT_WHOIS_COMMAND = "/msg Q whois #"
 
 # QUAKENET SPECIFIC VALUES
 # ---------------------------------------------------------------------

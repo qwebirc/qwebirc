@@ -213,7 +213,8 @@ qwebirc.ui.BaseUI = new Class({
     this.postInitialize();
 
     this.addCustomWindow("Connect", qwebirc.ui.ConnectPane, "connectpane", {
-      initialNickname: initialNickname, initialChannels: initialChannels, autoConnect: autoConnect, networkName: this.options.networkName, callback: callback, autoNick: autoNick
+      initialNickname: initialNickname, initialChannels: initialChannels, autoConnect: autoConnect, callback: callback, autoNick: autoNick,
+      uiOptions: this.options
     }, qwebirc.ui.WINDOW_CONNECT);
   },
   focusChange: function(newValue) {
@@ -494,7 +495,8 @@ qwebirc.ui.QuakeNetUI = new Class({
   urlDispatcher: function(name, window) {
     if(name == "qwhois") {
       return ["span", function(auth) {
-        this.client.exec("/MSG Q whois #" + auth);
+        if($defined(this.parentObject.options.accountWhoisCommand))
+          this.client.exec(this.parentObject.options.accountWhoisCommand + auth);
       }.bind(window)];
     }
     return this.parent(name, window);

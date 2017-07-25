@@ -31,7 +31,9 @@ qwebirc.ui.Interface = new Class({
     helpURL: null,
     dynamicBaseURL: "/",
     staticBaseURL: "/",
-    cloak: false
+    cloak: false,
+    logoURL: null,
+    accountWhoisCommand: null
   },
   initialize: function(element, ui, options) {
     this.setOptions(options);
