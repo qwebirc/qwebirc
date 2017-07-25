@@ -6,14 +6,14 @@ class GitException(Exception):
 def jslist(name, debug):
   ui = pages.UIs[name]
   if debug:
-    x = [pages.JS_BASE, ui.get("extra", []), pages.DEBUG, ["debug/ui/frontends/%s" % y for y in ui["uifiles"]]]
+    x = [pages.JS_DEBUG_BASE, ui.get("extra", []), pages.DEBUG, ["debug/ui/frontends/%s" % y for y in ui["uifiles"]]]
     gitid = ""
   else:
     #x = [pages.JS_BASE, ui.get("buildextra", ui.get("extra", [])), pages.BUILD_BASE, name]
-    x = [name]
+    x = [pages.JS_RAW_BASE, name]
     gitid = "-" + getgitid()  
   
-  return list("js/%s%s.js" % (y, gitid) for y in pages.flatten(x))
+  return list(y if y.startswith("//") else "js/%s%s.js" % (y, gitid) for y in pages.flatten(x))
 
 def csslist(name, debug, gen=False):
   ui = pages.UIs[name]
@@ -54,7 +54,7 @@ def producehtml(name, debug):
   js = jslist(name, debug)
   css = csslist(name, debug, gen=True)
   csshtml = "\n".join("  <link rel=\"stylesheet\" href=\"%s%s\" type=\"text/css\"/>" % (config.STATIC_BASE_URL, x) for x in css)
-  jshtml = "\n".join("  <script type=\"text/javascript\" src=\"%s%s\"></script>" % (config.STATIC_BASE_URL, x) for x in js)
+  jshtml = "\n".join("  <script type=\"text/javascript\" src=\"%s%s\"></script>" % ("" if x.startswith("//") else config.STATIC_BASE_URL, x) for x in js)
 
   if hasattr(config, "ANALYTICS_HTML"):
     jshtml+="\n" + config.ANALYTICS_HTML
@@ -72,7 +72,7 @@ def producehtml(name, debug):
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="icon" sizes="192x192" href="%simages/highresicon.png"/>
   <link rel="shortcut icon" type="image/png" href="%simages/favicon.png"/>
-%s%s
+%s<script type="text/javascript">QWEBIRC_DEBUG=%s;</script>%s
 %s
   <script type="text/javascript">
     var ui = new qwebirc.ui.Interface("ircui", qwebirc.ui.%s, %s);
@@ -86,7 +86,7 @@ def producehtml(name, debug):
   </div>
 </body>
 </html>
-""" % (ui["doctype"], config.APP_TITLE, config.STATIC_BASE_URL, config.STATIC_BASE_URL, csshtml, customjs, jshtml, ui["class"], optionsgen.get_options(), div)
+""" % (ui["doctype"], config.APP_TITLE, config.STATIC_BASE_URL, config.STATIC_BASE_URL, csshtml, debug and "true" or "false", customjs, jshtml, ui["class"], optionsgen.get_options(), div)
 
 def main(outputdir=".", produce_debug=True):
   p = os.path.join(outputdir, "static")

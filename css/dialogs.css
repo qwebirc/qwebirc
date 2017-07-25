@@ -12,19 +12,55 @@
 .qwebirc-centrebox table table {
   width: auto;
 }
+
 .qwebirc-loginbox .tr1 td {
   width: 100%;
   text-align: center;
 }
 
+.bar-spacer {
+  height: 5px;
+}
+
+.collapse {
+  border-spacing: 0;
+  padding: 0;
+}
+
 .qwebirc-loginbox .tr2 td {
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 .qwebirc-loginbox .tr2 table {
   margin-left: auto;
   margin-right: auto;
   text-align: left;
+}
+
+.qwebirc-loginbox .bar {
+  height: 8px;
+  background: white;
+  border-bottom: 1px rgb(95,110,124) solid;
+  border-top: 1px rgb(95,110,124) solid;
+}
+
+.qwebirc-loginbox .bar-background {
+  height: 68px;
+  background: rgb(95,110,124);
+  padding: 10px;
+}
+
+.qwebirc-loginbox .bar-logo {
+  width: 225px;
+  height: 68px;
+  left: 50%;
+  margin: 0 auto;
+  margin-top: 3px;
+  _background: none;
+}
+
+.qwebirc-loginbox input#loginnickname, .qwebirc-loginbox input#loginchannels {
+  width: 200px;
 }
 
 /**************** CONFIRM LOGIN BOX *******************/

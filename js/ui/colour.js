@@ -45,7 +45,7 @@ qwebirc.ui.Colourise = function(line, entity, execfn, cmdfn, window) {
   }
 
   function emitEndToken() {
-    var data;
+    var data = "";
     if(out.length > 0) {
       var o = out.join("");
       if (execfn) {

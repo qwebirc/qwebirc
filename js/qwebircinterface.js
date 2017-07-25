@@ -30,21 +30,48 @@ qwebirc.ui.Interface = new Class({
     nickValidation: null,
     helpURL: null,
     dynamicBaseURL: "/",
-    staticBaseURL: "/"
+    staticBaseURL: "/",
+    cloak: false,
+    logoURL: null,
+    accountWhoisCommand: null
   },
   initialize: function(element, ui, options) {
     this.setOptions(options);
+    var extractHost = function() {
+      var uri = document.location.href;
+
+      /* IE6 doesn't have document.origin ... */
+      var start = uri.indexOf('?');
+      if(start != -1)
+        uri = uri.substring(0, start);
+      var start = uri.indexOf('#');
+      if(start != -1)
+        uri = uri.substring(0, start);
+
+      if(QWEBIRC_DEBUG && uri.endsWith(".html")) {
+        var last = uri.lastIndexOf("/");
+        uri = uri.substring(0, last + 1);
+      }
+      if(uri.substr(uri.length - 1) != "/")
+        uri = uri + "/";
+
+      return uri;
+    };
+
+    options.baseURL = extractHost();
     
     /* HACK */
     qwebirc.global = {
       dynamicBaseURL: options.dynamicBaseURL,
       staticBaseURL: options.staticBaseURL,
+      baseURL: options.baseURL,
       helpURL: options.helpURL,
       nicknameValidator: $defined(options.nickValidation) ? new qwebirc.irc.NicknameValidator(options.nickValidation) : new qwebirc.irc.DummyNicknameValidator()
     };
 
     window.addEvent("domready", function() {
       var callback = function(options) {
+        options.cloak = ui_.options.cloak;
         var IRC = new qwebirc.irc.IRCClient(options, ui_);
         IRC.connect();
         window.onbeforeunload = qwebirc_ui_onbeforeunload;
@@ -106,7 +133,10 @@ qwebirc.ui.Interface = new Class({
           
         if(args.contains("randomnick") && args.get("randomnick") == 1)
           inick = this.options.initialNickname;
-          
+
+        if(args.contains("cloak") && args.get("cloak") == 1)
+          this.options.cloak = true;
+
         /* we only consider autoconnecting if the nick hasn't been supplied, or it has and it's not "" */
         if(canAutoConnect && (!$defined(inick) || ($defined(inick) && (inick != "")))) {
           var p = args.get("prompt");

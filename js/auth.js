@@ -1,19 +1,22 @@
 qwebirc.auth.loggedin = function() {
   var user = Cookie.read("user");
-  
+  var expiry = Cookie.read("ticketexpiry");
+  if(expiry && new Date().getTime() > expiry - (5 * 60 * 1000))
+    return;
+
   return user;
 }
 
 qwebirc.auth.enabled = function() {
-  return false;
+  return true;
 }
 
 qwebirc.auth.quakeNetAuth = function() {
-  return false;
+  return true;
 }
 
 qwebirc.auth.passAuth = function() {
-  return true;
+  return false;
 }
 
 qwebirc.auth.bouncerAuth = function() {

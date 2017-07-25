@@ -223,6 +223,10 @@ String.prototype.startsWith = function(what) {
   return this.substring(0, what.length) == what;
 }
 
+String.prototype.endsWith = function(what) {
+  return this.substring(this.length - what.length, this.length) == what;
+};
+
 /* NOT cryptographically secure! */
 qwebirc.util.randHexString = function(numBytes) {
   var getByte = function() {
@@ -432,3 +436,22 @@ qwebirc.util.arrayCmp = function(a, b) {
   }
   return 0;
 };
+
+qwebirc.util.__log = function(x) {
+  if(QWEBIRC_DEBUG) {
+    if(typeof console == "undefined") {
+      alert("log: " + x);
+    } else {
+      console.log(x);
+    }
+  }
+};
+
+qwebirc.util.logger = {
+  log: function(x) { qwebirc.util.__log("L " + x) },
+  info: function(x) { qwebirc.util.__log("I " + x) },
+  error: function(x) { qwebirc.util.__log("E " + x) },
+  warn: function(x) { qwebirc.util.__log("W " + x) }
+};
+
+qwebirc.util.log = qwebirc.util.logger.log;

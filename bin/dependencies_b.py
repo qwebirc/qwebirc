@@ -18,6 +18,7 @@ def check_dependencies():
   check_zope()
   check_twisted()
   check_win32()
+  i+=check_autobahn()
   i+=check_json()
   i+=check_java()
   i+=check_git()
@@ -84,7 +85,7 @@ def check_zope():
       fail("qwebirc requires zope interface.",
            "this should normally come with twisted, but can be downloaded",
            "from pypi: http://pypi.python.org/pypi/zope.interface")
-           
+
 def check_twisted():
   try:
     import twisted
@@ -123,7 +124,22 @@ def check_json():
          "http://pypi.python.org/pypi/simplejson/")
     return 1
   return 0
-  
+
+def check_autobahn():
+  try:
+    import autobahn, autobahn.twisted.websocket
+    x = autobahn.version.split(".")
+    if len(x) != 3:
+      raise ImportError()
+    if (int(x[1]) < 8) or (int(x[1]) == 8 and int(x[2]) < 14):
+      raise ImportError()
+    return 0
+  except ImportError:
+    warn("autobahn 0.8.14 (minimum) not installed; websocket support will be disabled.",
+         "consider installing autobahn from:",
+         "http://autobahn.ws/python/getstarted/")
+    return 1
+
 if __name__ == "__main__":
   import dependencies
   dependencies.check_dependencies()

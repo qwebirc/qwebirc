@@ -8,6 +8,12 @@ qwebirc.sound.SoundPlayer = new Class({
   initialize: function() {
     this.loadingSWF = false;
     this.loadedSWF = false;
+
+    var sb = qwebirc.global.staticBaseURL;
+    if(qwebirc.global.baseURL.substr(qwebirc.global.baseURL.length - 1, 1) == "/" && sb.substr(0, 1) == "/")
+      sb = sb.substr(1)
+
+    this.soundURL = qwebirc.global.baseURL + sb + "sound/";
   },
   go: function() {
     if(qwebirc.sound.domReady) {
@@ -22,24 +28,23 @@ qwebirc.sound.SoundPlayer = new Class({
     if(this.loadingSWF)
       return;
     this.loadingSWF = true;
-    if(eval("typeof soundManager") != "undefined") {
+
+    var debugMode = false;
+
+    window.soundManager = new SoundManager();
+
+    var sb = qwebirc.global.staticBaseURL;
+    if(qwebirc.global.baseURL.substr(-1) == "/" && sb.substr(0, 1) == "/")
+      sb = sb.substr(1)
+    
+    window.soundManager.url = this.soundURL;
+    window.soundManager.debugMode = debugMode;
+    window.soundManager.useConsole = debugMode;
+    window.soundManager.onload = function() {
       this.loadedSWF = true;
       this.fireEvent("ready");
-      return;
-    }
-    
-    var debugMode = false;
-    qwebirc.util.importJS(qwebirc.global.staticBaseURL + "js/" + (debugMode?"soundmanager2":"soundmanager2-nodebug-jsmin") + ".js", "soundManager", function() {
-      soundManager.url = qwebirc.global.staticBaseURL + "sound/";
-      
-      soundManager.debugMode = debugMode;
-      soundManager.useConsole = debugMode;
-      soundManager.onload = function() {
-        this.loadedSWF = true;
-        this.fireEvent("ready");
-      }.bind(this);
-      soundManager.beginDelayedInit();
-    }.bind(this));
+    }.bind(this);
+    window.soundManager.beginDelayedInit();
   },
   createSound: function(name, src) {
     try {
@@ -57,7 +62,7 @@ qwebirc.sound.SoundPlayer = new Class({
   },
   beep: function() {
     if(!this.beepLoaded) {
-      this.createSound("beep", qwebirc.global.staticBaseURL + "sound/beep3.mp3");
+      this.createSound("beep", this.soundURL + "beep3.mp3");
       this.beepLoaded = true;
     }
     this.playSound("beep");

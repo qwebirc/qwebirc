@@ -61,6 +61,8 @@ def merge_files(output, files, root_path=lambda x: x):
   f = open(output, "wb")
 
   for x in files:
+    if x.startswith("//"):
+      continue
     f2 = open(root_path(x), "rb")
     f.write(f2.read() + "\n")
     f2.close()
@@ -97,7 +99,7 @@ def main(outputdir=".", produce_debug=True):
     
     #jmerge_files(outputdir, "js", uiname, value["uifiles"], lambda x: os.path.join("js", "ui", "frontends", x + ".js"))
     
-    alljs = []
+    alljs = ["js/debugdisabled.js"]
     for y in pages.JS_BASE:
       alljs.append(os.path.join("static", "js", y + ".js"))
     for y in value.get("buildextra", []):
@@ -107,7 +109,7 @@ def main(outputdir=".", produce_debug=True):
     for y in value["uifiles"]:
       alljs.append(os.path.join("js", "ui", "frontends", y + ".js"))
     jmerge_files(outputdir, "js", uiname + "-" + ID, alljs, file_prefix="QWEBIRC_BUILD=\"" + ID + "\";\n")
-    
+
   os.rmdir(coutputdir)
   
   f = open(".compiled", "w")
