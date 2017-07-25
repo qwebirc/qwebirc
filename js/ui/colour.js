@@ -45,12 +45,13 @@ qwebirc.ui.Colourise = function(line, entity, execfn, cmdfn, window) {
   }
 
   function emitEndToken() {
-    var data = "";
+    var data;
     if(out.length > 0) {
       var o = out.join("");
       if (execfn) {
-        qwebirc.ui.urlificate(element, o, execfn, cmdfn, window);
+        data = qwebirc.ui.urlificate(element, o, execfn, cmdfn, window);
       } else {
+        data = o;
         element.appendChild(document.createTextNode(o));
       }
       entity.appendChild(element);
