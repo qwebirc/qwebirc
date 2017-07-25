@@ -26,8 +26,8 @@ class GZipRequest(object):
       self.crc = zlib.crc32('')
       self.size = self.csize = 0
       # XXX: Zap any length for now since we don't know final size
-      if 'content-length' in self.request.headers:
-        del self.request.headers['content-length']
+      if self.request.responseHeaders.hasHeader('content-length'):
+        self.request.responseHeaders.removeHeader('content-length')
         # Borrow header information from twisted.web2 gzip filter
       self.request.write('\037\213\010\000' '\0\0\0\0' '\002\377')
 
