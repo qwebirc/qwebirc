@@ -3,8 +3,9 @@ qwebirc.ui.Colourise = function(line, entity, execfn, cmdfn, window) {
   var bg;
   var underline = false;
   var bold = false;
+  var italic = false;
   var autoNickColour = false;
-  
+
   var out = [];
   var xline = line.split("");
   var element = document.createElement("span");
@@ -44,12 +45,13 @@ qwebirc.ui.Colourise = function(line, entity, execfn, cmdfn, window) {
   }
 
   function emitEndToken() {
-    var data = "";
+    var data;
     if(out.length > 0) {
       var o = out.join("");
       if (execfn) {
-        qwebirc.ui.urlificate(element, o, execfn, cmdfn, window);
+        data = qwebirc.ui.urlificate(element, o, execfn, cmdfn, window);
       } else {
+        data = o;
         element.appendChild(document.createTextNode(o));
       }
       entity.appendChild(element);
@@ -72,6 +74,8 @@ qwebirc.ui.Colourise = function(line, entity, execfn, cmdfn, window) {
       classes.push("Xb");
     if(underline)
       classes.push("Xu");
+    if(italic)
+      classes.push("Xi");
     element.className = classes.join(" ");
   }
   
@@ -118,20 +122,27 @@ qwebirc.ui.Colourise = function(line, entity, execfn, cmdfn, window) {
       underline = !underline;
       
       emitStartToken();
+    } else if(lc == "\x1D") {
+      emitEndToken();
+
+      italic = !italic;
+      
+      emitStartToken();
     } else if(lc == "\x0F") {
       emitEndToken();
       
       fg = undefined;
       bg = undefined;
       underline = false;
+      italic = false;
       bold = false;
     } else if(lc == "\x03") {
       emitEndToken();
       
       i = parseColours(xline, i);
-      if(bg > 15)
+      if(bg >= 99)
         bg = undefined;
-      if(fg > 15)
+      if(fg >= 99)
         fg = undefined;
         
       emitStartToken();
