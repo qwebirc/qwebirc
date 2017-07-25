@@ -93,9 +93,11 @@ qwebirc.ui.urlificate = function(element, text, execfn, cmdfn, window) {
       
     if(url) {
       a.href = url;
-    
-      if(target)
+
+      if(target) {
         a.target = target;
+        a.setAttribute("rel", "noopener noreferrer");
+      }
     }
     addedText.push(disptext);
     a.appendChild(document.createTextNode(disptext));

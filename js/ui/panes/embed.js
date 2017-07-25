@@ -210,6 +210,7 @@ qwebirc.ui.EmbedWizard = new Class({
       
       alink.href = url;
       alink.target = "_blank";
+      alink.setAttribute("rel", "noopener noreferrer");
       alink.appendChild(document.createTextNode(url));
       abox.value = "<iframe src=\"" + url + "\" width=\"647\" height=\"400\"></iframe>";
       
