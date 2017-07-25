@@ -4,11 +4,11 @@
       <table class="qwebirc-loginbox collapse" name="connectroot">
         <tr class="collapse qwebirc-loginbox" name="loginheader" style="display: none">
           <td class="collapse tr3">
-            <div class="bar"></div>
-            <div class="bar-background">
+            <div class="bar" style="background: url(../images/logo.png) 0 -68px repeat-x; border: none;"></div>
+            <div class="bar-background" style="background: url(../images/logo.png) 0 -76px repeat-x;">
               <div class="bar-logo"></div>
             </div>
-            <div class="bar"></div>
+            <div class="bar" style="background: url(../images/logo.png) 0 -68px repeat-x; border: none;"></div>
             <div class="bar-spacer"></div>
           </td>
         </tr>
@@ -33,6 +33,22 @@
                     <input type="submit" value="Join chat" name="connect" />
                   </td>
                 </tr>
+                <tr name="loginbutton" style="display: none">
+                  <td></td>
+                  <td><input type="submit" value="Log in to Q" name="login" /></td>
+                </tr>
+                <tr name="loginconnectbutton" style="display: none">
+                  <td></td>
+                  <td><input type="submit" value="Join chat (Q account required)" name="loginconnect" /></td>
+                </tr>
+                <tr name="loginstatus" style="display: none">
+                  <td></td>
+                  <td><small>(logged in as <b name="authname"></b>)</small></td>
+                </tr>
+                <tr name="loggingin" style="display: none">
+                  <td></td>
+                  <td><small>(waiting for you to log in...)</small></td>
+                </tr>
               </table>
             </form>
           </td>
@@ -47,6 +63,18 @@
               </tr>
               <tr class="tr2" name="connectbutton" style="display: none">
                 <td><input type="submit" value="Join chat" name="connect" /></td>
+              </tr>
+              <tr class="tr2" name="loginbutton" style="display: none">
+                <td><input type="submit" value="Log in to Q" name="login" /></td>
+              </tr>
+              <tr class="tr2" name="loginconnectbutton" style="display: none;">
+                <td><input type="submit" value="Join chat (Q account required)" name="loginconnect" /></td>
+              </tr>
+              <tr class="tr2" name="loginstatus" style="display: none">
+                <td><small>(logged in as <b name="authname"></b>)</small></td>
+              </tr>
+              <tr class="tr2" name="loggingin" style="display: none">
+                <td><small>(waiting for you to log in...)</small></td>
               </tr>
             </table>
           </td>
