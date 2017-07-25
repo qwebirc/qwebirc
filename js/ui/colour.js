@@ -129,9 +129,9 @@ qwebirc.ui.Colourise = function(line, entity, execfn, cmdfn, window) {
       emitEndToken();
       
       i = parseColours(xline, i);
-      if(bg > 15)
+      if(bg >= 99)
         bg = undefined;
-      if(fg > 15)
+      if(fg >= 99)
         fg = undefined;
         
       emitStartToken();
