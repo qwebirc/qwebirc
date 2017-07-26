@@ -362,3 +362,7 @@ div#noscript {
   margin-left: 3em;
   margin-right: 3em;
 }
+
+iframe {
+  border: none;
+}
