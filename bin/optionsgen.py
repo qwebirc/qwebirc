@@ -10,7 +10,8 @@ def get_options():
     baseURL=config.BASE_URL,
     staticBaseURL=config.STATIC_BASE_URL,
     dynamicBaseURL=config.DYNAMIC_BASE_URL,
-    validateNickname=False
+    validateNickname=False,
+    customMenuItems=[]
   )
   
   if hasattr(config, "NICKNAME_VALIDATE") and config.NICKNAME_VALIDATE:
@@ -26,6 +27,9 @@ def get_options():
 
   if hasattr(config, "LOGO_URL"):
     options["logoURL"] = config.LOGO_URL
+
+  if hasattr(config, "CUSTOM_MENU_ITEMS"):
+    options["customMenuItems"] = config.CUSTOM_MENU_ITEMS
 
   if hasattr(config, "ACCOUNT_WHOIS_COMMAND") and config.ACCOUNT_WHOIS_COMMAND:
     options["accountWhoisCommand"] = config.ACCOUNT_WHOIS_COMMAND

@@ -100,7 +100,7 @@ qwebirc.ui.QUI = new Class({
     
     this.UICommands.forEach(function(x) {
       var text = x[0];
-      var fn = this[x[1] + "Window"].bind(this);
+      var fn = x[1];
       var e = new Element("a");
       e.addEvent("mousedown", function(e) { new Event(e).stop(); });
       e.addEvent("click", function() {
@@ -141,7 +141,7 @@ qwebirc.ui.QUI = new Class({
     
     var inputbox = new Element("input");
     this.addEvent("signedOn", function() {
-      inputbox.placeholder = "chat here! you can also use commands, like /JOIN or /HELP";
+      inputbox.placeholder = "chat here! you can also use commands, like /JOIN";
       var d = function() { inputbox.addClass("input-flash"); }.delay(250);
       var d = function() { inputbox.removeClass("input-flash"); }.delay(500);
       var d = function() { inputbox.addClass("input-flash"); }.delay(750);
