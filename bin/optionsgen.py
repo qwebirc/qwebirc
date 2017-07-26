@@ -24,7 +24,7 @@ def get_options():
   if hasattr(config, "HELP_URL") and config.HELP_URL:
     options["helpURL"] = config.HELP_URL
 
-  if hasattr(config, "LOGO_URL") and config.LOGO_URL:
+  if hasattr(config, "LOGO_URL"):
     options["logoURL"] = config.LOGO_URL
 
   if hasattr(config, "ACCOUNT_WHOIS_COMMAND") and config.ACCOUNT_WHOIS_COMMAND:

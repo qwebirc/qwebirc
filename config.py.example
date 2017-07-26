@@ -98,9 +98,16 @@ BASE_URL = "http://foo.foo.org/"
 NETWORK_NAME = "FooNet"
 
 # OPTION: LOGO_URL
-#         URL to your logo (max height 68 pixels).
+#         URL (relative or absolute) to your logo (max height 68 pixels).
 #         If not set the default network name will shown in text.
+#         Can be set to "" to display the logo box without setting the
+#         logo (for use with CUSTOM_CSS)
 #LOGO_URL="images/logo.png"
+
+# OPTION: CUSTOM_CSS
+#         Filename of custom css to include.
+#         Must be in the css directory.
+#CUSTOM_CSS="mynetwork.css"
 
 # OPTION: ANALYTICS_HTML
 #         If you have an analytics service, you can paste the HTML

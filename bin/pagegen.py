@@ -20,10 +20,13 @@ def csslist(name, debug, gen=False):
   nocss = ui.get("nocss")
   if not debug:
     return ["css/%s-%s.css" % (name, getgitid())]
-  css = pages.flatten([ui.get("extracss", []), "colours", "dialogs"])
+  css = list(pages.flatten([ui.get("extracss", []), "colours", "dialogs"]))
   if not nocss:
-    css = list(css) + [name]
-  return list("css/%s%s.css" % ("debug/" if gen else "", x) for x in css)
+    css+=[name]
+  css = ["%s.css" % x for x in css]
+  if hasattr(config, "CUSTOM_CSS"):
+    css+=[config.CUSTOM_CSS]
+  return list("css/%s%s" % ("debug/" if gen else "", x) for x in css)
 
 def _getgitid():
   try:
