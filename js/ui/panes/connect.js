@@ -23,9 +23,11 @@ qwebirc.ui.ConnectPane = new Class({
       exec("[name=" + box + "box]", util.setVisible(true));
 
       if(!autoConnect) {
-        if(uiOptions.logoURL) {
+        if($defined(uiOptions.logoURL)) {
           var logoBar = parent.getElement("[class=bar-logo]");
-          logoBar.setAttribute("style", "background: url(" + uiOptions.logoURL + ") no-repeat center top; _filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + uiOptions.logoURL + "',sizingMethod='crop');");
+          if(uiOptions.logoURL)
+            logoBar.setAttribute("style", "background: url(" + uiOptions.logoURL + ") no-repeat center top; _filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" + uiOptions.logoURL + "',sizingMethod='crop');");
+
           util.makeVisible(parent.getElement("[name=loginheader]"));
         } else {
           util.makeVisible(parent.getElement("[name=nologologinheader]"));

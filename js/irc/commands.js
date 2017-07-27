@@ -9,7 +9,6 @@ qwebirc.irc.Commands = new Class({
       "MSG": "PRIVMSG",
       "Q": "QUERY",
       "BACK": "AWAY",
-      "PRIVACY": "PRIVACYPOLICY",
       "HOP": "CYCLE",
       "": "SAY",
       "BLOCK": "IGNORE",
@@ -126,9 +125,6 @@ qwebirc.irc.Commands = new Class({
   cmd_EMBED: [false, undefined, undefined, function(args) {
     this.newUIWindow("embeddedWindow");
   }],
-  cmd_PRIVACYPOLICY: [false, undefined, undefined, function(args) {
-    this.newUIWindow("privacyWindow");
-  }],
   cmd_ABOUT: [false, undefined, undefined, function(args) {
     this.newUIWindow("aboutWindow");
   }],
@@ -219,13 +215,6 @@ qwebirc.irc.Commands = new Class({
   }],
   cmd_AUTOJOIN: [false, undefined, undefined, function(args) {
     return ["JOIN", this.parentObject.options.autojoin];
-  }],
-  cmd_HELP: [false, 1, undefined, function(args) {
-    if(qwebirc.global.helpURL) {
-      this.newUIWindow("helpWindow");
-    } else {
-      this.send("HELP" + (args ? (" " + args[0]) : ""));
-    }
   }],
   cmd_CLEAR: [false, undefined, undefined, function(args) {
     var w = this.getActiveWindow().lines;

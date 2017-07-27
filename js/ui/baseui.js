@@ -249,9 +249,10 @@ qwebirc.ui.BaseUI = new Class({
 
 qwebirc.ui.StandardUI = new Class({
   Extends: qwebirc.ui.BaseUI,
-  UICommands: qwebirc.ui.UI_COMMANDS,
   initialize: function(parentElement, windowClass, uiName, options) {
     this.parent(parentElement, windowClass, uiName, options);
+
+    this.UICommands = this.__build_menu_items(options);
 
     this.__styleValues = {hue: qwebirc.ui.DEFAULT_HUE, saturation: 0, lightness: 0, textHue: null, textSaturation: null, textLightness: null};
     if($defined(this.options.hue)) this.__styleValues.hue = this.options.hue;
@@ -273,6 +274,42 @@ qwebirc.ui.StandardUI = new Class({
     this.__styleValues.textHue = $defined(this.options.thue) ? this.options.thue : this.__styleValues.hue;
 
     document.addEvent("keydown", this.__handleHotkey.bind(this));
+  },
+  __build_menu_items: function(options) {
+    var r = [];
+    var seenAbout = null;
+
+    for(var i=0;i<qwebirc.ui.UI_COMMANDS_P1.length;i++)
+      r.push([true, qwebirc.ui.UI_COMMANDS_P1[i]]);
+    for(var i=0;i<options.customMenuItems.length;i++)
+      r.push([false, options.customMenuItems[i]]);
+    for(var i=0;i<qwebirc.ui.UI_COMMANDS_P2.length;i++)
+      r.push([true, qwebirc.ui.UI_COMMANDS_P2[i]]);
+
+    var r2 = []
+    for(var i=0;i<r.length;i++) {
+      var preset = r[i][0], c = r[i][1];
+
+      if(c[0] == "About qwebirc") { /* HACK */
+        if(!preset) {
+          seenAbout = c;
+          continue;
+        } else if(seenAbout) {
+          c = seenAbout;
+          preset = false;
+        }
+      }
+
+      if(preset) {
+        r2.push([c[0], this[c[1] + "Window"].bind(this)]);
+      } else {
+        r2.push([c[0], (function(c) { return function() {
+          this.addCustomWindow(c[0], qwebirc.ui.URLPane, "urlpane", {url: c[1]});
+        }.bind(this); }).call(this, c)]);
+      }
+    }
+
+    return r2;
   },
   __handleHotkey: function(x) {
     var success = false;
@@ -376,16 +413,10 @@ qwebirc.ui.StandardUI = new Class({
     this.addCustomWindow("Options", qwebirc.ui.OptionsPane, "optionspane", this.uiOptions);
   },
   aboutWindow: function() {
-    this.addCustomWindow("About", qwebirc.ui.AboutPane, "aboutpane", this.uiOptions);
-  },
-  privacyWindow: function() {
-    this.addCustomWindow("Privacy policy", qwebirc.ui.PrivacyPolicyPane, "privacypolicypane", this.uiOptions);
+    this.addCustomWindow("About qwebirc", qwebirc.ui.AboutPane, "aboutpane", this.uiOptions);
   },
   feedbackWindow: function() {
     this.addCustomWindow("Feedback", qwebirc.ui.FeedbackPane, "feedbackpane", this.uiOptions);
-  },
-  helpWindow: function() {
-    this.addCustomWindow("Help!", qwebirc.ui.HelpPane, "helppane", this.uiOptions);
   },
   urlDispatcher: function(name, window) {
     if(name == "embedded")

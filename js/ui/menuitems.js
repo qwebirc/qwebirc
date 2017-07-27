@@ -1,9 +1,10 @@
-qwebirc.ui.UI_COMMANDS = [
+qwebirc.ui.UI_COMMANDS_P1 = [
   ["Options", "options"],
-  ["Add webchat to your site", "embedded"],
-  ["Privacy policy", "privacy"],
+  ["Add webchat to your site", "embedded"]
+];
+
+qwebirc.ui.UI_COMMANDS_P2 = [
   ["Feedback", "feedback"],
-  ["Help!", "help"],
   ["About qwebirc", "about"]
 ];
 
