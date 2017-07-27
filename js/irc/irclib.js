@@ -36,9 +36,9 @@ qwebirc.irc.IRCLowerTable = [
 qwebirc.irc.RFC1459toIRCLower = function(x) {
   var p = [];
   for(var i=0;i<x.length;i++) {
-    var l = x.charCodeAt(i);
+    var l = qwebirc.irc.IRCLowerTable[x.charCodeAt(i)];
 
-    p.push(qwebirc.irc.IRCLowerTable[l]);
+    p.push(l || x.charAt(i));
   }
     
   return p.join("");
