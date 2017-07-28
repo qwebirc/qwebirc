@@ -126,19 +126,21 @@ def check_json():
   return 0
 
 def check_autobahn():
-  try:
-    import autobahn, autobahn.twisted.websocket
-    x = autobahn.version.split(".")
-    if len(x) != 3:
-      raise ImportError()
-    if (int(x[1]) < 8) or (int(x[1]) == 8 and int(x[2]) < 14):
-      raise ImportError()
+  import qwebirc.util.autobahn_check as autobahn_check
+  v = autobahn_check.check()
+  if v == True:
     return 0
-  except ImportError:
-    warn("autobahn 0.8.14 (minimum) not installed; websocket support will be disabled.",
+
+  if v == False:
+    warn("autobahn not installed; websocket support will be disabled.",
          "consider installing autobahn from:",
          "http://autobahn.ws/python/getstarted/")
     return 1
+
+  warn("error loading autobahn: %s; websocket support will be disabled." % v,
+       "consider installing/upgrading autobahn from:",
+       "http://autobahn.ws/python/getstarted/")
+  return 1
 
 if __name__ == "__main__":
   import dependencies
