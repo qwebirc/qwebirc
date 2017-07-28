@@ -9,23 +9,26 @@ from qwebirc.util import HitCounter
 import qwebirc.dns as qdns
 import qwebirc.util.qjson as json
 import urlparse
+import qwebirc.util.autobahn_check as autobahn_check
 
 TRANSPORTS = ["longpoll"]
 
-try:
+has_websocket = False
+autobahn_status = autobahn_check.check()
+if autobahn_status == True:
   import autobahn
-  x = autobahn.version.split(".")
-  if len(x) != 3:
-    raise ImportError("Unknown version: %s", autobahn.vesrion)
-  if (int(x[1]) < 8) or (int(x[1]) == 8 and int(x[2]) < 14):
-    raise ImportError()
-
   import autobahn.twisted.websocket
   import autobahn.twisted.resource
   has_websocket = True
   TRANSPORTS.append("websocket")
-except ImportError:
-  has_websocket = False
+elif autobahn_status == False:
+  # they've been warned already
+  pass
+else:
+  print >>sys.stderr, "WARNING:"
+  print >>sys.stderr, "  %s" % autobahn_status
+  print >>sys.stderr, "  as a result websocket support is disabled."
+  print >>sys.stderr, "  upgrade your version of autobahn from http://autobahn.ws/python/getstarted/"
 
 BAD_SESSION_MESSAGE = "Invalid session, this most likely means the server has restarted; close this dialog and then try refreshing the page."
 MAX_SEQNO = 9223372036854775807  # 2**63 - 1... yeah it doesn't wrap
@@ -366,6 +369,7 @@ if has_websocket:
     AWAITING_AUTH, AUTHED = 0, 1
 
     def __init__(self, *args, **kwargs):
+      super(WebSocketEngineProtocol, self).__init__(*args, **kwargs)
       self.__state = self.AWAITING_AUTH
       self.__session = None
       self.__channel = None
@@ -380,7 +384,7 @@ if has_websocket:
         self.__session.unsubscribe(self.__channel)
         self.__session = None
 
-    def onMessage(self, msg, binary):
+    def onMessage(self, msg, isBinary):
       # we don't bother checking the Origin header, as if you can auth then you've been able to pass the browser's
       # normal origin handling (POSTed the new connection request and managed to get the session id)
       state = self.__state
@@ -442,7 +446,7 @@ if has_websocket:
     def close(self, reason=None):
       self.__cancelTimeout()
       if reason:
-        self.sendClose(4999, reason)
+        self.sendClose(4999, unicode(reason))
       else:
         self.sendClose(4998)
 
@@ -465,3 +469,4 @@ if has_websocket:
     factory.setProtocolOptions(maxMessagePayloadSize=512, maxFramePayloadSize=512, tcpNoDelay=False)
     resource = WebSocketResource(factory)
     return resource
+
