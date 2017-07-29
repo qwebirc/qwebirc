@@ -120,6 +120,7 @@ qwebirc.ui.ConnectPane = new Class({
       return;
 
     this.__cancelLogin();
+    this.fireEvent("close");
     this.cookie.extend(data);
     this.cookie.save();
     this.options.callback(data);
