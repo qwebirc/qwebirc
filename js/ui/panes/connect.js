@@ -85,7 +85,7 @@ qwebirc.ui.ConnectPane = new Class({
   util: {
     makeVisible: function(x) { x.setStyle("display", ""); },
     setVisible: function(y) { return function(x) { x.setStyle("display", y ? "" : "none"); }; },
-    focus: function(x) { x.focus(); },
+    focus: function(x) { try { x.focus(); } catch (e) { } },
     attachClick: function(fn) { return function(x) { x.addListener("click", fn); } },
     setText: function(x) { return function(y) {
       if(typeof y.value === "undefined") {
