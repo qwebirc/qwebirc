@@ -236,7 +236,6 @@ html {
 
 .qwebirc-qui .tabclose {
   margin-left: 5px;
-  font-size: 0.7em;
   line-height: 150%;
   vertical-align: top;
   padding-left: 3px;
