@@ -1,3 +1,4 @@
+# at 0.18.2 the project switched to 17.5.1, so this is correct
 MINIMUM_VERSION = 0, 17, 2
 
 import config
@@ -17,9 +18,9 @@ def check():
   major, minor, veryminor = int(x[0]), int(x[1]), int(x[2])
   if major > MINIMUM_VERSION[0]:
     pass # ok
-  if minor > MINIMUM_VERSION[1]:
+  elif minor > MINIMUM_VERSION[1]:
     pass # ok
-  if veryminor >= MINIMUM_VERSION[2]:
+  elif veryminor >= MINIMUM_VERSION[2]:
     pass # ok
   elif hasattr(config, "FORCE_AUTOBAHN"):
     pass # ok

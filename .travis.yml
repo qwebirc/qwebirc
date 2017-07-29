@@ -1,0 +1,9 @@
+language: python
+addons:
+  apt:
+    packages:
+      openjdk-8-jre-headless
+      git
+
+script:
+  - cp config.py.example config.py && ./compile.py && ./run.py && wget http://localhost:9090 -O /dev/null && kill $(cat twistd.pid)

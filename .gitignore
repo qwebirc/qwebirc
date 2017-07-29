@@ -27,3 +27,4 @@ syslog.py
 run.sh
 .idea
 *.iml
+.virtualenv
