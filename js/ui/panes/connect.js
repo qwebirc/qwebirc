@@ -3,6 +3,7 @@ qwebirc.ui.ConnectPane = new Class({
   initialize: function(parent, options) {
     var callback = options.callback, initialNickname = options.initialNickname, initialChannels = options.initialChannels, autoConnect = options.autoConnect, autoNick = options.autoNick;
     this.options = options;
+    this.cookie = new Hash.Cookie("optconn", {duration: 3650, autoSave: false});
     var uiOptions = options.uiOptions;
     this.__windowName = "authgate_" + Math.floor(Math.random() * 100000);
 
@@ -32,6 +33,20 @@ qwebirc.ui.ConnectPane = new Class({
         } else {
           util.makeVisible(parent.getElement("[name=nologologinheader]"));
         }
+      }
+
+      if(initialNickname === null && initialChannels === null) {
+        var n2 = this.cookie.get("nickname");
+        if(n2 !== null)
+          initialNickname = n2;
+
+        var c2 = this.cookie.get("autojoin");
+        if(c2 !== null)
+          initialChannels = c2;
+      }
+
+      if(initialChannels === null) {
+        initialChannels = "";
       }
 
       exec("[name=nickname]", util.setText(initialNickname));
@@ -105,7 +120,8 @@ qwebirc.ui.ConnectPane = new Class({
       return;
 
     this.__cancelLogin();
-    this.fireEvent("close");
+    this.cookie.extend(data);
+    this.cookie.save();
     this.options.callback(data);
   },
   __cancelLogin: function(noUIModifications) {

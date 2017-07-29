@@ -11,8 +11,8 @@ function qwebirc_ui_onbeforeunload(e) { /* IE sucks */
 qwebirc.ui.Interface = new Class({
   Implements: [Options],
   options: {
-    initialNickname: "qwebirc" + Math.ceil(Math.random() * 100000),
-    initialChannels: "",
+    initialNickname: null,
+    initialChannels: null,
     networkName: "ExampleNetwork",
     networkServices: [],
     loginRegex: null,
