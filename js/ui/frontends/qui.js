@@ -140,7 +140,8 @@ qwebirc.ui.QUI = new Class({
     form.addClass("input");
     
     var inputbox = new Element("input");
-    this.addEvent("signedOn", function() {
+    this.addEvent("signedOn", function(client) {
+      this.getStatusWindow(client).lines.removeClass("spinner");
       inputbox.placeholder = "chat here! you can also use commands, like /JOIN";
       var d = function() { inputbox.addClass("input-flash"); }.delay(250);
       var d = function() { inputbox.removeClass("input-flash"); }.delay(500);
@@ -450,6 +451,10 @@ qwebirc.ui.QUI.Window = new Class({
     this.lines = new Element("div");
     this.parentObject.qjsui.applyClasses("middle", this.lines);
     this.lines.addClass("lines");
+
+    if(type == qwebirc.ui.WINDOW_STATUS)
+      this.lines.addClass("spinner");
+
     if(type != qwebirc.ui.WINDOW_CUSTOM && type != qwebirc.ui.WINDOW_CONNECT)
       this.lines.addClass("ircwindow");
     
