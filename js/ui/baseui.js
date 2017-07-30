@@ -117,9 +117,12 @@ qwebirc.ui.BaseUI = new Class({
   getActiveWindow: function() {
     return this.active;
   },
+  getStatusWindow: function(client) {
+    return this.windows.get(this.getClientId(client)).get(this.getWindowIdentifier(client, qwebirc.ui.WINDOW_STATUS));
+  },
   getActiveIRCWindow: function(client) {
     if(!this.active || this.active.type == qwebirc.ui.WINDOW_CUSTOM) {
-      return this.windows.get(this.getClientId(client)).get(this.getWindowIdentifier(client, qwebirc.ui.WINDOW_STATUS));
+      return this.getStatusWindow(client);
     } else {
       return this.active;
     }
