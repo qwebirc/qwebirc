@@ -8,7 +8,7 @@ DEBUG_BASE = ["qwebirc", "version", "qhash", "jslib", "crypto", "md5", ["irc/%s"
 BUILD_BASE = ["qwebirc"]
 JS_DEBUG_BASE = ["mootools-1.2.5-core-nc", "mootools-1.2.5.1-more-nc", "debug/soundmanager_defer", "soundmanager2"]
 JS_RAW_BASE = ["//ajax.googleapis.com/ajax/libs/mootools/1.2.5/mootools-yui-compressed.js"]
-JS_BASE = ["mootools-1.2.5.1-more", "../../js/soundmanager_defer", "soundmanager2-nodebug-jsmin"]
+JS_BASE = ["mootools-1.2.5.1-more-nc", "../../js/soundmanager_defer", "soundmanager2-nodebug-jsmin"]
 JS_EXTRA = []
 
 UIs = {
