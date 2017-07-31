@@ -367,6 +367,6 @@ iframe {
 }
 
 .qwebirc-qui .spinner {
-  background: url(../images/spinner.png) no-repeat $(lines_background);
+  background: url($(base_url)../images/spinner.png) no-repeat $(lines_background);
   background-position: top 5px right 5px;
 }

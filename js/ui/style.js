@@ -1,6 +1,6 @@
 qwebirc.ui.style.ModifiableStylesheet = new Class({
   initialize: function(url) {
-    var n = this.__parseStylesheet(this.__getStylesheet(url));
+    var n = this.__parseStylesheet(this.__getStylesheet(url), url);
     
     this.__cssText = n.cssText;
     this.rules = n.rules;
@@ -37,9 +37,10 @@ qwebirc.ui.style.ModifiableStylesheet = new Class({
         node.removeChild(node.firstChild);
     }
   },
-  __parseStylesheet: function(data) {
+  __parseStylesheet: function(data, url) {
     var lines = data.replace("\r\n", "\n").split("\n");
-    
+    var baseURL = new URI("../", {base: url}).toString();
+
     var rules = {};
     var i;
     for(i=0;i<lines.length;i++) {
@@ -55,9 +56,11 @@ qwebirc.ui.style.ModifiableStylesheet = new Class({
     }
     
     var cssLines = []
-    for(;i<lines.length;i++)
-      cssLines.push(lines[i]);
-      
+    for(;i<lines.length;i++) {
+      var line = lines[i];
+      line = line.replaceAll("$(base_url)", baseURL);
+      cssLines.push(line);
+    }
     return {cssText: cssLines.join("\n"), rules: rules};
   },
   set: function(mutator) {
