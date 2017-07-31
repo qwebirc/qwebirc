@@ -39,7 +39,7 @@ qwebirc.ui.style.ModifiableStylesheet = new Class({
   },
   __parseStylesheet: function(data, url) {
     var lines = data.replace("\r\n", "\n").split("\n");
-    var baseURL = new URI("../", {base: url}).toString();
+    var baseURL = new URI(".", {base: url}).toString();
 
     var rules = {};
     var i;
