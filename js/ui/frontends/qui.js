@@ -492,9 +492,6 @@ qwebirc.ui.QUI.Window = new Class({
     } else {
       this.tab.replaceChild(newNode, this.tab.firstChild);
     }
-
-    if(this.type == qwebirc.ui.WINDOW_QUERY)
-      this.updateTopic("");
   },
   editTopic: function() {
     if(this.type != qwebirc.ui.WINDOW_CHANNEL)
