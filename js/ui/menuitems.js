@@ -4,7 +4,6 @@ qwebirc.ui.UI_COMMANDS_P1 = [
 ];
 
 qwebirc.ui.UI_COMMANDS_P2 = [
-  ["Feedback", "feedback"],
   ["About qwebirc", "about"]
 ];
 

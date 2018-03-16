@@ -63,7 +63,6 @@ class RootSite(server.Site):
       register(engines.WebSocketEngine, "w")
     except AttributeError:
       pass
-    register(engines.FeedbackEngine, "feedback")
     register(engines.AuthgateEngine, "auth")
     register(engines.AdminEngine, "adminengine", services)
     
