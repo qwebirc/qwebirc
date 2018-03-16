@@ -418,9 +418,6 @@ qwebirc.ui.StandardUI = new Class({
   aboutWindow: function() {
     this.addCustomWindow("About qwebirc", qwebirc.ui.AboutPane, "aboutpane", this.uiOptions);
   },
-  feedbackWindow: function() {
-    this.addCustomWindow("Feedback", qwebirc.ui.FeedbackPane, "feedbackpane", this.uiOptions);
-  },
   urlDispatcher: function(name, window) {
     if(name == "embedded")
       return ["a", this.embeddedWindow.bind(this)];

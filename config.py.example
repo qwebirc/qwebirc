@@ -157,27 +157,6 @@ NICKNAME_MINIMUM_LENGTH = 2
 #         before we connect.
 NICKNAME_MAXIMUM_LENGTH = 15
 
-# FEEDBACK OPTIONS
-# ---------------------------------------------------------------------
-#
-# These options control the feedback module, which allows users to
-# send feedback directly from qwebirc (via email).
-#
-# OPTION: FEEDBACK_FROM
-#         E-mail address that feedback will originate from.
-FEEDBACK_FROM = "moo@moo.com"
-
-# OPTION: FEEDBACK_TO:
-#         E-mail address that feedback will be sent to.
-FEEDBACK_TO = "moo@moo.com"
-
-# OPTION: FEEDBACK_SMTP_HOST
-#         Hostname/IP address of SMTP server feedback will be sent
-#         through.
-# OPTION: FEEDBACK_SMTP_PORT
-#         Port of SMTP server feedback will be sent through.
-FEEDBACK_SMTP_HOST, FEEDBACK_SMTP_PORT = "127.0.0.1", 25
-
 # ADMIN ENGINE OPTIONS
 # ---------------------------------------------------------------------
 #
