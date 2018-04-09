@@ -71,7 +71,7 @@ qwebirc.ui.BaseUI = new Class({
     if(!this.firstClient) {
       this.firstClient = true;
       w.addLine("", "qwebirc v" + qwebirc.VERSION);
-      w.addLine("", "Copyright (C) 2008-2017 Chris Porter and the qwebirc project.");
+      w.addLine("", "Copyright (C) 2008-2018 Chris Porter and the qwebirc project.");
       w.addLine("", "http://www.qwebirc.org");
       w.addLine("", "Licensed under the GNU General Public License, Version 2.");
     }
