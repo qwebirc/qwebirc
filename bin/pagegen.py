@@ -12,8 +12,15 @@ def jslist(name, debug):
     #x = [pages.JS_BASE, ui.get("buildextra", ui.get("extra", [])), pages.BUILD_BASE, name]
     x = [pages.JS_RAW_BASE, name]
     gitid = "-" + getgitid()  
-  
-  return list(y if y.startswith("//") else "js/%s%s.js" % (y, gitid) for y in pages.flatten(x))
+
+  l = []
+  for url in pages.flatten(x):
+    if isinstance(url, tuple):
+      url, digest = url
+    else:
+      digest = None
+    l.append((url if url.startswith("//") else "js/%s%s.js" % (url, gitid), digest))
+  return l
 
 def csslist(name, debug, gen=False):
   ui = pages.UIs[name]
@@ -57,7 +64,15 @@ def producehtml(name, debug):
   js = jslist(name, debug)
   css = csslist(name, debug, gen=True)
   csshtml = "\n".join("  <link rel=\"stylesheet\" href=\"%s%s\" type=\"text/css\"/>" % (config.STATIC_BASE_URL, x) for x in css)
-  jshtml = "\n".join("  <script type=\"text/javascript\" src=\"%s%s\"></script>" % ("" if x.startswith("//") else config.STATIC_BASE_URL, x) for x in js)
+
+  def toscript((url, digest)):
+    if digest:
+      subresource_int = " integrity=\"%s\" crossorigin=\"anonymous\"" % digest
+    else:
+      subresource_int = ""
+    return "  <script type=\"text/javascript\" src=\"%s%s\"%s></script>" % ("" if url.startswith("//") else config.STATIC_BASE_URL, url, subresource_int)
+
+  jshtml = "\n".join(toscript(x) for x in js)
 
   if hasattr(config, "ANALYTICS_HTML"):
     jshtml+="\n" + config.ANALYTICS_HTML
