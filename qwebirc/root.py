@@ -22,7 +22,7 @@ class ProxyRequest(server.Request):
     return True
     
   def getClientIP(self):
-    real_ip = http.Request.getClientIP(self)
+    real_ip = self.client.host
     if real_ip not in config.FORWARDED_FOR_IPS:
       return real_ip
       
