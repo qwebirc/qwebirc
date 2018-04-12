@@ -13,7 +13,7 @@ class RootResource(resource.Resource):
       name = "qui.html"
     return self.primaryChild.getChild(name, request)
 
-class ProxyRequest(server.Request):
+class WrappedRequest(server.Request):
   ip_re = re.compile(r"^((25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})[.](25[0-5]|2[0-4][0-9]|[0-1]?[0-9]{1,2})|(::|(([a-fA-F0-9]{1,4}):){7}(([a-fA-F0-9]{1,4}))|(:(:([a-fA-F0-9]{1,4})){1,6})|((([a-fA-F0-9]{1,4}):){1,6}:)|((([a-fA-F0-9]{1,4}):)(:([a-fA-F0-9]{1,4})){1,6})|((([a-fA-F0-9]{1,4}):){2}(:([a-fA-F0-9]{1,4})){1,5})|((([a-fA-F0-9]{1,4}):){3}(:([a-fA-F0-9]{1,4})){1,4})|((([a-fA-F0-9]{1,4}):){4}(:([a-fA-F0-9]{1,4})){1,3})|((([a-fA-F0-9]{1,4}):){5}(:([a-fA-F0-9]{1,4})){1,2})))$", re.IGNORECASE)
   def validIP(self, ip):
     m = self.ip_re.match(ip)
@@ -21,8 +21,21 @@ class ProxyRequest(server.Request):
       return False
     return True
     
-  def getClientIP(self):
-    real_ip = http.Request.getClientIP(self)
+  def _getClientIP(self):
+    # twisted.web.http.Request.getClientIP returns None if not IPv4;
+    # client.host has the real address
+
+    if not hasattr(self, "client") or not hasattr(self.client, "host"):
+        return None
+
+    real_ip = self.client.host
+
+    if real_ip[:7] == "::ffff:":
+      real_ip = real_ip[7:]
+
+    if not hasattr(config, "FORWARDED_FOR_HEADER"):
+      return real_ip
+
     if real_ip not in config.FORWARDED_FOR_IPS:
       return real_ip
       
@@ -36,6 +49,16 @@ class ProxyRequest(server.Request):
       
     return fake_ip
 
+  def getClientIP(self):
+    ip = self._getClientIP()
+
+    if ip is None:
+      return None
+
+    # make absolutely sure that the address doesn't start with : before we
+    # try to use it as a string to the IRC server!
+    return ip.lstrip(":")
+
 class HTTPChannel(http.HTTPChannel):
   def timeoutConnection(self):
     self.transport.abortConnection()
@@ -43,8 +66,7 @@ class HTTPChannel(http.HTTPChannel):
 class RootSite(server.Site):
   protocol = HTTPChannel
 
-  if hasattr(config, "FORWARDED_FOR_HEADER"):
-    requestFactory = ProxyRequest
+  requestFactory = WrappedRequest
 
   def __init__(self, path, *args, **kwargs):
     root = RootResource()
