@@ -19,10 +19,10 @@ def lookupPTR(ip, *args, **kwargs):
 def expandIPv6(ip):
   expand_sections = ["".join(["{:0>4}".format(group)
       for group in section.split(":")])
-        for section in ip.split("::")]
+        for section in ip.split("::", 1)]
   if len(expand_sections) == 1:
       return expand_sections[0]
-  return expand_sections[0] + (32-len(expand_start)-len(expand_end))*"0" + expand_sections[1:]
+  return expand_sections[0] + "".join((32-sum([len(x) for x in expand_sections]))*"0") + expand_sections[1]
 
 def lookupPTRv6(ip, *args, **kwargs):
   def callback(result):
