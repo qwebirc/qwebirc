@@ -75,8 +75,8 @@ html {
 .qwebirc-qui .lines {
   color: $(lines_text);
   overflow: auto;
-  font-size: 0.8em;
   background: $(lines_background);
+  font-size: 0.8em;
 }
 
 .qwebirc-qui .lines .timestamp {
@@ -333,7 +333,7 @@ div#noscript {
 
 .qwebirc-qui .dropdownmenu a {
   display: block;
-  font-size: 0.7em;
+  font-size: 0.8em;
   color: $(menu_text);
   cursor: pointer;
   cursor: hand;  
@@ -369,4 +369,57 @@ iframe {
 .qwebirc-qui .spinner {
   background: url($(base_url)../images/spinner.png) no-repeat $(lines_background);
   background-position: top 5px right 5px;
+}
+
+@media screen and (max-width:1024px) {
+  .qwebirc-qui .lines {
+    font-size: 1.2em;
+  }
+
+  .qwebirc-qui .ircwindow div {
+    font-size: 0.8em;
+  }
+
+  .qwebirc-qui .tabbar {
+    line-height: 35px;
+  }
+
+  .qwebirc-qui .tabbar, .qwebirc-qui .nicklist {
+    font-size: 1.3em;
+  }
+
+  .qwebirc-qui .topic, .qwebirc-qui .dropdownmenu a, .qwebirc-qui .dropdownhint {
+    font-size: 1.4em;
+  }
+
+  .qwebirc-qui .input input.keyboard-input {
+    font-size: 1.6em;
+  }
+
+  .qwebirc-qui input {
+    font-size: 1.6em;
+  }
+
+  .qwebirc-qui .tabclose {
+    color: maroon;
+  }
+
+  .qwebirc-qui .tabclose:before {
+    content: "(";
+  }
+  .qwebirc-qui .tabclose:after {
+    content: ")";
+  }
+
+  .qwebirc-qui .dropdown-tab img {
+    width: 160%;
+  }
+
+  .qwebirc-qui .outertabbar_top .dropdown-tab {
+    padding-right: 13px;
+  }
+
+  .qwebirc-qui .outertabbar_left .dropdown-tab {
+    padding-right: 13px;
+  }
 }
