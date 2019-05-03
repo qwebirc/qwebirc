@@ -138,7 +138,7 @@
 }
 
 .qwebirc-embeddedwizard .wizardcontrols input {
-  width: 70px;
+  min-width: 70px;
 }
 
 /**************** PRIVACY POLICY PANE *******************/
@@ -283,5 +283,9 @@
   opacity: 0.75;
   background: grey;
   border: 1px solid black;
+}
+
+.qwebirc-optionspane table {
+  white-space: nowrap;
 }
 
