@@ -141,6 +141,7 @@ qwebirc.config.TextInput = new Class({
 
 qwebirc.config.HueInput = new Class({
   Extends: qwebirc.config.Input,
+  wide: true,
   render: function() {
     var i = new Element("div");
     i.addClass("qwebirc-optionspane");
@@ -398,22 +399,30 @@ qwebirc.ui.OptionsPane = new Class({
       var x = optList[i];
       
       var row = FE("tr", tb);
-      var cella = FE("td", row);
-      
+      var cell = FE("td", row);
+
       x.id = qwebirc.util.generateID();
+      var ele = new x.Element(cell, x, i, this);
+      this.boxList.push([x, ele]);
+      var eleElement = cell.lastChild;
+      if(ele.wide)
+        cell.removeChild(eleElement);
+
       var label = new Element("label", {"for": x.id});
-      cella.appendChild(label);
-      label.set("text", x.label + ":");
+      cell.appendChild(label);
 
-      var cellb = FE("td", row);
-      this.boxList.push([x, new x.Element(cellb, x, i, this)]);
-
+      var eleParent;
+      if(ele.wide) {
+        label.set("text", x.label + ":");
+        cell.appendChild(eleElement);
+      } else {
+        label.set("text", x.label);
+      }
     }
     
     var r = FE("tr", tb);
     var cella = FE("td", r);
-    var cellb = FE("td", r);
-    var save = qwebirc.util.createInput("submit", cellb);
+    var save = qwebirc.util.createInput("submit", cella);
     save.value = "Save";
     
     save.addEvent("click", function() {
@@ -421,7 +430,7 @@ qwebirc.ui.OptionsPane = new Class({
       this.fireEvent("close");
     }.bind(this));
     
-    var cancel = qwebirc.util.createInput("submit", cellb);
+    var cancel = qwebirc.util.createInput("submit", cella);
     cancel.value = "Cancel";
     cancel.addEvent("click", function() {
       this.cancel();

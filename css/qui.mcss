@@ -422,4 +422,17 @@ iframe {
   .qwebirc-qui .outertabbar_left .dropdown-tab {
     padding-right: 13px;
   }
+
+  .qwebirc-qui input[type="checkbox"], input[type="radio"] {
+    transform: scale(1.5);
+  }
+
+  .qwebirc-qui .qwebirc-optionspane div.hue-slider {
+    height: 14px;
+  }
+
+  .qwebirc-qui .qwebirc-optionspane div.hue-slider .knob {
+    height: 24px;
+    width: 12px;
+  }
 }
