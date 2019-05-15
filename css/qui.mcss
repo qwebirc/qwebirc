@@ -371,7 +371,7 @@ iframe {
   background-position: top 5px right 5px;
 }
 
-@media screen and (max-width:1024px) {
+@media screen and (max-device-width:1024px) {
   .qwebirc-qui .lines {
     font-size: 1.2em;
   }
@@ -421,5 +421,18 @@ iframe {
 
   .qwebirc-qui .outertabbar_left .dropdown-tab {
     padding-right: 13px;
+  }
+
+  .qwebirc-qui input[type="checkbox"], input[type="radio"] {
+    transform: scale(1.5);
+  }
+
+  .qwebirc-qui .qwebirc-optionspane div.hue-slider {
+    height: 14px;
+  }
+
+  .qwebirc-qui .qwebirc-optionspane div.hue-slider .knob {
+    height: 24px;
+    width: 12px;
   }
 }
