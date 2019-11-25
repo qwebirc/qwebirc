@@ -165,16 +165,11 @@ qwebirc.ui.ConnectPane = new Class({
     }.bind(this), "login");
   },
   __performLogin: function(callback, calleename) {
-    Cookie.write("jslogin", "1");
-
     var handle = window.open("/auth", this.__windowName, "status=0,toolbar=0,location=1,menubar=0,directories=0,resizable=0,scrollbars=1,height=280,width=550");
 
     if(handle === null || handle === undefined) {
-      Cookie.dispose("jslogin");
-//      Cookie.write("redirect", document.location);
-//      window.location = "auth?";
       return;
-    }        
+    }
 
     var closeDetector = function() {
       if(handle.closed)
@@ -184,8 +179,6 @@ qwebirc.ui.ConnectPane = new Class({
 
     this.__cancelLoginCallback = function(noUIModifications) {
       $clear(closeCallback);
-
-      Cookie.dispose("jslogin");
 
       try {
         handle.close();
@@ -204,11 +197,6 @@ qwebirc.ui.ConnectPane = new Class({
 
     __qwebircAuthCallback = function(username, expiry, serverNow) {
       this.__cancelLoginCallback(true);
-
-      var now = new Date().getTime();
-      var offset = (serverNow * 1000) - now;
-      var ourExpiry = expiry * 1000 - offset;
-      Cookie.write("ticketexpiry", ourExpiry)
 
       this.util.exec("[name=loggingin]", this.util.setVisible(false));
       this.util.exec("[name=loginstatus]", this.util.setVisible(true));
