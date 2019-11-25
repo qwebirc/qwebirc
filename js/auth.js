@@ -1,10 +1,8 @@
 qwebirc.auth.loggedin = function() {
   var user = Cookie.read("user");
-  var expiry = Cookie.read("ticketexpiry");
-  if(expiry && new Date().getTime() > expiry - (5 * 60 * 1000))
-    return;
-
-  return user;
+  var expiry = Cookie.read("loggedin");
+  if(user && expiry)
+    return user;
 }
 
 qwebirc.auth.enabled = function() {
