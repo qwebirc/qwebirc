@@ -533,15 +533,17 @@ qwebirc.ui.QuakeNetUI = new Class({
     return this.parent(name, window);
   },
   logout: function() {
-    if(!qwebirc.auth.loggedin())
+    if(!qwebirc.auth.loggedin(true)) {
+      this.getActiveWindow().errorMessage("Not logged in!");
       return;
+    }
     if(confirm("Log out?")) {
       this.clients.each(function(k, v) {
         v.quit("Logged out");
       }, this);
       
       /* HACK */
-      var foo = function() { document.location = qwebirc.global.dynamicBaseURL + "auth?logout=1"; };
+      var foo = function() { document.location = "/auth?logout=1"; };
       foo.delay(500);
     }
   }

@@ -70,8 +70,9 @@ qwebirc.ui.ConnectPane = new Class({
         this.__validate = this.__validateLoginData;
       }
 
-      if(qwebirc.auth.loggedin()) {
-        exec("[name=authname]", util.setText(qwebirc.auth.loggedin()));
+      var login = qwebirc.auth.loggedin(true);
+      if(login) {
+        exec("[name=authname]", util.setText(login[0]));
         exec("[name=connectbutton]", util.makeVisible);
         exec("[name=loginstatus]", util.makeVisible);
       } else {
@@ -192,18 +193,27 @@ qwebirc.ui.ConnectPane = new Class({
       this.__cancelLoginCallback = null;
     }.bind(this);
 
-    this.util.exec("[name=loggingin]", this.util.setVisible(true));
-    this.util.exec("[name=" + calleename + "]", this.util.setVisible(false));
+    __qwebircAuthCallback = function(qticket, qticketUsername, realExpiry) {
+      if (typeof sessionStorage === "undefined")
+      {
+        alert("No session storage support in this browser -- login not supported");
+        this.__cancelLoginCallback(false);
+        return;
+      }
 
-    __qwebircAuthCallback = function(username, expiry, serverNow) {
       this.__cancelLoginCallback(true);
+      sessionStorage.setItem("qticket", qticket);
+      sessionStorage.setItem("qticket_username", qticketUsername);
+      sessionStorage.setItem("qticket_expiry", realExpiry);
 
       this.util.exec("[name=loggingin]", this.util.setVisible(false));
       this.util.exec("[name=loginstatus]", this.util.setVisible(true));
-      this.util.exec("[name=authname]", this.util.setText(username));
+      this.util.exec("[name=authname]", this.util.setText(qticketUsername));
       callback();
     }.bind(this);
 
+    this.util.exec("[name=loggingin]", this.util.setVisible(true));
+    this.util.exec("[name=" + calleename + "]", this.util.setVisible(false));
   },
   __validateConfirmData: function() {
     return {nickname: this.options.initialNickname, autojoin: this.options.initialChannels};
