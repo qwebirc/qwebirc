@@ -30,6 +30,7 @@ qwebirc.ui.Interface = new Class({
     nickValidation: null,
     dynamicBaseURL: "/",
     staticBaseURL: "/",
+    dynamicConfiguration: false,
     cloak: false,
     logoURL: null,
     accountWhoisCommand: null
@@ -62,9 +63,11 @@ qwebirc.ui.Interface = new Class({
     /* HACK */
     qwebirc.global = {
       dynamicBaseURL: options.dynamicBaseURL,
+      dynamicConfiguration: options.dynamicConfiguration,
       staticBaseURL: options.staticBaseURL,
       baseURL: options.baseURL,
-      nicknameValidator: $defined(options.nickValidation) ? new qwebirc.irc.NicknameValidator(options.nickValidation) : new qwebirc.irc.DummyNicknameValidator()
+      nicknameValidator: $defined(options.nickValidation) ? new qwebirc.irc.NicknameValidator(options.nickValidation) : new qwebirc.irc.DummyNicknameValidator(),
+      dynamicConfigurationLoaded: false
     };
 
     window.addEvent("domready", function() {
@@ -273,3 +276,17 @@ qwebirc.ui.Interface = new Class({
     return channel;
   }
 });
+
+qwebirc.ui.requireDynamicConfiguration = function(callback) {
+  if (!qwebirc.global.dynamicConfiguration || qwebirc.global.dynamicConfigurationLoaded) {
+    callback();
+    return;
+  }
+
+  var r = new Request.JSON({url: qwebirc.global.dynamicBaseURL + "configuration", onSuccess: function(data) {
+    qwebirc.global.dynamicBaseURL = data["dynamicBaseURL"];
+
+    callback();
+  }});
+  r.get();
+};

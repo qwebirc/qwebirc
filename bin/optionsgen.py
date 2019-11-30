@@ -10,6 +10,7 @@ def get_options():
     baseURL=config.BASE_URL,
     staticBaseURL=config.STATIC_BASE_URL,
     dynamicBaseURL=config.DYNAMIC_BASE_URL,
+    dynamicConfiguration=False,
     validateNickname=False,
     customMenuItems=[]
   )
@@ -33,5 +34,8 @@ def get_options():
 
   if hasattr(config, "ACCOUNT_WHOIS_COMMAND") and config.ACCOUNT_WHOIS_COMMAND:
     options["accountWhoisCommand"] = config.ACCOUNT_WHOIS_COMMAND
+
+  if hasattr(config, "DYNAMIC_CONFIGURATION") and config.DYNAMIC_CONFIGURATION:
+    options["dynamicConfiguration"] = True
 
   return json.dumps(options)

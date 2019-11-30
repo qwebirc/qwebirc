@@ -28,3 +28,4 @@ run.sh
 .idea
 *.iml
 .virtualenv
+venv
