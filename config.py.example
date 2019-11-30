@@ -258,6 +258,11 @@ STATIC_BASE_URL = ""
 #         instances on the same host.
 DYNAMIC_BASE_URL = ""
 
+# OPTION: DYNAMIC_CONFIGURATION
+#         If True then request configuration from the backend when we
+#         initially connect.
+DYNAMIC_CONFIGURATION = False
+
 # OPTION: CONNECTION_RESOLVER
 #         A list of (ip, port) tuples of resolvers to use for looking
 #         the SRV record(s) used for connecting to the name set in

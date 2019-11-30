@@ -30,7 +30,7 @@ qwebirc.ui.Interface = new Class({
     nickValidation: null,
     dynamicBaseURL: "/",
     staticBaseURL: "/",
-    cloak: false,
+    dynamicConfiguration: false,
     logoURL: null,
     accountWhoisCommand: null
   },
@@ -62,14 +62,15 @@ qwebirc.ui.Interface = new Class({
     /* HACK */
     qwebirc.global = {
       dynamicBaseURL: options.dynamicBaseURL,
+      dynamicConfiguration: options.dynamicConfiguration,
       staticBaseURL: options.staticBaseURL,
       baseURL: options.baseURL,
-      nicknameValidator: $defined(options.nickValidation) ? new qwebirc.irc.NicknameValidator(options.nickValidation) : new qwebirc.irc.DummyNicknameValidator()
+      nicknameValidator: $defined(options.nickValidation) ? new qwebirc.irc.NicknameValidator(options.nickValidation) : new qwebirc.irc.DummyNicknameValidator(),
+      dynamicConfigurationLoaded: false
     };
 
     window.addEvent("domready", function() {
       var callback = function(options) {
-        options.cloak = ui_.options.cloak;
         var IRC = new qwebirc.irc.IRCClient(options, ui_);
         IRC.connect();
         window.onbeforeunload = qwebirc_ui_onbeforeunload;
@@ -131,9 +132,6 @@ qwebirc.ui.Interface = new Class({
           
         if(args.contains("randomnick") && args.get("randomnick") == 1)
           inick = this.options.initialNickname;
-
-        if(args.contains("cloak") && args.get("cloak") == 1)
-          this.options.cloak = true;
 
         /* we only consider autoconnecting if the nick hasn't been supplied, or it has and it's not "" */
         if(canAutoConnect && (!$defined(inick) || ($defined(inick) && (inick != "")))) {
@@ -273,3 +271,17 @@ qwebirc.ui.Interface = new Class({
     return channel;
   }
 });
+
+qwebirc.ui.requireDynamicConfiguration = function(callback) {
+  if (!qwebirc.global.dynamicConfiguration || qwebirc.global.dynamicConfigurationLoaded) {
+    callback();
+    return;
+  }
+
+  var r = new Request.JSON({url: qwebirc.global.dynamicBaseURL + "configuration", onSuccess: function(data) {
+    qwebirc.global.dynamicBaseURL = data["dynamicBaseURL"];
+
+    callback();
+  }});
+  r.get();
+};

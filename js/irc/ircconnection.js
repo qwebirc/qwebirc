@@ -396,8 +396,11 @@ qwebirc.irc.IRCConnection = new Class({
     r.send("s=" + this.sessionid + "&n=" + this.__subSeqNo);
   },
   connect: function() {
+    qwebirc.ui.requireDynamicConfiguration(this.__innerConnect.bind(this));
+  },
+  __innerConnect: function() {
     this.cacheAvoidance = qwebirc.util.randHexString(16);
-    
+
     var r = this.newRequest("n");
     r.addEvent("complete", function(o) {
       if(!o) {
@@ -416,12 +419,13 @@ qwebirc.irc.IRCConnection = new Class({
       this.__wsSupported = false;
       this.__decideTransport(transports);
     }.bind(this));
-    
+
     var postdata = "nick=" + encodeURIComponent(this.initialNickname);
     if($defined(this.options.serverPassword))
       postdata+="&password=" + encodeURIComponent(this.options.serverPassword);
-    if($defined(this.options.cloak) && this.options.cloak)
-      postdata+="&cloak=true";
+    var loggedin = qwebirc.auth.loggedin(false);
+    if(loggedin)
+      postdata+="&qticket=" + encodeURIComponent(loggedin[1]);
     r.send(postdata);
   },
   __decideTransport: function(transports) {
