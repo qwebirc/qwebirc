@@ -423,8 +423,6 @@ qwebirc.irc.IRCConnection = new Class({
     var postdata = "nick=" + encodeURIComponent(this.initialNickname);
     if($defined(this.options.serverPassword))
       postdata+="&password=" + encodeURIComponent(this.options.serverPassword);
-    if($defined(this.options.cloak) && this.options.cloak)
-      postdata+="&cloak=true";
     r.send(postdata);
   },
   __decideTransport: function(transports) {
