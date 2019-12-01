@@ -19,32 +19,14 @@ qwebirc.ui.HilightController = new Class({
 qwebirc.ui.Beeper = new Class({
   initialize: function(uiOptions) {
     this.uiOptions = uiOptions;
-    
-    this.soundInited = false;
-    this.soundReady = false;
 
-    if(this.uiOptions.BEEP_ON_MENTION)
-      this.soundInit();
-  },
-  soundInit: function() {
-    if(this.soundInited)
-      return;
-    if(!$defined(Browser.Plugins.Flash) || Browser.Plugins.Flash.version < 8)
-      return;
-    this.soundInited = true;
-    
     this.soundPlayer = new qwebirc.sound.SoundPlayer();
-    this.soundPlayer.addEvent("ready", function() {
-      this.soundReady = true;
-    }.bind(this));
-    
-    this.soundPlayer.go();
   },
-  beep: function() {
-    if(!this.soundReady || !this.uiOptions.BEEP_ON_MENTION)
+  beep: function(notification) {
+    if(notification && !this.uiOptions.BEEP_ON_MENTION)
       return;
       
-    this.soundPlayer.beep();
+    this.soundPlayer.play("beep3.mp3");
   }
 });
 
