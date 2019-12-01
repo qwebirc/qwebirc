@@ -1,7 +1,6 @@
 /* This could do with a rewrite from scratch... by splitting into about 10 classes... */
 
 //WEB_SOCKET_DEBUG = QWEBIRC_DEBUG;
-//WEB_SOCKET_FORCE_FLASH = true;
 //FORCE_LONGPOLL = true;
 
 qwebirc.irc.IRCConnection = new Class({
@@ -488,57 +487,16 @@ qwebirc.util.WebSocket = function(callback) {
   }
 
   var modeSuffix = "";
-  if(!window.WEB_SOCKET_FORCE_FLASH) {
-    if(window.WebSocket) {
-      log("WebSocket detected");
-      return latch(true, "native");
-    } if(window.MozWebSocket) {
-      log("MozWebSocket detected");
-      window.WebSocket = MozWebSocket;
-      return latch(true, "nativeMoz");
-    }
-  } else {
-    log("FORCE_FLASH enabled");
-    modeSuffix = "(forced)";
+  if(window.WebSocket) {
+    log("WebSocket detected");
+    return latch(true, "native");
+  } if(window.MozWebSocket) {
+    log("MozWebSocket detected");
+    window.WebSocket = MozWebSocket;
+    return latch(true, "nativeMoz");
   }
 
-  if(!$defined(Browser.Plugins.Flash)) {
-    log("no WebSocket support in browser and no Flash");
-    return latch(false, "noFlash" + modeSuffix);
-  }
-
-  log("No WebSocket support present in client, but flash enabled... attempting to load FlashWebSocket...");
-  state.callbacks.push(callback);
-  state.loading = true;
-
-  var fireCallbacks = function() {
-    for(var i=0;i<state.callbacks.length;i++) {
-      state.callbacks[i](state.result[0], state.result[1]);
-    }
-    state.callbacks = [];
-  };
-  var timeout = function() {
-    log("timed out waiting for flash socket to load");
-    state.loading = false;
-    state.result = [false, "longPoll(flashTimeout)" + modeSuffix];
-    fireCallbacks();
-  }.delay(3000);
-
-  qwebirc.util.importJS(qwebirc.global.staticBaseURL + "js/flash_web_socket" + (QWEBIRC_DEBUG ? "-nc" : "") + ".js", "FLASH_WEBSOCKET_LOADED", function() {
-    $clear(timeout);
-    state.loading = false;
-    if(!window.WebSocket) {
-      state.result = [false, "longPoll(flashFailed)" + modeSuffix];
-      log("unable to install FlashWebSocket");
-    } else {
-      var ws = window.WebSocket;
-      if(window.location.scheme == "http") /* no point trying port sharing for https */
-        WebSocket.loadFlashPolicyFile("xmlsocket://" + window.location.host + "/");
-
-      log("FlashWebSocket loaded and installed");
-      state.result = [true, "flash" + modeSuffix];
-    }
-    fireCallbacks();
-  });
+  log("no WebSocket support in browser");
+  return latch(false, "longPoll");
 };
 
