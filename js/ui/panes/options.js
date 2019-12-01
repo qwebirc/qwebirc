@@ -14,12 +14,7 @@ qwebirc.ui.supportsFocus = function() {
  * settableByURL...
  */
 qwebirc.config.DEFAULT_OPTIONS = [
-  [1, "BEEP_ON_MENTION", "Beep on activity", true, {
-    applyChanges: function(value, ui) {
-      if(ui.setBeepOnMention)
-        ui.setBeepOnMention(value);
-    }
-  }],
+  [1, "BEEP_ON_MENTION", "Beep on activity", true],
   [16, "NOTIFICATIONS", "Emit HTML5 notifications on activity", false, {
     enabled: function() {
       if(!("Notification" in window))

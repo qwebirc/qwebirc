@@ -211,7 +211,7 @@ qwebirc.irc.Commands = new Class({
     this.send("MODE " + this.parentObject.getNickname() + (args?(" " + args[0]):""));
   }],
   cmd_BEEP: [false, undefined, undefined, function(args) {
-    this.parentObject.ui.beep();
+    this.parentObject.ui.beep(false);
   }],
   cmd_AUTOJOIN: [false, undefined, undefined, function(args) {
     return ["JOIN", this.parentObject.options.autojoin];

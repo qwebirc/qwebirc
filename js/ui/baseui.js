@@ -71,7 +71,7 @@ qwebirc.ui.BaseUI = new Class({
     if(!this.firstClient) {
       this.firstClient = true;
       w.addLine("", "qwebirc v" + qwebirc.VERSION);
-      w.addLine("", "Copyright (C) 2008-2018 Chris Porter and the qwebirc project.");
+      w.addLine("", "Copyright (C) 2008-2019 Chris Porter and the qwebirc project.");
       w.addLine("", "http://www.qwebirc.org");
       w.addLine("", "Licensed under the GNU General Public License, Version 2.");
     }
@@ -495,17 +495,13 @@ qwebirc.ui.NotificationUI = new Class({
 
     this.cancelFlash = this.__flasher.cancelFlash.bind(this.__flasher);
   },
-  beep: function() {
-    this.__beeper.beep();
+  beep: function(notification) {
+    this.__beeper.beep(notification);
   },
   notify: function(title, message, callback) {
-    this.__beeper.beep();
+    this.__beeper.beep(true);
     this.__flasher.flash();
     this.__notifier.notify(title, message, callback);
-  },
-  setBeepOnMention: function(value) {
-    if(value)
-      this.__beeper.soundInit();
   },
   setNotifications: function(value) {
     this.__notifier.setEnabled(value);
