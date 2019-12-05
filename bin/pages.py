@@ -7,8 +7,8 @@ UI_BASE.extend(["panes/%s" % x for x in PANES])
 DEBUG_BASE = ["qwebirc", "version", "qhash", "jslib", "base64", "crypto", "md5", ["irc/%s" % x for x in IRC_BASE], ["ui/%s" % x for x in UI_BASE], "qwebircinterface", "auth", "sound"]
 BUILD_BASE = ["qwebirc"]
 JS_DEBUG_BASE = ["mootools-1.2.5-core-nc", "mootools-1.2.5.1-more-nc"]
-JS_RAW_BASE = [("//ajax.googleapis.com/ajax/libs/mootools/1.2.5/mootools-yui-compressed.js", "sha384-MPnfXr8lwFAFe8KVcFLESmIGgKe77XuYv8AK6WHEwKLTVxlcltpFNHBcJuv2uxXT")]
-JS_BASE = ["mootools-1.2.5.1-more-nc"]
+JS_RAW_BASE = []
+JS_BASE = ["mootools-1.2.5-core-nc", "mootools-1.2.5.1-more-nc"]
 JS_EXTRA = []
 
 UIs = {
