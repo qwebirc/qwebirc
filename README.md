@@ -4,7 +4,7 @@
 
 ## Installation
 
-Installation instructions are on the website: https://qwebirc.org/faq
+Installation instructions are on the website: hhttps://qwebirc.org/installation
 
 ## Hacking on qwebirc
 
