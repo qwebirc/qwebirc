@@ -134,7 +134,7 @@ qwebirc.irc.IRCClient = new Class({
       this.windows.put(this.toIRCLower(name), w);
       
       w.addEvent("close", function(w) {
-        this.windows.remove(this.toIRCLower(name));
+        this.windows.remove(this.toIRCLower(w.name));
       }.bind(this));
     }
     
