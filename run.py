@@ -102,4 +102,8 @@ else:
 
 args2+=["--ip", options.ip]
 
+if os.name == "posix" and os.getuid() == 0:
+  print >>sys.stderr, "refusing to run as root"
+  os.exit(1)
+
 run_twistd(args1, args2)
