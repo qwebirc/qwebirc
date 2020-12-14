@@ -1,6 +1,6 @@
 # qwebirc IRC client
 
-[![Build status](https://github.com/qwebirc/qwebirc/workflows/CI/badge.svg)](https://github.com/quakenet/newserv/actions?query=workflow%3ACI)
+![CI](https://github.com/qwebirc/qwebirc/workflows/CI/badge.svg)
 
 ## Installation
 Installation instructions are on the website: https://qwebirc.org/installation
