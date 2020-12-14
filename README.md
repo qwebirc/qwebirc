@@ -1,9 +1,8 @@
 # qwebirc IRC client
 
-[![Build Status](https://travis-ci.org/qwebirc/qwebirc.png?branch=master)](https://travis-ci.org/qwebirc/qwebirc)
+[![Build status](https://github.com/qwebirc/qwebirc/workflows/CI/badge.svg)](https://github.com/quakenet/newserv/actions?query=workflow%3ACI)
 
 ## Installation
-
 Installation instructions are on the website: https://qwebirc.org/installation
 
 ## Hacking on qwebirc

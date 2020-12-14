@@ -1,9 +1,0 @@
-language: python
-python:
-  - "2.7"
-addons:
-  apt:
-    packages:
-      openjdk-8-jre-headless
-script:
-  - cp config.py.example config.py && ./compile.py && ./run.py && wget http://localhost:9090 -O /dev/null && kill $(cat twistd.pid)
