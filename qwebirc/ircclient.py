@@ -66,7 +66,6 @@ class QWebIRCClient(basic.LineReceiver):
     self.factory.publisher.event(args)
     
   def write(self, data):
-    print(repr(b"%s\r\n" % irc.lowQuote(data).encode("utf-8")), file=sys.stderr)
     self.transport.write(b"%s\r\n" % irc.lowQuote(data).encode("utf-8"))
       
   def connectionMade(self):
