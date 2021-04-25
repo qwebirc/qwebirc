@@ -66,15 +66,14 @@ def producehtml(name, debug):
   css = csslist(name, debug, gen=True)
   csshtml = "\n".join("  <link rel=\"stylesheet\" href=\"%s%s\" type=\"text/css\"/>" % (config.STATIC_BASE_URL, x) for x in css)
 
-  def toscript(xxx_todo_changeme):
-    (url, digest) = xxx_todo_changeme
+  def toscript(url, digest):
     if digest:
       subresource_int = " integrity=\"%s\" crossorigin=\"anonymous\"" % digest
     else:
       subresource_int = ""
     return "  <script type=\"text/javascript\" src=\"%s%s\"%s></script>" % ("" if url.startswith("//") else config.STATIC_BASE_URL, url, subresource_int)
 
-  jshtml = "\n".join(toscript(x) for x in js)
+  jshtml = "\n".join(toscript(*x) for x in js)
 
   if hasattr(config, "ANALYTICS_HTML"):
     jshtml+="\n" + config.ANALYTICS_HTML
