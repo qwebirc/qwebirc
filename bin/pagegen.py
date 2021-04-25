@@ -38,13 +38,13 @@ def csslist(name, debug, gen=False):
 
 def _getgitid():
   try:
-    p = subprocess.Popen(["git", "rev-parse", "HEAD"], stdout=subprocess.PIPE, shell=os.name == "nt", text=True)
+    p = subprocess.Popen(["git", "rev-parse", "HEAD"], stdout=subprocess.PIPE, shell=os.name == "nt")
   except Exception as e:
     if hasattr(e, "errno") and e.errno == 2:
       raise GitException("unable to execute")
     raise GitException("unknown exception running git: %s" % repr(e))
     
-  data = p.communicate()[0]
+  data = p.communicate()[0].decode()
   if p.wait() != 0:
     raise GitException("unable to get id")
   return re.match("^([0-9a-f]+).*", data).group(1)
