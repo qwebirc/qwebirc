@@ -1,8 +1,8 @@
 from twisted.web import resource, server, static
-import config, urlparse, urllib, hashlib, re
+import config, urllib.parse, urllib.request, urllib.error, hashlib, re
 import qwebirc.util.rijndael, qwebirc.util.ciphers
 import qwebirc.util
-import qwebirc.util.qjson as json
+import json
 
 authgate = config.AUTHGATEPROVIDER.twisted
 BLOCK_SIZE = 128/8
@@ -18,13 +18,13 @@ class AuthgateEngine(resource.Resource):
     request.addCookie(key, "", path="/", expires="Sat, 29 Jun 1996 01:44:48 GMT")
     
   def render_GET(self, request):
-    if request.args.get("logout"):
+    if request.args.get(b"logout"):
       self.deleteCookie(request, "user")
       
     a = authgate(request, config.AUTHGATEDOMAIN)
     try:
       ticket = a.login_required(accepting=lambda x: True)
-    except a.redirect_exception, e:
+    except a.redirect_exception as e:
       pass
     else:
       # only used for informational purposes, the backend stores this seperately
@@ -38,15 +38,16 @@ class AuthgateEngine(resource.Resource):
       self.__hit()
       if request.getCookie("jslogin"):
         self.deleteCookie(request, "jslogin")
-        return """<html><head><script>window.opener.__qwebircAuthCallback(%s);</script></head></html>""" % json.dumps(ticket.username)
+        out = """<html><head><script>window.opener.__qwebircAuthCallback(%s);</script></head></html>""" % json.dumps(ticket.username)
+        return out.encode()
 
       location = request.getCookie("redirect")
       if location is None:
         location = "/"
       else:
         self.deleteCookie(request, "redirect")
-        _, _, path, params, query, _ = urlparse.urlparse(urllib.unquote(location))
-        location = urlparse.urlunparse(("", "", path, params, query, ""))
+        _, _, path, params, query, _ = urllib.parse.urlparse(urllib.parse.unquote(location))
+        location = urllib.parse.urlunparse(("", "", path, params, query, ""))
 
       request.redirect(location)
       request.finish()
@@ -68,7 +69,7 @@ def decodeQTicket(qticket, p=re.compile("\x00*$"), cipher=qwebirc.util.rijndael.
   
     # technically this is a flawed padding algorithm as it allows chopping at BLOCK_SIZE, we don't
     # care about that though!
-    b = range(0, l-BLOCK_SIZE, BLOCK_SIZE)
+    b = list(range(0, l-BLOCK_SIZE, BLOCK_SIZE))
     for i, v in enumerate(b):
       q = cbc.decrypt(data[v:v+BLOCK_SIZE])
       if i == len(b) - 1:

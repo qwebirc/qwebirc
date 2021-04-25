@@ -1,7 +1,7 @@
 from twisted.web import resource, server, static, error
 import qwebirc.util as util
 import pprint
-from adminengine import AdminEngineAction
+from .adminengine import AdminEngineAction
 try:
   from twisted.web.server import GzipEncoderFactory
   GZIP_ENCODER = GzipEncoderFactory()
@@ -40,4 +40,4 @@ class StaticEngine(static.File):
     }
 
   def directoryListing(self):
-    return error.ForbiddenResource()
+    return resource.ForbiddenResource()

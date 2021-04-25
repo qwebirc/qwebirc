@@ -140,7 +140,7 @@ NICKNAME_VALIDATE = True
 #         a nickname.
 #         Default is as in RFC1459.
 import string
-NICKNAME_VALID_FIRST_CHAR = string.letters + "_[]{}`^\\|"
+NICKNAME_VALID_FIRST_CHAR = string.ascii_letters + "_[]{}`^\\|"
 
 # OPTION: NICKNAME_VALID_SUBSEQUENT_CHAR
 #         A string containing valid characters for the rest of the
@@ -296,7 +296,7 @@ AUTHGATEDOMAIN = "webchat_test"
 # OPTION: QTICKETKEY
 #         Key shared with the authgate that is used to decrypt
 #         qtickets.
-QTICKETKEY = "boo"
+QTICKETKEY = b"boo"
 
 # OPTION: AUTH_SERVICE
 #         Service that auth commands are sent to. Also used to check

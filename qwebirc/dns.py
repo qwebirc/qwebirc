@@ -10,7 +10,7 @@ def lookupPTR(ip, *args, **kwargs):
     answer, auth, add = result
     answer = [x for x in answer if x.type == dns.PTR]
     if len(answer) == 0:
-      raise LookupException, "No ANSWERS in PTR response for %s." % repr(ip)
+      raise LookupException("No ANSWERS in PTR response for %s." % repr(ip))
     return str(answer[0].payload.name)
 
   ptr = ".".join(ip.split(".")[::-1]) + ".in-addr.arpa."
@@ -29,7 +29,7 @@ def lookupPTRv6(ip, *args, **kwargs):
     answer, auth, add = result
     answer = [x for x in answer if x.type == dns.PTR]
     if len(answer) == 0:
-      raise LookupException, "No ANSWERS in PTR response for %s." % repr(ip)
+      raise LookupException("No ANSWERS in PTR response for %s." % repr(ip))
     return str(answer[0].payload.name)
 
   ptr = ".".join(reversed(expandIPv6(ip))) + ".ip6.arpa."
@@ -40,7 +40,7 @@ def lookupAs(hostname, *args, **kwargs):
     answer, auth, add = result
     answer = [x for x in answer if x.type == dns.A]
     if len(answer) == 0:
-      raise LookupException, "No ANSWERS in A response for %s." % repr(hostname)
+      raise LookupException("No ANSWERS in A response for %s." % repr(hostname))
     return [x.payload.dottedQuad() for x in answer]
 
   return client.lookupAddress(hostname, *args, **kwargs).addCallback(callback)
@@ -50,7 +50,7 @@ def lookupAAAAs(hostname, *args, **kwargs):
     answer, auth, add = result
     answer = [x for x in answer if x.type == dns.AAAA]
     if len(answer) == 0:
-      raise LookupException, "No ANSWERS in AAAA response for %s." % repr(hostname)
+      raise LookupException("No ANSWERS in AAAA response for %s." % repr(hostname))
     return [expandIPv6(x.payload._address) for x in answer]
 
   return client.lookupIPV6Address(hostname, *args, **kwargs).addCallback(callback)
@@ -84,7 +84,7 @@ if __name__ == "__main__":
   import sys
 
   def callback(x):
-    print x
+    print(x)
     reactor.stop()
 
   def errback(x):

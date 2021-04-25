@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import bin.pages as pages, os, bin.cleanpyc as cleanpyc, glob
 from bin.cleanpyc import tryunlink

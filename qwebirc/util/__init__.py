@@ -1,1 +1,1 @@
-from hitcounter import HitCounter
+from .hitcounter import HitCounter

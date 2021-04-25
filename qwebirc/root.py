@@ -1,16 +1,16 @@
 from twisted.protocols.policies import TimeoutMixin
 from twisted.web import resource, server, static, http
 from twisted.internet import error, reactor
-import engines
+from . import engines
 import mimetypes
 import config
-import sigdebug
+from . import sigdebug
 import re
 
 class RootResource(resource.Resource):
   def getChild(self, name, request):
-    if name == "":
-      name = "qui.html"
+    if name == b"":
+      name = b"qui.html"
     return self.primaryChild.getChild(name, request)
 
 class WrappedRequest(server.Request):
@@ -76,16 +76,16 @@ class RootSite(server.Site):
     services["StaticEngine"] = root.primaryChild = engines.StaticEngine(path)
 
     def register(service, path, *args, **kwargs):
-      sobj = service("/" + path, *args, **kwargs)
+      sobj = service(b"/" + path, *args, **kwargs)
       services[service.__name__] = sobj
       root.putChild(path, sobj)
       
-    register(engines.AJAXEngine, "e")
+    register(engines.AJAXEngine, b"e")
     try:
-      register(engines.WebSocketEngine, "w")
+      register(engines.WebSocketEngine, b"w")
     except AttributeError:
       pass
-    register(engines.AuthgateEngine, "auth")
-    register(engines.AdminEngine, "adminengine", services)
+    register(engines.AuthgateEngine, b"auth")
+    register(engines.AdminEngine, b"adminengine", services)
     
 mimetypes.types_map[".ico"] = "image/vnd.microsoft.icon"

@@ -20,27 +20,24 @@ def hmacfn(*args):
   h.update("%d %s" % (int(time.time() / HMACTEMPORAL), " ".join(args)))
   return h.hexdigest()
 
-def utf8_iso8859_1(data, table=dict((x, x.decode("iso-8859-1")) for x in map(chr, range(0, 256)))):
-  return (table.get(data.object[data.start]), data.start+1)
+def utf8_iso8859_1(data):
+  return (data.object[data.start:data.end].decode("iso-8859-1", "ignore"), data.end)
 
 codecs.register_error("mixed-iso-8859-1", utf8_iso8859_1)
 
 def irc_decode(x):
-  try:
-    return x.decode("utf-8", "mixed-iso-8859-1")
-  except UnicodeDecodeError:
-    return x.decode("iso-8859-1", "ignore")
+  return x.decode("utf-8", "mixed-iso-8859-1")
 
 class QWebIRCClient(basic.LineReceiver):
-  delimiter = "\n"
+  delimiter = b"\n"
   def __init__(self, *args, **kwargs):
     self.__nickname = "(unregistered)"
     
   def dataReceived(self, data):
-    basic.LineReceiver.dataReceived(self, data.replace("\r", ""))
+    basic.LineReceiver.dataReceived(self, data.replace(b"\r", b""))
 
   def lineReceived(self, line):
-    line = irc_decode(irc.lowDequote(line))
+    line = irc.lowDequote(irc_decode(line))
     
     try:
       prefix, command, params = irc.parsemsg(line)
@@ -69,7 +66,8 @@ class QWebIRCClient(basic.LineReceiver):
     self.factory.publisher.event(args)
     
   def write(self, data):
-    self.transport.write("%s\r\n" % irc.lowQuote(data.encode("utf-8")))
+    print(repr(b"%s\r\n" % irc.lowQuote(data).encode("utf-8")), file=sys.stderr)
+    self.transport.write(b"%s\r\n" % irc.lowQuote(data).encode("utf-8"))
       
   def connectionMade(self):
     basic.LineReceiver.connectionMade(self)

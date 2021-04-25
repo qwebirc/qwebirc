@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # this entire thing is a hack and badly needs reimplementing
 import bin.configcheck
 import bin.compile

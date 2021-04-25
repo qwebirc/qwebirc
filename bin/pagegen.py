@@ -1,4 +1,5 @@
-import os, sys, pages, subprocess, re, optionsgen, config
+from . import pages, optionsgen
+import os, sys, subprocess, re, config
 
 class GitException(Exception):
   pass
@@ -37,15 +38,15 @@ def csslist(name, debug, gen=False):
 
 def _getgitid():
   try:
-    p = subprocess.Popen(["git", "rev-parse", "HEAD"], stdout=subprocess.PIPE, shell=os.name == "nt")
-  except Exception, e:
+    p = subprocess.Popen(["git", "rev-parse", "HEAD"], stdout=subprocess.PIPE, shell=os.name == "nt", text=True)
+  except Exception as e:
     if hasattr(e, "errno") and e.errno == 2:
-      raise GitException, "unable to execute"
-    raise GitException, "unknown exception running git: %s" % repr(e)
+      raise GitException("unable to execute")
+    raise GitException("unknown exception running git: %s" % repr(e))
     
   data = p.communicate()[0]
   if p.wait() != 0:
-    raise GitException, "unable to get id"
+    raise GitException("unable to get id")
   return re.match("^([0-9a-f]+).*", data).group(1)
 
 GITID = None
@@ -54,8 +55,8 @@ def getgitid():
   if GITID is None:
     try:
       GITID =  _getgitid()
-    except GitException, e:
-      print >>sys.stderr, "warning: git: %s (using a random id)." % e
+    except GitException as e:
+      print("warning: git: %s (using a random id)." % e, file=sys.stderr)
       GITID = os.urandom(10).encode("hex")
   return GITID
     
@@ -65,7 +66,8 @@ def producehtml(name, debug):
   css = csslist(name, debug, gen=True)
   csshtml = "\n".join("  <link rel=\"stylesheet\" href=\"%s%s\" type=\"text/css\"/>" % (config.STATIC_BASE_URL, x) for x in css)
 
-  def toscript((url, digest)):
+  def toscript(xxx_todo_changeme):
+    (url, digest) = xxx_todo_changeme
     if digest:
       subresource_int = " integrity=\"%s\" crossorigin=\"anonymous\"" % digest
     else:
@@ -110,13 +112,13 @@ def main(outputdir=".", produce_debug=True):
   p = os.path.join(outputdir, "static")
   for x in pages.UIs:
     if produce_debug:
-      f = open(os.path.join(p, "%sdebug.html" % x), "wb")
+      f = open(os.path.join(p, "%sdebug.html" % x), "w")
       try:
         f.write(producehtml(x, debug=True))
       finally:
         f.close()
       
-    f = open(os.path.join(p, "%s.html" % x), "wb")
+    f = open(os.path.join(p, "%s.html" % x), "w")
     try:
       f.write(producehtml(x, debug=False))
     finally:

@@ -3,7 +3,7 @@ class DummyImplementation(object):
     pass
     
   def __getattr__(self, *args, **kwargs):
-    raise Exception, "Not implemented."
+    raise Exception("Not implemented.")
     
   def login_optional(self, *args, **kwargs):
     return None

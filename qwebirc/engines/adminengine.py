@@ -1,6 +1,6 @@
 from twisted.web import resource, server, static
-from cgi import escape
-from urllib import urlencode
+from html import escape
+from urllib.parse import urlencode
 import config, copy, time
 
 HEADER = """
@@ -52,12 +52,12 @@ class AdminEngine(resource.Resource):
       
   def process_action(self, args):
     try:  
-      engine = args["engine"][0]
-      heading = args["heading"][0]
-      pos = int(args["pos"][0])
-      pos2 = int(args["pos2"][0])
+      engine = args[b"engine"][0].decode()
+      heading = args[b"heading"][0].decode()
+      pos = int(args[b"pos"][0])
+      pos2 = int(args[b"pos2"][0])
       
-      uniqid = args.get("uniqid", [None])[0]
+      uniqid = args.get(b"uniqid", [None])[0]
       
       obj = self.__services[engine].adminEngine[heading][pos]
     except KeyError:
@@ -79,7 +79,7 @@ class AdminEngine(resource.Resource):
     if request.getClientIP() not in config.ADMIN_ENGINE_HOSTS:
       raise AdminEngineException("Access denied")
   
-    args = request.args.get("engine")
+    args = request.args.get(b"engine")
     if args:
       self.process_action(request.args)
       request.redirect("?")
@@ -119,4 +119,4 @@ class AdminEngine(resource.Resource):
 
     data.append(FOOTER)
     
-    return "".join(data)
+    return "".join(data).encode()

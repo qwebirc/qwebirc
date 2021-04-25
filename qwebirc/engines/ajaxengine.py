@@ -1,14 +1,14 @@
 from twisted.web import resource, server, static, error as http_error
 from twisted.names import client
 from twisted.internet import reactor, error
-from authgateengine import login_optional, getSessionData
-import md5, sys, os, time, config, qwebirc.config_options as config_options, traceback, socket
+from .authgateengine import login_optional, getSessionData
+import secrets, sys, os, time, config, qwebirc.config_options as config_options, traceback, socket
 import qwebirc.ircclient as ircclient
-from adminengine import AdminEngineAction
+from .adminengine import AdminEngineAction
 from qwebirc.util import HitCounter
 import qwebirc.dns as qdns
-import qwebirc.util.qjson as json
-import urlparse
+import json
+import urllib.parse
 import qwebirc.util.autobahn_check as autobahn_check
 
 TRANSPORTS = ["longpoll"]
@@ -25,17 +25,17 @@ elif autobahn_status == False:
   # they've been warned already
   pass
 else:
-  print >>sys.stderr, "WARNING:"
-  print >>sys.stderr, "  %s" % autobahn_status
-  print >>sys.stderr, "  as a result websocket support is disabled."
-  print >>sys.stderr, "  upgrade your version of autobahn from http://autobahn.ws/python/getstarted/"
+  print("WARNING:", file=sys.stderr)
+  print("  %s" % autobahn_status, file=sys.stderr)
+  print("  as a result websocket support is disabled.", file=sys.stderr)
+  print("  upgrade your version of autobahn from http://autobahn.ws/python/getstarted/", file=sys.stderr)
 
 BAD_SESSION_MESSAGE = "Invalid session, this most likely means the server has restarted; close this dialog and then try refreshing the page."
 MAX_SEQNO = 9223372036854775807  # 2**63 - 1... yeah it doesn't wrap
 Sessions = {}
 
 def get_session_id():
-  return md5.md5(os.urandom(16)).hexdigest()
+  return secrets.token_hex(16).encode()
 
 class BufferOverflowException(Exception):
   pass
@@ -49,7 +49,7 @@ class IDGenerationException(Exception):
 class LineTooLongException(Exception):
   pass
 
-EMPTY_JSON_LIST = json.dumps([])
+EMPTY_JSON_LIST = json.dumps([]).encode()
 
 def cleanupSession(id):
   try:
@@ -77,7 +77,7 @@ class IRCSession:
 
     if seqNo is not None and seqNo < self.subSeqNo:
       if self.old_buffer is None or seqNo != self.old_buffer[0]:
-        channel.write(json.dumps([False, "Unable to reconnect -- sequence number too old."]), seqNo + 1)
+        channel.write(json.dumps([False, "Unable to reconnect -- sequence number too old."]).encode(), seqNo + 1)
         return
 
       if not channel.write(self.old_buffer[1], self.old_buffer[0] + 1):
@@ -121,7 +121,7 @@ class IRCSession:
 
     self.throttle = t + config.UPDATE_FREQ
 
-    encdata = json.dumps(self.buffer)
+    encdata = json.dumps(self.buffer).encode()
     self.old_buffer = (self.subSeqNo, encdata)
     self.subSeqNo+=1
     self.buffer = []
@@ -141,7 +141,8 @@ class IRCSession:
     newbuflen = self.buflen + len(data)
     if newbuflen > config.MAXBUFLEN:
       self.buffer = []
-      self.client.error("Buffer overflow.")
+      if hasattr(self, "client"):
+        self.client.error("Buffer overflow.")
       return
 
     self.buffer.append(data)
@@ -195,27 +196,27 @@ class AJAXEngine(resource.Resource):
     
   def render_POST(self, request):
     path = request.path[len(self.prefix):]
-    if path[0] == "/":
-      handler = self.COMMANDS.get(path[1:])
+    if path[0:1] == b"/":
+      handler = self.COMMANDS.get(path[1:].decode())
       if handler is not None:
         try:
           return handler(self, request)
-        except AJAXException, e:
-          return json.dumps((False, e[0]))
+        except AJAXException as e:
+          return json.dumps((False, str(e))).encode()
 
-    return "404" ## TODO: tidy up
+    return b"404" ## TODO: tidy up
 
   def newConnection(self, request):
     ticket = login_optional(request)
     
     ip = request.getClientIP()
 
-    nick = request.args.get("nick")
+    nick = request.args.get(b"nick")
     if not nick:
-      raise AJAXException, "Nickname not supplied."
+      raise AJAXException("Nickname not supplied.")
     nick = ircclient.irc_decode(nick[0])
 
-    password = request.args.get("password")
+    password = request.args.get(b"password")
     if password is not None:
       password = ircclient.irc_decode(password[0])
       
@@ -267,18 +268,18 @@ class AJAXEngine(resource.Resource):
 
     Sessions[id] = session
     
-    return json.dumps((True, id, TRANSPORTS))
+    return json.dumps((True, id.decode(), TRANSPORTS)).encode()
 
   def getSession(self, request):
     bad_session_message = "Invalid session, this most likely means the server has restarted; close this dialog and then try refreshing the page."
     
-    sessionid = request.args.get("s")
+    sessionid = request.args.get(b"s")
     if sessionid is None:
-      raise AJAXException, bad_session_message
+      raise AJAXException(bad_session_message)
       
     session = Sessions.get(sessionid[0])
     if not session:
-      raise AJAXException, bad_session_message
+      raise AJAXException(bad_session_message)
     return session
     
   def subscribe(self, request):
@@ -288,14 +289,14 @@ class AJAXEngine(resource.Resource):
     session = self.getSession(request)
     notifier = request.notifyFinish()
 
-    seq_no = request.args.get("n")
+    seq_no = request.args.get(b"n")
     try:
       if seq_no is not None:
         seq_no = int(seq_no[0])
         if seq_no < 0 or seq_no > MAX_SEQNO:
           raise ValueError
     except ValueError:
-      raise AJAXEngine, "Bad sequence number"
+      raise AJAXException("Bad sequence number")
 
     session.subscribe(channel, seq_no)
 
@@ -310,32 +311,32 @@ class AJAXEngine(resource.Resource):
     return server.NOT_DONE_YET
 
   def push(self, request):
-    command = request.args.get("c")
+    command = request.args.get(b"c")
     if command is None:
-      raise AJAXException, "No command specified."
+      raise AJAXException("No command specified.")
     self.__total_hit()
 
-    seq_no = request.args.get("n")
+    seq_no = request.args.get(b"n")
     try:
       if seq_no is not None:
         seq_no = int(seq_no[0])
         if seq_no < 0 or seq_no > MAX_SEQNO:
           raise ValueError
     except ValueError:
-      raise AJAXEngine("Bad sequence number %r" % seq_no)
+      raise AJAXException("Bad sequence number %r" % seq_no)
 
     session = self.getSession(request)
     try:
       session.push(ircclient.irc_decode(command[0]), seq_no)
     except AttributeError: # occurs when we haven't noticed an error
       session.disconnect()
-      raise AJAXException, "Connection closed by server; try reconnecting by reloading the page."
-    except Exception, e: # catch all
+      raise AJAXException("Connection closed by server; try reconnecting by reloading the page.")
+    except Exception as e: # catch all
       session.disconnect()        
       traceback.print_exc(file=sys.stderr)
-      raise AJAXException, "Unknown error."
+      raise AJAXException("Unknown error.")
   
-    return json.dumps((True, True))
+    return json.dumps((True, True)).encode()
   
   def closeById(self, k):
     s = Sessions.get(k)
@@ -346,7 +347,7 @@ class AJAXEngine(resource.Resource):
   @property
   def adminEngine(self):
     return {
-      "Sessions": [(str(v.client.client), AdminEngineAction("close", self.closeById, k)) for k, v in Sessions.iteritems() if not v.closed],
+      "Sessions": [(str(v.client.client), AdminEngineAction("close", self.closeById, k)) for k, v in Sessions.items() if not v.closed],
       "Connections": [(self.__connect_hit,)],
       "Total hits": [(self.__total_hit,)],
     }
@@ -359,7 +360,7 @@ if has_websocket:
       self.channel = channel
 
     def write(self, data, seqNo):
-      self.channel.send("c", "%d,%s" % (seqNo, data))
+      self.channel.send(b"c", b"%d,%s" % (seqNo, data))
       return True
 
     def close(self):
@@ -390,8 +391,8 @@ if has_websocket:
       state = self.__state
       message_type, message = msg[:1], msg[1:]
       if state == self.AWAITING_AUTH:
-        if message_type == "s":  # subscribe
-          tokens = message.split(",", 1)
+        if message_type == b"s":  # subscribe
+          tokens = message.split(b",", 1)
           if len(tokens) != 2:
             self.close("Bad tokens")
             return
@@ -411,14 +412,14 @@ if has_websocket:
 
           self.__cancelTimeout()
           self.__session = session
-          self.send("s", "True")
+          self.send(b"s", b"True")
           self.__state = self.AUTHED
           self.__channel = WebSocketChannel(self)
           session.subscribe(self.__channel, seq_no)
           return
       elif state == self.AUTHED:
-        if message_type == "p":  # push
-          tokens = message.split(",", 1)
+        if message_type == b"p":  # push
+          tokens = message.split(b",", 1)
           if len(tokens) != 2:
             self.close("Bad tokens")
             return
@@ -446,7 +447,7 @@ if has_websocket:
     def close(self, reason=None):
       self.__cancelTimeout()
       if reason:
-        self.sendClose(4999, unicode(reason))
+        self.sendClose(4999, str(reason))
       else:
         self.sendClose(4998)
 

@@ -6,11 +6,11 @@ import subprocess
 import os
 
 def fail(*message):
-  print >>sys.stderr, "\n".join(message)
+  print("\n".join(message), file=sys.stderr)
   sys.exit(1)
   
 def warn(*message):
-  print >>sys.stderr, "warning:", "\nwarning: ".join(message), "\n"
+  print("warning:", "\nwarning: ".join(message), "\n", file=sys.stderr)
 
 def check_dependencies():
   i = 0
@@ -19,16 +19,15 @@ def check_dependencies():
   check_twisted()
   check_win32()
   i+=check_autobahn()
-  i+=check_json()
   i+=check_java()
   i+=check_git()
   
-  print "0 errors, %d warnings." % i
+  print("0 errors, %d warnings." % i)
   
   if i == 0:
-    print "looks like you've got everything you need to run qwebirc!"
+    print("looks like you've got everything you need to run qwebirc!")
   else:
-    print "you can run qwebirc despite these."
+    print("you can run qwebirc despite these.")
 
   f = open(".checked", "w")
   f.close()
@@ -115,15 +114,6 @@ def check_twisted():
     import twisted.words
   except ImportError:
     twisted_fail("words")
-    
-def check_json():
-  import qwebirc.util.qjson
-  if qwebirc.util.qjson.slow:
-    warn("simplejson module with C speedups not installed.",
-         "using embedded module (slower); consider installing simplejson from:",
-         "http://pypi.python.org/pypi/simplejson/")
-    return 1
-  return 0
 
 def check_autobahn():
   import qwebirc.util.autobahn_check as autobahn_check
@@ -143,5 +133,5 @@ def check_autobahn():
   return 1
 
 if __name__ == "__main__":
-  import dependencies
+  from . import dependencies
   dependencies.check_dependencies()
