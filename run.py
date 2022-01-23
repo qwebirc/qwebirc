@@ -2,6 +2,7 @@
 # this entire thing is a hack and badly needs reimplementing
 import bin.configcheck
 import bin.compile
+import sys
 bin.compile.vcheck()
 
 DEFAULT_PORT = 9090
@@ -105,6 +106,6 @@ args2+=["--ip", options.ip]
 
 if os.name == "posix" and os.getuid() == 0:
   print >>sys.stderr, "refusing to run as root"
-  os.exit(1)
+  sys.exit(1)
 
 run_twistd(args1, args2)
