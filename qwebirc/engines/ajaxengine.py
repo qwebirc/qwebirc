@@ -240,7 +240,8 @@ class AJAXEngine(resource.Resource):
     ident, realname = config.IDENT, config.REALNAME
     if ident is config_options.IDENT_HEX or ident is None: # latter is legacy
       import binascii
-      ident = binascii.hexlify(socket.inet_aton(ip))
+      ident = binascii.hexlify(socket.inet_aton(ip)).decode("utf-8")
+
     elif ident is config_options.IDENT_NICKNAME:
       ident = nick
 
