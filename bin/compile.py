@@ -38,7 +38,7 @@ def jmerge_files(prefix, suffix, output, files, *args, **kwargs):
       JAVA_WARNING_SURPRESSED = True
       print("warning: minify: %s (not minifying -- javascript will be HUGE)." % e, file=sys.stderr)
     try:
-      f = open(o, "r")
+      f = open(o, "rb")
       compiled = f.read()
     finally:
       f.close()
@@ -49,11 +49,11 @@ def jmerge_files(prefix, suffix, output, files, *args, **kwargs):
     time.sleep(1) # windows sucks
     os.unlink(o)
     
-  f = open(os.path.join(prefix, "static", suffix, output), "w")
-  f.write(COPYRIGHT)
+  f = open(os.path.join(prefix, "static", suffix, output), "wb")
+  f.write(COPYRIGHT.encode("utf-8"))
 
   if kwargs.get("file_prefix"):
-    f.write(kwargs.get("file_prefix"))
+    f.write(kwargs.get("file_prefix").encode("utf-8"))
     
   f.write(compiled)
   f.close()
