@@ -7,6 +7,7 @@ Automat==0.6.0
 constantly==15.1.0
 hyperlink==17.3.0
 incremental==17.5.0
+pkg-resources==0.0.0
 six==1.10.0
 Twisted==17.5.0
 txaio==2.8.1
