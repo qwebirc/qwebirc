@@ -21,6 +21,6 @@ jobs:
     - name: build
       run: cp config.py.example config.py && ./compile.py
     - name: run
-      run: ./run.py
+      run: chown -R nobody:nogroup . && su nobody -s /bin/bash -c ./run.py
     - name: basic test
       run: wget http://localhost:9090 -O /dev/null && kill $(cat twistd.pid)
