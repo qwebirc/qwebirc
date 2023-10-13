@@ -1,3 +1,13 @@
 autobahn==17.7.1
 simplejson==3.11.1
 Twisted==17.5.0
+
+attrs==17.2.0
+Automat==0.6.0
+constantly==15.1.0
+hyperlink==17.3.0
+incremental==17.5.0
+six==1.10.0
+Twisted==17.5.0
+txaio==2.8.1
+zope.interface==4.4.2
