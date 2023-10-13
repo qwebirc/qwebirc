@@ -1,5 +1,6 @@
-#!/usr/bin/env python
-import compile, pages, sys, os, shutil, compileall
+#!/usr/bin/env python3
+from . import pages, compile, compileall
+import sys, os, shutil
 
 def trymkdir(*dir):
   try:
@@ -54,7 +55,7 @@ def remove_python(dest, ignore=[]):
         
 def main():
   if len(sys.argv) < 2:
-    print >>sys.stderr, "syntax: %s [destination directory]" % sys.argv[0]
+    print("syntax: %s [destination directory]" % sys.argv[0], file=sys.stderr)
     sys.exit(0)
   DEST = sys.argv[1]
   
@@ -95,7 +96,7 @@ def main():
   copy("config.py.example", DEST)
   
   if os.path.exists("config.py"):
-    print "NOT copying current config.py!"
+    print("NOT copying current config.py!")
     #copy("config.py", DEST)
   
 if __name__ == "__main__":

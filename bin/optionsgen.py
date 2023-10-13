@@ -1,5 +1,5 @@
 import config
-import qwebirc.util.qjson as json
+import json
 
 def get_options():
   options = dict(

@@ -1,4 +1,4 @@
-from zope.interface import implements
+from zope.interface import implementer
 
 from twisted.python import usage
 
@@ -8,8 +8,8 @@ from twisted.plugin import IPlugin
 from twisted.application.service import IServiceMaker
 from twisted.application import internet, strports, service
 from twisted.web import static, server
-import urlparse
-import urllib
+import urllib.parse
+import urllib.request, urllib.parse, urllib.error
 
 from qwebirc.root import RootSite
 
@@ -35,8 +35,8 @@ class Options(usage.Options):
       except ImportError:
         raise usage.UsageError("SSL support not installed")
 
+@implementer(IServiceMaker, IPlugin)
 class QWebIRCServiceMaker(object):
-  implements(IServiceMaker, IPlugin)
   tapname = "qwebirc"
   description = "QuakeNet web-based IRC client"
   options = Options
@@ -64,7 +64,7 @@ def get_ssl_factory_factory():
   class ChainingOpenSSLContextFactory(DefaultOpenSSLContextFactory):
     def __init__(self, *args, **kwargs):
       self.chain = None
-      if kwargs.has_key("certificateChainFile"):
+      if "certificateChainFile" in kwargs:
         self.chain = kwargs["certificateChainFile"]
         del kwargs["certificateChainFile"]
 

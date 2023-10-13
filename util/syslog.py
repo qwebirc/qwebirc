@@ -18,7 +18,7 @@ class __SyslogProtocol(DatagramProtocol):
   def send(self, data):
     if self.transport is None: # oh well, it's UDP =)
       return
-    self.transport.write("<1> %s[%d]: %s\n" % (self.ident, self.pid, data), ADDR)
+    self.transport.write(b"<1> %s[%d]: %s\n" % (self.ident, self.pid, data.encode()), ADDR)
 
   def close(self):
     if self.transport is None:
@@ -42,7 +42,7 @@ def __build_protocol(ident=IDENT):
     return
 
   protocol = __SyslogProtocol()
-  protocol.ident = ident
+  protocol.ident = ident.encode()
 
 def syslog(data):
   __build_protocol()

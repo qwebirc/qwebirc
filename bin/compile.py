@@ -1,10 +1,11 @@
-#!/usr/bin/env python
-import dependencies
+#!/usr/bin/env python3
+from . import dependencies
 dependencies.vcheck()
 
-import pages, os, subprocess, pagegen, shutil, sys, time
+from . import pages, pagegen
+import os, subprocess, shutil, sys, time
 
-COPYRIGHT = open("js/copyright.js", "rb").read()
+COPYRIGHT = open("js/copyright.js", "r").read()
 
 class MinifyException(Exception):
   pass
@@ -12,13 +13,13 @@ class MinifyException(Exception):
 def jarit(src):
   try:
     p = subprocess.Popen(["java", "-jar", "bin/yuicompressor-2.4.8.jar", src], stdout=subprocess.PIPE, shell=os.name == "nt")
-  except Exception, e:
+  except Exception as e:
     if hasattr(e, "errno") and e.errno == 2:
-      raise MinifyException, "unable to run java"
+      raise MinifyException("unable to run java")
     raise
   data = p.communicate()[0]
   if p.wait() != 0:
-    raise MinifyException, "an error occured"
+    raise MinifyException("an error occured")
   return data
 
 JAVA_WARNING_SURPRESSED = False
@@ -31,11 +32,11 @@ def jmerge_files(prefix, suffix, output, files, *args, **kwargs):
   # cough hack
   try:
     compiled = jarit(o)
-  except MinifyException, e:
+  except MinifyException as e:
     global JAVA_WARNING_SURPRESSED
     if not JAVA_WARNING_SURPRESSED:
       JAVA_WARNING_SURPRESSED = True
-      print >>sys.stderr, "warning: minify: %s (not minifying -- javascript will be HUGE)." % e
+      print("warning: minify: %s (not minifying -- javascript will be HUGE)." % e, file=sys.stderr)
     try:
       f = open(o, "rb")
       compiled = f.read()
@@ -49,21 +50,21 @@ def jmerge_files(prefix, suffix, output, files, *args, **kwargs):
     os.unlink(o)
     
   f = open(os.path.join(prefix, "static", suffix, output), "wb")
-  f.write(COPYRIGHT)
+  f.write(COPYRIGHT.encode("utf-8"))
 
   if kwargs.get("file_prefix"):
-    f.write(kwargs.get("file_prefix"))
+    f.write(kwargs.get("file_prefix").encode("utf-8"))
     
   f.write(compiled)
   f.close()
   
 def merge_files(output, files, root_path=lambda x: x):
-  f = open(output, "wb")
+  f = open(output, "w")
 
   for x in files:
     if x.startswith("//"):
       continue
-    f2 = open(root_path(x), "rb")
+    f2 = open(root_path(x), "r")
     f.write(f2.read() + "\n")
     f2.close()
   f.close()
@@ -136,7 +137,7 @@ def vcheck():
   if has_compiled():
     return
     
-  print >>sys.stderr, "error: not yet compiled, run compile.py first."
+  print("error: not yet compiled, run compile.py first.", file=sys.stderr)
   sys.exit(1)
   
 if __name__ == "__main__":
